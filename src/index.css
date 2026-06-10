@@ -1,0 +1,4 @@
+/* 디자인 토큰 + 타이포 + 전역 스타일 (순서 중요: 토큰 먼저) */
+@import './styles/tokens.css';
+@import './styles/typography.css';
+@import './styles/global.css';

@@ -1,0 +1,27 @@
+/* =========================================================
+   디자인 토큰 — 팀 공식 디자인 시스템에서 추출 (정확값)
+   출처: Figma "1차프로젝트-3조" / design-system 등록 변수
+   ⚠️ 값은 여기서만 정의. 컴포넌트는 var(--xxx)로만 사용. (하드코딩 금지)
+   ========================================================= */
+:root {
+  /* ---------- COLOR  (Index/Color/*) ---------- */
+  --color-base-1:        #FFFFFF;
+  --color-base-2:        #FFF7EA;   /* 크림 / 서피스 */
+  --color-base-3:        #000000;
+  --color-accent-orange: #F49307;   /* 포인트(점등색) */
+  --color-footer:        #252525;
+
+  /* ---------- LAYOUT  (layout/*) ---------- */
+  --layout-container-width: 1920px;
+  --layout-gutter:          80px;
+  --layout-section-padding: 120px;
+  --layout-section-gap:     36px;
+
+  /* ---------- FONT FAMILY (3종) ---------- */
+  --font-kr:   'Pretendard', sans-serif;        /* 한글 */
+  --font-en:   'Instrument Sans', sans-serif;    /* 영문 기본 */
+  --font-deco: 'Playfair Display', serif;        /* 영문 장식 */
+
+  /* ---------- BASE ---------- */
+  --line-height-base: 1.4;   /* 행간 140% 통일 */
+}
