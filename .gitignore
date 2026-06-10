@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# 무거운 미디어(영상/시퀀스)는 git에 올리지 않음 — 클라우드/CDN로 공유 (DEV_GUIDE §9-4)
+public/videos/*
+!public/videos/README.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
