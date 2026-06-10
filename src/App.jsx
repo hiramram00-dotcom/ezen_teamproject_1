@@ -1,17 +1,15 @@
-import styles from './App.module.css'
+import HeroSection from './sections/HeroSection/HeroSection'
+// ⚠️ 임시: IntroSection은 placeholder(김종욱 제작). 다른 팀원 작업물로 교체 필요.
+import IntroSection from './sections/IntroSection/IntroSection'
 
 function App() {
   return (
-    <main className={styles.welcome}>
-      <p className={styles.kicker}>ILKW · TEAM PROJECT</p>
-      <h1 className={styles.title}>
-        We make <span className={styles.glow}>Light.</span>
-      </h1>
-      <p className={styles.desc}>
-        프로젝트 기본 세팅 완료 ✅<br />
-        각자 <code>feature/섹션명</code> 브랜치를 따서 작업을 시작하세요.
-      </p>
-    </main>
+    <>
+      <HeroSection />
+      {/* ⚠️ 임시 placeholder — 실제 Intro 섹션으로 교체할 것 */}
+      <IntroSection />
+      {/* 다음 섹션들 순서대로 추가: Story, Snowman, Space, Collabo, Footer */}
+    </>
   )
 }
 
