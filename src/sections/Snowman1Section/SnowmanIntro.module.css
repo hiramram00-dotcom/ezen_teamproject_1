@@ -1,0 +1,81 @@
+/* =========================================================
+   Snowman1Section — Figma node 468:657 ("18")
+   풀스크린 블랙 + 중앙 "Meet / SNOWMAN"
+   색·폰트는 토큰/타이포 클래스만 사용 (하드코딩 금지)
+   ========================================================= */
+
+.snowman {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--color-base-3); /* #000 */
+  color: var(--color-base-1);      /* #FFF */
+  overflow: hidden;
+}
+
+/* ----- 상단 헤더 (로고 ↔ 메뉴) ----- */
+.header {
+  position: absolute;
+  top: 19px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* Figma: 1920 폭 기준 좌우 26px 여백 (width 1868) */
+  padding: 0 26px;
+}
+
+.logo {
+  display: block;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.logo img {
+  width: 102.939px;
+  height: 23px;
+}
+
+.menu {
+  flex-shrink: 0;
+  color: var(--color-base-1);
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+/* ----- 중앙 타이틀 ----- */
+.title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 550px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.title p {
+  width: 100%;
+}
+
+/* ----- 반응형 (브레이크포인트 px는 팀 [TBD], 임시값) ----- */
+@media (max-width: 767px) {
+  .title {
+    width: auto;
+  }
+  .title :global(.type-italic-2),
+  .title :global(.type-title-semibold) {
+    font-size: 56px;
+  }
+  .logo img {
+    width: 80px;
+    height: auto;
+  }
+  .menu {
+    font-size: 22px;
+  }
+}
