@@ -35,6 +35,7 @@ function Snowman2Section() {
   const cardRef = useRef(null)
   const headerRef = useRef(null)
   const overlayRef = useRef(null)
+  const videoRef = useRef(null)
 
   useEffect(() => {
     const wrap = wrapRef.current
@@ -42,16 +43,30 @@ function Snowman2Section() {
     const card = cardRef.current
     const header = headerRef.current
     const overlay = overlayRef.current
+    const video = videoRef.current
     if (!wrap || !card) return
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     let raf = 0
+    let entered = false // 무대 진입(핀) 여부 — 진입할 때마다 영상 처음부터
     const update = () => {
       raf = 0
       const total = wrap.offsetHeight - window.innerHeight
       const rect = wrap.getBoundingClientRect()
       const raw = total > 0 ? clamp01(-rect.top / total) : 0
+
+      // 영상 화면 진입 시 항상 처음부터 재생
+      if (raw > 0 && !entered) {
+        entered = true
+        if (video) {
+          video.currentTime = 0
+          const p = video.play()
+          if (p && p.catch) p.catch(() => {})
+        }
+      } else if (raw <= 0) {
+        entered = false
+      }
 
       // fullness: 0 = 카드, 1 = 풀스크린
       let f
@@ -115,6 +130,7 @@ function Snowman2Section() {
 
         <div ref={cardRef} className={styles.card}>
           <video
+            ref={videoRef}
             className={styles.video}
             src={VIDEO_SRC}
             autoPlay
