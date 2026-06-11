@@ -1,0 +1,110 @@
+/* =========================================================
+   SnowmanVideo (Snowman1Section 내부) — Figma node 468:701 → 468:673
+   풀스크린 영상이 스크롤에 따라 라운드 카드로 줄어드는 연출
+   (영상 하나로 끊김 없이 이어짐)
+   ========================================================= */
+
+/* 스크롤 거리 확보용 래퍼 (이 높이 - 100vh 가 연출 구간) */
+.scrollWrap {
+  position: relative;
+  width: 100%;
+  height: 350vh;
+  background: var(--color-base-1); /* 흰 배경 (축소되며 드러남) */
+}
+
+/* 화면에 고정되는 무대 (진입은 검정에서 시작 → JS가 흰색으로 교체) */
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--color-base-3);
+}
+
+/* ----- 헤더 (검정 로고 + 메뉴) — JS가 opacity 페이드인 ----- */
+.header {
+  position: absolute;
+  top: 19px;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 26px;
+  opacity: 0;
+}
+
+.logo {
+  display: block;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.logo img {
+  width: 102.939px;
+  height: 23px;
+}
+
+.menu {
+  flex-shrink: 0;
+  color: var(--color-base-3); /* 검정 */
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+/* ----- 영상 카드 (시작: 카드 크기 → JS가 커졌다 작아짐) ----- */
+.card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50.37vw;
+  height: 45.09vh;
+  border-radius: 40px;
+  overflow: hidden;
+  background: var(--color-base-3);
+  will-change: width, height, border-radius;
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ----- 카드 내 좌하단 텍스트 오버레이 ----- */
+.overlay {
+  position: absolute;
+  left: 3.6%;
+  bottom: 8%;
+  z-index: 1;
+  color: var(--color-base-1); /* 흰 글씨 */
+  opacity: 0;
+}
+
+.overlayTitle {
+  font-family: var(--font-en);
+  font-weight: 600;
+  font-size: clamp(20px, 1.875vw, 36px);
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+.overlayDesc {
+  margin-top: 4px;
+  color: var(--color-base-1);
+}
+
+/* 모션 최소화 사용자: 줄어든 카드 상태로 고정 */
+@media (prefers-reduced-motion: reduce) {
+  .scrollWrap {
+    height: 100vh;
+  }
+  .header,
+  .overlay {
+    opacity: 1;
+  }
+}

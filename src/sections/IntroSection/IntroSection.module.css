@@ -1,0 +1,318 @@
+.intro {
+  --intro-copy: 40px;
+  --glow-rgb: 247, 235, 215;
+  --glow-blur: 18px;
+  --glow-opacity: 0.6;
+  position: relative;
+  height: 2950svh;
+  background: var(--color-base-3);
+  color: var(--color-base-2);
+}
+
+.stickyStage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--color-base-3);
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.fadeItem {
+  will-change: opacity;
+}
+
+.videoMedia {
+  opacity: 0;
+  transition: opacity 1200ms ease-out;
+}
+
+.videoVisible {
+  opacity: 1;
+}
+
+.centerLayer,
+.centerMediaLayer,
+.intro1Layer,
+.intro3Layer,
+.intro4Layer,
+.intro5Layer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.centerMediaLayer,
+.intro1Layer {
+  align-items: flex-end;
+}
+
+.copy {
+  position: relative;
+  z-index: 2;
+  font-size: var(--intro-copy);
+  font-weight: 300;
+  line-height: 1.55;
+  letter-spacing: -0.04em;
+  text-align: center;
+}
+
+.copy strong {
+  font-weight: 600;
+}
+
+.topCopy {
+  position: absolute;
+  top: clamp(100px, 14vh, 170px);
+  left: 50%;
+  width: min(90%, 760px);
+  transform: translateX(-50%);
+}
+
+.text6Layer {
+  display: flex;
+  justify-content: center;
+  will-change: opacity;
+}
+
+.text6Layer .copy {
+  position: absolute;
+  top: var(--text6-y);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(90%, 760px);
+}
+
+.media {
+  display: block;
+  object-fit: contain;
+}
+
+.intro1Media {
+  position: absolute;
+  right: 0;
+  bottom: -22svh;
+  left: 0;
+  width: 100%;
+  height: 122svh;
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+.intro2Media {
+  position: absolute;
+  bottom: -14svh;
+  left: 50%;
+  width: 100vw;
+  height: auto;
+  max-height: 100svh;
+  max-width: none;
+  object-fit: contain;
+  object-position: center bottom;
+  transform: translateX(-50%);
+}
+
+.intro3Layer {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-top: clamp(70px, 9vh, 130px);
+}
+
+.intro3Media {
+  width: 36vw;
+  height: min(72svh, 62vw);
+  object-fit: contain;
+  object-position: left top;
+}
+
+.intro4Layer {
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding-bottom: clamp(80px, 10vh, 150px);
+}
+
+.intro4Media {
+  width: 42vw;
+  height: min(64svh, 37vw);
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+.intro5Layer {
+  align-items: flex-end;
+  padding-bottom: clamp(130px, 16vh, 220px);
+}
+
+.intro5Media {
+  width: 34vw;
+  height: min(74svh, 50vw);
+  object-fit: cover;
+  object-position: center;
+}
+
+.intro5AutoFade {
+  animation: intro5AutoFade 1800ms 700ms ease-in-out forwards;
+}
+
+.text6AutoMove .copy {
+  animation: text6AutoMove 2200ms ease-in-out forwards;
+}
+
+.text6Layer .copy strong {
+  font-weight: 300;
+}
+
+.text6AutoMove .copy strong {
+  animation: text6Emphasis 2200ms ease-in-out forwards;
+}
+
+.text6AutoLeaving {
+  animation: text6AutoFadeOut 1000ms ease-in-out forwards;
+}
+
+.closing {
+  font-family: var(--font-en);
+  font-size: 64px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.closing em {
+  font-family: var(--font-deco);
+}
+
+.closing strong {
+  font-style: italic;
+}
+
+.glow {
+  color: rgb(var(--glow-rgb));
+  opacity: 0.18;
+  text-shadow:
+    0 0 var(--glow-blur) rgba(var(--glow-rgb), var(--glow-opacity)),
+    0 0 calc(var(--glow-blur) * 2.6)
+      rgba(var(--glow-rgb), calc(var(--glow-opacity) * 0.55));
+}
+
+.glow.lit {
+  animation:
+    turnOn 1100ms steps(1, end) forwards,
+    idleFlicker 3.5s 1.2s infinite;
+}
+
+@keyframes turnOn {
+  0% { opacity: 0.12; }
+  8% { opacity: 1; }
+  12% { opacity: 0.28; }
+  18% { opacity: 1; }
+  24% { opacity: 0.5; }
+  30% { opacity: 1; }
+  42% { opacity: 0.78; }
+  52% { opacity: 1; }
+  70% { opacity: 0.92; }
+  100% { opacity: 1; }
+}
+
+@keyframes idleFlicker {
+  0%,
+  47%,
+  51%,
+  92%,
+  96%,
+  100% {
+    filter: brightness(1);
+  }
+  49% {
+    filter: brightness(0.82);
+  }
+  94% {
+    filter: brightness(0.9);
+  }
+}
+
+@keyframes intro5AutoFade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes text6AutoMove {
+  from {
+    top: 14vh;
+  }
+  to {
+    top: 50%;
+  }
+}
+
+@keyframes text6Emphasis {
+  0%,
+  35% {
+    font-weight: 300;
+  }
+  100% {
+    font-weight: 600;
+  }
+}
+
+@keyframes text6AutoFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .intro {
+    --intro-copy: 28px;
+  }
+
+  .topCopy {
+    top: 96px;
+  }
+
+  .intro2Media {
+    width: 150vw;
+    height: auto;
+    max-height: 100svh;
+  }
+
+  .intro3Layer,
+  .intro4Layer,
+  .intro5Layer {
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .intro3Media,
+  .intro4Media,
+  .intro5Media {
+    width: min(100%, 620px);
+    height: auto;
+    max-height: none;
+  }
+
+  .closing {
+    font-size: 42px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow,
+  .glow.lit {
+    opacity: 1;
+    animation: none;
+  }
+}

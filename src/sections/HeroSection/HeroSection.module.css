@@ -1,0 +1,132 @@
+/* Hero — 손전등 + CTA 트레일 → 클릭 → 로고 조립(GSAP) */
+
+.hero {
+  --mx: 50%;
+  --my: 50%;
+  --spot-size: 300px;    /* 손전등 빛 범위 */
+  --core-dark: 0.5;      /* 빛 중심 어둠 */
+
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: var(--color-base-3);
+  overflow: hidden;
+  cursor: none;
+}
+
+/* 커스텀 커서 — 빛나는 점 */
+.cursorDot {
+  --dot-size: 46px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 247, 230, 0.5) 0%,
+    rgba(255, 240, 210, 0.32) 25%,
+    rgba(255, 230, 190, 0.12) 55%,
+    rgba(255, 220, 170, 0) 100%
+  );
+  transform: translate(
+    calc(var(--mx) - var(--dot-size) / 2),
+    calc(var(--my) - var(--dot-size) / 2)
+  );
+  z-index: 10;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: cursorPulse 2.4s ease-in-out infinite;
+}
+@keyframes cursorPulse {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 1; }
+}
+
+/* 펜던트 램프 */
+.lamp {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 88vh;
+  width: auto;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* 손전등 오버레이 (GSAP가 클릭 시 제거) */
+.spotlight {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: radial-gradient(
+    circle var(--spot-size) at var(--mx) var(--my),
+    rgba(0, 0, 0, var(--core-dark)) 0%,
+    rgba(0, 0, 0, 0.9) 55%,
+    #000 80%
+  );
+}
+
+/* ===== ILKW. 로고 (클릭 시 GSAP로 등장) ===== */
+.logo {
+  position: absolute;
+  left: 50%;
+  top: 19%;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.04em;
+  font-size: clamp(40px, 7.6vw, 146px);
+  z-index: 7;            /* 손전등 오버레이(5) 위 */
+  user-select: none;
+  opacity: 0;            /* GSAP가 보이게 함 */
+}
+.letter {
+  height: 1em;
+  width: auto;
+  display: block;
+}
+
+/* 점(.) — GSAP가 생성+반짝 제어 (처음엔 숨김) */
+.sparkle {
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 248, 232, 0.95) 0%,
+    rgba(255, 238, 205, 0.55) 22%,
+    rgba(255, 230, 190, 0.18) 45%,
+    rgba(255, 225, 180, 0) 72%
+  );
+  align-self: flex-end;
+  margin-left: 0.04em;
+  margin-bottom: -0.05em;
+  opacity: 0;
+}
+
+/* ===== CLICK TO ENTER 트레일 ===== */
+.cta {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+.ctaLetter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: var(--font-en);
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: pre;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursorDot { animation: none; }
+}
