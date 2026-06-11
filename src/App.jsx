@@ -9,7 +9,7 @@ import CollaboSection from './sections/CollaboSection/CollaboSection'
 
 function App() {
   return (
-    <main>      
+    <main>
       <HeroSection />
       <IntroSection />
       <StorySection />
@@ -18,10 +18,8 @@ function App() {
       <SnowmanSection2 />
       <SpacesSection />
       <CollaboSection />
-      {/* 다음 섹션들 순서대로 추가: Story, Snowman, Space, Collabo, Footer */}
     </main>
   )
 }
-
 
 export default App
