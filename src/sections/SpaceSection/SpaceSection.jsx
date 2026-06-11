@@ -11,7 +11,7 @@ import imgSpace07 from '../../assets/space/img-space-07.png';
 import imgSpace08 from '../../assets/space/img-space-08.gif';
 import ilkwLogo from '../../assets/ilkw-logo-header.svg';
 
-import spaceImg20 from '../../../img_/space_img20.png';
+import spaceImg1 from '../../../img_/space_img1.png';
 import spaceImg11 from '../../../img_/space_img11.png';
 import spaceImg12 from '../../../img_/space_img12.png';
 import spaceImg14 from '../../../img_/space_img14.png';
@@ -35,6 +35,16 @@ export default function SpaceSection() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isRevealed, setIsRevealed] = useState(false);
   const [revealedImages, setRevealedImages] = useState({});
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScale(window.innerWidth < 1920 ? window.innerWidth / 1920 : 1);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
 
@@ -45,7 +55,7 @@ export default function SpaceSection() {
       const sectionHeight = rect.height - window.innerHeight;
       
       const stickOffset = window.innerHeight * 0.41 - 200;
-      const stickStart = 1447 - stickOffset;
+      const stickStart = (1447 * scale) - stickOffset;
 
       if (textBoxRef.current) {
         const textRect = textBoxRef.current.getBoundingClientRect();
@@ -68,9 +78,10 @@ export default function SpaceSection() {
         for (const key of keys) {
           const el = document.getElementById(key);
           if (el) {
-            const isVisible = (rect.top + el.offsetTop) < triggerY;
-            if (isVisible && !next[key]) {
-              next[key] = true;
+            const elRect = el.getBoundingClientRect();
+            const isVisible = elRect.top < triggerY;
+            if (next[key] !== isVisible) {
+              next[key] = isVisible;
               changed = true;
             }
           }
@@ -84,7 +95,7 @@ export default function SpaceSection() {
         setCurrentStep(4);
       } else {
         const progress = (scrollY - stickStart) / (sectionHeight - stickStart);
-        const step = Math.min(4, Math.floor(progress * 5));
+        const step = Math.min(4, Math.max(0, Math.floor(progress * 5)));
         setCurrentStep(step);
       }
     };
@@ -92,7 +103,7 @@ export default function SpaceSection() {
     window.addEventListener('scroll', handleScroll);
     handleScroll(); // Initialize immediately on mount
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [scale]);
 
   const currentText = stepsData[currentStep] || stepsData[0];
   return (
@@ -104,7 +115,7 @@ export default function SpaceSection() {
           <span>Menu</span>
         </div>
       </div>
-      <div className={styles.container}>
+      <div className={styles.container} style={{ zoom: scale }}>
         <div className={styles.textWrapper}>
           <div className={styles.textBox} ref={textBoxRef}>
             <div className={`${styles.mainText} ${isRevealed ? styles.revealed : ''}`}>
@@ -129,7 +140,9 @@ export default function SpaceSection() {
           </div>
         </div>
 
-        <img id="img1" src={spaceImg20} alt="Space 1" className={`${styles.imgBase} ${styles.img1} ${styles.scaleImg} ${revealedImages.img1 ? styles.revealedScaleImg : ''}`} style={{ width: '1417px', height: '1447px', left: '0px', top: '0px', objectFit: 'fill' }} />
+        <div id="img1" className={`${styles.imgBase} ${styles.img1}`} style={{ width: '1417px', height: '1447px', left: '0px', top: '0px', overflow: 'hidden' }}>
+          <img src={spaceImg1} alt="Space 1" className={`${styles.scaleImg} ${revealedImages.img1 ? styles.revealedScaleImg : ''}`} style={{ width: '100%', height: '100%', objectFit: 'fill' }} />
+        </div>
         <img id="img2" src={imgSpace02} alt="Space 2" className={`${styles.imgBase} ${styles.img2} ${styles.scrollImg} ${revealedImages.img2 ? styles.revealedScrollImg : ''}`} style={{ width: '394px', height: '298px', left: '1417px', top: '1447px' }} />
         <img id="img3" src={spaceImg14} alt="Space 3" className={`${styles.imgBase} ${styles.img3} ${styles.scrollImg} ${revealedImages.img3 ? styles.revealedScrollImg : ''}`} style={{ width: '331px', height: '223px', left: '0px', top: '2452px' }} />
         <img id="img4" src={imgSpace04} alt="Space 4" className={`${styles.imgBase} ${styles.img4} ${styles.scrollImg} ${revealedImages.img4 ? styles.revealedScrollImg : ''}`} style={{ width: '309px', height: '236px', left: '1110px', top: '2672px' }} />
