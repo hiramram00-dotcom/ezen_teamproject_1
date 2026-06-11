@@ -10,7 +10,7 @@ import Footer from './components/Footer/Footer'
 
 function App() {
   return (
-    <main>      
+    <main>
       <HeroSection />
       <IntroSection />
       <StorySection />
@@ -23,6 +23,5 @@ function App() {
     </main>
   )
 }
-
 
 export default App
