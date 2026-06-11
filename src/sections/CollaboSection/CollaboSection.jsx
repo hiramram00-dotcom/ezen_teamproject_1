@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import logoIlkwBlack from './assets/logo-ilkw-black.svg'
 import imgKakao from './assets/collabo-kakao.webp'
 import imgKittybunnypony from './assets/collabo-kittybunnypony.webp'
 import imgHankyoreh from './assets/collabo-hankyoreh.webp'
@@ -185,15 +184,6 @@ function CollaboSection() {
   return (
     <section ref={wrapRef} className={styles.collabo}>
       <div className={styles.sticky}>
-        <header className={styles.header}>
-          <a className={styles.logo} href="/" aria-label="일광전구 ILKW 홈">
-            <img src={logoIlkwBlack} alt="ILKW" />
-          </a>
-          <button type="button" className={`${styles.menu} type-menu`}>
-            → Menu
-          </button>
-        </header>
-
         <div ref={titleRef} className={styles.intro}>
           <h2 className={styles.title}>
             <span className="type-title-1">COLLABO</span>{' '}
