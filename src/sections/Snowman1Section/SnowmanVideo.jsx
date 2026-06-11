@@ -12,9 +12,11 @@ import styles from './SnowmanVideo.module.css'
  * - 진입(GROW): 카드 크기 → 풀스크린 (도입부 검정 배경에서 커지며 등장).
  * - 유지(HOLD): 풀스크린. 이 사이 배경을 검정→흰색으로 교체(가려져 안 보임).
  * - 축소(SHRINK): 풀스크린 → 카드. 막판에 헤더·오버레이 페이드인.
- * 영상 소스 = public/videos/ (무거운 파일이라 git 제외, DEV_GUIDE §9-4).
+ * 영상 소스 = Cloudinary 호스팅 (무거운 파일이라 git 제외, DEV_GUIDE §9-4).
+ *   배포에서도 보이도록 외부 URL 사용. 로컬 파일(public/videos)은 백업용.
  */
-const VIDEO_SRC = '/videos/video-ilkw-snowman.mp4'
+const VIDEO_SRC =
+  'https://res.cloudinary.com/ddit4bjrw/video/upload/video-ilkw-snowman_dufdig.mp4'
 
 // 카드(최소) 크기 — Figma inset 기준: width 50.37%, height 45.09%
 const CARD_W = 50.37 // vw
