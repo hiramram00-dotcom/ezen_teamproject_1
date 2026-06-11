@@ -17,6 +17,10 @@ dist-ssr
 public/videos/*
 !public/videos/README.md
 
+# 임시 미리보기 파일 (섹션 단독 확인용, 커밋 안 함)
+footer-preview.html
+src/preview/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
