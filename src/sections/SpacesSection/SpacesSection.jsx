@@ -164,6 +164,13 @@ function SpacesSection() {
       const currentProgress = clamp(
         (window.scrollY - metrics.top) / metrics.distance,
       )
+
+      // 🚪 출구: 마지막 장면(다이닝, BED_TO_DINING.end=0.98) 지나면 마그넷 해제
+      //  → Collabo로 자연스럽게 빠져나감. (스냅 연출은 그대로)
+      //  이게 없으면 진행도가 0~1로 clamp돼서 섹션 끝/Collabo에서도 "0.98이 제일 가깝다"고
+      //  판단해 도로 끌어올림 = space로 튕겨 Collabo 진입 불가였음.
+      if (currentProgress >= BED_TO_DINING.end) return
+
       const nearestAnchor = MAGNET_ANCHORS.reduce((closest, anchor) =>
         Math.abs(anchor - currentProgress) <
         Math.abs(closest - currentProgress)
