@@ -6,6 +6,7 @@ import Snowman1Section from './sections/Snowman1Section/Snowman1Section'
 import SnowmanSection2 from './sections/SnowmanSection2/SnowmanSection2'
 import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
+import Footer from './components/Footer/Footer'
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
       <SnowmanSection2 />
       <SpacesSection />
       <CollaboSection />
-      {/* 다음 섹션들 순서대로 추가: Story, Snowman, Space, Collabo, Footer */}
+      <Footer />
     </main>
   )
 }
