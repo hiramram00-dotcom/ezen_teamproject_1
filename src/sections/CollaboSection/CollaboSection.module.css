@@ -52,7 +52,7 @@
 .intro {
   position: absolute;
   left: 38px;
-  top: 175px;
+  top: 127px;
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -86,7 +86,7 @@
   display: flex;
   align-items: flex-start;
   width: max-content;
-  padding-top: 24px; /* 둥둥 떠오를 상단 여유 (카드 실제 위치 = 416+24 = 440) */
+  padding-top: 157px; /* 둥둥 떠오를 상단 여유 */
   opacity: 1; /* JS가 0에서 페이드인 */
   will-change: transform, opacity;
 }
