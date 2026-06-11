@@ -1,29 +1,19 @@
-import logoIlkw from './assets/logo-ilkw.svg'
-import styles from './Snowman1Section.module.css'
+import SnowmanIntro from './SnowmanIntro'
+import SnowmanVideo from './SnowmanVideo'
 
 /**
  * Snowman1Section
- * 제품 시퀀스(Snowman) 인트로 화면 — 풀스크린 블랙 위에
- * "Meet / SNOWMAN" 타이틀이 중앙 정렬된다.
- * Figma: 1차프로젝트-3조 / node 468:657 ("18")
+ * 스노우맨 제품 시퀀스 (도입부 + 영상 축소 연출)을 하나로 묶은 섹션.
+ * 내부 화면:
+ *   - SnowmanIntro : "Meet / SNOWMAN" 타이틀 (Figma 468:657)
+ *   - SnowmanVideo : 영상 카드↔풀스크린 스크롤 연출 (Figma 468:701 ↔ 468:673)
  */
 function Snowman1Section() {
   return (
-    <section className={styles.snowman}>
-      <header className={styles.header}>
-        <a className={styles.logo} href="/" aria-label="일광전구 ILKW 홈">
-          <img src={logoIlkw} alt="ILKW" />
-        </a>
-        <button type="button" className={`${styles.menu} type-menu`}>
-          → Menu
-        </button>
-      </header>
-
-      <div className={styles.title}>
-        <p className="type-italic-2">Meet</p>
-        <p className="type-title-semibold">SNOWMAN</p>
-      </div>
-    </section>
+    <>
+      <SnowmanIntro />
+      <SnowmanVideo />
+    </>
   )
 }
 

@@ -1,16 +1,16 @@
 import { useEffect, useRef } from 'react'
 import logoIlkwBlack from './assets/logo-ilkw-black.svg'
-import styles from './Snowman2Section.module.css'
+import styles from './SnowmanVideo.module.css'
 
 /**
- * Snowman2Section
+ * SnowmanVideo (Snowman1Section 내부 화면)
  * 하나의 스노우맨 영상이 스크롤에 따라
  *   카드 → (커지며) 풀스크린 → (유지) → (작아지며) 카드
  * 로 자연스럽게 이어지는 연출.
  * Figma: 1차프로젝트-3조 / node 468:701(풀스크린) ↔ 468:673(카드)
  *
  * - 350vh 래퍼 안 sticky 무대(100vh)에서 진행도(raw 0→1) 계산.
- * - 진입(GROW): 카드 크기 → 풀스크린 (Snowman1 검정 배경에서 커지며 등장).
+ * - 진입(GROW): 카드 크기 → 풀스크린 (도입부 검정 배경에서 커지며 등장).
  * - 유지(HOLD): 풀스크린. 이 사이 배경을 검정→흰색으로 교체(가려져 안 보임).
  * - 축소(SHRINK): 풀스크린 → 카드. 막판에 헤더·오버레이 페이드인.
  * 영상 소스 = public/videos/ (무거운 파일이라 git 제외, DEV_GUIDE §9-4).
@@ -29,7 +29,7 @@ const SHRINK_START = 0.46
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
 
-function Snowman2Section() {
+function SnowmanVideo() {
   const wrapRef = useRef(null)
   const stickyRef = useRef(null)
   const cardRef = useRef(null)
@@ -152,4 +152,4 @@ function Snowman2Section() {
   )
 }
 
-export default Snowman2Section
+export default SnowmanVideo
