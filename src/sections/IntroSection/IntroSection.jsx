@@ -8,11 +8,14 @@ import { useEffect, useRef, useState } from 'react'
 import styles from './IntroSection.module.css'
 import VideoOnEnter from '../../components/VideoOnEnter/VideoOnEnter'
 
-import flameVideo from '../../../img/intro-1.mp4'
-import bulbVideo from '../../../img/intro-2.mp4'
 import intro3 from '../../../img/intro-3.png'
 import intro4 from '../../../img/intro-4.jpg'
 import intro5 from '../../../img/intro-5.png'
+
+const flameVideo =
+  'https://res.cloudinary.com/dg9hg29hc/video/upload/video-intro-1_emyjko.mp4'
+const bulbVideo =
+  'https://res.cloudinary.com/dg9hg29hc/video/upload/video-intro-2_omam01.mp4'
 
 const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max)
 
@@ -44,11 +47,11 @@ function IntroSection() {
     text1: getOpacity(progress, 0.01, 0.035, 0.105, 0.13),
     intro1: getOpacity(progress, 0.14, 0.165, 0.235, 0.28),
     intro2: getOpacity(progress, 0.31, 0.335, 0.415, 0.46),
-    intro3Image: getOpacity(progress, 0.49, 0.505, 0.54, 0.565),
-    intro3Text: getOpacity(progress, 0.515, 0.53, 0.535, 0.55),
-    intro4Image: getOpacity(progress, 0.58, 0.6, 0.66, 0.685),
-    intro4Text: getOpacity(progress, 0.61, 0.625, 0.635, 0.65),
-    intro5Image: getOpacity(progress, 0.7, 0.72, 0.78, 0.805),
+    intro3Image: getOpacity(progress, 0.49, 0.505, 0.548, 0.565),
+    intro3Text: getOpacity(progress, 0.515, 0.53, 0.54, 0.55),
+    intro4Image: getOpacity(progress, 0.58, 0.6, 0.668, 0.685),
+    intro4Text: getOpacity(progress, 0.61, 0.625, 0.64, 0.65),
+    intro5Image: getOpacity(progress, 0.7, 0.72, 0.788, 0.805),
     closing: getOpacity(progress, 0.92, 0.94, 0.995, 1),
   }
   const text6State = getText6State(progress)
