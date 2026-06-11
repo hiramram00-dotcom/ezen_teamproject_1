@@ -1,0 +1,107 @@
+/* =========================================================
+   Footer (글로벌 컴포넌트) — Figma node 468:873
+   크림 배경 + 거대 ILKW. 워드마크 + 하단 내비/약관
+   색·폰트는 토큰/타이포 클래스만 사용
+   ========================================================= */
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* 디자인 비율(높이≈너비*0.63), 너무 커지지 않게 상한 */
+  min-height: min(63vw, 1210px);
+  padding: 30px 38px 16px;
+  background: var(--color-base-2); /* 크림 */
+}
+
+/* 거대 워드마크: 조각(I·L·K·W·점)을 박스 안에 절대 위치로 배치 */
+.logo {
+  position: relative;
+  width: 100%;
+  /* 로고 박스 비율(너비/높이) — Figma 조각 좌표 기준 */
+  aspect-ratio: 1795.36 / 388.7;
+}
+.piece {
+  position: absolute;
+  display: block;
+}
+
+/* 내비 + 구분선 + 약관은 하단에 고정 */
+.bottom {
+  margin-top: auto;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 24px;
+  margin-bottom: 20px;
+}
+.navLink {
+  color: var(--color-footer); /* #252525 */
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+.navLink:hover {
+  opacity: 0.6;
+}
+
+.divider {
+  height: 1.2px;
+  width: 100%;
+  background: var(--color-base-3); /* 검정 */
+}
+
+.legal {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 12px;
+}
+.legalText {
+  font-family: var(--font-kr);
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--color-base-3);
+  white-space: nowrap;
+}
+.legalLink {
+  transition: opacity 0.2s ease;
+}
+.legalLink:hover {
+  opacity: 0.6;
+}
+
+/* ----- 반응형 (브레이크포인트 px는 팀 [TBD], 임시값) ----- */
+@media (max-width: 1024px) {
+  .nav :global(.type-body-2) {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .footer {
+    min-height: auto;
+    padding: 24px 20px 16px;
+  }
+  .logo {
+    margin-bottom: 80px;
+  }
+  .nav {
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    padding: 0;
+  }
+  .nav :global(.type-body-2) {
+    font-size: 16px;
+  }
+  .legal {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .legalText {
+    white-space: normal;
+  }
+}

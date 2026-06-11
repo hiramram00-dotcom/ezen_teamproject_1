@@ -1,0 +1,26 @@
+/* =========================================================
+   FooterSection (홈 전용) — Figma node 703:5
+   풀블리드 비주얼 사진 + 공용 Footer
+   ========================================================= */
+
+.footerSection {
+  width: 100%;
+}
+
+/* 풀 너비 비주얼 사진 (디자인 비율 1920×2139) */
+.photo {
+  width: 100%;
+}
+.photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1920 / 2139;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 767px) {
+  .photo img {
+    aspect-ratio: 3 / 4; /* 모바일에선 과하게 길지 않게 */
+  }
+}
