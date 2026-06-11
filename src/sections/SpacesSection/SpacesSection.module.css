@@ -1,0 +1,223 @@
+.spaces {
+  background: var(--color-base-2);
+  color: var(--color-base-3);
+}
+
+.inner {
+  width: min(100%, var(--layout-container-width));
+  margin: 0 auto;
+  padding: 0 clamp(20px, 2vw, 38px);
+}
+
+.introPanel {
+  position: relative;
+  height: 100svh;
+  min-height: 720px;
+  background: var(--color-base-2);
+}
+
+.introCopy {
+  position: absolute;
+  top: 34%;
+  left: 0;
+  color: var(--color-base-3);
+}
+
+.introTitle {
+  font-size: 120px;
+  line-height: 1.12;
+  letter-spacing: -2.4px;
+}
+
+.spaceWord,
+.ilkwWord {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+}
+
+.introTitle em {
+  font-family: var(--font-deco);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.introDescription {
+  margin-top: 28px;
+  font-family: var(--font-kr);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.72px;
+}
+
+.transitionSection {
+  height: 440svh;
+}
+
+.transitionStage {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100svh;
+  padding-top: 76px;
+  overflow: hidden;
+  background: var(--color-base-2);
+}
+
+.titleSlot {
+  position: relative;
+  height: 96px;
+  margin-bottom: 36px;
+}
+
+.title {
+  position: absolute;
+  inset: 0 auto auto 0;
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  font-size: 111px;
+  line-height: 0.86;
+  letter-spacing: -2px;
+  will-change: opacity, transform;
+}
+
+.imageFrame {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 40px 40px 0 0;
+  background: var(--color-base-3);
+}
+
+.imageLayer {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imageLayer:nth-child(1) {
+  z-index: 1;
+}
+
+.imageLayer:nth-child(1) .image {
+  object-position: center center;
+}
+
+.imageLayer:nth-child(2) {
+  z-index: 2;
+}
+
+.imageLayer:nth-child(2) .image {
+  object-position: center center;
+}
+
+.imageLayer:nth-child(3) {
+  z-index: 3;
+}
+
+.imageLayer:nth-child(3) .image {
+  object-position: center center;
+}
+
+.imageCaption {
+  position: absolute;
+  bottom: 70px;
+  left: 47px;
+  z-index: 4;
+  font-family: var(--font-kr);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: -0.72px;
+  color: var(--color-base-2);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.32);
+}
+
+@media (max-width: 1200px) {
+  .introPanel {
+    min-height: 640px;
+  }
+
+  .introTitle {
+    font-size: clamp(72px, 10vw, 120px);
+  }
+
+  .transitionStage {
+    height: 100svh;
+    padding-top: 72px;
+  }
+
+  .titleSlot {
+    height: clamp(52px, 8.3vw, 96px);
+    margin-bottom: 28px;
+  }
+
+  .title {
+    font-size: clamp(54px, 9vw, 111px);
+  }
+
+  .imageCaption {
+    bottom: 56px;
+    left: 40px;
+  }
+
+}
+
+@media (max-width: 700px) {
+  .inner {
+    padding: 0 20px;
+  }
+
+  .introPanel {
+    min-height: 560px;
+  }
+
+  .introCopy {
+    top: 32%;
+  }
+
+  .introTitle {
+    font-size: clamp(50px, 15vw, 76px);
+    line-height: 1.06;
+    letter-spacing: -1.4px;
+  }
+
+  .introDescription {
+    margin-top: 22px;
+    font-size: 16px;
+    letter-spacing: -0.48px;
+  }
+
+  .transitionStage {
+    padding-top: 52px;
+  }
+
+  .titleSlot {
+    height: clamp(42px, 12.5vw, 72px);
+    margin-bottom: 22px;
+  }
+
+  .title {
+    font-size: clamp(42px, 13vw, 76px);
+    line-height: 0.96;
+  }
+
+  .imageCaption {
+    bottom: 36px;
+    left: 28px;
+    width: calc(100% - 56px);
+    font-size: 16px;
+    line-height: 1.55;
+    letter-spacing: -0.48px;
+  }
+
+}

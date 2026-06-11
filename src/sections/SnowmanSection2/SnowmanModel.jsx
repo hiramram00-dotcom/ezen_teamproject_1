@@ -1,0 +1,186 @@
+import { useEffect, useRef } from 'react'
+import * as THREE from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
+
+import snowmanModel from '../../../3d/snowman.glb?url'
+import studioEnvironment from '../../../3d/studio-light.hdr.hdr?url'
+
+function SnowmanModel({ className = '' }) {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return undefined
+
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100)
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+    })
+    const clock = new THREE.Clock()
+    const environmentGenerator = new THREE.PMREMGenerator(renderer)
+    let model = null
+    let frame = null
+    let environmentMap = null
+    const glassMaterials = []
+    const glowMaterials = []
+
+    renderer.setClearColor(0xffffff, 0)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.outputColorSpace = THREE.SRGBColorSpace
+    renderer.toneMapping = THREE.ACESFilmicToneMapping
+    renderer.toneMappingExposure = 0.82
+    environmentGenerator.compileEquirectangularShader()
+
+    camera.position.set(0, 0.15, 14)
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x777777, 1.15))
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.2)
+    keyLight.position.set(-4, 4, 5)
+    scene.add(keyLight)
+
+    const fillLight = new THREE.DirectionalLight(0xd7dce0, 0.85)
+    fillLight.position.set(5, 1, 2)
+    scene.add(fillLight)
+
+    const lampLight = new THREE.PointLight(0xffd8a8, 0, 4.8, 2)
+    lampLight.position.set(0, 0.75, 0.8)
+    scene.add(lampLight)
+
+    new RGBELoader().load(studioEnvironment, (texture) => {
+      environmentMap = environmentGenerator.fromEquirectangular(texture).texture
+      scene.environment = environmentMap
+      texture.dispose()
+      environmentGenerator.dispose()
+    })
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect()
+      const width = Math.max(rect.width, 1)
+      const height = Math.max(rect.height, 1)
+
+      renderer.setSize(width, height, false)
+      camera.aspect = width / height
+      camera.updateProjectionMatrix()
+    }
+
+    const loader = new GLTFLoader()
+    loader.load(snowmanModel, (gltf) => {
+      model = gltf.scene
+
+      const bounds = new THREE.Box3().setFromObject(model)
+      const center = bounds.getCenter(new THREE.Vector3())
+      const size = bounds.getSize(new THREE.Vector3())
+      const maxSize = Math.max(size.x, size.y, size.z)
+
+      model.position.sub(center)
+      model.scale.setScalar(4.2 / maxSize)
+      model.rotation.y = -0.16
+      model.traverse((object) => {
+        if (!object.isMesh) return
+
+        const materials = Array.isArray(object.material)
+          ? object.material
+          : [object.material]
+
+        materials.forEach((material) => {
+          if (!material) return
+
+          if (material.emissive && material.emissive.getHex() !== 0) {
+            material.emissive.set(0xffd4a0)
+            material.emissiveIntensity = 0
+            glowMaterials.push(material)
+            material.needsUpdate = true
+            return
+          }
+
+          if (material.metalness > 0.5) {
+            material.color.set(0x9f9f9f)
+            material.roughness = 0.42
+            material.metalness = 1
+            material.envMapIntensity = 1.05
+            material.clearcoat = 0.05
+            material.clearcoatRoughness = 0.5
+            material.needsUpdate = true
+            return
+          }
+
+          if (material.transmission <= 0) return
+
+          material.color.set(0xf0f0f0)
+          material.opacity = 1
+          material.transparent = false
+          material.transmission = 0
+          material.roughness = 0.1
+          material.metalness = 0
+          material.envMapIntensity = 1.5
+          material.clearcoat = 1
+          material.clearcoatRoughness = 0.06
+          material.depthWrite = true
+          material.emissive.set(0xffd7a6)
+          material.emissiveIntensity = 0
+          glassMaterials.push(material)
+          material.needsUpdate = true
+        })
+      })
+      scene.add(model)
+    })
+
+    const render = () => {
+      if (model) {
+        const elapsed = clock.getElapsedTime()
+        const turn = Number.parseFloat(canvas.parentElement.dataset.turn) || 0
+        const enter = Number.parseFloat(canvas.parentElement.dataset.enter) || 0
+        const light = Number.parseFloat(canvas.parentElement.dataset.light) || 0
+
+        model.rotation.y = -0.16 + turn + Math.sin(elapsed * 0.45) * 0.04
+        model.rotation.x = Math.sin(enter * Math.PI * 2) * 0.1
+        model.rotation.z = Math.sin(enter * Math.PI) * -0.07
+        lampLight.intensity = light * 5.5
+        glassMaterials.forEach((material) => {
+          material.color.setRGB(
+            0.94 + light * 0.035,
+            0.94 - light * 0.045,
+            0.94 - light * 0.1,
+          )
+          material.emissiveIntensity = light * 0.35
+        })
+        glowMaterials.forEach((material) => {
+          material.emissiveIntensity = light * 3.8
+        })
+      }
+
+      renderer.render(scene, camera)
+      frame = requestAnimationFrame(render)
+    }
+
+    resize()
+    render()
+    window.addEventListener('resize', resize)
+
+    return () => {
+      window.removeEventListener('resize', resize)
+      if (frame) cancelAnimationFrame(frame)
+      scene.traverse((object) => {
+        if (!object.isMesh) return
+        object.geometry?.dispose()
+
+        const materials = Array.isArray(object.material)
+          ? object.material
+          : [object.material]
+        materials.forEach((material) => material?.dispose())
+      })
+      environmentMap?.dispose()
+      environmentGenerator.dispose()
+      renderer.dispose()
+    }
+  }, [])
+
+  return <canvas ref={canvasRef} className={className} aria-hidden="true" />
+}
+
+export default SnowmanModel
