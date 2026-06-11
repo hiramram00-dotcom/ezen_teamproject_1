@@ -1,4 +1,3 @@
-import logoIlkw from './assets/logo-ilkw.svg'
 import styles from './SnowmanIntro.module.css'
 
 /**
@@ -9,15 +8,6 @@ import styles from './SnowmanIntro.module.css'
 function SnowmanIntro() {
   return (
     <section className={styles.snowman}>
-      <header className={styles.header}>
-        <a className={styles.logo} href="/" aria-label="일광전구 ILKW 홈">
-          <img src={logoIlkw} alt="ILKW" />
-        </a>
-        <button type="button" className={`${styles.menu} type-menu`}>
-          → Menu
-        </button>
-      </header>
-
       <div className={styles.title}>
         <p className="type-italic-2">Meet</p>
         <p className="type-title-semibold">SNOWMAN</p>

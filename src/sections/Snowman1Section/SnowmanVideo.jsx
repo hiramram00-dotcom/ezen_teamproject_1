@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import logoIlkwBlack from './assets/logo-ilkw-black.svg'
 import styles from './SnowmanVideo.module.css'
 
 /**
@@ -33,7 +32,6 @@ function SnowmanVideo() {
   const wrapRef = useRef(null)
   const stickyRef = useRef(null)
   const cardRef = useRef(null)
-  const headerRef = useRef(null)
   const overlayRef = useRef(null)
   const videoRef = useRef(null)
 
@@ -41,7 +39,6 @@ function SnowmanVideo() {
     const wrap = wrapRef.current
     const sticky = stickyRef.current
     const card = cardRef.current
-    const header = headerRef.current
     const overlay = overlayRef.current
     const video = videoRef.current
     if (!wrap || !card) return
@@ -98,7 +95,6 @@ function SnowmanVideo() {
         fade = clamp01((s - 0.6) / 0.4)
       }
       if (reduce) fade = 1
-      if (header) header.style.opacity = String(fade)
       if (overlay) overlay.style.opacity = String(fade)
     }
 
@@ -119,15 +115,6 @@ function SnowmanVideo() {
   return (
     <section ref={wrapRef} className={styles.scrollWrap}>
       <div ref={stickyRef} className={styles.sticky}>
-        <header ref={headerRef} className={styles.header}>
-          <a className={styles.logo} href="/" aria-label="일광전구 ILKW 홈">
-            <img src={logoIlkwBlack} alt="ILKW" />
-          </a>
-          <button type="button" className={`${styles.menu} type-menu`}>
-            → Menu
-          </button>
-        </header>
-
         <div ref={cardRef} className={styles.card}>
           <video
             ref={videoRef}
