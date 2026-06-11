@@ -3,12 +3,14 @@ import logoL from './assets/logo-ilkw-l.svg'
 import logoK from './assets/logo-ilkw-k.svg'
 import logoW from './assets/logo-ilkw-w.svg'
 import logoDot from './assets/logo-ilkw-dot.svg'
+import footerHome from './assets/footer-home.webp'
 import styles from './Footer.module.css'
 
 /**
  * Footer (글로벌 컴포넌트)
- * 모든 페이지 하단에서 재사용. 거대한 ILKW. 워드마크(조각별 배치) + 내비 + 약관.
- * Figma: 1차프로젝트-3조 / node 468:873
+ * 풀블리드 비주얼 사진 + 거대 ILKW. 워드마크(조각별 배치) + 내비 + 약관.
+ * 페이지 하단에서 <Footer /> 하나로 사용.
+ * Figma: 1차프로젝트-3조 / node 703:5(사진) · 468:873(푸터)
  */
 
 // 로고 조각 — Figma 좌표를 로고 박스 기준 %로 환산 (I·L·K·W는 윗줄, 점은 아래)
@@ -30,27 +32,34 @@ const NAV = [
 
 function Footer() {
   return (
-    <footer className={styles.footer}>
-      {/* 거대 워드마크 — 조각 SVG(#252525 = footer 색)를 그대로 배치 */}
-      <div className={styles.logo} role="img" aria-label="ILKW.">
-        {PIECES.map((p, i) => (
-          <img
-            key={i}
-            className={styles.piece}
-            src={p.src}
-            alt=""
-            aria-hidden="true"
-            style={{
-              left: `${p.left}%`,
-              top: `${p.top}%`,
-              width: `${p.width}%`,
-              height: `${p.height}%`,
-            }}
-          />
-        ))}
+    <div className={styles.footer}>
+      {/* 풀블리드 비주얼 사진 */}
+      <div className={styles.photo}>
+        <img src={footerHome} alt="" loading="lazy" />
       </div>
 
-      <div className={styles.bottom}>
+      {/* 크림 푸터 블록 */}
+      <footer className={styles.body}>
+        {/* 거대 워드마크 — 조각 SVG(#252525 = footer 색)를 그대로 배치 */}
+        <div className={styles.logo} role="img" aria-label="ILKW.">
+          {PIECES.map((p, i) => (
+            <img
+              key={i}
+              className={styles.piece}
+              src={p.src}
+              alt=""
+              aria-hidden="true"
+              style={{
+                left: `${p.left}%`,
+                top: `${p.top}%`,
+                width: `${p.width}%`,
+                height: `${p.height}%`,
+              }}
+            />
+          ))}
+        </div>
+
+        <div className={styles.bottom}>
         <nav className={styles.nav} aria-label="푸터 내비게이션">
           {NAV.map((item) => (
             <a key={item.label} href={item.href} className={`${styles.navLink} type-body-2`}>
@@ -76,8 +85,9 @@ function Footer() {
             </a>
           </p>
         </div>
-      </div>
-    </footer>
+        </div>
+      </footer>
+    </div>
   )
 }
 

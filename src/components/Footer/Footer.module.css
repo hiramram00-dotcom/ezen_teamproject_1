@@ -5,6 +5,23 @@
    ========================================================= */
 
 .footer {
+  width: 100%;
+}
+
+/* 풀블리드 비주얼 사진 (디자인 비율 1920×2139) */
+.photo {
+  width: 100%;
+}
+.photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1920 / 2139;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* 크림 푸터 블록 */
+.body {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -82,7 +99,10 @@
 }
 
 @media (max-width: 767px) {
-  .footer {
+  .photo img {
+    aspect-ratio: 3 / 4; /* 모바일에선 과하게 길지 않게 */
+  }
+  .body {
     min-height: auto;
     padding: 24px 20px 16px;
   }
