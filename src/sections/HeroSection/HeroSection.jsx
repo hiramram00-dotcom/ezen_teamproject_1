@@ -1,79 +1,49 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './HeroSection.module.css'
 
+import iLetter from '../../assets/hero/hero-logo-ilkw-i.svg'
+import lLetter from '../../assets/hero/hero-logo-ilkw-l.svg'
+import kLetter from '../../assets/hero/hero-logo-ilkw-k.svg'
+import wLetter from '../../assets/hero/hero-logo-ilkw-w.svg'
+
 gsap.registerPlugin(ScrollTrigger)
-import lampImg from '../../assets/hero/hero-pendant.png'
-import iLetter from '../../assets/hero/ilkw-i.svg'
-import lLetter from '../../assets/hero/ilkw-l.svg'
-import kLetter from '../../assets/hero/ilkw-k.svg'
-import wLetter from '../../assets/hero/ilkw-w.svg'
 
-const CTA_TEXT = 'CLICK TO ENTER'
+// ===== 타이포 인트로 타이밍/위치 튜닝 (초) =====
+const ROW_DROP = 0.56     // KW(아래 행) 내려가는 양 (뷰포트 높이 비율)
+const APPEAR = 0.35       // 글자 페이드인
+const P1_DUR = 0.7        // 1단계 가로(X) 이동
+const GAP_AFTER_H = 0.25  // 가로 → 세로 사이 "사알짝 텀"
+const P2_BOT_DUR = 0.8    // 2단계 밑줄(KW) 수직 상승
+const KW_DELAY = 0.1      // K → W 살짝 시차
 
-// ===== CTA 트레일 스프링 튜닝 =====
-const STIFFNESS = 0.5
-const DAMPING = 0.4
-const OFFSET_X = 26
-const OFFSET_Y = 12
-const MAX_V = 45
+// ===== 영상 reveal (전구까지 자동 → 그 다음 스크롤로 밝힘) =====
+const REVEAL_BULB_AT = 0.5   // 최종화면 → 전구 등장
+const REVEAL_BULB_DUR = 1.4  // 전구 빛구멍 드러나는 속도 (천천히)
+const REVEAL_SCROLL_VH = 1.3 // 빛 다 밝히는 데 필요한 스크롤 거리 (뷰포트 높이 배수)
+const BULB_R = 14            // 전구 빛구멍 크기 (%)
+const FULL_R = 165           // 완전 공개 (%)
+const PLAY_AT = 0.88         // 영상 재생 시점 (스크롤 진행도 0~1 — 거의 다 밝아졌을 때)
+const COMPLETE_AT = 0.97     // 이 진행도 넘으면 '완료'로 잠금 (이후 스크롤 업 해도 안 어두워짐)
+const BOTTOM_ALPHA = 0.65    // 하단 로고 최종 불투명도(회색감)
 
 function HeroSection() {
   const heroRef = useRef(null)
-  const lampRef = useRef(null)
-  const lettersRef = useRef([])        // CTA 글자
-  const cursorRef = useRef({ x: -2000, y: -2000 })
-  const stateRef = useRef([])
-  const primedRef = useRef(false)
   const logoRef = useRef(null)
-  const logoLettersRef = useRef([])    // ILKW 글자
-  const sparkleRef = useRef(null)
-  const spotlightRef = useRef(null)
-  const [revealed, setRevealed] = useState(false)
+  const lettersRef = useRef([])
+  const dotRef = useRef(null)
+  const copyRef = useRef(null)
+  const videoRef = useRef(null)
+  const overlayRef = useRef(null)
+  const bottomLogoRef = useRef(null)
+  const hintRef = useRef(null)
+  const [introDone, setIntroDone] = useState(false)
 
-  // CTA 글자 트레일 (클릭 전에만)
+  // 마운트: 로고 중앙정렬 + 인트로 동안 스크롤 잠금
   useEffect(() => {
-    if (revealed) return
-    const letters = lettersRef.current.filter(Boolean)
-    if (!letters.length) return
-
-    const widths = letters.map((el) => el.offsetWidth)
-    primedRef.current = false
-    stateRef.current = letters.map(() => ({ x: 0, y: 0, vx: 0, vy: 0 }))
-    const st = stateRef.current
-    letters.forEach((el) => { el.style.transform = 'translate(-9999px, -9999px)' })
-
-    let raf
-    const loop = () => {
-      if (!primedRef.current) {
-        raf = requestAnimationFrame(loop)
-        return
-      }
-      for (let i = 0; i < letters.length; i++) {
-        const tx = i === 0 ? cursorRef.current.x + OFFSET_X : st[i - 1].x + widths[i - 1]
-        const ty = i === 0 ? cursorRef.current.y + OFFSET_Y : st[i - 1].y
-        st[i].vx = (st[i].vx + (tx - st[i].x) * STIFFNESS) * DAMPING
-        st[i].vy = (st[i].vy + (ty - st[i].y) * STIFFNESS) * DAMPING
-        if (st[i].vx > MAX_V) st[i].vx = MAX_V
-        else if (st[i].vx < -MAX_V) st[i].vx = -MAX_V
-        if (st[i].vy > MAX_V) st[i].vy = MAX_V
-        else if (st[i].vy < -MAX_V) st[i].vy = -MAX_V
-        st[i].x += st[i].vx
-        st[i].y += st[i].vy
-        letters[i].style.transform = `translate(${st[i].x}px, ${st[i].y}px)`
-      }
-      raf = requestAnimationFrame(loop)
-    }
-    raf = requestAnimationFrame(loop)
-    return () => cancelAnimationFrame(raf)
-  }, [revealed])
-
-  // 마운트: 중앙정렬 + 인트로 전 스크롤 잠금 (클릭 전엔 못 내려가게)
-  useEffect(() => {
-    gsap.set(lampRef.current, { xPercent: -50 })
     gsap.set(logoRef.current, { xPercent: -50 })
-    // 스크롤 잠금 — 스크롤바 폭만큼 padding 보정(잠금/해제 시 화면 안 밀리게)
+    gsap.set(bottomLogoRef.current, { xPercent: -50 })
     const sbw = window.innerWidth - document.documentElement.clientWidth
     document.body.style.overflow = 'hidden'
     document.body.style.paddingRight = `${sbw}px`
@@ -83,131 +53,171 @@ function HeroSection() {
     }
   }, [])
 
-  // 스크롤 시퀀스 (pin + scrub): 램프 내려왔다 올라감 → 글씨 중앙 → 페이드아웃
-  const setupScroll = () => {
-    const lamp = lampRef.current
+  useEffect(() => {
+    const letters = lettersRef.current.filter(Boolean)
     const logo = logoRef.current
-    if (!lamp || !logo) return
-    document.body.style.overflow = ''        // 인트로 끝 → 스크롤 잠금 해제
-    document.body.style.paddingRight = ''    // 보정 padding 제거(스크롤바 자리로 자연 복귀)
-    const VH = window.innerHeight
-    gsap.timeline({
-      scrollTrigger: {
+    const copy = copyRef.current
+    const video = videoRef.current
+    const overlay = overlayRef.current
+    const bottomLogo = bottomLogoRef.current
+    const hint = hintRef.current
+    if (letters.length < 4 || !logo) return
+
+    let tl
+    let scrollST
+    const setReveal = (v) => overlay && overlay.style.setProperty('--reveal', v + '%')
+
+    // 전구 등장 후 → 스크롤로 빛을 밝히는 단계로 핸드오프
+    const setupScrollReveal = () => {
+      document.body.style.overflow = '' // 스크롤 허용
+      document.body.style.paddingRight = ''
+      gsap.set(hint, { autoAlpha: 1 }) // 스크롤 힌트 표시
+
+      const dist = window.innerHeight * REVEAL_SCROLL_VH
+      const clamp01 = (x) => Math.min(1, Math.max(0, x))
+      let completed = false // 완전히 밝힌 뒤부터 잠금 (그 전엔 양방향 자연스크롤)
+
+      const apply = (p) => {
+        setReveal(BULB_R + (FULL_R - BULB_R) * p)            // 빛
+        gsap.set(logo, { autoAlpha: 1 - clamp01(p / 0.3) })  // 위 로고 (앞 30%)
+        gsap.set(hint, { autoAlpha: 1 - clamp01(p / 0.2) })  // 힌트 (앞 20%)
+        const bp = clamp01((p - 0.7) / 0.3)                   // 하단 로고 (뒤 30%)
+        gsap.set(bottomLogo, { autoAlpha: bp * BOTTOM_ALPHA, y: (1 - bp) * 18 })
+      }
+
+      scrollST = ScrollTrigger.create({
         trigger: heroRef.current,
         start: 'top top',
-        end: '+=2200',      // 시퀀스 스크롤 길이 (튜닝)
+        end: `+=${dist}`,
         pin: true,
-        scrub: 1,
-      },
-    })
-      // .to(lamp, { y: VH * 0.05, ease: 'none', duration: 0.4 })         // [보류] 살짝 내려옴 — 이미지 짤림 이슈, 이미지 교체 후 복구
-      .to(lamp, { y: -VH * 0.95, ease: 'power1.in', duration: 1.4 })      // 램프 위로 사라짐
-      .to(logo, { y: VH * 0.2, ease: 'none', duration: 1.2 }, '<')        // 램프 올라갈 때 글씨 중앙으로
-      .to(logo, { y: VH * 0.26, ease: 'none', duration: 0.8 })           // 중앙 도착 후 좀 더 머물며 내려감(각인)
-      .to(logo, { autoAlpha: 0, ease: 'none', duration: 0.6 })           // 그 다음 페이드아웃
+        onUpdate: (self) => {
+          if (self.progress >= COMPLETE_AT) completed = true
+          const p = completed ? 1 : self.progress // 완료 전엔 스크롤 따라(양방향), 완료 후 잠금
+          apply(p)
+          if (p > PLAY_AT && video && video.paused) video.play().catch(() => {})
+        },
+        onLeave: () => {
+          completed = true
+          setIntroDone(true)
+        },
+      })
 
-    ScrollTrigger.refresh()   // 잠금 해제 후 스크롤 높이 재계산
-  }
-
-  const handleMouseMove = (e) => {
-    const el = heroRef.current
-    if (!el) return
-    const rect = el.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    cursorRef.current = { x, y }
-    el.style.setProperty('--mx', `${x}px`)
-    el.style.setProperty('--my', `${y}px`)
-
-    if (!primedRef.current) {
-      const st = stateRef.current
-      for (let i = 0; i < st.length; i++) {
-        st[i].x = x; st[i].y = y; st[i].vx = 0; st[i].vy = 0
-      }
-      primedRef.current = true
+      ScrollTrigger.refresh()
     }
-  }
 
-  // 클릭 → 로고 조립 인터랙션 (GSAP 타임라인)
-  const playIntro = () => {
-    const [I, L, K, W] = logoLettersRef.current
-    if (!I || !L || !K || !W) return
-    const sparkle = sparkleRef.current
-    const spotlight = spotlightRef.current
-    const logo = logoRef.current
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) {
+      gsap.set([logo, copy], { autoAlpha: 0 })
+      gsap.set(bottomLogo, { autoAlpha: BOTTOM_ALPHA, y: 0 })
+      gsap.set(hint, { autoAlpha: 0 })
+      setReveal(FULL_R)
+      if (video) video.play().catch(() => {})
+      document.body.style.overflow = ''
+      document.body.style.paddingRight = ''
+      setIntroDone(true)
+      return
+    }
 
-    const VW = window.innerWidth
-    const VH = window.innerHeight
-    // ===== 시작 위치 튜닝 =====
-    const Y_TOP = -VH * 0.16   // IL 그룹 상단 시작
-    const Y_BOT = VH * 0.30    // KW 그룹 하단 시작
-    const OFF_L = -VW * 0.4    // 좌측 화면 밖
-    const OFF_R = VW * 0.4     // 우측 화면 밖
+    const build = () => {
+      const logoCenter = logo.offsetWidth / 2
+      const natCenter = letters.map((el) => el.offsetLeft + el.offsetWidth / 2)
+      const DROP = window.innerHeight * ROW_DROP
 
-    gsap.set(logo, { autoAlpha: 1 })
-    gsap.set([I, L], { x: OFF_L, y: Y_TOP })  // I,L : 좌측 + 상단
-    gsap.set([K, W], { x: OFF_R, y: Y_BOT })  // K,W : 우측 + 하단
-    gsap.set(sparkle, { scale: 0, autoAlpha: 0, transformOrigin: 'center center' })
+      const startX = natCenter.map((c) => logoCenter - c)
+      const startY = [0, 0, DROP, DROP]
 
-    const tl = gsap.timeline()
-    // 1단계: 가로 조립 (x → 0)
-    tl.to([I, L, K, W], { x: 0, duration: 1.5, ease: 'power2.out', stagger: 0.06 })
-    // (살짝 텀 0.2s) → 2단계: 수직 합류 (y → 0) + 램프 페이드인(손전등 제거)
-    tl.to([I, L, K, W], { y: 0, duration: 1.2, ease: 'power3.inOut', stagger: 0.05 }, '+=0.2')
-    tl.to(spotlight, { autoAlpha: 0, duration: 1.2, ease: 'power2.out' }, '<+=0.3')
-    // 3단계: 점 생성 (가운데서 빛처럼)
-    tl.to(sparkle, { scale: 1, autoAlpha: 1, duration: 0.6, ease: 'power2.out' }, '+=0.15')
-    // 인트로 끝 → 스크롤 시퀀스(pin) 준비
-    tl.call(setupScroll)
-    // 4단계: 반짝(은은한 호흡 반복)
-    tl.to(sparkle, { autoAlpha: 0.5, duration: 1.8, ease: 'sine.inOut', repeat: -1, yoyo: true }, '+=0.05')
-  }
+      gsap.set(logo, { autoAlpha: 1 })
+      letters.forEach((el, i) =>
+        gsap.set(el, { x: startX[i], y: startY[i], autoAlpha: 0 }),
+      )
+      gsap.set(copy, { xPercent: -50, y: 24, autoAlpha: 0 })
+      setReveal(0) // 오버레이 완전 검정
 
-  const handleClick = () => {
-    if (revealed) return
-    setRevealed(true)
-    playIntro()
-  }
+      const bulb = { v: 0 }
+      const onBulb = () => setReveal(bulb.v)
+      const p2Start = APPEAR + P1_DUR + GAP_AFTER_H
+      const introEnd = p2Start + P2_BOT_DUR + KW_DELAY // ≈ 2.2s
+
+      tl = gsap.timeline({ onComplete: setupScrollReveal })
+      // ── 타이포 인트로 ──
+      tl.to(letters, { autoAlpha: 1, duration: APPEAR, stagger: 0.04 }, 0)
+      tl.to(copy, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power2.out' }, 0.1)
+      tl.to(letters, { x: 0, duration: P1_DUR, ease: 'power2.out' }, APPEAR)
+      tl.to([letters[2], letters[3]], { y: 0, duration: P2_BOT_DUR, ease: 'power3.inOut', stagger: KW_DELAY }, p2Start)
+      tl.to(dotRef.current, { autoAlpha: 1, duration: 0.4, ease: 'power2.out' }, p2Start + 0.3)
+      // ── 카피만 페이드아웃 → 전구 등장 (로고는 스크롤 전까지 유지) ──
+      tl.to(copy, { autoAlpha: 0, duration: 0.5, ease: 'power2.out' }, introEnd + 0.3)
+      tl.to(bulb, { v: BULB_R, duration: REVEAL_BULB_DUR, ease: 'sine.inOut', onUpdate: onBulb }, introEnd + REVEAL_BULB_AT)
+    }
+
+    // SVG 로드 완료 후 측정
+    const ready = letters.every((el) => el.complete && el.naturalWidth > 0)
+    if (ready) {
+      build()
+    } else {
+      let loaded = letters.filter((el) => el.complete && el.naturalWidth > 0).length
+      const onLoad = () => {
+        if (++loaded >= letters.length) build()
+      }
+      letters.forEach((el) => {
+        if (!(el.complete && el.naturalWidth > 0)) {
+          el.addEventListener('load', onLoad, { once: true })
+        }
+      })
+    }
+
+    return () => {
+      tl && tl.kill()
+      scrollST && scrollST.kill()
+    }
+  }, [])
 
   return (
-    <section
-      ref={heroRef}
-      className={`${styles.hero} ${revealed ? styles.revealed : ''}`}
-      onMouseMove={handleMouseMove}
-      onClick={handleClick}
-    >
-      {/* 펜던트 램프 */}
-      <img ref={lampRef} className={styles.lamp} src={lampImg} alt="" aria-hidden="true" />
+    <section ref={heroRef} className={`${styles.hero} ${introDone ? styles.done : ''}`}>
+      {/* 배경 영상 */}
+      <video
+        ref={videoRef}
+        className={styles.video}
+        src="/videos/hero-video.mp4"
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+      />
 
-      {/* ILKW. 로고 — 클릭 시 GSAP로 조립 */}
+      {/* 검정 오버레이 — 전구 위치에 빛구멍, --reveal 키우면 걷힘 */}
+      <div ref={overlayRef} className={styles.overlay} aria-hidden="true" />
+
+      {/* ILKW 워드마크 — 자동 조립 후 페이드아웃 */}
       <div className={styles.logo} ref={logoRef} aria-label="ILKW">
-        <img ref={(el) => (logoLettersRef.current[0] = el)} className={styles.letter} src={iLetter} alt="" aria-hidden="true" />
-        <img ref={(el) => (logoLettersRef.current[1] = el)} className={styles.letter} src={lLetter} alt="" aria-hidden="true" />
-        <img ref={(el) => (logoLettersRef.current[2] = el)} className={styles.letter} src={kLetter} alt="" aria-hidden="true" />
-        <img ref={(el) => (logoLettersRef.current[3] = el)} className={styles.letter} src={wLetter} alt="" aria-hidden="true" />
-        <span ref={sparkleRef} className={styles.sparkle} />
+        <img ref={(el) => (lettersRef.current[0] = el)} className={styles.letter} src={iLetter} alt="" aria-hidden="true" />
+        <img ref={(el) => (lettersRef.current[1] = el)} className={styles.letter} src={lLetter} alt="" aria-hidden="true" />
+        <img ref={(el) => (lettersRef.current[2] = el)} className={styles.letter} src={kLetter} alt="" aria-hidden="true" />
+        <img ref={(el) => (lettersRef.current[3] = el)} className={styles.letter} src={wLetter} alt="" aria-hidden="true" />
+        <span ref={dotRef} className={styles.dot} aria-hidden="true" />
       </div>
 
-      {/* 마우스 손전등 */}
-      <div ref={spotlightRef} className={styles.spotlight} />
+      {/* 중앙 서브카피 */}
+      <div className={styles.copy} ref={copyRef}>
+        <p className={styles.copyEn}>We make Light</p>
+        <p className={styles.copyKr}>빛이 머문 자리에, 온기가 남습니다</p>
+      </div>
 
-      {/* 커스텀 커서 — 빛점 */}
-      <div className={styles.cursorDot} />
+      {/* 하단 로고 — 영상 위에 남는 작은 ILKW */}
+      <div className={styles.bottomLogo} ref={bottomLogoRef} aria-label="ILKW">
+        <img className={styles.letter} src={iLetter} alt="" aria-hidden="true" />
+        <img className={styles.letter} src={lLetter} alt="" aria-hidden="true" />
+        <img className={styles.letter} src={kLetter} alt="" aria-hidden="true" />
+        <img className={styles.letter} src={wLetter} alt="" aria-hidden="true" />
+      </div>
 
-      {/* CLICK TO ENTER — 글자 트레일 (클릭 전) */}
-      {!revealed && (
-        <div className={styles.cta} aria-hidden="true">
-          {CTA_TEXT.split('').map((ch, i) => (
-            <span
-              key={i}
-              ref={(el) => (lettersRef.current[i] = el)}
-              className={styles.ctaLetter}
-            >
-              {ch === ' ' ? ' ' : ch}
-            </span>
-          ))}
-        </div>
-      )}
+      {/* 하단중앙 스크롤 힌트 — 마우스 휠 인디케이터 */}
+      <div ref={hintRef} className={styles.hint} aria-hidden="true">
+        <span className={styles.mouse}>
+          <span className={styles.wheel} />
+        </span>
+        <span className={styles.hintLabel}>Scroll</span>
+      </div>
     </section>
   )
 }
