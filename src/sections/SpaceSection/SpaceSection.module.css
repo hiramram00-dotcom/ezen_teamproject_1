@@ -8,29 +8,13 @@
   position: absolute;
   top: 40px;
   left: 40px;
-  right: 40px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   z-index: 100;
 }
 
 .logo {
   height: 32px;
-}
-
-.menuBtn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #fff;
-  font-family: var(--font-en);
-  font-size: 26px;
-  cursor: pointer;
-}
-
-.arrow {
-  font-size: 30px;
 }
 
 .container {
