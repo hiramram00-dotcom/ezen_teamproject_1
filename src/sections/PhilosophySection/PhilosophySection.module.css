@@ -1,0 +1,80 @@
+.philosophy {
+  position: relative;
+  width: 100%;
+  height: 80vw;
+  overflow: hidden;
+  background: var(--color-base-3);
+}
+
+.room {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.panel {
+  position: absolute;
+  top: 11.56vw;
+  left: 50%;
+  width: 50.1vw;
+  height: 50.1vw;
+  overflow: hidden;
+  background: var(--color-base-2);
+  transform: translateX(-50%);
+}
+
+.light {
+  position: absolute;
+  top: 8.2vw;
+  left: 50%;
+  width: 21.1vw;
+  height: 28.2vw;
+  object-fit: cover;
+  transform: translateX(-50%);
+}
+
+.title {
+  position: absolute;
+  inset: 0;
+  color: var(--color-base-3);
+  font-family: var(--font-deco);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  pointer-events: none;
+}
+
+.title span {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.title span:first-child {
+  top: 2.45vw;
+  font-size: 8.33vw;
+  line-height: 1;
+}
+
+.title span:last-child {
+  top: 28.3vw;
+  font-size: 8.33vw;
+  line-height: 1;
+}
+
+.message {
+  position: absolute;
+  bottom: 3.15vw;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--color-base-3);
+  font-family: var(--font-kr);
+  font-size: 1.98vw;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}

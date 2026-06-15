@@ -8,9 +8,14 @@ import SnowmanSection2 from './sections/SnowmanSection2/SnowmanSection2'
 import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
 import Footer from './components/Footer/Footer'
+import AboutPage from './pages/AboutPage/AboutPage'
 import Header from './components/Header/Header'
 
 function App() {
+  if (window.location.pathname === '/about') {
+    return <AboutPage />
+  }
+
   return (
     <main>
       <Header index />
