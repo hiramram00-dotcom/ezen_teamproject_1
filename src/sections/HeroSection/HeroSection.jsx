@@ -178,7 +178,7 @@ function HeroSection() {
       <video
         ref={videoRef}
         className={styles.video}
-        src="/videos/hero-video.mp4"
+        src="https://res.cloudinary.com/dg9hg29hc/video/upload/hero-video_imshuy.mp4"
         muted
         playsInline
         preload="auto"
