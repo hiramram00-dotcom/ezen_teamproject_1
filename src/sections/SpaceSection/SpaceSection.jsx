@@ -4,6 +4,11 @@ import styles from './SpaceSection.module.css';
 import imgSpace02 from '../../../img/2.png';
 import imgSpace04 from '../../../img/4.png';
 import ilkwLogo from '../../assets/ilkw-logo-header.svg';
+import imgSpace05 from '../../assets/space/img-space-05.png';
+import imgSpace06 from '../../assets/space/img-space-06.png';
+import imgSpace07 from '../../assets/space/img-space-07.png';
+import imgSpace08 from '../../assets/space/img-space-08.gif';
+import ilkwLogo from '../../../img/new-logo.png';
 
 import spaceImg1 from '../../../img/100.png';
 import spaceImg12 from '../../../img/15.png';
@@ -27,12 +32,17 @@ export default function SpaceSection() {
   const [isRevealed, setIsRevealed] = useState(false);
   const [revealedImages, setRevealedImages] = useState({});
   const [scale, setScale] = useState(1);
+  const [textHeight, setTextHeight] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
       setScale(window.innerWidth < 1920 ? window.innerWidth / 1920 : 1);
+      if (textBoxRef.current) {
+        setTextHeight(textBoxRef.current.offsetHeight);
+      }
     };
     handleResize();
+    setTimeout(handleResize, 100); // Recalculate after font load
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -45,7 +55,7 @@ export default function SpaceSection() {
       const scrollY = -rect.top; 
       const sectionHeight = rect.height - window.innerHeight;
       
-      const stickOffset = window.innerHeight * 0.30;
+      const stickOffset = window.innerHeight * 0.45;
       const stickStart = (1447 * scale) - stickOffset;
 
       if (textBoxRef.current) {
@@ -102,7 +112,7 @@ export default function SpaceSection() {
         <img src={ilkwLogo} alt="ILKW Logo" className={styles.logo} />
       </div>
       <div className={styles.container} style={{ zoom: scale }}>
-        <div className={styles.textWrapper}>
+        <div className={styles.textWrapper} style={{ height: textHeight ? `calc(100% + ${textHeight}px)` : '100%' }}>
           <div className={styles.textBox} ref={textBoxRef}>
             <div className={`${styles.mainText} ${isRevealed ? styles.revealed : ''}`}>
               <p className="type-title-5"><span className={`${styles.lineContent} ${styles.delay1}`}>We bring</span></p>

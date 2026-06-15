@@ -5,21 +5,39 @@
 }
 
 .topNav {
-  position: absolute;
+  position: sticky;
   top: 40px;
   left: 40px;
+  width: 100%;
+  padding: 0 40px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   z-index: 100;
 }
 
 .logo {
-  height: 32px;
+  height: 60px;
+}
+
+.menuBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-family: var(--font-en);
+  font-size: 42px;
+  cursor: pointer;
+  margin-right: 7px;
+}
+
+.arrow {
+  font-size: 40px;
 }
 
 .container {
   width: 1920px;
-  height: 4500px;
+  height: 4458px;
   position: relative;
   flex-shrink: 0;
   display: flow-root; /* Prevent margin collapse from .textBox */
@@ -30,13 +48,13 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 4350px;
+  height: 100%;
   pointer-events: none;
 }
 
 .textBox {
   position: sticky;
-  top: 30vh;
+  top: 45vh;
   margin-top: 1447px;
   margin-left: 1450px;
   transform: translate(87%, -100%);

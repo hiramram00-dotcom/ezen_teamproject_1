@@ -209,8 +209,12 @@ ezen_teamproject_1/
 - 무거운 360° 시퀀스 등도 외부/CDN.
 
 ### 9-5. 에셋 위치 (코딩 단계)
-- 섹션 전용 에셋 = 섹션 폴더 안 `assets/`.
-- 공용(로고·아이콘) = `assets/common/`.
+- **섹션 전용** 에셋 = `assets/섹션명/` (예: `assets/hero/`, `assets/spaces/`). 그 섹션만 씀.
+- **공용 에셋**(로고·아이콘 등 여러 곳에서 쓰는 것) = `assets/common/` 아래 종류별 폴더.
+  - **로고** = `assets/common/logo/` — ✅ 현재: `ilkw-i/l/k/w.svg`(글자 분리) + `ilkw.svg`(완성형). **진짜 벡터**(path)로 보관.
+  - 아이콘 = `assets/common/icon/` (필요 시).
+  - ⚠️ **공용 에셋은 `섹션-이름` 규칙 예외** — 섹션에 속하지 않으므로 `assets/common/종류/` 에 의미명으로. (로고를 특정 섹션 폴더에 두지 말 것 → 헤더·푸터·Hero가 한 곳에서 import)
+  - ⚠️ 로고는 **PNG 박힌 가짜 SVG 금지**(비동기 로드·용량↑ 문제). **path 기반 진짜 벡터**만.
 
 ---
 
