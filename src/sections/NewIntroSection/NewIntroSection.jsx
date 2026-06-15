@@ -242,7 +242,7 @@ function NewIntroSection() {
   }
 
   return (
-    <section ref={sectionRef} className={styles.intro} aria-label="ILKW 브랜드 철학">
+    <section id="intro" ref={sectionRef} className={styles.intro} aria-label="ILKW 브랜드 철학">
       <div ref={stageRef} className={styles.stage}>
         <div ref={bgRef} className={styles.bg} />
 
