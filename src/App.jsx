@@ -8,10 +8,12 @@ import SnowmanSection2 from './sections/SnowmanSection2/SnowmanSection2'
 import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
 import Footer from './components/Footer/Footer'
+import Header from './components/Header/Header'
 
 function App() {
   return (
     <main>
+      <Header index />
       {<HeroSection />}
       {<IntroSection />}
       <StorySection />

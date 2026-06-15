@@ -1,0 +1,45 @@
+/* 글로벌 헤더 — Hero에선 숨김, Intro부터 등장. 아래스크롤 숨김 / 위로 등장 */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--layout-gutter, 38px);
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 100;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 숨김 = 화면 위로 올라가서 안 보임 (올라감만 더 느리게) */
+.hidden {
+  transform: translateY(-100%);
+  transition-duration: 0.8s;
+}
+
+.logo {
+  height: 22px;
+  width: auto;
+  display: block;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-family: var(--font-en, sans-serif);
+  font-size: 16px;
+  letter-spacing: 0.01em;
+}
+.arrow {
+  display: inline-block;
+}

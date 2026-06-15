@@ -3,10 +3,10 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './HeroSection.module.css'
 
-import iLetter from '../../assets/hero/hero-logo-ilkw-i.svg'
-import lLetter from '../../assets/hero/hero-logo-ilkw-l.svg'
-import kLetter from '../../assets/hero/hero-logo-ilkw-k.svg'
-import wLetter from '../../assets/hero/hero-logo-ilkw-w.svg'
+import iLetter from '../../assets/common/logo/ilkw-i.svg'
+import lLetter from '../../assets/common/logo/ilkw-l.svg'
+import kLetter from '../../assets/common/logo/ilkw-k.svg'
+import wLetter from '../../assets/common/logo/ilkw-w.svg'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -32,7 +32,6 @@ function HeroSection() {
   const heroRef = useRef(null)
   const logoRef = useRef(null)
   const lettersRef = useRef([])
-  const dotRef = useRef(null)
   const copyRef = useRef(null)
   const videoRef = useRef(null)
   const overlayRef = useRef(null)
@@ -65,10 +64,13 @@ function HeroSection() {
 
     let tl
     let scrollST
+    let cancelled = false // StrictMode/언마운트 시 중복 실행·잔여 타임라인 방지
+    const imgCleanups = []
     const setReveal = (v) => overlay && overlay.style.setProperty('--reveal', v + '%')
 
     // 전구 등장 후 → 스크롤로 빛을 밝히는 단계로 핸드오프
     const setupScrollReveal = () => {
+      if (cancelled) return
       document.body.style.overflow = '' // 스크롤 허용
       document.body.style.paddingRight = ''
       gsap.set(hint, { autoAlpha: 1 }) // 스크롤 힌트 표시
@@ -119,6 +121,7 @@ function HeroSection() {
     }
 
     const build = () => {
+      if (cancelled) return
       const logoCenter = logo.offsetWidth / 2
       const natCenter = letters.map((el) => el.offsetLeft + el.offsetWidth / 2)
       const DROP = window.innerHeight * ROW_DROP
@@ -144,36 +147,39 @@ function HeroSection() {
       tl.to(copy, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power2.out' }, 0.1)
       tl.to(letters, { x: 0, duration: P1_DUR, ease: 'power2.out' }, APPEAR)
       tl.to([letters[2], letters[3]], { y: 0, duration: P2_BOT_DUR, ease: 'power3.inOut', stagger: KW_DELAY }, p2Start)
-      tl.to(dotRef.current, { autoAlpha: 1, duration: 0.4, ease: 'power2.out' }, p2Start + 0.3)
       // ── 카피만 페이드아웃 → 전구 등장 (로고는 스크롤 전까지 유지) ──
       tl.to(copy, { autoAlpha: 0, duration: 0.5, ease: 'power2.out' }, introEnd + 0.3)
       tl.to(bulb, { v: BULB_R, duration: REVEAL_BULB_DUR, ease: 'sine.inOut', onUpdate: onBulb }, introEnd + REVEAL_BULB_AT)
     }
 
-    // SVG 로드 완료 후 측정
+    // SVG 로드 완료 후 측정 (큰 PNG-임베드 SVG는 비동기 로드 → 리스너 정리 필수)
     const ready = letters.every((el) => el.complete && el.naturalWidth > 0)
     if (ready) {
       build()
     } else {
       let loaded = letters.filter((el) => el.complete && el.naturalWidth > 0).length
       const onLoad = () => {
+        if (cancelled) return
         if (++loaded >= letters.length) build()
       }
       letters.forEach((el) => {
         if (!(el.complete && el.naturalWidth > 0)) {
           el.addEventListener('load', onLoad, { once: true })
+          imgCleanups.push(() => el.removeEventListener('load', onLoad))
         }
       })
     }
 
     return () => {
+      cancelled = true
+      imgCleanups.forEach((fn) => fn())
       tl && tl.kill()
       scrollST && scrollST.kill()
     }
   }, [])
 
   return (
-    <section ref={heroRef} className={`${styles.hero} ${introDone ? styles.done : ''}`}>
+    <section id="hero" ref={heroRef} className={`${styles.hero} ${introDone ? styles.done : ''}`}>
       {/* 배경 영상 */}
       <video
         ref={videoRef}
@@ -194,7 +200,6 @@ function HeroSection() {
         <img ref={(el) => (lettersRef.current[1] = el)} className={styles.letter} src={lLetter} alt="" aria-hidden="true" />
         <img ref={(el) => (lettersRef.current[2] = el)} className={styles.letter} src={kLetter} alt="" aria-hidden="true" />
         <img ref={(el) => (lettersRef.current[3] = el)} className={styles.letter} src={wLetter} alt="" aria-hidden="true" />
-        <span ref={dotRef} className={styles.dot} aria-hidden="true" />
       </div>
 
       {/* 중앙 서브카피 */}
