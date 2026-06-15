@@ -1,26 +1,22 @@
-import logoI from './assets/logo-ilkw-i.svg'
-import logoL from './assets/logo-ilkw-l.svg'
-import logoK from './assets/logo-ilkw-k.svg'
-import logoW from './assets/logo-ilkw-w.svg'
-import logoDot from './assets/logo-ilkw-dot.svg'
-import footerHome from './assets/footer-home.webp'
+import { useRef, useEffect } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import logoIlkw from './assets/ilkw-logo.svg'
+import footerTop from './assets/footer-top.webp'
 import styles from './Footer.module.css'
+
+gsap.registerPlugin(ScrollTrigger)
 
 /**
  * Footer (글로벌 컴포넌트)
- * 풀블리드 비주얼 사진 + 거대 ILKW. 워드마크(조각별 배치) + 내비 + 약관.
+ * 비주얼 사진 + 흰 카드 오버레이 + 거대 ILKW. 워드마크 + 내비 + 약관.
  * 페이지 하단에서 <Footer /> 하나로 사용.
- * Figma: 1차프로젝트-3조 / node 703:5(사진) · 468:873(푸터)
+ * Figma: 1차프로젝트-3조 / node 778:521(사진+카드) · 778:525(푸터)
+ *
+ * 스크롤 인터랙션:
+ *  - 사진: 뷰에 들어올 때 살짝 커졌다가 원래 크기로 (펄스)
+ *  - 흰 카드: 조금 더 스크롤하면 아래에서 위로 떠오르며 등장
  */
-
-// 로고 조각 — Figma 좌표를 로고 박스 기준 %로 환산 (I·L·K·W는 윗줄, 점은 아래)
-const PIECES = [
-  { src: logoI, left: 0, top: 0.1, width: 11.184, height: 95.22 },
-  { src: logoL, left: 11.915, top: 0.28, width: 19.604, height: 95.22 },
-  { src: logoK, left: 32.038, top: 0, width: 26.775, height: 95.22 },
-  { src: logoW, left: 59.548, top: 0.13, width: 33.161, height: 95.22 },
-  { src: logoDot, left: 92.71, top: 66.32, width: 7.291, height: 33.676 },
-]
 
 const NAV = [
   { label: '브랜드', href: '#brand' },
@@ -31,38 +27,82 @@ const NAV = [
 ]
 
 function Footer() {
+  const photoRef = useRef(null)
+  const photoImgRef = useRef(null)
+  const cardRef = useRef(null)
+
+  useEffect(() => {
+    // 모션 최소화 설정이면 애니메이션 생략
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const ctx = gsap.context(() => {
+      // 사진: 뷰 진입 시 살짝 커졌다가 원래 크기로 (펄스)
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: photoRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none reset',
+          },
+        })
+        .fromTo(
+          photoImgRef.current,
+          { scale: 1 },
+          { scale: 1.08, duration: 0.7, ease: 'power2.out' }
+        )
+        .to(photoImgRef.current, { scale: 1, duration: 0.9, ease: 'power2.inOut' })
+
+      // 흰 카드: 조금 더 스크롤하면 아래에서 위로 떠오르며 등장
+      gsap.fromTo(
+        cardRef.current,
+        { yPercent: 50, autoAlpha: 0 },
+        {
+          yPercent: 0,
+          autoAlpha: 1,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: photoRef.current,
+            start: 'top 45%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      )
+    }, photoRef)
+
+    return () => ctx.revert()
+  }, [])
+
   return (
     <div className={styles.footer}>
-      {/* 풀블리드 비주얼 사진 */}
-      <div className={styles.photo}>
-        <img src={footerHome} alt="" loading="lazy" />
+      {/* 비주얼 사진 + 흰 카드 오버레이 (footer_C / 778:521) */}
+      <div className={styles.photo} ref={photoRef}>
+        <img className={styles.photoImg} src={footerTop} alt="" loading="lazy" ref={photoImgRef} />
+        <div className={styles.card} ref={cardRef}>
+          <p className={styles.cardHeading}>
+            Ilkwang Lighting has SHAPEd light
+            <br />
+            with passion and craftsmanship.
+          </p>
+          <a className={styles.cardLink} href="#naver-store">
+            <span>Go to Naver Brand Store </span>
+            <span className={styles.cardArrow}>→</span>
+          </a>
+          <p className={styles.cardEmail}>INFO@ILKWDESIGN.com</p>
+        </div>
       </div>
 
       {/* 크림 푸터 블록 */}
       <footer className={styles.body}>
-        {/* 거대 워드마크 — 조각 SVG(#252525 = footer 색)를 그대로 배치 */}
-        <div className={styles.logo} role="img" aria-label="ILKW.">
-          {PIECES.map((p, i) => (
-            <img
-              key={i}
-              className={styles.piece}
-              src={p.src}
-              alt=""
-              aria-hidden="true"
-              style={{
-                left: `${p.left}%`,
-                top: `${p.top}%`,
-                width: `${p.width}%`,
-                height: `${p.height}%`,
-              }}
-            />
-          ))}
+        {/* 거대 워드마크 — 단일 SVG(#252525 = footer 색) */}
+        <div className={styles.logo}>
+          <img src={logoIlkw} alt="ILKW." />
         </div>
 
         <div className={styles.bottom}>
         <nav className={styles.nav} aria-label="푸터 내비게이션">
           {NAV.map((item) => (
-            <a key={item.label} href={item.href} className={`${styles.navLink} type-body-2`}>
+            <a key={item.label} href={item.href} className={`${styles.navLink} type-body-3`}>
               {item.label}
             </a>
           ))}

@@ -8,16 +8,84 @@
   width: 100%;
 }
 
-/* 풀블리드 비주얼 사진 (디자인 비율 1920×2139) */
+/* 비주얼 사진 + 흰 카드 오버레이 (Figma footer_C 1920×1720) */
 .photo {
+  position: relative;
   width: 100%;
+  aspect-ratio: 1920 / 1720;
+  overflow: hidden;
+  background: #fff9f0;
 }
-.photo img {
-  display: block;
+.photoImg {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  aspect-ratio: 1920 / 2139;
+  height: 100%;
   object-fit: cover;
   object-position: center;
+}
+
+/* 흰 사각형 카드 (1204:21) — 위치·크기는 프레임 기준 % */
+.card {
+  position: absolute;
+  left: 22.917%;   /* 440/1920 */
+  top: 19.477%;    /* 335/1720 */
+  width: 54.219%;  /* 1041/1920 */
+  height: 61.047%; /* 1050/1720 */
+  background: #fff9f6;
+  text-align: center;
+}
+/* 카드 안 텍스트 — 폰트는 1920 기준 px를 vw로 환산해 비례 스케일 */
+.cardHeading {
+  position: absolute;
+  top: 5.71%;       /* 60/1050 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 78.6%;     /* 818/1041 */
+  margin: 0;
+  font-family: var(--font-en);
+  font-weight: 500;
+  font-size: 2.1875vw; /* 42px @1920 */
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #000;
+}
+.cardLink {
+  position: absolute;
+  top: 47.71%;      /* 501/1050 */
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--font-deco);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 2.0833vw; /* 40px @1920 */
+  line-height: 1.2;
+  color: #000;
+  transition: opacity 0.2s ease;
+}
+.cardLink:hover {
+  opacity: 0.6;
+}
+.cardArrow {
+  font-family: var(--font-kr);
+  font-style: normal;
+}
+.cardEmail {
+  position: absolute;
+  top: 87.43%;      /* 918/1050 */
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  white-space: nowrap;
+  font-family: var(--font-en);
+  font-weight: 600;
+  font-size: 3.125vw; /* 60px @1920 */
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #d1ccc4;
 }
 
 /* 크림 푸터 블록 */
@@ -25,22 +93,22 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  /* 디자인 비율(높이≈너비*0.63), 너무 커지지 않게 상한 */
-  min-height: min(63vw, 1210px);
-  padding: 30px 38px 16px;
-  background: var(--color-base-2); /* 크림 */
+  /* 디자인 프레임 비율 850/1920 ≈ 44.3%, 너무 커지지 않게 상한 */
+  min-height: min(44.3vw, 850px);
+  padding: 54px 34px 30px;
+  background: var(--color-base-2); /* 크림 = #FFF7EA */
 }
 
-/* 거대 워드마크: 조각(I·L·K·W·점)을 박스 안에 절대 위치로 배치 */
+/* 워드마크: 단일 SVG. Figma 기준 폭 ≈ 44% · 가로 중앙 정렬 */
 .logo {
-  position: relative;
-  width: 100%;
-  /* 로고 박스 비율(너비/높이) — Figma 조각 좌표 기준 */
-  aspect-ratio: 1795.36 / 388.7;
+  width: 44%;
+  max-width: 846px;
+  margin: 0 auto;
 }
-.piece {
-  position: absolute;
+.logo img {
   display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* 내비 + 구분선 + 약관은 하단에 고정 */
@@ -52,8 +120,7 @@
   display: flex;
   justify-content: space-between;
   gap: 24px;
-  padding: 0 24px;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 .navLink {
   color: var(--color-footer); /* #252525 */
@@ -65,23 +132,23 @@
 }
 
 .divider {
-  height: 1.2px;
+  height: 2px;
   width: 100%;
-  background: var(--color-base-3); /* 검정 */
+  background: var(--color-footer); /* #252525 */
 }
 
 .legal {
   display: flex;
   justify-content: space-between;
   gap: 24px;
-  margin-top: 12px;
+  margin-top: 22px;
 }
 .legalText {
-  font-family: var(--font-kr);
+  font-family: var(--font-en); /* Instrument Sans */
   font-weight: 400;
-  font-size: 11px;
-  line-height: 1.4;
-  color: var(--color-base-3);
+  font-size: 16px;
+  line-height: normal;
+  color: var(--color-footer); /* #252525 */
   white-space: nowrap;
 }
 .legalLink {
@@ -93,15 +160,15 @@
 
 /* ----- 반응형 (브레이크포인트 px는 팀 [TBD], 임시값) ----- */
 @media (max-width: 1024px) {
-  .nav :global(.type-body-2) {
+  .nav :global(.type-body-3) {
     font-size: 20px;
+  }
+  .legalText {
+    font-size: 16px;
   }
 }
 
 @media (max-width: 767px) {
-  .photo img {
-    aspect-ratio: 3 / 4; /* 모바일에선 과하게 길지 않게 */
-  }
   .body {
     min-height: auto;
     padding: 24px 20px 16px;
@@ -112,14 +179,16 @@
   .nav {
     flex-wrap: wrap;
     gap: 12px 20px;
-    padding: 0;
   }
-  .nav :global(.type-body-2) {
+  .nav :global(.type-body-3) {
     font-size: 16px;
   }
   .legal {
     flex-direction: column;
     gap: 6px;
+  }
+  .legalText {
+    font-size: 14px;
   }
   .legalText {
     white-space: normal;
