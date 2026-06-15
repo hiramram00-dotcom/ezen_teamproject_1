@@ -1,0 +1,41 @@
+/* RevealImage — 위에서 아래로 펼쳐지며 드러남 */
+.root {
+  /* IntersectionObserver 관측용 — 클립하지 않음 */
+  display: block;
+}
+
+.wrap {
+  overflow: hidden;
+  /* 위만 보이는 상태(=거의 안 보임)에서 시작 */
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 3.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: clip-path;
+}
+
+.shown {
+  clip-path: inset(0 0 0 0);
+}
+
+.img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: translateY(-7%);
+  transition: transform 3.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.shown .img {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrap {
+    clip-path: none;
+    transition: none;
+  }
+  .img {
+    transform: none;
+    transition: none;
+  }
+}

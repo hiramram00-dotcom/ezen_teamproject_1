@@ -1,0 +1,23 @@
+/* RevealLines — 줄 단위 순차 등장 (아래에서 위로) */
+.line {
+  display: block;
+  opacity: 0;
+  transform: translateY(0.8em);
+  transition:
+    opacity 0.7s ease-out,
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.shown .line {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

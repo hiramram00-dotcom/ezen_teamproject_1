@@ -1,0 +1,147 @@
+import { useEffect, useRef } from 'react'
+import heroImg from './assets/showroom-hero.webp'
+import mapImg from './assets/showroom-map.webp'
+import styles from './PinScene.module.css'
+
+/**
+ * PinScene — 첫 이미지를 잠시 고정하고 카드가 뒤늦게 올라오는 장면.
+ * 이미지는 원본 비율 전체가 보이며, 고정 구간 전체에 걸쳐 1.15 → 1로 축소된다.
+ * Figma: 1차프로젝트-3조 / node 778:379·778:380·778:381·778:385
+ */
+const ease = (t) =>
+  t < 0.5
+    ? 4 * t * t * t
+    : 1 - Math.pow(-2 * t + 2, 3) / 2
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
+const CARD_START = 0
+const CARD_END = 0.9
+
+function PinScene() {
+  const sceneRef = useRef(null)
+  const imageRef = useRef(null)
+  const cardRef = useRef(null)
+
+  useEffect(() => {
+    const scene = sceneRef.current
+    const image = imageRef.current
+    const card = cardRef.current
+    if (!scene || !image || !card) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      image.style.transform = 'scale(1)'
+      card.style.transform = 'translateY(0)'
+      card.style.visibility = 'visible'
+      return
+    }
+
+    let ticking = false
+    const apply = () => {
+      ticking = false
+      const rect = scene.getBoundingClientRect()
+      const scrollRange = scene.offsetHeight - window.innerHeight
+      const sceneProgress = scrollRange > 0
+        ? clamp(-rect.top / scrollRange, 0, 1)
+        : 1
+      const imageEase = ease(sceneProgress)
+      const cardProgress = clamp(
+        (sceneProgress - CARD_START) / (CARD_END - CARD_START),
+        0,
+        1,
+      )
+      const cardEase = ease(cardProgress)
+
+      image.style.transform = `scale(${(1.15 - 0.15 * imageEase).toFixed(4)})`
+      card.style.transform = `translateY(${((1 - cardEase) * 100).toFixed(2)}%)`
+      card.style.visibility = cardProgress > 0 ? 'visible' : 'hidden'
+    }
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true
+        requestAnimationFrame(apply)
+      }
+    }
+
+    apply()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [])
+
+  return (
+    <section ref={sceneRef} className={styles.scene}>
+      <div className={styles.pinStage}>
+        <div className={styles.visual}>
+          <div ref={imageRef} className={styles.imageInner}>
+            <img src={heroImg} alt="일광전구 서울 쇼룸 내부" />
+          </div>
+
+          {/* 카드 + 라벨 — 고정 구간 후반에 이미지 위로 올라옴 */}
+          <div ref={cardRef} className={styles.cardLayer}>
+            <div className={styles.labels}>
+              <span className={`${styles.label} type-subtitle-1`}>Our Showroom</span>
+              <span className={`${styles.label} ${styles.labelVisit} type-subtitle-1`}>
+                <svg
+                  className={styles.arrow}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <polyline points="6 13 12 19 18 13" />
+                </svg>
+                Plan Your Visit
+              </span>
+            </div>
+
+            <div className={styles.card}>
+              <div className={styles.top}>
+                <div className={styles.info}>
+                  <h2 className={styles.title}>
+                    <span className="type-body-semibold-1">일광전구 서울 쇼룸</span>
+                    <span className={`${styles.titleEn} type-subtitle-1`}>IK SEOUL SHOWROOM</span>
+                  </h2>
+                  <p className={`${styles.desc} type-body-4`}>
+                    조명과 가구가 함께 놓인 장면을 통해
+                    <br />
+                    제품의 형태와 크기감, 빛이 만드는 분위기를 경험할 수 있습니다.
+                  </p>
+                </div>
+
+                <div className={styles.map}>
+                  <img className={styles.mapImg} src={mapImg} alt="일광전구 서울 쇼룸 약도 — 회현역 4번출구, 우리은행, 교육센터 마음의씨앗 인근" />
+                </div>
+              </div>
+
+              <div className={styles.divider} />
+
+              <div className={styles.bottom}>
+                <div className={styles.col}>
+                  <h3 className={`${styles.colTitle} type-body-semibold-2`}>위치 · 운영시간</h3>
+                  <p className={`${styles.colText} type-body-4`}>
+                    서울특별시 중구 퇴계로4길 2-1 로컬스티치 B동 1층
+                  </p>
+                  <p className={`${styles.colText} type-body-4`}>
+                    MON-SUN 11:00-20:00&nbsp;&nbsp;/&nbsp;&nbsp;BREAK TIME 15:00-16:00
+                  </p>
+                </div>
+
+                <div className={`${styles.col} ${styles.colContact}`}>
+                  <h3 className={`${styles.colTitle} type-body-semibold-2`}>문의</h3>
+                  <p className={`${styles.colText} type-body-4`}>02-318-1079</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export default PinScene

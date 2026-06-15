@@ -1,0 +1,14 @@
+/* ShowroomPage — 서브페이지 레이아웃 골격 */
+.page {
+  background: var(--color-base-1); /* 흰 (섹션별로 자체 배경 지정) */
+  color: var(--color-base-3);
+}
+
+/* 자간 -0.5px 통일 (showroom 페이지 한정 — 전역 typography.css는 팀 공유라 미수정) */
+.page :global(*) {
+  letter-spacing: -0.5px;
+}
+
+.page :global(p) {
+  line-height: 1.6;
+}
