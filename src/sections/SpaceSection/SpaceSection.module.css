@@ -46,13 +46,13 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 2300px;
+  height: 4350px;
   pointer-events: none;
 }
 
 .textBox {
   position: sticky;
-  top: calc(41vh - 200px);
+  top: 30vh;
   margin-top: 1447px;
   margin-left: 1450px;
   transform: translate(87%, -100%);
@@ -152,9 +152,17 @@
   opacity: 1 !important;
 }
 .img2 { width: 394px; height: 298px; left: 1417px; top: 1447px; }
-.img3 { width: 331px; height: 234px; left: 0; top: 2437px; }
-.img4 { width: 309px; height: 236px; left: 1110px; top: 2672px; }
-.img5 { width: 571px; height: 439px; left: 538px; top: 2908px; }
+.img3 { width: 427px; height: 298px; left: 0; top: 2452px; }
+.img4 { 
+  width: 440px; 
+  height: 301px; 
+  left: 1215px; 
+  top: 2672px; 
+  border: 4px solid transparent;
+  border-image: linear-gradient(to bottom right, rgba(0,0,0,0.7), rgba(0,0,0,0)) 1;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+.img5 { width: 647px; height: 439px; left: 538px; top: 2908px; }
 .img6 { width: 538px; height: 658px; left: 0; top: 2758px; }
 .img7 { object-fit: fill; }
 .img8 { width: 667px; height: 494px; left: 607px; top: 1430px; }

@@ -2,24 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './SpaceSection.module.css';
 
 import imgSpace01 from '../../assets/space/img-space-01.png';
-import imgSpace02 from '../../assets/space/img-space-02.png';
+import imgSpace02 from '../../../img/2.png';
 import imgSpace03 from '../../assets/space/img-space-03.png';
-import imgSpace04 from '../../assets/space/img-space-04.png';
+import imgSpace04 from '../../../img/4.png';
 import imgSpace05 from '../../assets/space/img-space-05.png';
 import imgSpace06 from '../../assets/space/img-space-06.png';
 import imgSpace07 from '../../assets/space/img-space-07.png';
 import imgSpace08 from '../../assets/space/img-space-08.gif';
 import ilkwLogo from '../../assets/ilkw-logo-header.svg';
 
-import spaceImg1 from '../../../img_/space_img1.png';
+import spaceImg1 from '../../../img/100.png';
 import spaceImg11 from '../../../img_/space_img11.png';
-import spaceImg12 from '../../../img_/space_img12.png';
-import spaceImg14 from '../../../img_/space_img14.png';
-import spaceImg16 from '../../../img_/space_img16.png';
+import spaceImg12 from '../../../img/15.png';
+import spaceImg14 from '../../../img/14.png';
+import spaceImg16 from '../../../img/8.png';
 import spaceImg17 from '../../../img_/space_img17.png';
-import spaceImg19 from '../../../img_/space_img19.png';
+import spaceImg19 from '../../../img/6.png';
 import storyImg04 from '../../../img_/story_img04.png';
-import imgGif from '../../../img_/img.gif';
+import imgGif from '../../../img/download.gif';
 
 const stepsData = [
   { word: "Spaces", sub: "모든 공간에는, 그에 어울리는 빛이 있습니다." },
@@ -54,14 +54,13 @@ export default function SpaceSection() {
       const scrollY = -rect.top; 
       const sectionHeight = rect.height - window.innerHeight;
       
-      const stickOffset = window.innerHeight * 0.41 - 200;
+      const stickOffset = window.innerHeight * 0.30;
       const stickStart = (1447 * scale) - stickOffset;
 
       if (textBoxRef.current) {
         const textRect = textBoxRef.current.getBoundingClientRect();
-        // Use textRect.bottom because transform: translateY(-100%) makes the bottom exactly at 1447px.
-        // Triggers just as the text location enters the screen from the bottom.
-        if (textRect.bottom < window.innerHeight * 0.95) {
+        // 텍스트 박스 요소 자체가 뷰포트 하단(화면)에 진입하는 즉시 애니메이션을 시작합니다.
+        if (textRect.top < window.innerHeight) {
           setIsRevealed(true);
         } else {
           setIsRevealed(false);
@@ -144,11 +143,11 @@ export default function SpaceSection() {
           <img src={spaceImg1} alt="Space 1" className={`${styles.scaleImg} ${revealedImages.img1 ? styles.revealedScaleImg : ''}`} style={{ width: '100%', height: '100%', objectFit: 'fill' }} />
         </div>
         <img id="img2" src={imgSpace02} alt="Space 2" className={`${styles.imgBase} ${styles.img2} ${styles.scrollImg} ${revealedImages.img2 ? styles.revealedScrollImg : ''}`} style={{ width: '394px', height: '298px', left: '1417px', top: '1447px' }} />
-        <img id="img3" src={spaceImg14} alt="Space 3" className={`${styles.imgBase} ${styles.img3} ${styles.scrollImg} ${revealedImages.img3 ? styles.revealedScrollImg : ''}`} style={{ width: '331px', height: '223px', left: '0px', top: '2452px' }} />
-        <img id="img4" src={imgSpace04} alt="Space 4" className={`${styles.imgBase} ${styles.img4} ${styles.scrollImg} ${revealedImages.img4 ? styles.revealedScrollImg : ''}`} style={{ width: '309px', height: '236px', left: '1110px', top: '2672px' }} />
-        <img id="img5" src={spaceImg19} alt="Space 5" className={`${styles.imgBase} ${styles.img5} ${styles.scrollImg} ${revealedImages.img5 ? styles.revealedScrollImg : ''}`} style={{ width: '539px', height: '439px', left: '571px', top: '2908px' }} />
+        <img id="img3" src={spaceImg14} alt="Space 3" className={`${styles.imgBase} ${styles.img3} ${styles.scrollImg} ${revealedImages.img3 ? styles.revealedScrollImg : ''}`} style={{ width: '427px', height: '298px', left: '0px', top: '2452px' }} />
+        <img id="img4" src={imgSpace04} alt="Space 4" className={`${styles.imgBase} ${styles.img4} ${styles.scrollImg} ${revealedImages.img4 ? styles.revealedScrollImg : ''}`} style={{ width: '440px', height: '301px', left: '1215px', top: '2672px' }} />
+        <img id="img5" src={spaceImg19} alt="Space 5" className={`${styles.imgBase} ${styles.img5} ${styles.scrollImg} ${revealedImages.img5 ? styles.revealedScrollImg : ''}`} style={{ width: '647px', height: '439px', left: '571px', top: '2908px' }} />
         <img id="img6" src={spaceImg12} alt="Space 6" className={`${styles.imgBase} ${styles.img6} ${styles.scrollImg} ${revealedImages.img6 ? styles.revealedScrollImg : ''}`} style={{ width: '571px', height: '430px', left: '0px', top: '3347px' }} />
-        <img id="img7" src={spaceImg16} alt="Space 7" className={`${styles.imgBase} ${styles.img7} ${styles.scrollImg} ${revealedImages.img7 ? styles.revealedScrollImg : ''}`} style={{ width: '848px', height: '682px', left: '571px', top: '3776px' }} />
+        <img id="img7" src={spaceImg16} alt="Space 7" className={`${styles.imgBase} ${styles.img7} ${styles.scrollImg} ${revealedImages.img7 ? styles.revealedScrollImg : ''}`} style={{ width: '1033px', height: '682px', left: '571px', top: '3776px' }} />
         <div id="img8" className={`${styles.box8} ${styles.scrollImg} ${revealedImages.img8 ? styles.revealedScrollImg : ''}`} style={{ width: '843px', height: '695px', left: '573px', top: '1745px' }}>
           <img src={imgGif} alt="Space 8 GIF" className={styles.box8InnerImg} />
         </div>
