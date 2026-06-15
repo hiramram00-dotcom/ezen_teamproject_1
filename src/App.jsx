@@ -61,18 +61,18 @@ function App() {
 
   if (view === 'product') {
     return <ProductSection onOpenProduct={openProductDetail} />
+  }
+
   if (window.location.pathname === '/about') {
     return <AboutPage />
   }
 
   return (
     <main>
+      <Header index />
       <HeroSection />
       <IntroSection />
-      <Header index />
-      {<HeroSection />}
-      {<IntroSection />}
-      {<NewIntroSection />}
+      <NewIntroSection />
       <Story2Section />
       <StorySection />
       <SpaceSection />
