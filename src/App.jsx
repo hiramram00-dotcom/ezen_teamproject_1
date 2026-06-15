@@ -12,16 +12,16 @@ import Footer from './components/Footer/Footer'
 function App() {
   return (
     <main>
-      <HeroSection />
-      <IntroSection />
+      {<HeroSection />}
+      {<IntroSection />}
       <StorySection />
       <SpaceSection />
-      <StoryEndingSection />
-      <Snowman1Section />
-      <SnowmanSection2 />
-      <SpacesSection />
-      <CollaboSection />
-      <Footer />
+      {<StoryEndingSection />}
+      {<Snowman1Section />}
+      {<SnowmanSection2 />}
+      {<SpacesSection />}
+      {<CollaboSection />}
+      {<Footer />}
     </main>
   )
 }
