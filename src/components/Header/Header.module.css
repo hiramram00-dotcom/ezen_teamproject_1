@@ -21,6 +21,23 @@
   transition-duration: 0.8s;
 }
 
+/* 메뉴 열렸을 때 — 크림 오버레이에 맞춰 배경 투명 + 검정 (시안 기준) */
+.menuMode {
+  background: transparent;
+}
+/* 메뉴 열리면 로고는 안 띄움 */
+.menuMode .logoLink {
+  display: none;
+}
+.menuMode .menu {
+  color: #111;
+}
+
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
 .logo {
   height: 22px;
   width: auto;
@@ -37,7 +54,7 @@
   cursor: pointer;
   color: #fff;
   font-family: var(--font-en, sans-serif);
-  font-size: 16px;
+  font-size: 26px;
   letter-spacing: 0.01em;
 }
 .arrow {
