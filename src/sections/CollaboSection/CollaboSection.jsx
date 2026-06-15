@@ -182,7 +182,7 @@ function CollaboSection() {
   const loopCards = [...CARDS, ...CARDS]
 
   return (
-    <section ref={wrapRef} className={styles.collabo}>
+    <section id="collabo" ref={wrapRef} className={styles.collabo}>
       <div className={styles.sticky}>
         <div ref={titleRef} className={styles.intro}>
           <h2 className={styles.title}>

@@ -108,6 +108,7 @@ function IntroSection() {
   }, [progress])
 
   return (
+    <section id="about" ref={introRef} className={styles.intro} aria-label="일광전구 브랜드 소개">
     <section id="intro" ref={introRef} className={styles.intro} aria-label="일광전구 브랜드 소개">
       <div className={styles.stickyStage}>
         <div className={`${styles.layer} ${styles.centerLayer}`} style={{ opacity: opacity.text1 }}>

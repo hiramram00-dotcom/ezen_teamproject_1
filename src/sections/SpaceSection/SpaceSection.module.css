@@ -7,11 +7,11 @@
 .topNav {
   position: sticky;
   top: 40px;
+  left: 40px;
   width: 100%;
   padding: 0 40px;
   box-sizing: border-box;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   z-index: 100;
 }

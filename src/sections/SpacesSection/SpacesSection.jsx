@@ -283,7 +283,7 @@ function SpacesSection() {
   }
 
   return (
-    <section className={styles.spaces} aria-label="공간 큐레이션">
+    <section id="showroom" className={styles.spaces} aria-label="공간 큐레이션">
       <div className={styles.inner}>
         <article className={styles.introPanel} aria-label="Spaces introduction">
           <div className={styles.introCopy}>

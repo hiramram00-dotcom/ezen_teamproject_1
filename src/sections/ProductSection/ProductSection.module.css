@@ -1,0 +1,302 @@
+.products {
+  width: 100%;
+  overflow: hidden;
+  background: var(--color-base-2);
+  color: var(--color-base-3);
+}
+
+.hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #0b1b2d;
+}
+
+.heroImage,
+.mainVisual img,
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroLogo,
+.heroWordmark,
+.rowLogo {
+  position: absolute;
+  z-index: 3;
+  object-fit: fill;
+}
+
+.heroLogo {
+  top: 2.3148%;
+  left: 1.1979%;
+  width: 5.3614%;
+  height: 2.1296%;
+}
+
+.heroWordmark {
+  top: 81.8519%;
+  left: 3.2161%;
+  width: 25.6253%;
+  height: 13.5296%;
+}
+
+.catalog {
+  background: var(--color-base-2);
+}
+
+.productRow {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--color-base-2);
+}
+
+.mainVisual,
+.productInfo {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.mainVisual {
+  margin: 0;
+  background: #29271f;
+}
+
+.mainImageMotion {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.thumbnail img {
+  transform-origin: center;
+  transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: clip-path, transform;
+}
+
+.productLink {
+  cursor: pointer;
+}
+
+.thumbnail {
+  transform-origin: center;
+  transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.thumbnail:hover,
+.thumbnail:focus-visible {
+  transform: translateX(-50%) scale(0.955);
+}
+
+.thumbnail:hover img,
+.thumbnail:focus-visible img {
+  transform: scale(1.0472);
+}
+
+.productLink:focus-visible {
+  outline: 3px solid var(--color-base-3);
+  outline-offset: -3px;
+}
+
+.imageLeft .mainVisual {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.imageLeft .productInfo {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.imageRight .mainVisual {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.imageRight .productInfo {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.productInfo {
+  background: var(--color-base-2);
+}
+
+.rowLogo {
+  top: 2.3148%;
+  left: var(--logo-left);
+  width: var(--logo-width);
+  height: 2.1296%;
+}
+
+.productName {
+  position: absolute;
+  top: 10.1852%;
+  left: var(--title-x);
+  width: 90%;
+  transform: translateX(-50%);
+  font-family: var(--font-deco);
+  font-size: 3.6458vw;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.03em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.flamingoName {
+  will-change: transform;
+}
+
+.flamingoTitleButton {
+  display: inline-block;
+  color: inherit;
+  font: inherit;
+  font-style: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  white-space: inherit;
+}
+
+.flamingoTitleButton:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 5px;
+}
+
+.flamingoChar {
+  display: inline-block;
+  opacity: 1;
+}
+
+.flamingoTitleButton:hover .flamingoChar,
+.flamingoTitleButton:focus-visible .flamingoChar {
+  animation: flamingo-wave 900ms ease-in-out both;
+  animation-delay: calc(var(--char-index) * 60ms);
+}
+
+@keyframes flamingo-wave {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  42% {
+    opacity: 0.76;
+    transform: translateY(-0.35vw);
+  }
+}
+
+.description {
+  position: absolute;
+  top: 42.6852%;
+  left: var(--content-x);
+  width: 78%;
+  transform: translateX(-50%);
+  font-family: var(--font-kr);
+  font-size: 1.0938vw;
+  font-weight: 300;
+  line-height: 1.4;
+  letter-spacing: -0.04em;
+  text-align: center;
+}
+
+.description span {
+  display: block;
+}
+
+.thumbnail {
+  position: absolute;
+  top: 72.22%;
+  left: var(--content-x);
+  width: 32.4%;
+  aspect-ratio: 311 / 190;
+  margin: 0;
+  transform: translateX(-50%);
+  overflow: hidden;
+  background: #ddd6ca;
+}
+
+@media (max-width: 700px) {
+  .hero {
+    aspect-ratio: 4 / 5;
+  }
+
+  .heroImage {
+    object-position: center;
+  }
+
+  .productRow {
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: auto;
+    overflow: visible;
+  }
+
+  .mainVisual,
+  .productInfo {
+    width: 100%;
+    aspect-ratio: 8 / 9;
+  }
+
+  .mainVisual {
+    order: 1;
+  }
+
+  .productInfo {
+    order: 2;
+  }
+
+  .heroLogo,
+  .rowLogo {
+    top: 2%;
+    left: 4%;
+    width: 12%;
+    height: 2.7%;
+  }
+
+  .heroWordmark {
+    top: auto;
+    bottom: 4%;
+    left: 4%;
+    width: 48%;
+    height: 13%;
+  }
+
+  .productName {
+    font-size: clamp(29px, 9vw, 42px);
+  }
+
+  .description {
+    width: 86%;
+    font-size: clamp(12px, 3.4vw, 15px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .products *,
+  .products *::before,
+  .products *::after {
+    scroll-behavior: auto !important;
+  }
+
+  .thumbnail {
+    transition: none;
+  }
+
+  .flamingoTitleButton:hover .flamingoChar,
+  .flamingoTitleButton:focus-visible .flamingoChar {
+    animation: none;
+  }
+}
