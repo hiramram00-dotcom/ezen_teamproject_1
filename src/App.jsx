@@ -1,5 +1,6 @@
 import HeroSection from './sections/HeroSection/HeroSection'
 import IntroSection from './sections/IntroSection/IntroSection'
+import Story2Section from './sections/Story2Section/Story2Section'
 import StorySection from './sections/StorySection/StorySection'
 import SpaceSection from './sections/SpaceSection/SpaceSection'
 import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection'
@@ -14,6 +15,7 @@ function App() {
     <main>
       {<HeroSection />}
       {<IntroSection />}
+      <Story2Section />
       <StorySection />
       <SpaceSection />
       {<StoryEndingSection />}
