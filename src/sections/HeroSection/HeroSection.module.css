@@ -1,132 +1,162 @@
-/* Hero — 손전등 + CTA 트레일 → 클릭 → 로고 조립(GSAP) */
+/* Hero — 자동 인트로(ILKW. 조립) → 검정 오버레이 빛 reveal → 영상 + 하단 로고 */
 
 .hero {
-  --mx: 50%;
-  --my: 50%;
-  --spot-size: 300px;    /* 손전등 빛 범위 */
-  --core-dark: 0.5;      /* 빛 중심 어둠 */
-
+  --bulb-x: 50%;   /* 영상 속 전구 가로 위치 (튜닝) */
+  --bulb-y: 44%;   /* 영상 속 전구 세로 위치 (튜닝) */
+  --reveal: 0%;    /* GSAP가 키움: 0 → 165% */
   position: relative;
   width: 100%;
   height: 100vh;
-  background: var(--color-base-3);
+  background: #000;
   overflow: hidden;
-  cursor: none;
 }
 
-/* 커스텀 커서 — 빛나는 점 */
-.cursorDot {
-  --dot-size: 46px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--dot-size);
-  height: var(--dot-size);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at center,
-    rgba(255, 247, 230, 0.5) 0%,
-    rgba(255, 240, 210, 0.32) 25%,
-    rgba(255, 230, 190, 0.12) 55%,
-    rgba(255, 220, 170, 0) 100%
-  );
-  transform: translate(
-    calc(var(--mx) - var(--dot-size) / 2),
-    calc(var(--my) - var(--dot-size) / 2)
-  );
-  z-index: 10;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  animation: cursorPulse 2.4s ease-in-out infinite;
-}
-@keyframes cursorPulse {
-  0%, 100% { opacity: 0.85; }
-  50%      { opacity: 1; }
-}
-
-/* 펜던트 램프 */
-.lamp {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  height: 88vh;
-  width: auto;
-  z-index: 1;
-  pointer-events: none;
-  user-select: none;
-}
-
-/* 손전등 오버레이 (GSAP가 클릭 시 제거) */
-.spotlight {
+/* 배경 영상 */
+.video {
   position: absolute;
   inset: 0;
-  z-index: 5;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+/* 검정 오버레이 — 전구 위치에서 빛이 퍼지듯 걷힘 */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
   pointer-events: none;
   background: radial-gradient(
-    circle var(--spot-size) at var(--mx) var(--my),
-    rgba(0, 0, 0, var(--core-dark)) 0%,
-    rgba(0, 0, 0, 0.9) 55%,
-    #000 80%
+    circle at var(--bulb-x) var(--bulb-y),
+    transparent calc(var(--reveal) - 10%),
+    #000 var(--reveal)
   );
 }
 
-/* ===== ILKW. 로고 (클릭 시 GSAP로 등장) ===== */
+/* ===== ILKW 워드마크 (자연 위치 = 최종 한 줄, GSAP가 조립) ===== */
 .logo {
   position: absolute;
   left: 50%;
-  top: 19%;
+  top: 6%;
   display: flex;
   align-items: flex-end;
-  gap: 0.04em;
-  font-size: clamp(40px, 7.6vw, 146px);
-  z-index: 7;            /* 손전등 오버레이(5) 위 */
+  gap: 0;
+  font-size: clamp(56px, 16vw, 320px);
+  z-index: 3;
   user-select: none;
-  opacity: 0;            /* GSAP가 보이게 함 */
+  opacity: 0;
 }
 .letter {
   height: 1em;
   width: auto;
   display: block;
 }
+/* 시안 커닝 — 이탤릭이라 K가 L 위로 살짝 겹침 */
+.letter:nth-child(3) {
+  margin-left: -0.14em;
+}
 
-/* 점(.) — GSAP가 생성+반짝 제어 (처음엔 숨김) */
-.sparkle {
-  width: 0.5em;
-  height: 0.5em;
+/* 마침표(.) — 솔리드, 이탤릭 착시 보정 */
+.dot {
+  width: 0.2em;
+  height: 0.2em;
   border-radius: 50%;
-  background: radial-gradient(
-    circle at center,
-    rgba(255, 248, 232, 0.95) 0%,
-    rgba(255, 238, 205, 0.55) 22%,
-    rgba(255, 230, 190, 0.18) 45%,
-    rgba(255, 225, 180, 0) 72%
-  );
+  background: #fff;
   align-self: flex-end;
-  margin-left: 0.04em;
-  margin-bottom: -0.05em;
+  margin-left: -0.02em;
+  margin-bottom: 0;
+  flex: none;
   opacity: 0;
 }
 
-/* ===== CLICK TO ENTER 트레일 ===== */
-.cta {
+/* ===== 중앙 서브카피 ===== */
+.copy {
   position: absolute;
-  inset: 0;
-  z-index: 6;
+  left: 50%;
+  top: 46%;
+  text-align: center;
+  z-index: 3;
+  user-select: none;
   pointer-events: none;
+  white-space: nowrap;
+  opacity: 0;
 }
-.ctaLetter {
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-family: var(--font-en);
-  font-weight: 500;
-  font-size: 20px;
-  letter-spacing: 0.14em;
-  color: rgba(255, 255, 255, 0.7);
-  white-space: pre;
-  will-change: transform;
+.copyEn {
+  margin: 0 0 4px;
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-style: italic;
+  font-size: clamp(15px, 1.15vw, 22px);
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.01em;
+}
+.copyKr {
+  margin: 0;
+  font-family: var(--font-kr, 'Pretendard', sans-serif);
+  font-size: clamp(14px, 1.05vw, 20px);
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: -0.01em;
 }
 
+/* ===== 하단 로고 — 영상 위 작은 ILKW ===== */
+.bottomLogo {
+  position: absolute;
+  left: 50%;
+  bottom: 7%;          /* 위치 튜닝 (896:385 기준 하단) */
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  font-size: clamp(24px, 6.3vw, 126px);
+  z-index: 4;
+  user-select: none;
+  opacity: 0;          /* GSAP가 끝에 보이게 */
+}
+
+/* ===== 하단중앙 스크롤 힌트 — 마우스 휠 인디케이터 ===== */
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: 5.5%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;          /* GSAP가 전구 상태에서 보이게 */
+  pointer-events: none;
+}
+/* 마우스 외형 — 세로 길고 가로 짧은 라운드 사각형 */
+.mouse {
+  width: 24px;
+  height: 38px;
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+}
+/* 휠 — 안에서 아래로 내려가는 작은 막대 */
+.wheel {
+  width: 3px;
+  height: 8px;
+  margin-top: 7px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.85);
+  animation: wheelScroll 1.7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@keyframes wheelScroll {
+  0%   { transform: translateY(0); opacity: 0; }
+  25%  { opacity: 1; }
+  70%  { transform: translateY(12px); opacity: 0; }
+  100% { transform: translateY(12px); opacity: 0; }
+}
+.hintLabel {
+  font-family: var(--font-en, sans-serif);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
 @media (prefers-reduced-motion: reduce) {
-  .cursorDot { animation: none; }
+  .wheel { animation: none; }
 }
