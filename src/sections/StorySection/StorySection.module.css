@@ -17,36 +17,114 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 12px;
+  gap: 0px;
 }
 
 .title {
   color: var(--color-base-1);
+  margin: 0;
+  opacity: 0;
+  transform: translateY(-30px);
+  transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.titleVisible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.titleRegular {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 96px;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.titleItalic {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 96px;
+  line-height: 1.4;
+  font-weight: 400;
+  letter-spacing: -2.4px;
 }
 
 .desc {
   color: var(--color-base-1);
   text-align: center;
-  margin-top: 12px;
+  margin-top: -8px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 300;
+  font-size: 21px;
+  line-height: 1.4;
+  letter-spacing: -0.84px;
+  opacity: 0;
+  transform: translateY(-30px);
+  transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  transition-delay: 0.3s;
+}
+
+.descVisible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
 }
 
 .imageGrid {
   display: flex;
   justify-content: center;
-  gap: 100px;
+  gap: 20px;
+  margin-top: -61px;
 }
 
 .imageCard {
   position: relative;
-  width: 332px;
-  height: 380px;
+  width: 517px;
+  height: 611px;
   border-radius: 4px;
   overflow: hidden;
-  background-color: #222;
+  background-color: transparent;
 }
 
-.imageCard::after {
-  content: "";
+.imageRevealMask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: transparent;
+  transform: translateY(-100%);
+  transition: transform 1.2s cubic-bezier(0.1, 0.7, 0.2, 1);
+  transition-delay: 0.1s;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.imageRevealMask.delay2 {
+  transition-delay: 0.25s;
+}
+
+.visibleMask {
+  transform: translateY(0) !important;
+}
+
+.imageRevealMask img {
+  transform: translateY(100%);
+  transition: transform 1.2s cubic-bezier(0.1, 0.7, 0.2, 1);
+  transition-delay: 0.1s;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.imageRevealMask.delay2 img {
+  transition-delay: 0.25s;
+}
+
+.visibleMask img {
+  transform: translateY(0) !important;
+}
+
+.gradientOverlay {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -54,6 +132,7 @@
   height: 40%;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
   pointer-events: none;
+  z-index: 10;
 }
 
 .imageCard img {
@@ -63,18 +142,18 @@
 }
 
 .imgScene {
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  left: -1px;
+  top: -1px;
   object-fit: cover;
 }
 
 .imgWarm {
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  left: -1px;
+  top: -1px;
   object-fit: cover;
 }
 
@@ -95,10 +174,72 @@
   justify-content: center;
   gap: 40px;
   width: 100%;
+  margin-top: -70px;
+}
+
+.footerTextLeft {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+  transition-delay: 0.5s;
+}
+
+.footerVisible .footerTextLeft {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .line {
-  width: 338px;
+  width: 440px;
   height: 1px;
   background-color: rgba(255, 255, 255, 0.4);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: 0.7s;
+}
+
+.footerVisible .line {
+  transform: scaleX(1);
+}
+
+.footerTextRight {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+  transition-delay: 1.1s;
+}
+
+.footerVisible .footerTextRight,
+.isVisibleTriggered .footerTextRight {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* GSAP ScrollTrigger를 통해 최상위 section 요소에 .isVisibleTriggered가 추가되면 하위 요소들이 애니메이션됩니다. */
+.isVisibleTriggered .title {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.isVisibleTriggered .desc {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.isVisibleTriggered .imageRevealMask {
+  transform: translateY(0) !important;
+}
+
+.isVisibleTriggered .imageRevealMask img {
+  transform: translateY(0) !important;
+}
+
+.isVisibleTriggered .footerTextLeft {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.isVisibleTriggered .line {
+  transform: scaleX(1);
 }

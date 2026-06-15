@@ -1,0 +1,84 @@
+/* 풀스크린 메뉴 오버레이 — 헤더 Menu 클릭 시 열림 (헤더가 위에 얹힘) */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90; /* 헤더(100) 아래 */
+  background: var(--cream, #f7ebd7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s;
+}
+.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+.row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.item {
+  font-family: var(--font-en, sans-serif);
+  font-weight: 800;
+  font-size: clamp(40px, 6vw, 110px);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: #111;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+/* 다른 항목 hover 중일 때 나머지는 살짝 흐려짐 (포커스 유도) */
+.dim {
+  opacity: 0.35;
+}
+
+/* ===== 프리뷰 이미지 — hover 시 펼쳐지며 아래 항목 밀어냄 ===== */
+.preview {
+  display: grid;
+  grid-template-rows: 0fr; /* 닫힘 = 높이 0 */
+  transition: grid-template-rows 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+}
+.previewOn {
+  grid-template-rows: 1fr; /* 열림 = 콘텐츠 높이만큼 (부드럽게 밀어냄) */
+}
+.previewInner {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+.previewInner img {
+  display: block;
+  height: 42vh; /* 시안 비율(세로형 353×466) 고정 슬롯 — 이미지는 object-fit으로 채움(크롭) */
+  aspect-ratio: 353 / 466;
+  width: auto;
+  object-fit: cover;
+  margin: 2.5vh 0;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.4s ease 0.05s, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.previewOn .previewInner img {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preview,
+  .previewInner img {
+    transition: none;
+  }
+}

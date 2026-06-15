@@ -1,0 +1,90 @@
+/* BeyondSection — 갤러리(좌 텍스트 + 우 사진) + 검정 블록 */
+.beyond {
+  background: var(--color-base-1); /* 갤러리 영역 흰 */
+}
+
+/* ---------- 갤러리 ---------- */
+.gallery {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(24px, 3vw, 56px);
+  padding: clamp(48px, 6vw, 120px) var(--layout-gutter);
+}
+
+.galleryText {
+  flex: 0 0 32%;
+  position: sticky;
+  top: clamp(48px, 8vh, 120px);
+}
+
+.title {
+  margin-bottom: clamp(24px, 2vw, 32px);
+}
+
+.desc {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  opacity: 0.82;
+}
+
+.galleryImages {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-section-gap); /* 36px */
+}
+
+.galleryImages img {
+  width: 100%;
+  height: auto;
+}
+
+.galleryImages .galleryFirstImage {
+  height: clamp(400px, 43vw, 720px);
+  object-fit: cover;
+}
+
+.galleryImages .galleryThirdImage {
+  height: clamp(420px, 46vw, 760px);
+  object-fit: cover;
+}
+
+/* ---------- 검정 풀스크린 블록 ---------- */
+.dark {
+  background: var(--color-base-3); /* 검정 */
+  color: var(--color-base-1);
+}
+
+.darkExterior {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.darkText {
+  /* 줄바꿈은 마크업의 <br>로 고정 — 줄이 또 접히지 않게 가로 제약 없음 */
+  padding: clamp(48px, 6vw, 120px) var(--layout-gutter);
+  text-align: right;
+  line-height: 1.6;
+}
+
+.darkPhotos {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(20px, 2.4vw, 44px);
+  padding: 0 var(--layout-gutter) clamp(80px, 12vw, 200px);
+}
+
+.darkPhotoSm {
+  flex: 0 0 32%;
+  width: 32%;
+  height: auto;
+}
+
+.darkPhotoLg {
+  flex: 0 0 46%;
+  width: 46%;
+  height: auto;
+}

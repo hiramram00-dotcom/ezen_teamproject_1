@@ -1,0 +1,48 @@
+/* ShowroomHero — 소개문 */
+.hero {
+  background: var(--color-base-1); /* 흰 */
+  color: var(--color-base-3);
+}
+
+.intro {
+  /* 줄바꿈은 마크업의 <br>로 고정 — 줄이 또 접히지 않게 가로 제약 없음 */
+  margin: 0 var(--layout-gutter) 66px;
+  padding-top: clamp(72px, 11vw, 200px);
+}
+
+/* ---------- 비주얼 + 라벨 오버레이 ---------- */
+.visual {
+  position: relative;
+  width: 100%;
+}
+
+.visualImg {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.labels {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(28px, 4vw, 70px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(38px, 5.2vw, 100px);
+}
+
+.label {
+  color: var(--color-base-1); /* 비주얼 위 흰 텍스트 */
+}
+
+.labelVisit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.arrow {
+  width: clamp(24px, 1.9vw, 36px);
+  height: clamp(24px, 1.9vw, 36px);
+}
