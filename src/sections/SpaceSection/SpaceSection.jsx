@@ -3,7 +3,6 @@ import styles from './SpaceSection.module.css';
 
 import imgSpace02 from '../../../img/2.png';
 import imgSpace04 from '../../../img/4.png';
-import ilkwLogo from '../../assets/ilkw-logo-header.svg';
 import imgSpace05 from '../../assets/space/img-space-05.png';
 import imgSpace06 from '../../assets/space/img-space-06.png';
 import imgSpace07 from '../../assets/space/img-space-07.png';
