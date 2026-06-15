@@ -52,23 +52,7 @@
   width: auto;
   display: block;
 }
-/* 시안 커닝 — 이탤릭이라 K가 L 위로 살짝 겹침 */
-.letter:nth-child(3) {
-  margin-left: -0.14em;
-}
-
-/* 마침표(.) — 솔리드, 이탤릭 착시 보정 */
-.dot {
-  width: 0.2em;
-  height: 0.2em;
-  border-radius: 50%;
-  background: #fff;
-  align-self: flex-end;
-  margin-left: -0.02em;
-  margin-bottom: 0;
-  flex: none;
-  opacity: 0;
-}
+/* 새 로고 글자는 자연스레 붙음 (gap:0). 자간 미세조정 필요하면 .logo { gap } 사용 */
 
 /* ===== 중앙 서브카피 ===== */
 .copy {
