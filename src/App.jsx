@@ -9,6 +9,7 @@ import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
 import Footer from './components/Footer/Footer'
 import AboutPage from './pages/AboutPage/AboutPage'
+import Header from './components/Header/Header'
 
 function App() {
   if (window.location.pathname === '/about') {
@@ -17,6 +18,7 @@ function App() {
 
   return (
     <main>
+      <Header index />
       {<HeroSection />}
       {<IntroSection />}
       <StorySection />
