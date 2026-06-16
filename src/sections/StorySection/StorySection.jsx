@@ -32,8 +32,8 @@ export default function StorySection() {
 
   return (
     <div className="story-section-wrapper" ref={containerRef} style={{ height: '250vh', position: 'relative' }}>
-      <section 
-        className={styles.storySection} 
+      <section
+        className={styles.storySection}
         ref={sectionRef}
         style={{ position: 'sticky', top: 0, height: '100vh' }}
       >

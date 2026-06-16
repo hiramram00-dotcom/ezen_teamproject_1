@@ -20,17 +20,17 @@ function App() {
   return (
     <main>
       <Header index />
-      {<HeroSection />}
-      {<IntroSection />}
+      {/* <HeroSection /> */}
+      {/* <IntroSection /> */}
       <Story2Section />
       <StorySection />
       <SpaceSection />
-      {<StoryEndingSection />}
-      {<Snowman1Section />}
-      {<SnowmanSection2 />}
-      {<SpacesSection />}
-      {<CollaboSection />}
-      {<Footer />}
+      <StoryEndingSection />
+      {/* <Snowman1Section /> */}
+      {/* <SnowmanSection2 /> */}
+      {/* <SpacesSection /> */}
+      {/* <CollaboSection /> */}
+      {/* <Footer /> */}
     </main>
   )
 }
