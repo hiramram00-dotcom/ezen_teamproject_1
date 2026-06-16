@@ -34,8 +34,6 @@ function Home() {
       <HeroSection />
       <NewIntroSection />
       <MakeLightSection />
-      <HeroSection />
-      <NewIntroSection />
       <Story2Section />
       <StorySection />
       <SpaceSection />
