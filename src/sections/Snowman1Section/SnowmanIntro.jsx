@@ -216,7 +216,7 @@ function SnowmanIntro() {
   }, [])
 
   return (
-    <section ref={sectionRef} className={styles.snowman}>
+    <section id="products" ref={sectionRef} className={styles.snowman}>
       <div ref={stickyRef} className={styles.sticky}>
         <div ref={cardStageRef} className={styles.cardStage} aria-hidden="true">
           <div ref={cardTunnelRef} className={styles.cardTunnel}>

@@ -18,12 +18,13 @@ gsap.registerPlugin(ScrollTrigger)
  *  - 푸터 본문: 워드마크 로고가 왼쪽부터 써지듯 리빌
  */
 
+// target: 'top'은 최상단, 그 외엔 해당 섹션 id로 위로 스크롤
 const NAV = [
-  { label: '브랜드', href: '#brand' },
-  { label: '빛의 철학', href: '#philosophy' },
-  { label: '제품', href: '#products' },
-  { label: '공간 큐레이션', href: '#space' },
-  { label: '쇼룸', href: '#showroom' },
+  { label: '브랜드', target: 'top' },
+  { label: '빛의 철학', target: 'intro' },
+  { label: '제품', target: 'products' },
+  { label: '공간 큐레이션', target: 'showroom' },
+  { label: '콜라보', target: 'collabo' },
 ]
 
 function Footer() {
@@ -67,18 +68,18 @@ function Footer() {
 
       // ───── 트리거 ② 푸터 본문(.body) ─────
       // 푸터 본문에 진입하면 워드마크 로고가 왼쪽 → 오른쪽으로 써지듯 리빌.
-      // clip-path inset의 오른쪽 값을 100% → 0%으로 줄여 왼쪽부터 드러냄.
+      // scrub 없이 한 번 진입하면 스크롤과 무관하게 자체 duration으로 쭉 이어서 재생.
       gsap.fromTo(
         logoRef.current,
         { clipPath: 'inset(0 100% 0 0)' },
         {
           clipPath: 'inset(0 0% 0 0)',
-          ease: 'none',
+          duration: 1.2,
+          ease: 'power2.out',
           scrollTrigger: {
             trigger: bodyRef.current,
-            start: 'top 85%', // 본문 top이 화면 85% 지점에 닿으면 시작
-            end: 'top 40%', // 본문 top이 화면 40% 지점에 닿으면 끝 (페이지 끝 전 완료)
-            scrub: 1,
+            start: 'top 85%', // 본문 top이 화면 85% 지점에 닿으면 1회 재생
+            toggleActions: 'play none none reset', // 들어오면 재생, 위로 벗어나면 초기화(재진입 시 다시)
             refreshPriority: -1,
           },
         }
@@ -108,6 +109,16 @@ function Footer() {
       ctx.revert()
     }
   }, [])
+
+  // 푸터 내비: 해당 섹션으로 부드럽게 위로 스크롤 ('top'은 최상단)
+  const handleNavClick = (e, target) => {
+    e.preventDefault()
+    if (target === 'top') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   return (
     <div className={styles.footer} ref={footerRef}>
@@ -143,7 +154,12 @@ function Footer() {
         <div className={styles.bottom}>
         <nav className={styles.nav} aria-label="푸터 내비게이션">
           {NAV.map((item) => (
-            <a key={item.label} href={item.href} className={`${styles.navLink} type-body-3`}>
+            <a
+              key={item.label}
+              href={item.target === 'top' ? '#' : `#${item.target}`}
+              onClick={(e) => handleNavClick(e, item.target)}
+              className={`${styles.navLink} type-body-3`}
+            >
               {item.label}
             </a>
           ))}
