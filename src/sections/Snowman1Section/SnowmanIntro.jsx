@@ -21,7 +21,10 @@ const INTRO_SNOWMEN = [
   {
     targetX: -29.5,
     targetY: -20.2,
+    exitX: -96,
+    exitY: -58,
     rotation: 52,
+    exitRotation: 52,
     size: 19,
     turn: -0.7,
     glassColor: '#edc6c6',
@@ -31,6 +34,8 @@ const INTRO_SNOWMEN = [
   {
     targetX: 16.3,
     targetY: -42.4,
+    exitX: 30,
+    exitY: -112,
     rotation: -32,
     size: 23,
     turn: 0.62,
@@ -41,6 +46,8 @@ const INTRO_SNOWMEN = [
   {
     targetX: 47.2,
     targetY: -12.8,
+    exitX: 106,
+    exitY: -26,
     rotation: 15,
     size: 17,
     turn: -0.34,
@@ -51,6 +58,8 @@ const INTRO_SNOWMEN = [
   {
     targetX: -43.2,
     targetY: 33.3,
+    exitX: -102,
+    exitY: 96,
     rotation: -22,
     size: 34,
     turn: 0.2,
@@ -61,6 +70,8 @@ const INTRO_SNOWMEN = [
   {
     targetX: 17.6,
     targetY: 41.5,
+    exitX: 44,
+    exitY: 110,
     rotation: 29,
     size: 21,
     turn: -0.52,
@@ -125,9 +136,11 @@ function SnowmanIntro() {
       const progress = clamp(-rect.top / scrollable)
       const spinProgress = smoothstep(progress / 0.58)
       const settleProgress = smoothstep((progress - 0.46) / 0.2)
-      const transitionProgress = smoothstep((progress - 0.5) / 0.32)
-      const exitProgress = smoothstep((progress - 0.62) / 0.24)
-      const productReveal = smoothstep((progress - 0.8) / 0.16)
+      const transitionProgress = smoothstep((progress - 0.46) / 0.24)
+      const exitProgress = smoothstep((progress - 0.58) / 0.22)
+      const holdExit = smoothstep((progress - 0.86) / 0.14)
+      const productReveal = smoothstep((progress - 0.58) / 0.16)
+      const productExit = holdExit
       const fastRotation = -1260 * spinProgress
       const rotation =
         fastRotation + (targetRotation - fastRotation) * settleProgress
@@ -143,26 +156,41 @@ function SnowmanIntro() {
       meet.style.setProperty('--meet-y', `${transitionProgress * -92}px`)
       snowmanWord.style.setProperty(
         '--snowman-y',
-        `${transitionProgress * -56}px`,
+        `${transitionProgress * -56 - holdExit * 16}px`,
       )
       snowmanWord.style.setProperty(
         '--snowman-color',
         `rgb(${snowmanTextValue}, ${snowmanTextValue}, ${snowmanTextValue})`,
       )
-      snowmanWord.style.setProperty('--snowman-opacity', '1')
+      snowmanWord.style.setProperty(
+        '--snowman-weight',
+        `${700 - transitionProgress * 200}`,
+      )
+      snowmanWord.style.setProperty('--snowman-scale', `${1 - holdExit * 0.68}`)
+      snowmanWord.style.setProperty('--snowman-blur', `${holdExit * 4}px`)
+      snowmanWord.style.setProperty('--snowman-opacity', `${1 - holdExit}`)
       sticky.style.setProperty(
         '--intro-bg',
         `rgb(${whiteValue}, ${whiteValue}, ${whiteValue})`,
       )
       products.forEach((product, index) => {
         const item = INTRO_SNOWMEN[index]
+        const x = item.targetX + (item.exitX - item.targetX) * productExit
+        const y = item.targetY + (item.exitY - item.targetY) * productExit
+        const exitRotation = item.exitRotation ?? item.rotation * 1.35
+        const rotation =
+          item.rotation + (exitRotation - item.rotation) * productExit
 
-        product.style.setProperty('--x', `${item.targetX}vw`)
-        product.style.setProperty('--y', `${item.targetY}vh`)
-        product.style.setProperty('--rotation', `${item.rotation}deg`)
-        product.style.setProperty('--scale', `${0.96 + productReveal * 0.04}`)
-        product.style.setProperty('--opacity', `${productReveal}`)
-        product.dataset.turn = `${item.turn}`
+        product.style.setProperty('--x', `${x}vw`)
+        product.style.setProperty('--y', `${y}vh`)
+        product.style.setProperty('--rotation', `${rotation}deg`)
+        product.style.setProperty('--scale', `${0.96 + productReveal * 0.04 + productExit * 0.32}`)
+        product.style.setProperty(
+          '--opacity',
+          `${productReveal * (1 - productExit)}`,
+        )
+        product.style.setProperty('--blur', `${productExit * 2.5}px`)
+        product.dataset.turn = `${item.turn + productExit * 0.32}`
         product.dataset.enter = '0.35'
         product.dataset.light = '0'
       })
@@ -209,6 +237,18 @@ function SnowmanIntro() {
           </div>
         </div>
 
+        <div className={styles.title}>
+          <p ref={meetRef} className={`${styles.meetLine} type-italic-2`}>
+            Meet
+          </p>
+          <p
+            ref={snowmanWordRef}
+            className={`${styles.snowmanLine} type-title-semibold`}
+          >
+            SNOWMAN
+          </p>
+        </div>
+
         <div className={styles.productLayer} aria-hidden="true">
           {INTRO_SNOWMEN.map((snowman, index) => (
             <div
@@ -237,18 +277,6 @@ function SnowmanIntro() {
               />
             </div>
           ))}
-        </div>
-
-        <div className={styles.title}>
-          <p ref={meetRef} className={`${styles.meetLine} type-italic-2`}>
-            Meet
-          </p>
-          <p
-            ref={snowmanWordRef}
-            className={`${styles.snowmanLine} type-title-semibold`}
-          >
-            SNOWMAN
-          </p>
         </div>
       </div>
     </section>
