@@ -12,7 +12,7 @@ if ('scrollRestoration' in window.history) {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/ezen_teamproject_1">
       <App />
     </BrowserRouter>
   </StrictMode>,
