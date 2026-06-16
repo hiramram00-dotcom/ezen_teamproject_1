@@ -25,6 +25,7 @@ const CARD_H = 45.09 // vh
 // 스크롤 구간(raw 0~1): 0~GROW_END 커짐 / ~SHRINK_START 유지 / 이후 줄어듦
 const GROW_END = 0.22
 const SHRINK_START = 0.46
+const BEIGE_START = 0.76
 
 // easeInOutCubic — 기계적이지 않게
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
@@ -83,11 +84,11 @@ function SnowmanVideo() {
       card.style.borderRadius = 40 * (1 - f) + 'px'
 
       // 배경: 진입(검정) → 풀스크린 지나면 흰색(가려진 순간 교체)
-      const onWhite = reduce || raw >= GROW_END
       if (sticky) {
-        sticky.style.background = onWhite
-          ? 'var(--color-base-1)'
-          : 'var(--color-base-3)'
+        const beigeProgress = reduce
+          ? 1
+          : ease(clamp01((raw - BEIGE_START) / (1 - BEIGE_START)))
+        sticky.style.setProperty('--video-bg-progress', `${beigeProgress}`)
       }
 
       // 헤더·오버레이: 축소 후반(60~100%)에 페이드인
