@@ -175,16 +175,26 @@ function SnowmanIntro() {
       )
       products.forEach((product, index) => {
         const item = INTRO_SNOWMEN[index]
-        const x = item.targetX + (item.exitX - item.targetX) * productExit
-        const y = item.targetY + (item.exitY - item.targetY) * productExit
+        const gatheredX = item.targetX * 0.45
+        const gatheredY = item.targetY * 0.38
+        const settledX = gatheredX + (item.targetX - gatheredX) * productReveal
+        const settledY = gatheredY + (item.targetY - gatheredY) * productReveal
+        const x = settledX + (item.exitX - settledX) * productExit
+        const y = settledY + (item.exitY - settledY) * productExit
         const exitRotation = item.exitRotation ?? item.rotation * 1.35
+        const gatheredRotation = item.rotation * 0.55
+        const settledRotation =
+          gatheredRotation + (item.rotation - gatheredRotation) * productReveal
         const rotation =
-          item.rotation + (exitRotation - item.rotation) * productExit
+          settledRotation + (exitRotation - settledRotation) * productExit
 
         product.style.setProperty('--x', `${x}vw`)
         product.style.setProperty('--y', `${y}vh`)
         product.style.setProperty('--rotation', `${rotation}deg`)
-        product.style.setProperty('--scale', `${0.96 + productReveal * 0.04 + productExit * 0.32}`)
+        product.style.setProperty(
+          '--scale',
+          `${0.88 + productReveal * 0.12 + productExit * 0.32}`,
+        )
         product.style.setProperty(
           '--opacity',
           `${productReveal * (1 - productExit)}`,

@@ -39,6 +39,9 @@
   --model-scale: 0.62;
   --model-turn: 0;
   --model-light: 0;
+  --model-shadow: 0;
+  --model-wobble-x: 0vw;
+  --model-wobble-rotate: 0deg;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -49,6 +52,8 @@
   transform:
     translate(-50%, -50%)
     translate(var(--model-x), var(--model-y))
+    translateX(var(--model-wobble-x))
+    rotate(var(--model-wobble-rotate))
     scale(var(--model-scale));
   will-change: transform, opacity;
 }
@@ -56,44 +61,64 @@
 .modelWrap::before,
 .modelWrap::after {
   position: absolute;
-  top: 42%;
+  top: 40%;
   left: 50%;
   z-index: -1;
-  width: 58%;
+  width: 66%;
   aspect-ratio: 1;
   border-radius: 50%;
   content: '';
   opacity: var(--model-light);
   pointer-events: none;
-  transform: translate(-50%, -50%) scale(calc(0.55 + var(--model-light) * 0.45));
+  transform: translate(-50%, -50%) scale(calc(0.6 + var(--model-light) * 0.54));
   transition: opacity 80ms linear;
 }
 
 .modelWrap::before {
   background: radial-gradient(
     circle,
-    rgba(255, 232, 195, 0.62) 0%,
-    rgba(255, 218, 168, 0.3) 32%,
-    rgba(255, 205, 145, 0.1) 58%,
-    rgba(255, 205, 145, 0) 76%
+    rgba(255, 225, 178, 0.88) 0%,
+    rgba(255, 203, 135, 0.44) 34%,
+    rgba(255, 195, 118, 0.18) 58%,
+    rgba(255, 205, 145, 0) 78%
   );
-  filter: blur(22px);
+  filter: blur(26px);
 }
 
 .modelWrap::after {
-  width: 88%;
+  width: 104%;
   background: radial-gradient(
     circle,
-    rgba(255, 235, 205, 0.2) 0%,
-    rgba(255, 218, 176, 0.08) 45%,
-    rgba(255, 210, 160, 0) 72%
+    rgba(255, 229, 195, 0.34) 0%,
+    rgba(255, 213, 166, 0.14) 48%,
+    rgba(255, 210, 160, 0) 76%
   );
-  filter: blur(38px);
+  filter: blur(48px);
+}
+
+.modelShadow {
+  position: absolute;
+  left: 50%;
+  bottom: 15%;
+  z-index: 0;
+  width: 46%;
+  height: 9%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgba(0, 0, 0, 0.24) 0%,
+    rgba(0, 0, 0, 0.1) 48%,
+    rgba(0, 0, 0, 0) 74%
+  );
+  opacity: calc(var(--model-shadow) * 0.9);
+  transform: translateX(-50%) scale(calc(0.72 + var(--model-shadow) * 0.28));
+  filter: blur(18px);
+  pointer-events: none;
 }
 
 .modelCanvas {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: block;
   width: 100%;
   height: 100%;
@@ -128,6 +153,40 @@
   letter-spacing: -0.04em;
 }
 
+.buyLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 154px;
+  height: 44px;
+  margin-top: 34px;
+  padding: 0 22px;
+  border: 1px solid rgba(0, 0, 0, 0.72);
+  border-radius: 999px;
+  color: var(--color-base-3);
+  font-family: var(--font-kr);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-decoration: none;
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.buyLink:hover {
+  background: var(--color-base-3);
+  color: var(--color-base-1);
+  transform: translateY(-2px);
+}
+
+.buyLink:focus-visible {
+  outline: 2px solid var(--color-base-3);
+  outline-offset: 4px;
+}
+
 @media (max-width: 900px) {
   .snowman {
     height: 360svh;
@@ -143,6 +202,12 @@
     width: min(82%, 420px);
     text-align: center;
     transform: translate(-50%, var(--detail-x));
+  }
+
+  .buyLink {
+    height: 42px;
+    margin-top: 26px;
+    font-size: 14px;
   }
 }
 
