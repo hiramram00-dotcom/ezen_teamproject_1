@@ -104,6 +104,7 @@ function CollaboSection() {
     let dragStartPos = 0
     let last = performance.now()
     let raf = 0
+    let isVisible = false
 
     // ----- 호버(카드 위에서만 정지) / 드래그 -----
     const overCard = (el) => !!(el && el.closest && el.closest('[data-card]'))
@@ -140,6 +141,9 @@ function CollaboSection() {
     viewport.addEventListener('pointercancel', onUp)
 
     const frame = (now) => {
+      raf = 0
+      if (!isVisible) return
+
       const dt = Math.min(0.05, (now - last) / 1000)
       last = now
 
@@ -163,10 +167,26 @@ function CollaboSection() {
       raf = requestAnimationFrame(frame)
     }
 
-    raf = requestAnimationFrame(frame)
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting
+
+        if (isVisible && !raf) {
+          last = performance.now()
+          raf = requestAnimationFrame(frame)
+        } else if (!isVisible && raf) {
+          cancelAnimationFrame(raf)
+          raf = 0
+        }
+      },
+      { threshold: 0 },
+    )
+
+    visibilityObserver.observe(wrap)
     window.addEventListener('resize', measure)
     return () => {
       cancelAnimationFrame(raf)
+      visibilityObserver.disconnect()
       window.removeEventListener('resize', measure)
       viewport.removeEventListener('pointerover', onOver)
       viewport.removeEventListener('pointerout', onOut)
