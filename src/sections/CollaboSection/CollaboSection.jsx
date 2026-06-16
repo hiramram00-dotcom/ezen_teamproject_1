@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import imgKakao from './assets/collabo-kakao.webp'
 import imgKittybunnypony from './assets/collabo-kittybunnypony.webp'
 import imgHankyoreh from './assets/collabo-hankyoreh.webp'
@@ -6,6 +8,8 @@ import imgChilsung from './assets/collabo-chilsung.webp'
 import imgWarmgreytale from './assets/collabo-warmgreytale.webp'
 import imgKanu from './assets/collabo-kanu.webp'
 import styles from './CollaboSection.module.css'
+
+gsap.registerPlugin(ScrollTrigger)
 
 /**
  * CollaboSection
@@ -75,8 +79,35 @@ const clamp01 = (v) => Math.min(1, Math.max(0, v))
 function CollaboSection() {
   const wrapRef = useRef(null)
   const titleRef = useRef(null)
+  const headingRef = useRef(null)
+  const descRef = useRef(null)
   const viewportRef = useRef(null)
   const trackRef = useRef(null)
+
+  // 제목 + 아래 한글 문장 — 섹션 진입 시 왼쪽 → 오른쪽으로 쓰여지듯 리빌 (ScrollTrigger)
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const targets = [headingRef.current, descRef.current].filter(Boolean)
+    if (!targets.length) return
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        targets,
+        { clipPath: 'inset(0 100% 0 0)' },
+        {
+          clipPath: 'inset(0 0% 0 0)',
+          duration: 1.2,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: wrapRef.current,
+            // 섹션 상단이 화면 40%에 닿으면 진입 → 스크롤과 무관하게 끝까지 1회 재생.
+            start: 'top 40%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      )
+    }, wrapRef)
+    return () => ctx.revert()
+  }, [])
 
   useEffect(() => {
     const wrap = wrapRef.current
@@ -155,7 +186,12 @@ function CollaboSection() {
       const aP = ease(clamp01(scrolled / (total * 0.85)))
       const rise = Math.max(0, vh / 2 - (title.offsetTop + title.offsetHeight / 2))
       title.style.transform = `translateY(${(1 - aP) * rise}px)`
-      track.style.opacity = String(aP)
+      // 갤러리: 페이드인은 앞 85%에 걸쳐 더 천천히, 상승은 전체 구간에서 360px 진행.
+      // 상승 거리를 크게 잡아 페이드 중에도 또렷이 올라오는 게 보이도록(=인터랙션 강조).
+      // (트랙 transform은 마퀴 translateX가 쓰므로 상승은 부모 viewport에 적용)
+      const galleryFade = clamp01(aP / 0.85)
+      viewport.style.transform = `translateY(${(1 - aP) * 360}px)`
+      track.style.opacity = String(galleryFade)
 
       // 마퀴 (호버/드래그 중엔 자동 정지)
       const inView = rect.bottom > 0 && rect.top < vh
@@ -205,12 +241,12 @@ function CollaboSection() {
     <section id="collabo" ref={wrapRef} className={styles.collabo}>
       <div className={styles.sticky}>
         <div ref={titleRef} className={styles.intro}>
-          <h2 className={styles.title}>
+          <h2 ref={headingRef} className={styles.title}>
             <span className="type-title-1">COLLABO</span>{' '}
             <span className="type-italic-1">with</span>{' '}
             <span className="type-title-1">ILKW.</span>
           </h2>
-          <p className={`${styles.desc} type-body-3`}>
+          <p ref={descRef} className={`${styles.desc} type-body-3`}>
             다양한 브랜드와 함께 새로운 빛의 경험을 만들어갑니다.
           </p>
         </div>
