@@ -31,9 +31,9 @@ function Home() {
   return (
     <main>
       <Header index />
-      {<HeroSection />}
-      {<NewIntroSection />}
-      {<MakeLightSection />}
+      <HeroSection />
+      <NewIntroSection />
+      <MakeLightSection />
       <HeroSection />
       <NewIntroSection />
       <Story2Section />
@@ -45,7 +45,7 @@ function Home() {
       <CollaboSection />
       <Footer />
     </main>
-  )
+  );
 }
 
 // 제품 목록 → 상세 이동(라우터)
