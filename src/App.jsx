@@ -31,28 +31,19 @@ function Home() {
   return (
     <main>
       <Header index />
-      {/* <HeroSection /> */}
-      {/* <IntroSection /> */}
-      {<HeroSection />}
-      {<NewIntroSection />}
-      {<MakeLightSection />}
       <HeroSection />
       <NewIntroSection />
+      <MakeLightSection />
       <Story2Section />
       <StorySection />
       <SpaceSection />
       <StoryEndingSection />
-      {/* <Snowman1Section /> */}
-      {/* <SnowmanSection2 /> */}
-      {/* <SpacesSection /> */}
-      {/* <CollaboSection /> */}
-      {/* <Footer /> */}
       <Snowman1Section />
       <SpacesSection />
       <CollaboSection />
       <Footer />
     </main>
-  )
+  );
 }
 
 // 제품 목록 → 상세 이동(라우터)
