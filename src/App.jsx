@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import HeroSection from './sections/HeroSection/HeroSection'
 import NewIntroSection from './sections/NewIntroSection/NewIntroSection'
+import MakeLightSection from './sections/MakeLightSection/MakeLightSection'
 import Story2Section from './sections/Story2Section/Story2Section'
 import StorySection from './sections/StorySection/StorySection'
 import SpaceSection from './sections/SpaceSection/SpaceSection'
@@ -30,6 +31,10 @@ function Home() {
   return (
     <main>
       <Header index />
+      {<HeroSection />}
+      {<IntroSection />}
+      {<NewIntroSection />}
+      {<MakeLightSection />}
       <HeroSection />
       <NewIntroSection />
       <Story2Section />
