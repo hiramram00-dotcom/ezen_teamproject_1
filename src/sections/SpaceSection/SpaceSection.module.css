@@ -41,6 +41,7 @@
   position: relative;
   flex-shrink: 0;
   display: flow-root; /* Prevent margin collapse from .textBox */
+  margin: 0 auto; /* 화면이 1920px 이상일 때 왼쪽 쏠림(깨짐) 방지 */
 }
 
 .textWrapper {
