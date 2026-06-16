@@ -25,7 +25,7 @@
   margin: 0;
   opacity: 0;
   transform: translateY(-30px);
-  transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: all 1.1s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .titleVisible {
@@ -60,7 +60,7 @@
   letter-spacing: -0.84px;
   opacity: 0;
   transform: translateY(-30px);
-  transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: all 1.1s cubic-bezier(0.25, 1, 0.5, 1);
   transition-delay: 0.3s;
 }
 
@@ -94,14 +94,14 @@
   overflow: hidden;
   background-color: transparent;
   transform: translateY(-100%);
-  transition: transform 1.2s cubic-bezier(0.1, 0.7, 0.2, 1);
-  transition-delay: 0.1s;
+  transition: transform 1.6s cubic-bezier(0.1, 0.7, 0.2, 1);
+  transition-delay: 0.2s;
   will-change: transform;
   backface-visibility: hidden;
 }
 
 .imageRevealMask.delay2 {
-  transition-delay: 0.25s;
+  transition-delay: 0.45s;
 }
 
 .visibleMask {
@@ -110,14 +110,14 @@
 
 .imageRevealMask img {
   transform: translateY(100%);
-  transition: transform 1.2s cubic-bezier(0.1, 0.7, 0.2, 1);
-  transition-delay: 0.1s;
+  transition: transform 1.6s cubic-bezier(0.1, 0.7, 0.2, 1);
+  transition-delay: 0.2s;
   will-change: transform;
   backface-visibility: hidden;
 }
 
 .imageRevealMask.delay2 img {
-  transition-delay: 0.25s;
+  transition-delay: 0.45s;
 }
 
 .visibleMask img {
@@ -180,8 +180,8 @@
 .footerTextLeft {
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity 1s ease-out, transform 1s ease-out;
-  transition-delay: 0.5s;
+  transition: opacity 1.1s ease-out, transform 1.1s ease-out;
+  transition-delay: 0.6s;
 }
 
 .footerVisible .footerTextLeft {
@@ -195,8 +195,8 @@
   background-color: rgba(255, 255, 255, 0.4);
   transform-origin: left;
   transform: scaleX(0);
-  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: 0.7s;
+  transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: 0.9s;
 }
 
 .footerVisible .line {
@@ -206,8 +206,8 @@
 .footerTextRight {
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity 1s ease-out, transform 1s ease-out;
-  transition-delay: 1.1s;
+  transition: opacity 1.1s ease-out, transform 1.1s ease-out;
+  transition-delay: 1.3s;
 }
 
 .footerVisible .footerTextRight,
@@ -216,7 +216,6 @@
   transform: translateY(0);
 }
 
-/* GSAP ScrollTrigger를 통해 최상위 section 요소에 .isVisibleTriggered가 추가되면 하위 요소들이 애니메이션됩니다. */
 .isVisibleTriggered .title {
   opacity: 1 !important;
   transform: translateY(0) !important;

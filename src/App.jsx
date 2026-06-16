@@ -31,6 +31,8 @@ function Home() {
   return (
     <main>
       <Header index />
+      {/* <HeroSection /> */}
+      {/* <IntroSection /> */}
       {<HeroSection />}
       {<NewIntroSection />}
       {<MakeLightSection />}
@@ -40,6 +42,11 @@ function Home() {
       <StorySection />
       <SpaceSection />
       <StoryEndingSection />
+      {/* <Snowman1Section /> */}
+      {/* <SnowmanSection2 /> */}
+      {/* <SpacesSection /> */}
+      {/* <CollaboSection /> */}
+      {/* <Footer /> */}
       <Snowman1Section />
       <SpacesSection />
       <CollaboSection />
