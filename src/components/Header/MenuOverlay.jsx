@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import styles from './MenuOverlay.module.css'
 import img1 from '../../assets/header/header-menu-test01.webp'
 import img2 from '../../assets/header/header-menu-test02.webp'
@@ -9,9 +10,14 @@ import img4 from '../../assets/header/header-menu-test04.webp'
 // (지금은 임시로: 항목에 포커스하면 이 4장을 0.5초 간격으로 무한 순환)
 const TEST_IMAGES = [img1, img2, img3, img4]
 
-const ITEMS = ['ABOUT', 'PRODUCT', 'SHOWROOM', 'COLLABO']
+const ITEMS = [
+  { label: 'ABOUT', to: '/about' },
+  { label: 'PRODUCT', to: '/product' },
+  { label: 'SHOWROOM', to: '/showroom' },
+  { label: 'COLLABO', to: '/collabo' },
+]
 
-function MenuOverlay({ open }) {
+function MenuOverlay({ open, onNavigate }) {
   const [active, setActive] = useState(null) // hover된 항목 index
   const [imgIdx, setImgIdx] = useState(0) // 포커스 중 0.5초마다 도는 테스트 이미지 index
 
@@ -26,15 +32,16 @@ function MenuOverlay({ open }) {
   return (
     <div className={`${styles.overlay} ${open ? styles.open : ''}`} aria-hidden={!open}>
       <nav className={styles.list} onMouseLeave={() => setActive(null)}>
-        {ITEMS.map((label, i) => (
+        {ITEMS.map(({ label, to }, i) => (
           <div className={styles.row} key={label}>
-            <a
+            <Link
               className={`${styles.item} ${active !== null && active !== i ? styles.dim : ''}`}
-              href="#"
+              to={to}
+              onClick={onNavigate}
               onMouseEnter={() => setActive(i)}
             >
               {label}
-            </a>
+            </Link>
             {/* hover 시 시안비율(세로형) 슬롯이 펼쳐지며 아래 항목 밀어냄 */}
             <div className={`${styles.preview} ${active === i ? styles.previewOn : ''}`}>
               <div className={styles.previewInner}>

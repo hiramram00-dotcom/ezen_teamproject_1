@@ -31,6 +31,7 @@ function SnowmanModel({
     let model = null
     let frame = null
     let environmentMap = null
+    let isVisible = false
     const glassMaterials = []
     const glowMaterials = []
     const baseGlassColor = new THREE.Color(glassColor)
@@ -140,6 +141,9 @@ function SnowmanModel({
     })
 
     const render = () => {
+      frame = null
+      if (!isVisible) return
+
       if (model) {
         const elapsed = clock.getElapsedTime()
         const turn = Number.parseFloat(canvas.parentElement.dataset.turn) || 0
@@ -163,12 +167,28 @@ function SnowmanModel({
       frame = requestAnimationFrame(render)
     }
 
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting
+
+        if (isVisible && frame === null) {
+          resize()
+          frame = requestAnimationFrame(render)
+        } else if (!isVisible && frame !== null) {
+          cancelAnimationFrame(frame)
+          frame = null
+        }
+      },
+      { threshold: 0 },
+    )
+
     resize()
-    render()
+    visibilityObserver.observe(canvas)
     window.addEventListener('resize', resize)
 
     return () => {
       window.removeEventListener('resize', resize)
+      visibilityObserver.disconnect()
       if (frame) cancelAnimationFrame(frame)
       scene.traverse((object) => {
         if (!object.isMesh) return

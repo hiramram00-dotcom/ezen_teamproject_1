@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import HeroSection from './sections/HeroSection/HeroSection'
 import NewIntroSection from './sections/NewIntroSection/NewIntroSection'
 import Story2Section from './sections/Story2Section/Story2Section'
@@ -12,59 +13,20 @@ import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
 import Footer from './components/Footer/Footer'
 import AboutPage from './pages/AboutPage/AboutPage'
+import ShowroomPage from './pages/ShowroomPage/ShowroomPage'
 import Header from './components/Header/Header'
 
-const getCurrentView = () => {
-  if (window.location.hash === '#product/flamingo') return 'flamingo'
-  if (window.location.hash === '#product') return 'product'
-  return 'home'
+// 라우트 바뀔 때마다 맨 위로 (엉뚱한 스크롤 위치 방지)
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+  return null
 }
 
-function App() {
-  const [view, setView] = useState(getCurrentView)
-
-  useEffect(() => {
-    const syncViewWithHistory = () => {
-      const nextView = getCurrentView()
-      setView(nextView)
-
-      window.requestAnimationFrame(() => {
-        if (nextView !== 'home') {
-          window.scrollTo({ top: 0 })
-          return
-        }
-
-        const targetId = window.location.hash.slice(1)
-        document.getElementById(targetId)?.scrollIntoView()
-      })
-    }
-
-    window.addEventListener('popstate', syncViewWithHistory)
-    return () => window.removeEventListener('popstate', syncViewWithHistory)
-  }, [])
-
-  const openProductDetail = (product) => {
-    if (product !== 'flamingo') return
-
-    window.history.pushState(null, '', '#product/flamingo')
-    setView('flamingo')
-    window.requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, behavior: 'auto' })
-    })
-  }
-
-  if (view === 'flamingo') {
-    return <FlamingoDetailSection />
-  }
-
-  if (view === 'product') {
-    return <ProductSection onOpenProduct={openProductDetail} />
-  }
-
-  if (window.location.pathname === '/about') {
-    return <AboutPage />
-  }
-
+// 메인(인덱스) 페이지 — 헤더는 인덱스 전용 동작(index)
+function Home() {
   return (
     <main>
       <Header index />
@@ -79,6 +41,35 @@ function App() {
       <CollaboSection />
       <Footer />
     </main>
+  )
+}
+
+// 제품 목록 → 상세 이동(라우터)
+function ProductRoute() {
+  const navigate = useNavigate()
+  return (
+    <ProductSection
+      onOpenProduct={(product) => {
+        if (product === 'flamingo') navigate('/product/flamingo')
+      }}
+    />
+  )
+}
+
+function App() {
+  return (
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/product" element={<ProductRoute />} />
+        <Route path="/product/flamingo" element={<FlamingoDetailSection />} />
+        <Route path="/showroom" element={<ShowroomPage />} />
+        {/* ⚠️ /collabo 는 아직 전용 페이지 미정(취합 전) → 임시로 홈 콜라보 섹션 단독 렌더 */}
+        <Route path="/collabo" element={<CollaboSection />} />
+      </Routes>
+    </>
   )
 }
 
