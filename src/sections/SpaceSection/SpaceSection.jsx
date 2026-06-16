@@ -37,7 +37,8 @@ export default function SpaceSection() {
 
   useEffect(() => {
     const handleResize = () => {
-      setScale(window.innerWidth < 1920 ? window.innerWidth / 1920 : 1);
+      const clientWidth = document.documentElement.clientWidth;
+      setScale(clientWidth < 1920 ? clientWidth / 1920 : 1);
       if (textBoxRef.current) {
         setTextHeight(textBoxRef.current.offsetHeight);
       }
