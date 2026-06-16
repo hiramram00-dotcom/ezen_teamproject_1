@@ -12,15 +12,15 @@ gsap.registerPlugin(ScrollTrigger)
 
 // ===== 타이포 인트로 타이밍/위치 튜닝 (초) =====
 const ROW_DROP = 0.56     // KW(아래 행) 내려가는 양 (뷰포트 높이 비율)
-const APPEAR = 0.35       // 글자 페이드인
-const P1_DUR = 0.7        // 1단계 가로(X) 이동
-const GAP_AFTER_H = 0.25  // 가로 → 세로 사이 "사알짝 텀"
-const P2_BOT_DUR = 0.8    // 2단계 밑줄(KW) 수직 상승
-const KW_DELAY = 0.1      // K → W 살짝 시차
+const APPEAR = 0.25       // 글자 페이드인
+const P1_DUR = 0.45       // 1단계 가로(X) 이동
+const GAP_AFTER_H = 0.12  // 가로 → 세로 사이 "사알짝 텀"
+const P2_BOT_DUR = 0.5    // 2단계 밑줄(KW) 수직 상승
+const KW_DELAY = 0.08     // K → W 살짝 시차
 
 // ===== 영상 reveal (전구까지 자동 → 그 다음 스크롤로 밝힘) =====
-const REVEAL_BULB_AT = 0.5   // 최종화면 → 전구 등장
-const REVEAL_BULB_DUR = 1.4  // 전구 빛구멍 드러나는 속도 (천천히)
+const REVEAL_BULB_AT = 0.3   // 최종화면 → 전구 등장
+const REVEAL_BULB_DUR = 0.9  // 전구 빛구멍 드러나는 속도
 const REVEAL_SCROLL_VH = 1.3 // 빛 다 밝히는 데 필요한 스크롤 거리 (뷰포트 높이 배수)
 const BULB_R = 14            // 전구 빛구멍 크기 (%)
 const FULL_R = 165           // 완전 공개 (%)
@@ -37,7 +37,11 @@ function HeroSection() {
   const overlayRef = useRef(null)
   const bottomLogoRef = useRef(null)
   const hintRef = useRef(null)
-  const [introDone, setIntroDone] = useState(false)
+  // reduce-motion이면 인트로를 건너뛰므로 처음부터 done 상태로 시작
+  // (effect 안에서 동기 setState 호출 → 불필요한 리렌더 경고 방지)
+  const [introDone, setIntroDone] = useState(
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
 
   // 마운트: 로고 중앙정렬 + 인트로 동안 스크롤 잠금
   useEffect(() => {
@@ -116,7 +120,7 @@ function HeroSection() {
       if (video) video.play().catch(() => {})
       document.body.style.overflow = ''
       document.body.style.paddingRight = ''
-      setIntroDone(true)
+      // introDone은 reduce일 때 초기값이 이미 true → 여기서 setState 불필요
       return
     }
 
