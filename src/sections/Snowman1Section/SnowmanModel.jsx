@@ -6,7 +6,13 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import snowmanModel from '../../../3d/snowman.glb?url'
 import studioEnvironment from '../../../3d/studio-light.hdr.hdr?url'
 
-function SnowmanModel({ className = '' }) {
+function SnowmanModel({
+  className = '',
+  glassColor = '#f0f0f0',
+  bodyColor = '#9f9f9f',
+  lampColor = '#ffd7a6',
+  cameraZ = 14,
+}) {
   const canvasRef = useRef(null)
 
   useEffect(() => {
@@ -28,6 +34,9 @@ function SnowmanModel({ className = '' }) {
     let isVisible = false
     const glassMaterials = []
     const glowMaterials = []
+    const baseGlassColor = new THREE.Color(glassColor)
+    const litGlassColor = new THREE.Color(lampColor)
+    const baseLampColor = new THREE.Color(lampColor)
 
     renderer.setClearColor(0xffffff, 0)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -36,7 +45,7 @@ function SnowmanModel({ className = '' }) {
     renderer.toneMappingExposure = 0.82
     environmentGenerator.compileEquirectangularShader()
 
-    camera.position.set(0, 0.15, 14)
+    camera.position.set(0, 0.15, cameraZ)
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x777777, 1.15))
 
@@ -48,7 +57,7 @@ function SnowmanModel({ className = '' }) {
     fillLight.position.set(5, 1, 2)
     scene.add(fillLight)
 
-    const lampLight = new THREE.PointLight(0xffd8a8, 0, 4.8, 2)
+    const lampLight = new THREE.PointLight(baseLampColor, 0, 4.8, 2)
     lampLight.position.set(0, 0.75, 0.8)
     scene.add(lampLight)
 
@@ -100,7 +109,7 @@ function SnowmanModel({ className = '' }) {
           }
 
           if (material.metalness > 0.5) {
-            material.color.set(0x9f9f9f)
+            material.color.set(bodyColor)
             material.roughness = 0.42
             material.metalness = 1
             material.envMapIntensity = 1.05
@@ -112,7 +121,7 @@ function SnowmanModel({ className = '' }) {
 
           if (material.transmission <= 0) return
 
-          material.color.set(0xf0f0f0)
+          material.color.copy(baseGlassColor)
           material.opacity = 1
           material.transparent = false
           material.transmission = 0
@@ -122,7 +131,7 @@ function SnowmanModel({ className = '' }) {
           material.clearcoat = 1
           material.clearcoatRoughness = 0.06
           material.depthWrite = true
-          material.emissive.set(0xffd7a6)
+          material.emissive.copy(baseLampColor)
           material.emissiveIntensity = 0
           glassMaterials.push(material)
           material.needsUpdate = true
@@ -146,11 +155,7 @@ function SnowmanModel({ className = '' }) {
         model.rotation.z = Math.sin(enter * Math.PI) * -0.07
         lampLight.intensity = light * 5.5
         glassMaterials.forEach((material) => {
-          material.color.setRGB(
-            0.94 + light * 0.035,
-            0.94 - light * 0.045,
-            0.94 - light * 0.1,
-          )
+          material.color.copy(baseGlassColor).lerp(litGlassColor, light * 0.42)
           material.emissiveIntensity = light * 0.35
         })
         glowMaterials.forEach((material) => {
@@ -198,7 +203,7 @@ function SnowmanModel({ className = '' }) {
       environmentGenerator.dispose()
       renderer.dispose()
     }
-  }, [])
+  }, [bodyColor, cameraZ, glassColor, lampColor])
 
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />
 }

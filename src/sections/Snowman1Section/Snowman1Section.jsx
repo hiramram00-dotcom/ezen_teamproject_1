@@ -1,5 +1,6 @@
 import SnowmanIntro from './SnowmanIntro'
 import SnowmanVideo from './SnowmanVideo'
+import SnowmanProductScene from './SnowmanProductScene'
 
 /**
  * Snowman1Section
@@ -12,6 +13,7 @@ function Snowman1Section() {
   return (
     <>
       <SnowmanIntro />
+      <SnowmanProductScene />
       <SnowmanVideo />
     </>
   )

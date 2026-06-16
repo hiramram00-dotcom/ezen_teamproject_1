@@ -1,81 +1,217 @@
-/* =========================================================
-   Snowman1Section — Figma node 468:657 ("18")
-   풀스크린 블랙 + 중앙 "Meet / SNOWMAN"
-   색·폰트는 토큰/타이포 클래스만 사용 (하드코딩 금지)
-   ========================================================= */
-
 .snowman {
   position: relative;
   width: 100%;
-  min-height: 100vh;
-  background: var(--color-base-3); /* #000 */
-  color: var(--color-base-1);      /* #FFF */
+  height: 260svh;
+  background: var(--color-base-1);
+  overflow: visible;
+}
+
+.sticky {
+  --intro-bg: rgb(0, 0, 0);
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100svh;
+  background: var(--intro-bg);
+  color: var(--color-base-1);
   overflow: hidden;
 }
 
-/* ----- 상단 헤더 (로고 ↔ 메뉴) ----- */
-.header {
-  position: absolute;
-  top: 19px;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  /* Figma: 1920 폭 기준 좌우 26px 여백 (width 1868) */
-  padding: 0 26px;
-}
-
-.logo {
-  display: block;
-  flex-shrink: 0;
-  line-height: 0;
-}
-
-.logo img {
-  width: 102.939px;
-  height: 23px;
-}
-
-.menu {
-  flex-shrink: 0;
-  color: var(--color-base-1);
-  white-space: nowrap;
-  text-transform: capitalize;
-}
-
-/* ----- 중앙 타이틀 ----- */
 .title {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  z-index: 3;
   width: 550px;
   max-width: 90vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  transform: translate(-50%, -50%);
+}
+
+.productLayer {
+  position: absolute;
+  inset: -12svh 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.product {
+  --x: 0vw;
+  --y: 0vh;
+  --rotation: 0deg;
+  --scale: 1;
+  --opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--size);
+  aspect-ratio: 1 / 1;
+  max-width: none;
+  opacity: var(--opacity);
+  transform:
+    translate(-50%, -50%)
+    translate(var(--x), var(--y))
+    rotate(var(--rotation))
+    scale(var(--scale));
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.productCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .title p {
   width: 100%;
 }
 
-/* ----- 반응형 (브레이크포인트 px는 팀 [TBD], 임시값) ----- */
+.meetLine {
+  --meet-opacity: 1;
+  --meet-y: 0px;
+  opacity: var(--meet-opacity);
+  transform: translateY(var(--meet-y));
+  will-change: transform, opacity;
+}
+
+.snowmanLine {
+  --snowman-y: 0px;
+  --snowman-color: rgb(255, 255, 255);
+  --snowman-opacity: 1;
+  color: var(--snowman-color);
+  opacity: var(--snowman-opacity);
+  transform: translateY(var(--snowman-y));
+  will-change: transform, color, opacity;
+}
+
+.cardStage {
+  --cards-opacity: 0.42;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  opacity: var(--cards-opacity);
+  perspective: 35em;
+  pointer-events: none;
+  mask: linear-gradient(90deg, #0000, #000 20% 80%, #0000);
+  will-change: opacity;
+}
+
+.cardStage::before {
+  position: absolute;
+  width: min(132vw, 2020px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 247, 234, 0.13), transparent 58%),
+    radial-gradient(circle, rgba(244, 147, 7, 0.1), transparent 70%);
+  content: '';
+  filter: blur(28px);
+}
+
+.cardTunnel {
+  --n: 16;
+  --carousel-rotation: 0deg;
+  display: grid;
+  place-items: center;
+  width: 0;
+  height: 0;
+  transform: rotateY(var(--carousel-rotation));
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.card {
+  --w: min(17.5em, 18vw);
+  --ba: calc(1turn / var(--n));
+  position: absolute;
+  grid-area: 1 / 1;
+  width: var(--w);
+  aspect-ratio: 7 / 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.06)),
+    rgba(255, 255, 255, 0.08);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+  transform:
+    rotateY(calc(var(--i) * var(--ba)))
+    translateZ(calc(-1 * (0.5 * var(--w) + 0.5em) / tan(0.5 * var(--ba))));
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.58;
+  filter: grayscale(0.25) saturate(0.8) brightness(0.75);
+}
+
+.card::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 36%, rgba(0, 0, 0, 0.5));
+  content: '';
+}
+
+.card figcaption {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-en);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.snowmanCard {
+  border-color: rgba(255, 247, 234, 0.56);
+  background:
+    linear-gradient(180deg, rgba(255, 247, 234, 0.28), rgba(255, 247, 234, 0.08)),
+    rgba(255, 255, 255, 0.1);
+}
+
 @media (max-width: 767px) {
+  .snowman {
+    height: 240svh;
+  }
+
   .title {
     width: auto;
   }
+
   .title :global(.type-italic-2),
   .title :global(.type-title-semibold) {
     font-size: 56px;
   }
-  .logo img {
-    width: 80px;
-    height: auto;
+
+  .cardStage {
+    --cards-opacity: 0.26;
   }
-  .menu {
-    font-size: 22px;
+
+  .card {
+    --w: min(12em, 36vw);
+    border-radius: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snowman {
+    height: 120svh;
   }
 }

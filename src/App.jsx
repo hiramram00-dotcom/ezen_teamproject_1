@@ -7,7 +7,6 @@ import StorySection from './sections/StorySection/StorySection'
 import SpaceSection from './sections/SpaceSection/SpaceSection'
 import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection'
 import Snowman1Section from './sections/Snowman1Section/Snowman1Section'
-import SnowmanSection2 from './sections/SnowmanSection2/SnowmanSection2'
 import ProductSection from './sections/ProductSection/ProductSection'
 import FlamingoDetailSection from './sections/FlamingoDetailSection/FlamingoDetailSection'
 import SpacesSection from './sections/SpacesSection/SpacesSection'
@@ -38,7 +37,6 @@ function Home() {
       <SpaceSection />
       <StoryEndingSection />
       <Snowman1Section />
-      <SnowmanSection2 />
       <SpacesSection />
       <CollaboSection />
       <Footer />

@@ -7,8 +7,8 @@
 
 .stage {
   position: sticky;
-  top: 0;
-  height: 100svh;
+  top: -12svh;
+  height: 124svh;
   overflow: hidden;
   background: var(--color-base-1);
 }
@@ -19,7 +19,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  z-index: 2;
+  z-index: 5;
   margin: 0;
   font-family: var(--font-en);
   font-size: clamp(64px, 5.2vw, 100px);
@@ -36,7 +36,7 @@
 .productLayer {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 3;
   pointer-events: none;
 }
 
@@ -46,13 +46,15 @@
   --rotation: 0deg;
   --scale: 1;
   --opacity: 1;
+  --blur: 0px;
   position: absolute;
   top: 50%;
   left: 50%;
   width: var(--size);
+  aspect-ratio: 1 / 1;
   max-width: none;
-  height: auto;
   opacity: var(--opacity);
+  filter: blur(var(--blur));
   transform:
     translate(-50%, -50%)
     translate(var(--x), var(--y))
@@ -62,12 +64,18 @@
   will-change: transform, opacity;
 }
 
+.productCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .featureTitle {
   --feature-title-opacity: 0;
   position: absolute;
   top: 50%;
   left: 50%;
-  z-index: 2;
+  z-index: 4;
   margin: 0;
   font-family: var(--font-en);
   font-size: clamp(64px, 5.2vw, 100px);
