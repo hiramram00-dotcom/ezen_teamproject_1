@@ -14,6 +14,7 @@ import spaceImg14 from '../../../img/14.png';
 import spaceImg16 from '../../../img/8.png';
 import spaceImg19 from '../../../img/6.png';
 import imgGif from '../../../img/download.gif';
+import ilkwLogo from '../../assets/common/logo/ilkw.svg';
 
 const stepsData = [
   { word: "Spaces", sub: "모든 공간에는, 그에 어울리는 빛이 있습니다." },
