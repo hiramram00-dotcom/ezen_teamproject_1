@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import HeroSection from './sections/HeroSection/HeroSection'
 import NewIntroSection from './sections/NewIntroSection/NewIntroSection'
@@ -18,10 +18,13 @@ import ShowroomPage from './pages/ShowroomPage/ShowroomPage'
 import Header from './components/Header/Header'
 
 // 라우트 바뀔 때마다 맨 위로 (엉뚱한 스크롤 위치 방지)
+// useLayoutEffect = 페인트 전 / 다음 프레임에 한 번 더 = ScrollTrigger 등이 위치 복원하려는 것까지 눌러줌
 function ScrollToTop() {
   const { pathname } = useLocation()
-  useEffect(() => {
+  useLayoutEffect(() => {
     window.scrollTo(0, 0)
+    const id = requestAnimationFrame(() => window.scrollTo(0, 0))
+    return () => cancelAnimationFrame(id)
   }, [pathname])
   return null
 }
@@ -64,12 +67,13 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/product" element={<ProductRoute />} />
+        {/* 서브페이지는 전역 헤더 상시표시(index 없음). About은 자체 헤더 없어 바로 적용 */}
+        <Route path="/about" element={<><Header /><AboutPage /></>} />
+        <Route path="/product" element={<><Header /><ProductRoute /></>} />
         <Route path="/product/flamingo" element={<FlamingoDetailSection />} />
-        <Route path="/showroom" element={<ShowroomPage />} />
+        <Route path="/showroom" element={<><Header /><ShowroomPage /></>} />
         {/* ⚠️ /collabo 는 아직 전용 페이지 미정(취합 전) → 임시로 홈 콜라보 섹션 단독 렌더 */}
-        <Route path="/collabo" element={<CollaboSection />} />
+        <Route path="/collabo" element={<><Header /><CollaboSection /></>} />
       </Routes>
     </>
   )
