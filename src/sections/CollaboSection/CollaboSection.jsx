@@ -148,7 +148,7 @@ function CollaboSection() {
       const vh = window.innerHeight
       const total = wrap.offsetHeight - vh
       const scrolled = Math.min(total, Math.max(0, -rect.top))
-      const aP = ease(clamp01(scrolled / (total * 0.4)))
+      const aP = ease(clamp01(scrolled / (total * 0.85)))
       const rise = Math.max(0, vh / 2 - (title.offsetTop + title.offsetHeight / 2))
       title.style.transform = `translateY(${(1 - aP) * rise}px)`
       track.style.opacity = String(aP)
