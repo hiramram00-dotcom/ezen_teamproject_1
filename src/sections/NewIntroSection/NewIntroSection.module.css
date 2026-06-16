@@ -7,8 +7,8 @@
 /* 스크롤 거리 제공 — 단어 채우기(완만) + 확장 + 슬라이드 자동전환 + 여운 */
 .intro {
   position: relative;
-  height: 820vh;
-  margin-bottom: 300px; /* 마지막(마무리) 화면 뒤 여백 */
+  height: 520vh;
+  margin-bottom: 20vh; /* 스토리텔링 ↔ 마무리 화면 사이 텀 */
   background: var(--color-base-2); /* #FFF7EA 크림 */
 }
 
@@ -152,66 +152,3 @@
 .lbl2 { left: 28.4%; }  /* 세상을   (514+62/2)/1920 */
 .lbl3 { left: 71.4%; }  /* 밝히고   (1340+62/2)/1920 */
 .lbl4 { left: 95.5%; }  /* LIGHTING (1779+111/2)/1920 */
-
-/* =========================================================
-   마무리 화면 (Figma 1106:489) — 스토리3가 멀어지며 뒤로 떠오름
-   ========================================================= */
-.makeBg {
-  position: absolute;
-  inset: 0;
-  z-index: 2; /* 스토리 프레임(z3) 뒤에서 떠오름 */
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  transform-origin: center center;
-  opacity: 0;
-  filter: brightness(0.06);
-  will-change: filter, transform, opacity;
-}
-.makeOverlay {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  opacity: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, #000 100%);
-}
-.makeText {
-  position: absolute;
-  inset: 0;
-  z-index: 6;
-  pointer-events: none;
-}
-.makeHeadline {
-  position: absolute;
-  left: 4.64%; /* 89/1920 */
-  top: 66.85%; /* 722/1080 */
-  margin: 0;
-  opacity: 0;
-  will-change: transform, opacity;
-  font-family: var(--font-en);
-  font-weight: 400;
-  font-size: 6.25vw; /* 120px @1920 */
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: #fff;
-  white-space: nowrap;
-}
-.makeHeadline strong {
-  font-weight: 700; /* LIGHT */
-}
-.makeDesc {
-  position: absolute;
-  left: 4.64%;
-  top: 83.98%; /* 907/1080 */
-  width: 44.79%; /* 860/1920 */
-  margin: 0;
-  opacity: 0;
-  will-change: transform, opacity;
-  font-family: var(--font-kr);
-  font-weight: 400;
-  font-size: 1.25vw; /* 24px @1920 */
-  line-height: 1.4;
-  letter-spacing: -0.02em;
-  color: #fff;
-}

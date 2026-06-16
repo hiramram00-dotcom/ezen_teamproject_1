@@ -1,7 +1,7 @@
 .snowman {
   position: relative;
   width: 100%;
-  height: 260svh;
+  height: 360svh;
   background: var(--color-base-1);
   overflow: visible;
 }
@@ -21,7 +21,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  z-index: 3;
+  z-index: 4;
   width: 550px;
   max-width: 90vw;
   display: flex;
@@ -29,41 +29,6 @@
   align-items: center;
   text-align: center;
   transform: translate(-50%, -50%);
-}
-
-.productLayer {
-  position: absolute;
-  inset: -12svh 0;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.product {
-  --x: 0vw;
-  --y: 0vh;
-  --rotation: 0deg;
-  --scale: 1;
-  --opacity: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: var(--size);
-  aspect-ratio: 1 / 1;
-  max-width: none;
-  opacity: var(--opacity);
-  transform:
-    translate(-50%, -50%)
-    translate(var(--x), var(--y))
-    rotate(var(--rotation))
-    scale(var(--scale));
-  transform-origin: center;
-  will-change: transform, opacity;
-}
-
-.productCanvas {
-  display: block;
-  width: 100%;
-  height: 100%;
 }
 
 .title p {
@@ -82,10 +47,17 @@
   --snowman-y: 0px;
   --snowman-color: rgb(255, 255, 255);
   --snowman-opacity: 1;
+  --snowman-weight: 700;
+  --snowman-scale: 1;
+  --snowman-blur: 0px;
   color: var(--snowman-color);
+  filter: blur(var(--snowman-blur));
+  font-weight: var(--snowman-weight);
   opacity: var(--snowman-opacity);
-  transform: translateY(var(--snowman-y));
-  will-change: transform, color, opacity;
+  transform:
+    translateY(var(--snowman-y))
+    scale(var(--snowman-scale));
+  will-change: transform, color, opacity, font-weight, filter;
 }
 
 .cardStage {
@@ -186,9 +158,45 @@
     rgba(255, 255, 255, 0.1);
 }
 
+.productLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.product {
+  --x: 0vw;
+  --y: 0vh;
+  --rotation: 0deg;
+  --scale: 1;
+  --opacity: 0;
+  --blur: 0px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--size);
+  aspect-ratio: 1 / 1;
+  opacity: var(--opacity);
+  filter: blur(var(--blur));
+  transform:
+    translate(-50%, -50%)
+    translate(var(--x), var(--y))
+    rotate(var(--rotation))
+    scale(var(--scale));
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.productCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 @media (max-width: 767px) {
   .snowman {
-    height: 240svh;
+    height: 330svh;
   }
 
   .title {
@@ -207,6 +215,10 @@
   .card {
     --w: min(12em, 36vw);
     border-radius: 20px;
+  }
+
+  .product {
+    width: calc(var(--size) * 1.75);
   }
 }
 

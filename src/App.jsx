@@ -2,6 +2,7 @@ import { useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import HeroSection from './sections/HeroSection/HeroSection'
 import NewIntroSection from './sections/NewIntroSection/NewIntroSection'
+import MakeLightSection from './sections/MakeLightSection/MakeLightSection'
 import Story2Section from './sections/Story2Section/Story2Section'
 import StorySection from './sections/StorySection/StorySection'
 import SpaceSection from './sections/SpaceSection/SpaceSection'
@@ -35,6 +36,7 @@ function Home() {
       <Header index />
       <HeroSection />
       <NewIntroSection />
+      <MakeLightSection />
       <Story2Section />
       <StorySection />
       <SpaceSection />
@@ -44,7 +46,7 @@ function Home() {
       <CollaboSection />
       <Footer />
     </main>
-  )
+  );
 }
 
 // 제품 목록 → 상세 이동(라우터)

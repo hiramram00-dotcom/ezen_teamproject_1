@@ -7,7 +7,6 @@ import imgSpace05 from '../../assets/space/img-space-05.png';
 import imgSpace06 from '../../assets/space/img-space-06.png';
 import imgSpace07 from '../../assets/space/img-space-07.png';
 import imgSpace08 from '../../assets/space/img-space-08.gif';
-import ilkwLogo from '../../../img/new-logo.png';
 
 import spaceImg1 from '../../../img/100.png';
 import spaceImg12 from '../../../img/15.png';
@@ -15,6 +14,7 @@ import spaceImg14 from '../../../img/14.png';
 import spaceImg16 from '../../../img/8.png';
 import spaceImg19 from '../../../img/6.png';
 import imgGif from '../../../img/download.gif';
+import ilkwLogo from '../../assets/common/logo/ilkw.svg';
 
 const stepsData = [
   { word: "Spaces", sub: "모든 공간에는, 그에 어울리는 빛이 있습니다." },
@@ -32,6 +32,8 @@ export default function SpaceSection() {
   const [revealedImages, setRevealedImages] = useState({});
   const [scale, setScale] = useState(1);
   const [textHeight, setTextHeight] = useState(0);
+  const [candleActive, setCandleActive] = useState(false);
+  const [litBulbs, setLitBulbs] = useState([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -87,7 +89,18 @@ export default function SpaceSection() {
         }
         return changed ? next : prev;
       });
-      
+
+      // 촛불 시퀀스 트리거 (스크롤 오르내릴 때 재설정되도록)
+      const img7El = document.getElementById('img7');
+      if (img7El) {
+        const img7Rect = img7El.getBoundingClientRect();
+        const isCandleVisible = img7Rect.top < window.innerHeight * 0.75;
+        setCandleActive(prev => {
+          if (prev !== isCandleVisible) return isCandleVisible;
+          return prev;
+        });
+      }
+
       if (scrollY < stickStart) {
         setCurrentStep(0);
       } else if (scrollY > sectionHeight) {
@@ -107,6 +120,7 @@ export default function SpaceSection() {
   const currentText = stepsData[currentStep] || stepsData[0];
   return (
     <section className={styles.spaceSection} ref={sectionRef}>
+
       <div className={styles.topNav}>
         <img src={ilkwLogo} alt="ILKW Logo" className={styles.logo} />
       </div>
@@ -143,7 +157,38 @@ export default function SpaceSection() {
         <img id="img4" src={imgSpace04} alt="Space 4" className={`${styles.imgBase} ${styles.img4} ${styles.scrollImg} ${revealedImages.img4 ? styles.revealedScrollImg : ''}`} style={{ width: '440px', height: '301px', left: '1215px', top: '2672px' }} />
         <img id="img5" src={spaceImg19} alt="Space 5" className={`${styles.imgBase} ${styles.img5} ${styles.scrollImg} ${revealedImages.img5 ? styles.revealedScrollImg : ''}`} style={{ width: '647px', height: '439px', left: '571px', top: '2908px' }} />
         <img id="img6" src={spaceImg12} alt="Space 6" className={`${styles.imgBase} ${styles.img6} ${styles.scrollImg} ${revealedImages.img6 ? styles.revealedScrollImg : ''}`} style={{ width: '571px', height: '430px', left: '0px', top: '3347px' }} />
-        <img id="img7" src={spaceImg16} alt="Space 7" className={`${styles.imgBase} ${styles.img7} ${styles.scrollImg} ${revealedImages.img7 ? styles.revealedScrollImg : ''}`} style={{ width: '1033px', height: '682px', left: '571px', top: '3776px' }} />
+        {/* img7 - 촛불 이미지 래퍼 (기존 scrollImg 동작 유지 + 별똥별 인터렉션) */}
+        <div
+          id="img7"
+          className={`${styles.imgBase} ${styles.img7} ${styles.scrollImg} ${revealedImages.img7 ? styles.revealedScrollImg : ''}`}
+          style={{ width: '1033px', height: '682px', left: '571px', top: '3776px', overflow: 'hidden' }}
+        >
+          <img src={spaceImg16} alt="Space 7" style={{ width: '100%', height: '100%', objectFit: 'fill', display: 'block' }} />
+          {/* 암전 오버레이 */}
+          <div className={`${styles.candleDarkOverlay} ${candleActive ? styles.candleDarkOverlayActive : ''}`} />
+          {/* 전구 드러남 (Reveal) - 4번(오른쪽)부터 순서대로 점화 */}
+          <div className={`${styles.candleReveal} ${styles.candleReveal4} ${candleActive ? styles.candleReveal4Active : ''}`}>
+            <img src={spaceImg16} alt="" />
+          </div>
+          <div className={`${styles.candleReveal} ${styles.candleReveal3} ${candleActive ? styles.candleReveal3Active : ''}`}>
+            <img src={spaceImg16} alt="" />
+          </div>
+          <div className={`${styles.candleReveal} ${styles.candleReveal2} ${candleActive ? styles.candleReveal2Active : ''}`}>
+            <img src={spaceImg16} alt="" />
+          </div>
+          <div className={`${styles.candleReveal} ${styles.candleReveal1} ${candleActive ? styles.candleReveal1Active : ''}`}>
+            <img src={spaceImg16} alt="" />
+          </div>
+        </div>
+        {/* 별똥별 4개 */}
+        {candleActive && (
+          <>
+            <div className={`${styles.shootingStar} ${styles.shootingStar4}`} />
+            <div className={`${styles.shootingStar} ${styles.shootingStar3}`} />
+            <div className={`${styles.shootingStar} ${styles.shootingStar2}`} />
+            <div className={`${styles.shootingStar} ${styles.shootingStar1}`} />
+          </>
+        )}
         <div id="img8" className={`${styles.box8} ${styles.scrollImg} ${revealedImages.img8 ? styles.revealedScrollImg : ''}`} style={{ width: '843px', height: '695px', left: '573px', top: '1745px' }}>
           <img src={imgGif} alt="Space 8 GIF" className={styles.box8InnerImg} />
         </div>
