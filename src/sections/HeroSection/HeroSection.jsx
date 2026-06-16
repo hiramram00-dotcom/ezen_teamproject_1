@@ -28,6 +28,20 @@ const PLAY_AT = 0.88         // 영상 재생 시점 (스크롤 진행도 0~1 �
 const COMPLETE_AT = 0.97     // 이 진행도 넘으면 '완료'로 잠금 (이후 스크롤 업 해도 안 어두워짐)
 const BOTTOM_ALPHA = 0.65    // 하단 로고 최종 불투명도(회색감)
 
+// 동작 줄이기(reduce-motion) 여부
+const prefersReduced = () =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+// 인트로 1회만 재생 — sessionStorage라 같은 탭 세션 내내 유지(F5에도 안 재생),
+// 새 탭/세션이나 스토리지 클리어 시 리셋 → 첫 방문엔 보여주되 반복(뒤로가기·새로고침)은 막음.
+const INTRO_KEY = 'ilkw_intro_played'
+const introWasPlayed = () => {
+  try { return sessionStorage.getItem(INTRO_KEY) === '1' } catch { return false }
+}
+const markIntroPlayed = () => {
+  try { sessionStorage.setItem(INTRO_KEY, '1') } catch { /* 스토리지 차단 환경 무시 */ }
+}
+
 function HeroSection() {
   const heroRef = useRef(null)
   const logoRef = useRef(null)
@@ -37,16 +51,15 @@ function HeroSection() {
   const overlayRef = useRef(null)
   const bottomLogoRef = useRef(null)
   const hintRef = useRef(null)
-  // reduce-motion이면 인트로를 건너뛰므로 처음부터 done 상태로 시작
+  // 인트로를 스킵하는 경우(reduce-motion 또는 뒤로 재진입)엔 처음부터 done 상태로 시작
   // (effect 안에서 동기 setState 호출 → 불필요한 리렌더 경고 방지)
-  const [introDone, setIntroDone] = useState(
-    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  )
+  const [introDone, setIntroDone] = useState(() => prefersReduced() || introWasPlayed())
 
   // 마운트: 로고 중앙정렬 + 인트로 동안 스크롤 잠금
   useEffect(() => {
     gsap.set(logoRef.current, { xPercent: -50 })
     gsap.set(bottomLogoRef.current, { xPercent: -50 })
+    if (prefersReduced() || introWasPlayed()) return // 인트로 스킵 → 스크롤 잠그지 않음
     const sbw = window.innerWidth - document.documentElement.clientWidth
     document.body.style.overflow = 'hidden'
     document.body.style.paddingRight = `${sbw}px`
@@ -75,6 +88,8 @@ function HeroSection() {
     // 전구 등장 후 → 스크롤로 빛을 밝히는 단계로 핸드오프
     const setupScrollReveal = () => {
       if (cancelled) return
+      // 인트로 끝 → 이제 영상 버퍼링 시작 (인트로 동안엔 안 받아서 초반 버벅임 방지)
+      if (video) video.load()
       document.body.style.overflow = '' // 스크롤 허용
       document.body.style.paddingRight = ''
       gsap.set(hint, { autoAlpha: 1 }) // 스크롤 힌트 표시
@@ -111,8 +126,8 @@ function HeroSection() {
       ScrollTrigger.refresh()
     }
 
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduce) {
+    // 스킵(reduce-motion 또는 뒤로 재진입): 인트로 없이 최종 상태로 바로 (스크롤 잠금 X)
+    if (prefersReduced() || introWasPlayed()) {
       gsap.set([logo, copy], { autoAlpha: 0 })
       gsap.set(bottomLogo, { autoAlpha: BOTTOM_ALPHA, y: 0 })
       gsap.set(hint, { autoAlpha: 0 })
@@ -120,12 +135,13 @@ function HeroSection() {
       if (video) video.play().catch(() => {})
       document.body.style.overflow = ''
       document.body.style.paddingRight = ''
-      // introDone은 reduce일 때 초기값이 이미 true → 여기서 setState 불필요
+      // introDone은 스킵일 때 초기값이 이미 true → 여기서 setState 불필요
       return
     }
 
     const build = () => {
       if (cancelled) return
+      markIntroPlayed() // 이번 세션 인트로 재생 시작 → 이후(뒤로가기·새로고침) 스킵
       const logoCenter = logo.offsetWidth / 2
       const natCenter = letters.map((el) => el.offsetLeft + el.offsetWidth / 2)
       const DROP = window.innerHeight * ROW_DROP
@@ -156,15 +172,24 @@ function HeroSection() {
       tl.to(bulb, { v: BULB_R, duration: REVEAL_BULB_DUR, ease: 'sine.inOut', onUpdate: onBulb }, introEnd + REVEAL_BULB_AT)
     }
 
+    // 인트로 시작을 "메인 스레드가 한가해질 때"로 미룬다.
+    // (페이지 로드 직후 다른 섹션들의 ScrollTrigger 초기화/리플로우가 메인 스레드를 ~1초 막아서,
+    //  바로 시작하면 타임라인이 멈췄다가 GSAP가 경과시간만큼 '확' 순간이동(catch-up)함 → 그걸 방지)
+    const startIntro = () => {
+      if (cancelled) return
+      const ric = window.requestIdleCallback || ((fn) => setTimeout(fn, 1))
+      ric(() => { if (!cancelled) build() }, { timeout: 600 })
+    }
+
     // SVG 로드 완료 후 측정 (큰 PNG-임베드 SVG는 비동기 로드 → 리스너 정리 필수)
     const ready = letters.every((el) => el.complete && el.naturalWidth > 0)
     if (ready) {
-      build()
+      startIntro()
     } else {
       let loaded = letters.filter((el) => el.complete && el.naturalWidth > 0).length
       const onLoad = () => {
         if (cancelled) return
-        if (++loaded >= letters.length) build()
+        if (++loaded >= letters.length) startIntro()
       }
       letters.forEach((el) => {
         if (!(el.complete && el.naturalWidth > 0)) {
@@ -190,8 +215,9 @@ function HeroSection() {
         className={styles.video}
         src="https://res.cloudinary.com/dg9hg29hc/video/upload/hero-video_rtcktn.mp4"
         muted
+        loop
         playsInline
-        preload="auto"
+        preload="none"
         aria-hidden="true"
       />
 

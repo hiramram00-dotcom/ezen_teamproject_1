@@ -51,6 +51,7 @@
   height: 1em;
   width: auto;
   display: block;
+  will-change: transform; /* 인트로 시작 첫 프레임 버벅임 방지 (미리 GPU 레이어로) */
 }
 /* 새 로고 글자는 자연스레 붙음 (gap:0). 자간 미세조정 필요하면 .logo { gap } 사용 */
 
@@ -65,6 +66,7 @@
   pointer-events: none;
   white-space: nowrap;
   opacity: 0;
+  will-change: transform; /* 첫 프레임 버벅임 방지 */
 }
 .copyEn {
   margin: 0 0 4px;
