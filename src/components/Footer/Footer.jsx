@@ -14,8 +14,8 @@ gsap.registerPlugin(ScrollTrigger)
  * Figma: 1차프로젝트-3조 / node 778:521(사진+카드) · 778:525(푸터)
  *
  * 스크롤 인터랙션:
- *  - 사진: 뷰에 들어올 때 살짝 커졌다가 원래 크기로 (펄스)
- *  - 흰 카드: 조금 더 스크롤하면 아래에서 위로 떠오르며 등장
+ *  - 사진 섹션: 사진 살짝 확대 + 흰 카드 떠오름
+ *  - 푸터 본문: 워드마크 로고가 왼쪽부터 써지듯 리빌
  */
 
 const NAV = [
@@ -27,54 +27,90 @@ const NAV = [
 ]
 
 function Footer() {
+  const footerRef = useRef(null)
   const photoRef = useRef(null)
   const photoImgRef = useRef(null)
   const cardRef = useRef(null)
+  const bodyRef = useRef(null)
+  const logoRef = useRef(null)
 
   useEffect(() => {
     // 모션 최소화 설정이면 애니메이션 생략
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const ctx = gsap.context(() => {
-      // 사진: 뷰 진입 시 살짝 커졌다가 원래 크기로 (펄스)
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: photoRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none reset',
-          },
-        })
-        .fromTo(
-          photoImgRef.current,
-          { scale: 1 },
-          { scale: 1.08, duration: 0.7, ease: 'power2.out' }
-        )
-        .to(photoImgRef.current, { scale: 1, duration: 0.9, ease: 'power2.inOut' })
+      // ───── 트리거 ① 사진 섹션(.photo) ─────
+      // 사진 섹션이 화면에 들어올 때 — 스크롤 연동(scrub)으로 진행.
+      // 사진: 살짝 확대 / 흰 카드: 아래에서 제자리로 떠오름 (함께 진행)
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: photoRef.current,
+          start: 'top 85%', // 사진 top이 화면 85% 지점에 닿으면 시작
+          end: 'center center', // 사진 중앙이 화면 중앙에 닿으면 끝
+          scrub: 1,
+          // 히어로 핀(늦게 생성, 페이지 높이 증가)보다 나중에 위치 계산하도록 강제.
+          refreshPriority: -1,
+        },
+      })
 
-      // 흰 카드: 조금 더 스크롤하면 아래에서 위로 떠오르며 등장
-      gsap.fromTo(
+      tl.fromTo(
+        photoImgRef.current,
+        { scale: 1 },
+        { scale: 1.08, ease: 'none', duration: 1 },
+        0
+      ).fromTo(
         cardRef.current,
-        { yPercent: 50, autoAlpha: 0 },
+        { yPercent: 60, autoAlpha: 0 },
+        { yPercent: 0, autoAlpha: 1, ease: 'none', duration: 1 },
+        0
+      )
+
+      // ───── 트리거 ② 푸터 본문(.body) ─────
+      // 푸터 본문에 진입하면 워드마크 로고가 왼쪽 → 오른쪽으로 써지듯 리빌.
+      // clip-path inset의 오른쪽 값을 100% → 0%으로 줄여 왼쪽부터 드러냄.
+      gsap.fromTo(
+        logoRef.current,
+        { clipPath: 'inset(0 100% 0 0)' },
         {
-          yPercent: 0,
-          autoAlpha: 1,
-          duration: 1,
-          ease: 'power3.out',
+          clipPath: 'inset(0 0% 0 0)',
+          ease: 'none',
           scrollTrigger: {
-            trigger: photoRef.current,
-            start: 'top 45%',
-            toggleActions: 'play none none reverse',
+            trigger: bodyRef.current,
+            start: 'top 85%', // 본문 top이 화면 85% 지점에 닿으면 시작
+            end: 'top 40%', // 본문 top이 화면 40% 지점에 닿으면 끝 (페이지 끝 전 완료)
+            scrub: 1,
+            refreshPriority: -1,
           },
         }
       )
-    }, photoRef)
+    }, footerRef)
 
-    return () => ctx.revert()
+    // 푸터는 긴 페이지 맨 아래 — 위쪽 콘텐츠가 늦게 로드되며 높이가 바뀌면
+    // 트리거 위치가 어긋날 수 있어 로드/지연/높이변화 때마다 재계산.
+    const refresh = () => ScrollTrigger.refresh()
+    window.addEventListener('load', refresh)
+    const t1 = window.setTimeout(refresh, 600)
+    const t2 = window.setTimeout(refresh, 1800)
+
+    let debounce
+    const ro = new ResizeObserver(() => {
+      window.clearTimeout(debounce)
+      debounce = window.setTimeout(refresh, 200)
+    })
+    ro.observe(document.body)
+
+    return () => {
+      window.removeEventListener('load', refresh)
+      window.clearTimeout(t1)
+      window.clearTimeout(t2)
+      window.clearTimeout(debounce)
+      ro.disconnect()
+      ctx.revert()
+    }
   }, [])
 
   return (
-    <div className={styles.footer}>
+    <div className={styles.footer} ref={footerRef}>
       {/* 비주얼 사진 + 흰 카드 오버레이 (footer_C / 778:521) */}
       <div className={styles.photo} ref={photoRef}>
         <img className={styles.photoImg} src={footerTop} alt="" loading="lazy" ref={photoImgRef} />
@@ -84,19 +120,24 @@ function Footer() {
             <br />
             with passion and craftsmanship.
           </p>
-          <a className={styles.cardLink} href="#naver-store">
+          <a
+            className={styles.cardLink}
+            href="https://brand.naver.com/iklamp"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <span>Go to Naver Brand Store </span>
             <span className={styles.cardArrow}>→</span>
           </a>
-          <p className={styles.cardEmail}>INFO@ILKWDESIGN.com</p>
+          <a className={styles.cardEmail} href="#">INFO@ILKWDESIGN.com</a>
         </div>
       </div>
 
       {/* 크림 푸터 블록 */}
-      <footer className={styles.body}>
+      <footer className={styles.body} ref={bodyRef}>
         {/* 거대 워드마크 — 단일 SVG(#252525 = footer 색) */}
         <div className={styles.logo}>
-          <img src={logoIlkw} alt="ILKW." />
+          <img src={logoIlkw} alt="ILKW." ref={logoRef} />
         </div>
 
         <div className={styles.bottom}>

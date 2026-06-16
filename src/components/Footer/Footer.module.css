@@ -23,6 +23,7 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
+  filter: brightness(0.5); /* 살짝 어둡게 */
 }
 
 /* 흰 사각형 카드 (1204:21) — 위치·크기는 프레임 기준 % */
@@ -86,6 +87,11 @@
   letter-spacing: -0.02em;
   text-transform: uppercase;
   color: #d1ccc4;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+.cardEmail:hover {
+  opacity: 0.6;
 }
 
 /* 크림 푸터 블록 */
@@ -126,6 +132,10 @@
   color: var(--color-footer); /* #252525 */
   white-space: nowrap;
   transition: opacity 0.2s ease;
+}
+/* 내비 글씨 22px (type-body-3 기본 24px 오버라이드) */
+.nav :global(.type-body-3) {
+  font-size: 22px;
 }
 .navLink:hover {
   opacity: 0.6;
