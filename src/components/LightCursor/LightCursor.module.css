@@ -1,0 +1,86 @@
+.cursor {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.isVisible {
+  opacity: 1;
+}
+
+.lightCore {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: block;
+  border-radius: 999px;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.lightCore {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.82) 0 6%, rgba(255, 248, 224, 0.58) 18%, rgba(255, 225, 154, 0.26) 42%, rgba(255, 188, 104, 0.08) 64%, rgba(255, 188, 104, 0) 82%);
+  filter:
+    drop-shadow(0 0 1px rgba(86, 52, 22, 0.34))
+    drop-shadow(0 0 14px rgba(255, 210, 122, 0.36))
+    blur(0.35px)
+    saturate(1.04);
+  transition: width 160ms ease, height 160ms ease, margin 160ms ease, opacity 160ms ease;
+}
+
+.tailSvg {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.tailGlow,
+.tailCore {
+  fill: rgba(255, 235, 184, 0.9);
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.tailGlow {
+  filter:
+    drop-shadow(0 0 1px rgba(86, 52, 22, 0.2))
+    blur(12px);
+}
+
+.tailCore {
+  filter:
+    drop-shadow(0 0 1px rgba(86, 52, 22, 0.16))
+    blur(3px);
+}
+
+.isHovering .lightCore {
+  width: 42px;
+  height: 42px;
+  margin: -21px 0 0 -21px;
+}
+
+.isHovering .tailGlow {
+  filter: blur(10px);
+}
+
+.isPressed .lightCore {
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+}
+
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  .cursor {
+    display: none;
+  }
+}
