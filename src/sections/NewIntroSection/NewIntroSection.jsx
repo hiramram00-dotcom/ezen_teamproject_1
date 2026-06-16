@@ -80,6 +80,14 @@ function NewIntroSection() {
     let lastLit = -1
 
     const measure = () => {
+      // word4(인라인 램프)는 quote의 transform(scale)·blur 영향을 받으므로,
+      // 스크롤이 내려간 상태(축소됨)에서 측정하면 시작 위치가 틀어진다.
+      // 측정하는 동안만 quote를 기본 상태(scale 1, blur 0)로 되돌려 자연 위치를 읽는다.
+      const prevTransform = quote.style.transform
+      const prevFilter = quote.style.filter
+      quote.style.transform = 'translate(-50%, -50%)'
+      quote.style.filter = 'none'
+
       const s = stage.getBoundingClientRect()
       const w = word4.getBoundingClientRect()
       const sw = stage.offsetWidth
@@ -88,6 +96,10 @@ function NewIntroSection() {
         start: { left: w.left - s.left, top: w.top - s.top, width: w.width, height: w.height },
         end: { left: sw * 0.1854, top: sh * 0.1491, width: sw * 0.6286, height: sh * 0.6676 },
       }
+
+      // 원래 상태로 복원 (직후 apply()가 현재 스크롤 위치에 맞게 다시 설정)
+      quote.style.transform = prevTransform
+      quote.style.filter = prevFilter
     }
 
     const apply = () => {
@@ -154,17 +166,48 @@ function NewIntroSection() {
       apply()
     }
 
+    // 재측정 + 즉시 반영 (어긋났을 때 제자리로 복원)
+    const remeasure = () => {
+      measure()
+      apply()
+    }
+
     measure()
     apply()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onResize)
-    const settle = window.setTimeout(onResize, 300)
+    // 모든 리소스 로드 완료 시 한 번 더 (이미지 늦게 로드되며 줄바꿈 바뀌는 경우)
+    window.addEventListener('load', remeasure)
+
+    // 웹폰트 로드 후 텍스트가 리플로우되면 인라인 램프(word4) 위치가 바뀌므로 재측정
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(remeasure)
+    }
+
+    // 인용문 안 이미지(워드/램프)가 늦게 로드되어 위치가 바뀌는 경우 각각 재측정
+    const imgs = Array.from(quote.querySelectorAll('img'))
+    imgs.forEach((img) => {
+      if (!img.complete) img.addEventListener('load', remeasure)
+    })
+
+    // 레이아웃이 어떤 이유로든 바뀌면(폰트/이미지/리사이즈) 항상 다시 맞춤
+    const ro = new ResizeObserver(remeasure)
+    ro.observe(stage)
+    ro.observe(quote)
+
+    // 느린 환경 대비 지연 보정
+    const settle1 = window.setTimeout(remeasure, 300)
+    const settle2 = window.setTimeout(remeasure, 1200)
 
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
+      window.removeEventListener('load', remeasure)
+      imgs.forEach((img) => img.removeEventListener('load', remeasure))
+      ro.disconnect()
       if (raf) cancelAnimationFrame(raf)
-      window.clearTimeout(settle)
+      window.clearTimeout(settle1)
+      window.clearTimeout(settle2)
     }
   }, [])
 
