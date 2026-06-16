@@ -104,6 +104,7 @@ function CollaboSection() {
     let dragStartPos = 0
     let last = performance.now()
     let raf = 0
+    let isVisible = false
 
     // ----- 호버(카드 위에서만 정지) / 드래그 -----
     const overCard = (el) => !!(el && el.closest && el.closest('[data-card]'))
@@ -140,6 +141,9 @@ function CollaboSection() {
     viewport.addEventListener('pointercancel', onUp)
 
     const frame = (now) => {
+      raf = 0
+      if (!isVisible) return
+
       const dt = Math.min(0.05, (now - last) / 1000)
       last = now
 
@@ -148,7 +152,7 @@ function CollaboSection() {
       const vh = window.innerHeight
       const total = wrap.offsetHeight - vh
       const scrolled = Math.min(total, Math.max(0, -rect.top))
-      const aP = ease(clamp01(scrolled / (total * 0.4)))
+      const aP = ease(clamp01(scrolled / (total * 0.85)))
       const rise = Math.max(0, vh / 2 - (title.offsetTop + title.offsetHeight / 2))
       title.style.transform = `translateY(${(1 - aP) * rise}px)`
       track.style.opacity = String(aP)
@@ -163,10 +167,26 @@ function CollaboSection() {
       raf = requestAnimationFrame(frame)
     }
 
-    raf = requestAnimationFrame(frame)
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting
+
+        if (isVisible && !raf) {
+          last = performance.now()
+          raf = requestAnimationFrame(frame)
+        } else if (!isVisible && raf) {
+          cancelAnimationFrame(raf)
+          raf = 0
+        }
+      },
+      { threshold: 0 },
+    )
+
+    visibilityObserver.observe(wrap)
     window.addEventListener('resize', measure)
     return () => {
       cancelAnimationFrame(raf)
+      visibilityObserver.disconnect()
       window.removeEventListener('resize', measure)
       viewport.removeEventListener('pointerover', onOver)
       viewport.removeEventListener('pointerout', onOut)
@@ -182,7 +202,7 @@ function CollaboSection() {
   const loopCards = [...CARDS, ...CARDS]
 
   return (
-    <section ref={wrapRef} className={styles.collabo}>
+    <section id="collabo" ref={wrapRef} className={styles.collabo}>
       <div className={styles.sticky}>
         <div ref={titleRef} className={styles.intro}>
           <h2 className={styles.title}>

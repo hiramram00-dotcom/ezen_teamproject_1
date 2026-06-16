@@ -1,19 +1,27 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
-import ShowroomPage from './pages/ShowroomPage/ShowroomPage.jsx'
 
-/**
- * 임시 라우팅 — 서브페이지 라우팅 확정([TBD]) 전까지 #showroom 해시로 미리보기.
- * TODO: react-router 도입 시 이 분기를 <Route path="/showroom"> 로 교체하고 제거.
- *   (예) localhost:5173/#showroom 으로 접속하면 ShowroomPage 렌더.
- */
-const renderByHash = () =>
-  window.location.hash === '#showroom' ? <ShowroomPage /> : <App />
+const deployedBase = '/ezen_teamproject_1'
+const viteBase = import.meta.env.BASE_URL.replace(/\/$/, '')
+const routerBasename = window.location.pathname.startsWith(`${deployedBase}/`)
+  ? deployedBase
+  : viteBase === deployedBase
+    ? viteBase
+    : ''
 
-const root = createRoot(document.getElementById('root'))
-const render = () => root.render(<StrictMode>{renderByHash()}</StrictMode>)
+// 뒤로/앞으로 갈 때 브라우저가 옛 스크롤 위치를 멋대로 복원해서 (콘텐츠가 아직 안 그려진 사이)
+// 메인이 엉뚱한 위치로 오던 버그 방지 → 복원을 끄고 라우트 변경 시 직접 top으로 올림(App의 ScrollToTop).
+if ('scrollRestoration' in window.history) {
+  window.history.scrollRestoration = 'manual'
+}
 
-window.addEventListener('hashchange', render)
-render()
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <BrowserRouter basename={routerBasename}>
+      <App />
+    </BrowserRouter>
+  </StrictMode>,
+)

@@ -1,65 +1,16 @@
 .snowman {
   position: relative;
-  height: 650svh;
+  height: 390svh;
   background: var(--color-base-1);
   color: var(--color-base-3);
 }
 
 .stage {
   position: sticky;
-  top: 0;
-  height: 100svh;
+  top: -12svh;
+  height: 124svh;
   overflow: hidden;
   background: var(--color-base-1);
-}
-
-.title {
-  --title-scale: 1;
-  --title-opacity: 1;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 2;
-  margin: 0;
-  font-family: var(--font-en);
-  font-size: clamp(64px, 5.2vw, 100px);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.05em;
-  opacity: var(--title-opacity);
-  transform:
-    translate(-50%, -50%)
-    scale(var(--title-scale));
-  will-change: transform, opacity;
-}
-
-.productLayer {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.product {
-  --x: 0vw;
-  --y: 0vh;
-  --rotation: 0deg;
-  --scale: 1;
-  --opacity: 1;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: var(--size);
-  max-width: none;
-  height: auto;
-  opacity: var(--opacity);
-  transform:
-    translate(-50%, -50%)
-    translate(var(--x), var(--y))
-    rotate(var(--rotation))
-    scale(var(--scale));
-  transform-origin: center;
-  will-change: transform, opacity;
 }
 
 .featureTitle {
@@ -67,7 +18,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  z-index: 2;
+  z-index: 4;
   margin: 0;
   font-family: var(--font-en);
   font-size: clamp(64px, 5.2vw, 100px);
@@ -179,15 +130,7 @@
 
 @media (max-width: 900px) {
   .snowman {
-    height: 520svh;
-  }
-
-  .title {
-    font-size: clamp(48px, 16vw, 76px);
-  }
-
-  .product {
-    width: calc(var(--size) * 1.75);
+    height: 360svh;
   }
 
   .modelWrap {

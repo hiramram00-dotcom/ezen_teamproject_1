@@ -7,7 +7,7 @@
 .collabo {
   position: relative;
   width: 100%;
-  height: 250vh; /* 핀 구간: 타이틀 상승 + 마퀴 감상 여유 */
+  height: 160vh; /* 핀 구간: 타이틀 상승까지만 (끝부분 죽은 스크롤 제거) */
   background: var(--color-base-2); /* 크림 */
   color: var(--color-base-3); /* 검정 */
 }

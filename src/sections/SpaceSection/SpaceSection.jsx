@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './SpaceSection.module.css';
 
-import imgSpace01 from '../../assets/space/img-space-01.png';
 import imgSpace02 from '../../../img/2.png';
-import imgSpace03 from '../../assets/space/img-space-03.png';
 import imgSpace04 from '../../../img/4.png';
 import imgSpace05 from '../../assets/space/img-space-05.png';
 import imgSpace06 from '../../assets/space/img-space-06.png';
@@ -11,13 +9,10 @@ import imgSpace07 from '../../assets/space/img-space-07.png';
 import imgSpace08 from '../../assets/space/img-space-08.gif';
 
 import spaceImg1 from '../../../img/100.png';
-import spaceImg11 from '../../../img_/space_img11.png';
 import spaceImg12 from '../../../img/15.png';
 import spaceImg14 from '../../../img/14.png';
 import spaceImg16 from '../../../img/8.png';
-import spaceImg17 from '../../../img_/space_img17.png';
 import spaceImg19 from '../../../img/6.png';
-import storyImg04 from '../../../img_/story_img04.png';
 import imgGif from '../../../img/download.gif';
 
 const stepsData = [
@@ -125,6 +120,9 @@ export default function SpaceSection() {
   return (
     <section className={styles.spaceSection} ref={sectionRef}>
 
+      <div className={styles.topNav}>
+        <img src={ilkwLogo} alt="ILKW Logo" className={styles.logo} />
+      </div>
       <div className={styles.container} style={{ zoom: scale }}>
         <div className={styles.textWrapper} style={{ height: textHeight ? `calc(100% + ${textHeight}px)` : '100%' }}>
           <div className={styles.textBox} ref={textBoxRef}>
