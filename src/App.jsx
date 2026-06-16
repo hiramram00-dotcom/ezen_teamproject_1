@@ -32,7 +32,6 @@ function Home() {
     <main>
       <Header index />
       {<HeroSection />}
-      {<IntroSection />}
       {<NewIntroSection />}
       {<MakeLightSection />}
       <HeroSection />
