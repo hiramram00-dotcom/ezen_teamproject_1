@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import whiteLogo from '../Snowman1Section/assets/logo-ilkw.svg'
 import blackLogo from '../Snowman1Section/assets/logo-ilkw-black.svg'
 import heroBackground from './assets/hero-background.webp'
@@ -29,9 +30,9 @@ function PanelHeader({ variant = 'dark' }) {
         src={variant === 'light' ? whiteLogo : blackLogo}
         alt="ILKW"
       />
-      <a className={styles.headerMenu} href="#product">
+      <Link className={styles.headerMenu} to="/product">
         → Menu
-      </a>
+      </Link>
     </div>
   )
 }

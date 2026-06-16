@@ -1,4 +1,5 @@
 import { useRef, useEffect, useLayoutEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import styles from './Header.module.css'
 import MenuOverlay from './MenuOverlay'
 import logo from '../../assets/common/logo/ilkw.svg'
@@ -93,9 +94,8 @@ function Header({ index = false }) {
     }
   }, [index])
 
-  // 로고 클릭 → 메뉴 닫고 메인(맨 위)으로. (서브페이지/라우팅 생기면 '/'로 이동하게 변경)
-  const handleLogo = (e) => {
-    e.preventDefault()
+  // 로고 클릭 → 메뉴 닫고 메인('/')으로. (이미 메인이면 맨 위로 부드럽게)
+  const handleLogo = () => {
     setMenuOpen(false)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -103,9 +103,9 @@ function Header({ index = false }) {
   return (
     <>
       <header ref={headerRef} className={`${styles.header} ${menuOpen ? styles.menuMode : ''}`}>
-        <a className={styles.logoLink} href="/" onClick={handleLogo} aria-label="메인으로">
+        <Link className={styles.logoLink} to="/" onClick={handleLogo} aria-label="메인으로">
           <img className={styles.logo} src={logo} alt="ILKW" />
-        </a>
+        </Link>
         <button
           className={styles.menu}
           type="button"
@@ -116,7 +116,7 @@ function Header({ index = false }) {
           <span>{menuOpen ? 'Close' : 'Menu'}</span>
         </button>
       </header>
-      <MenuOverlay open={menuOpen} />
+      <MenuOverlay open={menuOpen} onNavigate={() => setMenuOpen(false)} />
     </>
   )
 }
