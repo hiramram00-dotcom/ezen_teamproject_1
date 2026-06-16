@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -o \"./figma-hero.png\" \"https://www.figma.com/api/mcp/asset/d3ed1342-e5be-4361-be56-4de5b2e9b9e5\")",
+      "Bash(curl -s -o \"./figma-collab.png\" \"https://www.figma.com/api/mcp/asset/8a850fd1-f520-4419-846b-df0214d24600\")",
+      "Bash(curl -s -o \"./figma-other.png\" \"https://www.figma.com/api/mcp/asset/83b17272-d0d2-4d9c-8ed5-8a55f01d2c4e\")",
+      "Bash(curl -s -o \"./figma-intro.png\" \"https://www.figma.com/api/mcp/asset/42f535bb-3c6b-495e-a153-393049573baf\")",
+      "Bash(curl -s -o \"./figma-posters.png\" \"https://www.figma.com/api/mcp/asset/73990c77-7016-4bb3-943d-b22221cc993f\")",
+      "Bash(curl -s -o \"./figma-story.png\" \"https://www.figma.com/api/mcp/asset/aa4ac78e-fc3f-41a4-8b25-ebf4797f07e7\")"
+    ]
+  }
+}

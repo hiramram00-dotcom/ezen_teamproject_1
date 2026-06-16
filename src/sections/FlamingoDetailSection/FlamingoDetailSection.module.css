@@ -1,0 +1,569 @@
+.detail {
+  width: 100%;
+  overflow: hidden;
+  background: var(--color-base-2);
+  color: var(--color-base-3);
+}
+
+.panel {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--color-base-2);
+}
+
+.intro {
+  margin-top: 0.2083vw;
+}
+
+.posters {
+  margin-top: -0.0521vw;
+}
+
+.header {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.headerLogo {
+  position: absolute;
+  top: 2.3148%;
+  left: 1.1979%;
+  width: 5.3614%;
+  height: 2.1296%;
+}
+
+.headerMenu {
+  position: absolute;
+  top: 1.5741%;
+  right: 1.9792%;
+  font-family: var(--font-en);
+  font-size: 0.9375vw;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  text-transform: capitalize;
+  pointer-events: auto;
+}
+
+.headerLight {
+  color: var(--color-base-1);
+}
+
+.headerDark {
+  color: var(--color-base-3);
+}
+
+.collaboration .headerLogo {
+  top: 1.043%;
+  left: 2.083%;
+  width: 5.59%;
+  height: 0.774%;
+}
+
+.collaboration .headerMenu {
+  top: 1.155%;
+  right: 1.979%;
+}
+
+.heroBackground {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroTitle {
+  position: absolute;
+  left: 1.56%;
+  bottom: 7.6%;
+  z-index: 2;
+  font-family: var(--font-en);
+  font-size: 6.25vw;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--color-base-1);
+}
+
+.introVisual {
+  position: absolute;
+  top: 7.87%;
+  left: 24.48%;
+  width: 51.04%;
+  aspect-ratio: 1500 / 900;
+  overflow: hidden;
+}
+
+.introVisual img {
+  position: absolute;
+  top: -21%;
+  left: 0;
+  width: 100%;
+  height: 133.33%;
+  max-width: none;
+}
+
+.introTitle {
+  position: absolute;
+  top: 62.31%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-en);
+  font-size: 4.1667vw;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.introTitle span,
+.introTitle em {
+  display: block;
+}
+
+.introTitle em {
+  font-family: var(--font-deco);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.introDescription {
+  position: absolute;
+  top: 84.07%;
+  left: 50%;
+  width: 37.29%;
+  transform: translateX(-50%);
+  font-family: var(--font-kr);
+  font-size: 1.0938vw;
+  font-weight: 300;
+  line-height: 1.4;
+  letter-spacing: -0.04em;
+  text-align: center;
+}
+
+.storyVisual {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 104.26%;
+  overflow: hidden;
+}
+
+.storyVisual img {
+  width: 100%;
+  height: auto;
+  max-width: none;
+}
+
+.storyCopy {
+  position: absolute;
+  left: 1.98%;
+  bottom: 1.5%;
+  width: 30.21%;
+}
+
+.storyCopy h2 {
+  margin-bottom: 1.5vw;
+  font-family: var(--font-deco);
+  font-size: 1.4583vw;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.05em;
+}
+
+.storyCopy p {
+  font-family: var(--font-kr);
+  font-size: 1.0938vw;
+  font-weight: 300;
+  line-height: 1.4;
+  letter-spacing: -0.04em;
+}
+
+.posterGrid {
+  position: absolute;
+  top: 24.26%;
+  left: 9.64%;
+  display: grid;
+  grid-template-columns: repeat(3, 23.44vw);
+  gap: 5.2083vw;
+}
+
+.posterCard {
+  position: relative;
+  width: 23.44vw;
+  height: 29.01vw;
+  overflow: hidden;
+}
+
+.greenPoster {
+  background: #5f7051;
+  color: #ffd900;
+}
+
+.greenPoster img {
+  position: absolute;
+  top: 20%;
+  left: 24%;
+  width: 51.78%;
+  height: 61.04%;
+  border-radius: 1.0417vw;
+}
+
+.greenPoster span,
+.centerPoster span,
+.creamPoster h2,
+.creamPoster span {
+  position: absolute;
+  z-index: 2;
+  font-family: var(--font-deco);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.liveIn {
+  top: 9.86%;
+  left: 38.2%;
+  font-size: 1.6667vw;
+}
+
+.better {
+  top: 45.45%;
+  left: 2.4%;
+  font-size: 1.6667vw;
+}
+
+.light {
+  top: 45.45%;
+  right: 0.9%;
+  font-size: 1.6667vw;
+}
+
+.posterLine {
+  top: 49.9%;
+  left: 35.9%;
+  width: 36.4%;
+  height: 1px;
+  background: #ffd900;
+}
+
+.centerPoster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.madeFor,
+.moment {
+  transform: rotate(-90deg);
+  transform-origin: left top;
+  color: #ffd900;
+  font-size: 2.9167vw;
+  white-space: nowrap;
+}
+
+.madeFor {
+  left: 1%;
+  bottom: 6%;
+}
+
+.moment {
+  left: 18%;
+  bottom: 28%;
+}
+
+.creamPoster {
+  background: #f1eedd;
+  color: #005c31;
+}
+
+.creamPoster h2 {
+  top: 4.3%;
+  left: 10.9%;
+  font-size: 2.5vw;
+  white-space: nowrap;
+}
+
+.creamPoster img {
+  position: absolute;
+  top: 20%;
+  left: 38.7%;
+  width: 49.56%;
+  height: 61.04%;
+  border-radius: 1.0417vw;
+}
+
+.creamPoster span {
+  right: 10%;
+  bottom: 4.67%;
+  font-size: 2.0833vw;
+}
+
+.collaboration {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1920 / 2973;
+  margin-top: 0.1563vw;
+  overflow: hidden;
+  background: var(--color-base-2);
+}
+
+.collaborationTitle {
+  position: absolute;
+  top: 4.67%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-deco);
+  font-size: 6.25vw;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.collaborationDescription {
+  position: absolute;
+  top: 19.36%;
+  left: 50%;
+  width: 35.78%;
+  transform: translateX(-50%);
+  font-family: var(--font-kr);
+  font-size: 1.25vw;
+  font-weight: 300;
+  line-height: 1.4;
+  letter-spacing: -0.04em;
+  text-align: center;
+}
+
+.collaborationGrid {
+  position: absolute;
+  top: 23.31%;
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 100%;
+  gap: 1.0417vw;
+  width: 100%;
+  height: 31.96%;
+}
+
+.collaborationGrid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.collaborationWide {
+  position: absolute;
+  top: 55.97%;
+  left: 0;
+  width: 100%;
+  height: 44.03%;
+  object-fit: cover;
+}
+
+.otherProducts {
+  position: relative;
+  width: 100%;
+  height: 56.25vw;
+  margin-top: 0.1563vw;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--color-base-2);
+  cursor: grab;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.otherProducts::-webkit-scrollbar {
+  display: none;
+}
+
+.dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.otherTrack {
+  position: relative;
+  width: 253.4896vw;
+  height: 56.25vw;
+  background: var(--color-base-2);
+}
+
+.otherIntro {
+  position: absolute;
+  top: 18.52%;
+  left: 1.875vw;
+}
+
+.otherIntro h2 {
+  font-family: var(--font-deco);
+  font-size: 6.7708vw;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.08em;
+}
+
+.otherIntro p {
+  margin-top: 1vw;
+  font-family: var(--font-deco);
+  font-size: 2.6042vw;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: #8d8d8d;
+}
+
+.otherCard {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 1.5625vw;
+  color: var(--color-base-1);
+}
+
+.otherCard img {
+  position: absolute;
+  max-width: none;
+  user-select: none;
+}
+
+.otherCard h3 {
+  position: absolute;
+  z-index: 2;
+  font-family: var(--font-en);
+  font-size: 4.6875vw;
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.snowmanCard {
+  top: 16.09vw;
+  left: 36.2vw;
+  width: 42.97vw;
+  height: 32.19vw;
+}
+
+.snowmanCard img {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 126.13%;
+}
+
+.snowmanCard h3 {
+  top: 1.2vw;
+  left: 1.15vw;
+}
+
+.snowballCard {
+  top: 9.64vw;
+  left: 81.3vw;
+  width: 38.91vw;
+  height: 38.91vw;
+}
+
+.snowballCard img {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.snowballCard h3 {
+  right: 2.5vw;
+  bottom: 1.8vw;
+  text-align: right;
+}
+
+.marioCard {
+  top: 9.64vw;
+  left: 122.92vw;
+  width: 57.4vw;
+  height: 35.78vw;
+}
+
+.marioCard img {
+  top: -82.53%;
+  left: 0;
+  width: 100%;
+  height: 182.53%;
+}
+
+.marioCard h3 {
+  top: 1.9vw;
+  left: 21.77vw;
+  white-space: nowrap;
+}
+
+.flamingoCard {
+  top: 9.64vw;
+  left: 183.49vw;
+  width: 29.48vw;
+  height: 43.28vw;
+}
+
+.flamingoCard img {
+  top: 0;
+  left: -19.2%;
+  width: 124.96%;
+  height: 100%;
+}
+
+.flamingoCard h3 {
+  right: 1.5vw;
+  bottom: 4vw;
+  text-align: right;
+}
+
+.apolloCard {
+  top: 17.29vw;
+  left: 217.55vw;
+  width: 35.94vw;
+  height: 35.63vw;
+}
+
+.apolloCard img {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.apolloCard h3 {
+  right: 1.7vw;
+  bottom: 1.5vw;
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .introDescription,
+  .storyCopy p,
+  .collaborationDescription {
+    font-size: 7px;
+  }
+
+  .storyCopy h2 {
+    font-size: 9px;
+  }
+
+  .headerMenu {
+    font-size: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detail {
+    scroll-behavior: auto;
+  }
+}
