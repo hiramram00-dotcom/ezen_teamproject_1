@@ -58,19 +58,19 @@ function MakeLightSection() {
       },
     })
     // 검정 정지 → 가로 타원이 커짐. 사진은 처음부터 어둡다가 원래 밝기로(한 방향) 돌아옴.
-    tl.to(oval, { r: 130, ease: 'none', duration: 0.5, onUpdate: setClip }, 0.06)
-      .fromTo(dim, { opacity: 0.75 }, { opacity: 0, ease: 'none', duration: 0.42 }, 0.24) // 어둠 → 원본
-      .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', duration: 0.08 }, 0.58)
+    tl.to(oval, { r: 130, ease: 'none', duration: 0.34, onUpdate: setClip }, 0.02)
+      .fromTo(dim, { opacity: 0.75 }, { opacity: 0, ease: 'none', duration: 0.28 }, 0.14) // 어둠 → 원본
+      .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', duration: 0.08 }, 0.42)
       // 글씨 한꺼번에 (헤드라인 + 본문 동시)
       .fromTo(
         [headline, desc],
         { autoAlpha: 0, y: 48 },
         { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.12 },
-        0.6
+        0.44
       )
       // "LIGHT" — 흰색 유지 → 점차 한 번 밝아졌다가 → 서서히 다시 흰색 (CSS 변수 보간으로 매끄럽게)
-      .to(light, { '--glow': 1, ease: 'power1.inOut', duration: 0.16 }, 0.7)
-      .to(light, { '--glow': 0, ease: 'power1.inOut', duration: 0.28 }, 0.88)
+      .to(light, { '--glow': 1, ease: 'power1.inOut', duration: 0.16 }, 0.54)
+      .to(light, { '--glow': 0, ease: 'power1.inOut', duration: 0.28 }, 0.72)
 
     return () => {
       tl.scrollTrigger && tl.scrollTrigger.kill()
