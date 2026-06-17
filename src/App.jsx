@@ -35,7 +35,6 @@ function Home() {
     <main>
       <Header index />
       <HeroSection />
-      <NewIntroSection />
       <NewIntroSectionNew />
       <MakeLightSection />
       <StorySection />
