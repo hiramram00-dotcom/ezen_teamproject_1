@@ -47,7 +47,6 @@ function HeroSection() {
   const logoRef = useRef(null)
   const lettersRef = useRef([])
   const copyRef = useRef(null)
-  const copyKrRef = useRef(null)
   const filamentRef = useRef(null)
   const videoRef = useRef(null)
   const overlayRef = useRef(null)
@@ -75,7 +74,6 @@ function HeroSection() {
     const letters = lettersRef.current.filter(Boolean)
     const logo = logoRef.current
     const copy = copyRef.current
-    const copyKr = copyKrRef.current
     const filament = filamentRef.current
     const video = videoRef.current
     const overlay = overlayRef.current
@@ -173,10 +171,11 @@ function HeroSection() {
       tl.to(letters, { autoAlpha: 1, duration: APPEAR, stagger: 0.04 }, 0)
       tl.to(copy, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power2.out' }, 0.1)
       // ── 한글 서브카피: 전구 필라멘트 빛이 가로로 지나가며 글자가 켜지듯 드러남 ──
-      if (copyKr) {
-        tl.fromTo(copyKr, { '--sweep': 0 }, { '--sweep': 1, duration: 1.1, ease: 'power1.inOut' }, 0.5)
+      if (filament) {
+        // 빛 라인이 화면을 가로질러 → 두 줄(영문·한글) 같이 켜짐
+        tl.fromTo(copy, { '--sweep': 0 }, { '--sweep': 1, duration: 1.1, ease: 'power1.inOut' }, 0.5)
         tl.fromTo(filament, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, 0.5)
-        tl.to(filament, { autoAlpha: 0, duration: 0.28 }, 1.45) // 빛 끝나면 필라멘트 사라짐
+        tl.to(filament, { autoAlpha: 0, duration: 0.28 }, 1.45) // 빛 라인 끝나면 사라짐
       }
       tl.to(letters, { x: 0, duration: P1_DUR, ease: 'power2.out' }, APPEAR)
       tl.to([letters[2], letters[3]], { y: 0, duration: P2_BOT_DUR, ease: 'power3.inOut', stagger: KW_DELAY }, p2Start)
@@ -248,10 +247,8 @@ function HeroSection() {
       {/* 중앙 서브카피 */}
       <div className={styles.copy} ref={copyRef}>
         <p className={styles.copyEn}>We make Light</p>
-        <span className={styles.copyKrWrap} ref={copyKrRef}>
-          <span className={styles.copyKr}>빛이 머문 자리에, 온기가 남습니다</span>
-          <span className={styles.filament} ref={filamentRef} aria-hidden="true" />
-        </span>
+        <p className={styles.copyKr}>빛이 머문 자리에, 온기가 남습니다</p>
+        <span className={styles.filament} ref={filamentRef} aria-hidden="true" />
       </div>
 
       {/* 하단 로고 — 영상 위에 남는 작은 ILKW */}

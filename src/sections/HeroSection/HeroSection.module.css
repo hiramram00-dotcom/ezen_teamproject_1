@@ -57,6 +57,7 @@
 
 /* ===== 중앙 서브카피 ===== */
 .copy {
+  --sweep: 0; /* GSAP가 0→1: 빛 라인이 화면 왼쪽(0)→오른쪽(100%) 지나는 진행도 */
   position: absolute;
   left: 0;
   width: 100%;
@@ -74,16 +75,32 @@
   font-family: var(--font-display, 'Playfair Display', serif);
   font-style: italic;
   font-size: clamp(15px, 1.15vw, 22px);
-  color: rgba(255, 255, 255, 0.6);
   letter-spacing: 0.01em;
+  /* 영문도 빛 막 지난 곳=옐로우흰빛 → 뒤로=흰색 정착 */
+  color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(255, 255, 255, 0.62) calc(var(--sweep) * 100% - 13%),
+    #fff2cc calc(var(--sweep) * 100% - 3%),
+    #ffe199 calc(var(--sweep) * 100%),
+    #ffe199 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  /* 빛 라인이 지나갈 때 영문도 같이 드러남(파도처럼) */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    #000 calc(var(--sweep) * 100% - 8%),
+    transparent calc(var(--sweep) * 100% + 5%)
+  );
+  mask-image: linear-gradient(
+    90deg,
+    #000 calc(var(--sweep) * 100% - 8%),
+    transparent calc(var(--sweep) * 100% + 5%)
+  );
 }
-/* 한글 서브카피 — 전구 필라멘트 빛 스윕 리빌 (--sweep 0→1, GSAP가 구동) */
-.copyKrWrap {
-  --sweep: 0; /* GSAP가 0→1: 빛이 화면 왼쪽(0)→오른쪽(100%) 지나는 진행도 */
-  position: relative;
-  display: block;
-  width: 100%;
-}
+/* 한글 서브카피 — 빛 라인 스윕 리빌 (--sweep은 .copy에서 상속) */
 .copyKr {
   display: block;
   width: 100%;
@@ -91,37 +108,56 @@
   margin: 0;
   font-family: var(--font-kr, 'Pretendard', sans-serif);
   font-size: clamp(14px, 1.05vw, 20px);
-  color: rgba(255, 255, 255, 0.82);
   letter-spacing: -0.01em;
-  /* 빛(전체폭)이 지나간 만큼 부드럽게 드러남 → 가운데 텍스트는 빛이 가운데 올 때 켜짐 */
+  /* 글자색: 빛 막 지난 곳=옐로우흰빛(#ffe39a) → 뒤로(왼쪽)=흰색으로 정착 */
+  color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 255, 255, 0.85) calc(var(--sweep) * 100% - 13%),
+    #fff4d2 calc(var(--sweep) * 100% - 3%),
+    #ffe39a calc(var(--sweep) * 100%),
+    #ffe39a 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  /* 빛이 지나간 만큼 부드럽게(파도처럼) 왼→오로 드러남 */
   -webkit-mask-image: linear-gradient(
     90deg,
-    #000 calc(var(--sweep) * 100% - 5%),
-    transparent calc(var(--sweep) * 100% + 3%)
+    #000 calc(var(--sweep) * 100% - 8%),
+    transparent calc(var(--sweep) * 100% + 5%)
   );
   mask-image: linear-gradient(
     90deg,
-    #000 calc(var(--sweep) * 100% - 5%),
-    transparent calc(var(--sweep) * 100% + 3%)
+    #000 calc(var(--sweep) * 100% - 8%),
+    transparent calc(var(--sweep) * 100% + 5%)
   );
-  text-shadow: 0 0 7px rgba(244, 147, 7, 0.22); /* 은은한 온기 글로우 */
+  text-shadow: 0 0 7px rgba(244, 147, 7, 0.25); /* 은은한 온기 글로우 */
 }
-/* 가로 빛줄기 — 화면 전체폭(왼쪽0→오른쪽100%)을 지나감, 빛 끝이 리빌 경계 */
+/* 빛 — 혜성/별똥별 모양: 머리(원점=빛 끝)는 굵고, 꼬리(잔상)로 갈수록 뾰족하게 얇아짐 */
 .filament {
   position: absolute;
   top: 50%;
-  left: calc(var(--sweep) * 100%); /* 전체폭 = .copy가 width:100% 라 화면 끝까지 */
-  width: 28%; /* 빛줄기 길이(전체폭 기준) — 길게/짧게 조절 */
-  height: 1.9em;
-  transform: translate(-100%, -50%); /* 빛 끝을 리빌 경계에 맞추고 왼쪽으로 꼬리 */
+  left: calc(var(--sweep) * 100%);
+  width: 58%; /* 가로 길이(꼬리 포함) — 길게/짧게 조절 */
+  height: 24px; /* 머리(원점) 세로 두께 — 굵게/얇게 조절 */
+  transform: translate(-100%, -50%); /* 머리를 리빌 경계에, 왼쪽으로 꼬리=잔상 */
+  /* 꼬리=주황 → 머리=밝은 피크 → 맨 오른쪽은 다시 투명(머리 하드엣지 녹임) */
   background: linear-gradient(
     90deg,
-    rgba(255, 205, 130, 0) 0%,
-    rgba(255, 216, 150, 0.18) 55%,
-    rgba(255, 238, 205, 0.55) 88%,
-    #fff6e6 100%
+    rgba(244, 147, 7, 0) 0%, /* 꼬리 끝(투명) */
+    rgba(244, 147, 7, 0.3) 30%, /* 주황 꼬리 */
+    rgba(255, 200, 110, 0.6) 64%,
+    rgba(255, 240, 200, 0.95) 84%, /* 머리 밝은 피크 */
+    rgba(255, 248, 232, 0.45) 95%,
+    rgba(255, 248, 232, 0) 100% /* 맨 오른쪽 투명 → 머리 딱딱한 엣지 사라짐 */
   );
-  filter: blur(5px);
+  /* 오른쪽=두꺼운 머리 → 왼쪽=뾰족한 꼬리 */
+  clip-path: polygon(100% 0, 100% 100%, 0% 50%);
+  /* 머리 위아래도 부드럽게(딱딱한 면 → 빛처럼) */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 42%, #000 58%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 42%, #000 58%, transparent 100%);
+  filter: blur(1.8px) drop-shadow(0 0 12px rgba(244, 147, 7, 0.55));
   opacity: 0; /* GSAP가 스윕 동안만 켬 */
   pointer-events: none;
 }
