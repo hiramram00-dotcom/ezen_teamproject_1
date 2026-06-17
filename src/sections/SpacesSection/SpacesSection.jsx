@@ -103,7 +103,7 @@ const easeInOutCubic = (value) =>
 
 // 진행도 구간: 텍스트 고정 → 검정 절반 등장(REVEAL) → 전체화면 확장(WIDEN) → 가로 패닝+조명 스윕
 const REVEAL_START = 0.1
-const REVEAL_END = 0.19
+const REVEAL_END = 0.15
 const WIDEN_END = 0.3
 const CARD_MIN_SCALE = 0.05
 // 스윕(조명 ON 라인) 구간이 룸 이동보다 몇 배 더 긴지 — 클수록 라인이 천천히 지나간다
