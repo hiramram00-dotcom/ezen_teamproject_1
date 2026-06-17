@@ -22,12 +22,8 @@ function SnowmanProductScene() {
     const featureTitle = featureTitleRef.current
     const model = modelRef.current
     const detail = detailRef.current
-    if (
-      !section ||
-      !featureTitle ||
-      !model ||
-      !detail
-    ) {
+
+    if (!section || !featureTitle || !model || !detail) {
       return undefined
     }
 
@@ -39,6 +35,7 @@ function SnowmanProductScene() {
       const featureTitleIn = smoothStep(progress / 0.1)
       const featureTitleOut = smoothStep((progress - 0.28) / 0.14)
       const finalScene = smoothStep((progress - 0.42) / 0.28)
+      const wobblePower = 1 - modelEnter
 
       featureTitle.style.setProperty(
         '--feature-title-opacity',
@@ -53,16 +50,27 @@ function SnowmanProductScene() {
         `${modelCover * Math.PI * 0.7 + finalScene * Math.PI * 1.85}`,
       )
       model.style.setProperty('--model-light', `${finalScene}`)
+      model.style.setProperty('--model-shadow', `${finalScene}`)
+      model.style.setProperty(
+        '--model-wobble-x',
+        `${Math.sin(modelEnter * Math.PI * 4) * wobblePower * 0.8}vw`,
+      )
+      model.style.setProperty(
+        '--model-wobble-rotate',
+        `${Math.sin(modelEnter * Math.PI * 5) * wobblePower * 3.2}deg`,
+      )
+      model.style.setProperty(
+        '--model-scale',
+        `${0.62 + modelCover * 0.28 - finalScene * 0.04}`,
+      )
+
       model.dataset.turn = `${
         modelCover * Math.PI * 0.7 + finalScene * Math.PI * 1.85
       }`
       model.dataset.enter = `${modelCover}`
       model.dataset.final = `${finalScene}`
       model.dataset.light = `${finalScene}`
-      model.style.setProperty(
-        '--model-scale',
-        `${0.62 + modelCover * 0.28 - finalScene * 0.04}`,
-      )
+      model.dataset.showcase = '1'
 
       detail.style.setProperty('--detail-opacity', `${finalScene}`)
       detail.style.setProperty('--detail-x', `${(1 - finalScene) * 6}vw`)
@@ -103,6 +111,7 @@ function SnowmanProductScene() {
         </p>
 
         <div ref={modelRef} className={styles.modelWrap}>
+          <span className={styles.modelShadow} aria-hidden="true" />
           <SnowmanModel className={styles.modelCanvas} />
         </div>
 
@@ -113,6 +122,14 @@ function SnowmanProductScene() {
             <br />
             공간에 따뜻하고 사랑스러운 무드를 더합니다.
           </p>
+          <a
+            className={styles.buyLink}
+            href="https://brand.naver.com/iklamp/products/11202568021"
+            target="_blank"
+            rel="noreferrer"
+          >
+            제품 보러가기
+          </a>
         </div>
       </div>
     </section>

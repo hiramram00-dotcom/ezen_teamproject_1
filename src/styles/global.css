@@ -4,6 +4,9 @@
 *, *::before, *::after { box-sizing: border-box; }
 * { margin: 0; padding: 0; }
 
+/* ⚠️ html/body에 overflow-x:hidden 금지 — overflow-y가 auto로 변해 스크롤 컨테이너가 바뀌면서
+   position:sticky / GSAP ScrollTrigger pin 이 깨짐(스크롤 연동 섹션 안 보임). 단, overflow-x: clip 은 스크롤 컨테이너를
+   안 만들어 안전 → 가로 넘침 방지는 clip 사용. (넘치는 섹션 근본 수정은 별개로 필요) */
 html, body { min-height: 100%; height: auto; overflow-x: clip; }
 
 body {
@@ -20,3 +23,10 @@ img, video, svg { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
 ul, ol { list-style: none; }
 button { font: inherit; cursor: pointer; background: none; border: none; }
+
+@media (hover: hover) and (pointer: fine) {
+  .has-light-cursor,
+  .has-light-cursor * {
+    cursor: none !important;
+  }
+}

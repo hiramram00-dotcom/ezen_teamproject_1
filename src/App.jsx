@@ -15,6 +15,7 @@ import Footer from './components/Footer/Footer'
 import AboutPage from './pages/AboutPage/AboutPage'
 import ShowroomPage from './pages/ShowroomPage/ShowroomPage'
 import Header from './components/Header/Header'
+import LightCursor from './components/LightCursor/LightCursor'
 
 // 라우트 바뀔 때마다 맨 위로 (엉뚱한 스크롤 위치 방지)
 // useLayoutEffect = 페인트 전 / 다음 프레임에 한 번 더 = ScrollTrigger 등이 위치 복원하려는 것까지 눌러줌
@@ -62,6 +63,7 @@ function ProductRoute() {
 function App() {
   return (
     <>
+      <LightCursor />
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
