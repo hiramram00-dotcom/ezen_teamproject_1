@@ -80,7 +80,7 @@ const SWEEP_WEIGHT = 1.7
 // 이 진행도에서 애니메이션 완료(Dining ON). 이후 끝까지는 고정 유지 + Collabo가 위로 올라옴
 const ANIM_END = 0.85
 // 고정 구간에서 Dining이 위로 드리프트하는 양(px) — 클수록 더 많이 올라감
-const DINING_DRIFT = 150
+const DINING_DRIFT = 200
 
 function SpacesSection() {
   const rangeRef = useRef(null)
