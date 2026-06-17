@@ -73,6 +73,36 @@
   font-size: 26px;
   letter-spacing: 0.01em;
 }
+/* 화살표 — 꼬리(shaft) 짧음→길어졌다→짧아짐 반복(방향 가리키는 느낌). Close일 땐 반대 방향 */
 .arrow {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  width: 26px; /* 고정폭 — shaft 늘어나도 버튼 레이아웃 안 흔들림 */
+  height: 12px;
+}
+.arrowShaft {
+  height: 2px;
+  width: 5px;
+  background: currentColor;
+  flex-shrink: 0;
+  animation: arrowReach 1.3s ease-in-out infinite;
+}
+.arrowHead {
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 8px solid currentColor;
+  flex-shrink: 0;
+}
+@keyframes arrowReach {
+  0%, 100% { width: 4px; }
+  55% { width: 17px; }
+}
+/* 메뉴 열림(Close) — 화살표만 반대 방향 */
+.arrowClose {
+  transform: scaleX(-1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .arrowShaft { animation: none; width: 12px; }
 }
