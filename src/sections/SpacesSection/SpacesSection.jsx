@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import styles from './SpacesSection.module.css'
 
-import livingImg from '../../assets/spaces/spaces2-living.png'
-import livingOnImg from '../../assets/spaces/spaces2-living-on.png'
-import bedImg from '../../assets/spaces/spaces2-bed.png'
-import bedOnImg from '../../assets/spaces/spaces2-bed-on.png'
-import diningImg from '../../assets/spaces/spaces2-dining.png'
-import diningOnImg from '../../assets/spaces/spaces2-dining-on.png'
+import livingImg from '../../assets/spaces/spaces2-living.webp'
+import livingOnImg from '../../assets/spaces/spaces2-living-on.webp'
+import bedImg from '../../assets/spaces/spaces2-bed.webp'
+import bedOnImg from '../../assets/spaces/spaces2-bed-on.webp'
+import diningImg from '../../assets/spaces/spaces2-dining.webp'
+import diningOnImg from '../../assets/spaces/spaces2-dining-on.webp'
 
 const rooms = [
   {
