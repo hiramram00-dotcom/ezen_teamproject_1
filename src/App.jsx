@@ -4,7 +4,7 @@ import HeroSection from './sections/HeroSection/HeroSection'
 import NewIntroSection from './sections/NewIntroSection/NewIntroSection'
 import MakeLightSection from './sections/MakeLightSection/MakeLightSection'
 import StorySection from './sections/StorySection/StorySection'
-import SpaceSection from './sections/SpaceSection/SpaceSection'
+import SpaceMiddleSection from './sections/SpaceMiddleSection/SpaceMiddleSection'
 import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection'
 import Snowman1Section from './sections/Snowman1Section/Snowman1Section'
 import ProductSection from './sections/ProductSection/ProductSection'
@@ -33,17 +33,17 @@ function ScrollToTop() {
 function Home() {
   return (
     <main>
-      <Header index />
-      <HeroSection />
-      <NewIntroSection />
-      <MakeLightSection />
+      {/* <Header index /> */}
+      {/* <HeroSection /> */}
+      {/* <NewIntroSection /> */}
+      {/* <MakeLightSection /> */}
       <StorySection />
-      <SpaceSection />
+      <SpaceMiddleSection />
       <StoryEndingSection />
-      <Snowman1Section />
-      <SpacesSection />
-      <CollaboSection />
-      <Footer />
+      {/* <Snowman1Section /> */}
+      {/* <SpacesSection /> */}
+      {/* <CollaboSection /> */}
+      {/* <Footer /> */}
     </main>
   );
 }
