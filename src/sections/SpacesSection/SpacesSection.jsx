@@ -62,6 +62,37 @@ const rooms = [
   },
 ]
 
+// 각 룸 사진 속 램프 실루엣 아이콘 (Living/Bed/Dining 순). viewBox 0 0 40 54 공통
+const LAMP_ICONS = [
+  // 0) 거실 — 2단 디스크 플로어 램프
+  (
+    <>
+      <path d="M14 12.5Q20 7.5 26 12.5" />
+      <path d="M9 18Q20 10 31 18" />
+      <line x1="20" y1="18" x2="20" y2="46" />
+      <ellipse cx="20" cy="47.5" rx="7" ry="2.3" />
+    </>
+  ),
+  // 1) 침실 — 줄에 매달린 돔 펜던트
+  (
+    <>
+      <line x1="20" y1="6" x2="20" y2="20" />
+      <path d="M10 33C10 22 14 20 20 20C26 20 30 22 30 33Z" />
+    </>
+  ),
+  // 2) 다이닝 — 주름진 둥근 셰이드 테이블 램프
+  (
+    <>
+      <path d="M11 23Q11 13 20 13Q29 13 29 23Q29 32 20 32Q11 32 11 23Z" />
+      <line x1="13" y1="18.5" x2="27" y2="18.5" />
+      <line x1="12" y1="23" x2="28" y2="23" />
+      <line x1="13.5" y1="28" x2="26.5" y2="28" />
+      <line x1="20" y1="32" x2="20" y2="44" />
+      <ellipse cx="20" cy="45.5" rx="5.5" ry="1.8" />
+    </>
+  ),
+]
+
 const clamp = (value, min = 0, max = 1) =>
   Math.min(Math.max(value, min), max)
 
@@ -80,7 +111,7 @@ const SWEEP_WEIGHT = 1.7
 // 이 진행도에서 애니메이션 완료(Dining ON). 이후 끝까지는 고정 유지 + Collabo가 위로 올라옴
 const ANIM_END = 0.85
 // 고정 구간에서 Dining이 위로 드리프트하는 양(px) — 클수록 더 많이 올라감
-const DINING_DRIFT = 150
+const DINING_DRIFT = 200
 
 function SpacesSection() {
   const rangeRef = useRef(null)
@@ -88,6 +119,7 @@ function SpacesSection() {
   const trackRef = useRef(null)
   const photoOnRefs = useRef([])
   const lineRefs = useRef([])
+  const bulbRefs = useRef([])
   const frameRef = useRef(null)
   const introRef = useRef(null)
   const [introVisible, setIntroVisible] = useState(false)
@@ -188,6 +220,10 @@ function SpacesSection() {
           line.style.left = `${sweep * 100}%`
           line.style.opacity = sweep > 0.002 && sweep < 0.998 ? '1' : '0'
         }
+
+        // 전구도 스윕에 맞춰 같이 점등
+        const bulb = bulbRefs.current[i]
+        if (bulb) bulb.style.opacity = String(sweep)
       })
     }
 
@@ -245,12 +281,18 @@ function SpacesSection() {
                 <article className={styles.panel} key={room.title}>
                   <div className={styles.panelText}>
                     <p className={styles.caption}>{room.caption}</p>
-                    <span className={styles.arrow} aria-hidden="true">
-                      <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M16.875 30V7.18125L27.3563 17.6625L30 15L15 0L0 15L2.64375 17.6438L13.125 7.18125V30H16.875Z"
-                          fill="currentColor"
-                        />
+                    <span className={styles.bulb} aria-hidden="true">
+                      <svg className={styles.bulbBase} viewBox="0 0 40 54">
+                        {LAMP_ICONS[index]}
+                      </svg>
+                      <svg
+                        className={styles.bulbGlow}
+                        viewBox="0 0 40 54"
+                        ref={(node) => {
+                          bulbRefs.current[index] = node
+                        }}
+                      >
+                        {LAMP_ICONS[index]}
                       </svg>
                     </span>
                     <h3 className={styles.roomTitle}>{room.title}</h3>
