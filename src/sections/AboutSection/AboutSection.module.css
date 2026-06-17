@@ -67,42 +67,21 @@
 .introAtmosphere span:nth-child(4) { top: 67%; left: 57%; animation-delay: 1.2s; }
 .introAtmosphere span:nth-child(5) { top: 43%; left: 47%; animation-delay: 5.1s; }
 
-.origin {
+.introParticles {
   position: absolute;
-  z-index: 2;
-  top: 23.6vw;
-  left: 50%;
-  transform: translate(-50%, 0);
-  transition:
-    transform 1.45s cubic-bezier(0.22, 0.72, 0.2, 1),
-    filter 1.45s ease,
-    opacity 1.45s ease;
-  will-change: transform;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 56.25vw;
+  pointer-events: none;
 }
 
-.originRaised {
-  filter: brightness(0.96);
-  transform: translate(-50%, -5.55vw);
-}
-
-.originLabel,
-.since p,
 .legacy h2 {
   font-family: var(--font-deco);
   font-style: italic;
   font-weight: 400;
   letter-spacing: -0.02em;
-}
-
-.originLabel,
-.since p {
-  font-size: 6.25vw;
-  line-height: 1.3;
-}
-
-.originLabel {
-  opacity: 0;
-  animation: sinceTurnOn 1.8s 180ms ease-out forwards;
 }
 
 .glowDot {
@@ -143,30 +122,6 @@
   aspect-ratio: 1;
   background: radial-gradient(circle, rgba(247, 235, 215, 0.08), transparent 68%);
   filter: blur(0.9vw);
-}
-
-.yearLight {
-  position: absolute;
-  z-index: 3;
-  top: 30.2vw;
-  left: 50%;
-  display: grid;
-  place-items: center;
-  width: 7vw;
-  aspect-ratio: 1;
-  padding: 0;
-  border-radius: 50%;
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-}
-
-.lightVisible {
-  animation: lightAppear 1.5s cubic-bezier(0.42, 0, 0.18, 1) forwards;
-}
-
-.lightHidden {
-  opacity: 0 !important;
 }
 
 .legacyTravelLight {
@@ -222,37 +177,6 @@
 .arrivalFlash {
   top: 4.2vw;
   left: 88%;
-}
-
-.since {
-  position: absolute;
-  top: 26.05vw;
-  left: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transform: translateX(-50%);
-}
-
-.year {
-  margin-top: -0.85vw;
-  font-family: var(--font-kr);
-  font-size: 9.375vw;
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: transparent;
-  font-variant-numeric: tabular-nums;
-  text-shadow: none;
-}
-
-.yearCounting,
-.yearRevealed {
-  color: var(--color-base-1);
-}
-
-.yearRevealed {
-  animation: yearSpark 900ms ease-out;
 }
 
 .legacy {
@@ -401,10 +325,10 @@
 
 .storyImage {
   position: absolute;
-  top: 18.5vw;
-  left: 13.18vw;
-  width: 43.85vw;
-  height: 28.2vw;
+  top: 18.9vw;
+  left: 10.8vw;
+  width: 38.8vw;
+  height: 24.9vw;
   object-fit: cover;
   clip-path: inset(0 0 100% 0);
   filter: brightness(0.28) saturate(0.3);
@@ -452,9 +376,32 @@
 
 .storyClosing {
   position: absolute;
-  top: 40.5vw;
-  left: 34.58vw;
-  width: 63.5vw;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-align: left;
+}
+
+.storyClosingLine {
+  position: absolute;
+  display: block;
+  white-space: nowrap;
+}
+
+.storyClosingLine:nth-child(1) {
+  top: 35.1vw;
+  left: 54vw;
+}
+
+.storyClosingLine:nth-child(2) {
+  top: 41.7vw;
+  left: 31.5vw;
+}
+
+.storyClosingLine:nth-child(3) {
+  top: 46vw;
+  left: 38.6vw;
 }
 
 .storyClosing strong {
@@ -484,10 +431,23 @@
 
 .storyPhaseTwo > .storyLead,
 .storyPhaseTwo > .storyImage,
+.storyPhaseTwo > .storyClosing,
+.storyPassed > .storyLead,
+.storyPassed > .storyImage,
+.storyPassed > .storyClosing {
+  pointer-events: none;
+}
+
+.storyPhaseTwo > .storyLead,
+.storyPhaseTwo > .storyImage,
 .storyPhaseTwo > .storyClosing {
-  opacity: 0;
+  opacity: 0 !important;
   filter: blur(0.45vw);
   transform: translateY(-1.4vw) scale(0.985);
+}
+
+.story:not(.storyPhaseTwo) .storySecond {
+  opacity: 0 !important;
 }
 
 .storyPhaseTwo .storySecond {
@@ -504,9 +464,37 @@
 }
 
 .storySecond .storyImage {
+  top: 19.1vw;
+  left: 11.2vw;
+  width: 38vw;
+  height: 24.4vw;
   clip-path: inset(0);
   filter: brightness(0.85) saturate(0.78);
   transform: scale(1);
+}
+
+.storySecond .storyClosing {
+  font-size: 2.72vw;
+}
+
+.storySecond .storyClosingLine:nth-child(1) {
+  top: 34.7vw;
+  left: 55vw;
+}
+
+.storySecond .storyClosingLine:nth-child(2) {
+  top: 38.3vw;
+  left: 55vw;
+}
+
+.storySecond .storyClosingLine:nth-child(3) {
+  top: 42vw;
+  left: 40vw;
+}
+
+.storySecond .storyClosingLine:nth-child(4) {
+  top: 45.6vw;
+  left: 40vw;
 }
 
 .videoPlaceholder {
@@ -561,20 +549,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .origin {
-    transition: none;
-  }
-
-  .originLabel {
-    opacity: 1;
-    animation: none;
-  }
-
   .introAtmosphere span {
-    animation: none;
-  }
-
-  .lightVisible .glowDot {
     animation: none;
   }
 
@@ -614,35 +589,6 @@
   }
 }
 
-@keyframes sinceTurnOn {
-  0% {
-    opacity: 0;
-    filter: blur(0.7vw);
-    text-shadow: 0 0 0 rgba(247, 235, 215, 0);
-    transform: translateY(0.9vw);
-  }
-  32% {
-    opacity: 0.92;
-    filter: blur(0.08vw);
-    text-shadow: 0 0 1.2vw rgba(247, 235, 215, 0.58);
-  }
-  42% {
-    opacity: 0.35;
-  }
-  52% {
-    opacity: 1;
-  }
-  65% {
-    opacity: 0.72;
-  }
-  100% {
-    opacity: 1;
-    filter: blur(0);
-    text-shadow: 0 0 0.5vw rgba(247, 235, 215, 0.16);
-    transform: translateY(0);
-  }
-}
-
 @keyframes dustFloat {
   0%,
   100% {
@@ -655,34 +601,6 @@
   }
   55% {
     transform: translate(0.8vw, -1vw) scale(1);
-  }
-}
-
-@keyframes lightAppear {
-  0% {
-    opacity: 0;
-    filter: brightness(0.55);
-    transform: translate(-50%, calc(-50% - 15vw)) scale(0.04);
-  }
-  18% {
-    opacity: 0.72;
-    filter: brightness(1.25);
-    transform: translate(calc(-50% + 2.8vw), calc(-50% - 12vw)) scale(0.28);
-  }
-  42% {
-    opacity: 0.9;
-    filter: brightness(1.05);
-    transform: translate(calc(-50% - 3.4vw), calc(-50% - 7.5vw)) scale(0.55);
-  }
-  68% {
-    opacity: 0.82;
-    filter: brightness(1.18);
-    transform: translate(calc(-50% + 1.8vw), calc(-50% - 3.5vw)) scale(0.78);
-  }
-  100% {
-    opacity: 0.9;
-    filter: brightness(1);
-    transform: translate(-50%, -50%) scale(1);
   }
 }
 
@@ -771,22 +689,5 @@
   50% {
     transform: scale(1.22);
     filter: blur(0.38vw) brightness(1.3);
-  }
-}
-
-@keyframes yearSpark {
-  0% {
-    color: rgba(255, 255, 255, 0.2);
-    text-shadow: 0 0 0 rgba(247, 235, 215, 0);
-  }
-  45% {
-    color: var(--color-base-1);
-    text-shadow:
-      0 0 1vw rgba(247, 235, 215, 1),
-      0 0 3vw rgba(247, 235, 215, 0.7);
-  }
-  100% {
-    color: var(--color-base-1);
-    text-shadow: 0 0 0 rgba(247, 235, 215, 0);
   }
 }

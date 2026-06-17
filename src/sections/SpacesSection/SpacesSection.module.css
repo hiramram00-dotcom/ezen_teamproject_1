@@ -1,231 +1,269 @@
 .spaces {
-  background: var(--color-base-2);
-  color: var(--color-base-3);
-}
-
-.inner {
-  width: 100%;
-  max-width: none;
-  margin: 0 auto;
-  padding: 0 clamp(20px, 2vw, 38px);
-}
-
-.introPanel {
   position: relative;
-  height: 100svh;
-  min-height: 720px;
+  z-index: 1;
+  background: var(--color-base-2);
+  color: var(--color-base-1);
+}
+
+/* 스크럽 페이스 손잡이: 값이 클수록 전체(등장+패닝)가 더 천천히 진행된다. */
+.range {
+  position: relative;
+  height: 1040svh;
   background: var(--color-base-2);
 }
 
-.introCopy {
-  position: absolute;
-  top: 34%;
-  left: 0;
-  color: var(--color-base-3);
-}
-
-.introTitle {
-  font-size: 120px;
-  line-height: 1.12;
-  letter-spacing: -2.4px;
-}
-
-.spaceWord,
-.ilkwWord {
-  font-family: 'Instrument Sans', sans-serif;
-  font-weight: 600;
-}
-
-.introTitle em {
-  font-family: var(--font-deco);
-  font-style: italic;
-  font-weight: 400;
-}
-
-.introDescription {
-  margin-top: 28px;
-  font-family: var(--font-kr);
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 1.6;
-  letter-spacing: -0.72px;
-}
-
-.transitionSection {
-  height: 440svh;
-}
-
-.transitionStage {
+.stage {
+  /* 창(우측 절반) 너비 = 패널 한 면(검정/사진)의 너비 */
+  --cardw: 50vw;
   position: sticky;
   top: 0;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   height: 100svh;
-  padding-top: 76px;
   overflow: hidden;
   background: var(--color-base-2);
 }
 
-.titleSlot {
+/* ── 인트로 텍스트 (중앙 고정) ── */
+.introCopy {
   position: relative;
-  height: 96px;
-  margin-bottom: 36px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: min(880px, 92vw);
+  text-align: center;
+  color: var(--color-base-3);
 }
 
-.title {
-  position: absolute;
-  inset: 0 auto auto 0;
+.introLabel {
+  margin: 0;
   font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: clamp(18px, 2vw, 26px);
+  line-height: 1.3;
+  letter-spacing: -0.52px;
+}
+
+.introHeadline {
+  margin: 0;
+  white-space: nowrap;
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600;
+  font-size: clamp(26px, 3.4vw, 40px);
+  line-height: 1.3;
+  letter-spacing: -0.8px;
+}
+
+.introSub {
+  margin: 0;
+  font-family: var(--font-kr);
   font-weight: 400;
-  font-size: 111px;
-  line-height: 0.86;
-  letter-spacing: -2px;
-  backface-visibility: hidden;
-  will-change: opacity, transform;
+  font-size: clamp(17px, 2vw, 26px);
+  line-height: 1.4;
+  letter-spacing: -1.04px;
 }
 
-.imageFrame {
-  position: relative;
-  width: 100%;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  border-radius: 40px 40px 0 0;
-  background: var(--color-base-3);
-  contain: paint;
+/* ── 인트로 텍스트 모션: 블러 포커스 인 ── */
+.introLabel,
+.introHeadline,
+.introSub {
+  opacity: 0;
+  filter: blur(8px);
+  transform: scale(1.02);
+  transition: none; /* 이탈 시 즉시 초기화 */
 }
 
-.imageLayer {
+.introVisible .introLabel,
+.introVisible .introHeadline,
+.introVisible .introSub {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+  transition:
+    opacity 2s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 2s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.introVisible .introLabel {
+  transition-delay: 0.08s;
+}
+
+.introVisible .introHeadline {
+  transition-delay: 0.32s;
+}
+
+.introVisible .introSub {
+  transition-delay: 0.6s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .introLabel,
+  .introHeadline,
+  .introSub {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ── 우측 절반 창(카드) + 가로 패닝 ── */
+.card {
   position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  width: var(--cardw);
+  height: 100svh;
+  overflow: hidden;
+  background: var(--color-base-3);
+  transform-origin: 100% 100%;
+  will-change: transform, opacity;
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  height: 100%;
   will-change: transform;
 }
 
-.image {
-  display: block;
-  width: 100%;
+/* 한 룸 = 검정 텍스트면(좌) + 사진면(우), 각 면이 창 너비 */
+.panel {
+  position: relative;
+  flex: 0 0 calc(2 * var(--cardw));
   height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  background: var(--color-base-3);
 }
 
-.imageLayer:nth-child(1) {
+.panelText {
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: 1;
+  width: var(--cardw);
+  height: 100%;
+  color: var(--color-base-1);
 }
 
-.imageLayer:nth-child(1) .image {
-  object-position: center center;
+.caption {
+  position: absolute;
+  top: clamp(48px, 8vh, 92px);
+  left: clamp(28px, 3.4vw, 64px);
+  margin: 0;
+  font-family: var(--font-kr);
+  font-weight: 400;
+  font-size: clamp(14px, 1.3vw, 19px);
+  line-height: 1.55;
+  letter-spacing: -0.4px;
 }
 
-.imageLayer:nth-child(2) {
-  z-index: 2;
-}
-
-.imageLayer:nth-child(2) .image {
-  object-position: center center;
-}
-
-.imageLayer:nth-child(3) {
+/* 전구 포인트 — 조명 스윕에 맞춰 꺼진 전구가 따뜻하게 점등 */
+.bulb {
+  position: absolute;
+  /* 세로 시작점을 캡션 텍스트와 동일하게 */
+  top: clamp(48px, 8vh, 92px);
+  right: clamp(28px, 3.4vw, 64px);
+  width: clamp(26px, 2vw, 36px);
+  aspect-ratio: 40 / 54;
   z-index: 3;
 }
 
-.imageLayer:nth-child(3) .image {
-  object-position: center center;
-}
-
-.imageCaption {
+.bulbBase,
+.bulbGlow {
   position: absolute;
-  bottom: 70px;
-  left: 47px;
-  z-index: 4;
-  font-family: var(--font-kr);
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 1.6;
-  letter-spacing: -0.72px;
-  color: var(--color-base-2);
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.32);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-@media (max-width: 1200px) {
-  .introPanel {
-    min-height: 640px;
-  }
-
-  .introTitle {
-    font-size: clamp(72px, 10vw, 120px);
-  }
-
-  .transitionStage {
-    height: 100svh;
-    padding-top: 72px;
-  }
-
-  .titleSlot {
-    height: clamp(52px, 8.3vw, 96px);
-    margin-bottom: 28px;
-  }
-
-  .title {
-    font-size: clamp(54px, 9vw, 111px);
-  }
-
-  .imageCaption {
-    bottom: 56px;
-    left: 40px;
-  }
-
+/* 꺼진 상태 — 은은한 회색 외곽선 */
+.bulbBase {
+  color: rgba(255, 255, 255, 0.4);
 }
 
-@media (max-width: 700px) {
-  .inner {
-    padding: 0 20px;
+/* 점등 상태 — 따뜻한 색 + 글로우, opacity는 JS가 스윕에 맞춰 제어 */
+.bulbGlow {
+  opacity: 0;
+  color: #ffce8a;
+  filter:
+    drop-shadow(0 0 7px rgba(255, 190, 110, 0.9))
+    drop-shadow(0 0 16px rgba(244, 147, 7, 0.55));
+  will-change: opacity;
+}
+
+.roomTitle {
+  position: absolute;
+  left: clamp(28px, 3.4vw, 64px);
+  bottom: clamp(48px, 7.5vh, 84px);
+  margin: 0;
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  /* 1920 기준 120px (= 6.25vw), 데스크톱 너비에 비례해 확대/축소 */
+  font-size: clamp(64px, 6.25vw, 160px);
+  line-height: 1.3;
+  letter-spacing: -2.4px;
+  color: var(--color-base-1);
+}
+
+.panelPhoto {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--cardw);
+  height: 100%;
+  overflow: hidden;
+}
+
+.photoOff,
+.photoOn {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 조명 ON 레이어: 세로 라인 스윕으로 좌→우 공개 */
+.photoOn {
+  z-index: 2;
+  will-change: clip-path;
+}
+
+/* 스윕 세로 라인 (빛이 지나가는 선) */
+.sweepLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 3;
+  width: 2px;
+  margin-left: -1px;
+  background: #fff;
+  box-shadow:
+    0 0 18px 3px rgba(255, 214, 150, 0.9),
+    0 0 60px 12px rgba(244, 147, 7, 0.45);
+  pointer-events: none;
+  will-change: left, opacity;
+}
+
+@media (max-width: 768px) {
+  .stage {
+    --cardw: 84vw;
   }
 
-  .introPanel {
-    min-height: 560px;
+  .introHeadline {
+    white-space: normal;
   }
 
-  .introCopy {
-    top: 32%;
-  }
-
-  .introTitle {
-    font-size: clamp(50px, 15vw, 76px);
-    line-height: 1.06;
+  .roomTitle {
     letter-spacing: -1.4px;
   }
-
-  .introDescription {
-    margin-top: 22px;
-    font-size: 16px;
-    letter-spacing: -0.48px;
-  }
-
-  .transitionStage {
-    padding-top: 52px;
-  }
-
-  .titleSlot {
-    height: clamp(42px, 12.5vw, 72px);
-    margin-bottom: 22px;
-  }
-
-  .title {
-    font-size: clamp(42px, 13vw, 76px);
-    line-height: 0.96;
-  }
-
-  .imageCaption {
-    bottom: 36px;
-    left: 28px;
-    width: calc(100% - 56px);
-    font-size: 16px;
-    line-height: 1.55;
-    letter-spacing: -0.48px;
-  }
-
 }
