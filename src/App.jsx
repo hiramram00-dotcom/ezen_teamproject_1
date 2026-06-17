@@ -1,6 +1,7 @@
 import { useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import HeroSection from './sections/HeroSection/HeroSection'
+import NewIntroSection from './sections/NewIntroSection/NewIntroSection'
 import NewIntroSectionNew from './sections/NewIntroSection_new/NewIntroSection_new'
 import MakeLightSection from './sections/MakeLightSection/MakeLightSection'
 import Story2Section from './sections/Story2Section/Story2Section'
@@ -35,6 +36,7 @@ function Home() {
     <main>
       <Header index />
       <HeroSection />
+      <NewIntroSection />
       <NewIntroSectionNew />
       <MakeLightSection />
       <Story2Section />
