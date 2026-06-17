@@ -116,9 +116,10 @@
 }
 
 .card {
+  position: relative; /* ::after 구분선 기준 */
   flex: 0 0 379px;
   width: 379px;
-  margin-right: 68px; /* 카드 사이 간격(끝에도 붙어 마퀴 이음새 균일) */
+  margin-right: 130px; /* 카드 사이 간격(끝에도 붙어 마퀴 이음새 균일) */
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -128,6 +129,17 @@
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   will-change: transform;
+}
+/* 카드 사이 간격(68px)의 정가운데에 연한 회색 세로 구분선 */
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -65px; /* 간격 130px의 절반 → 카드와 카드 정중앙 */
+  width: 1px;
+  background: rgba(0, 0, 0, 0.12);
+  pointer-events: none;
 }
 /* 호버한 카드는 둥둥 멈춤 */
 .card:hover {
