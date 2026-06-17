@@ -1,6 +1,4 @@
 import { useEffect, useRef } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import imgKakao from './assets/collabo-kakao.webp'
 import imgKittybunnypony from './assets/collabo-kittybunnypony.webp'
 import imgHankyoreh from './assets/collabo-hankyoreh.webp'
@@ -8,8 +6,6 @@ import imgChilsung from './assets/collabo-chilsung.webp'
 import imgWarmgreytale from './assets/collabo-warmgreytale.webp'
 import imgKanu from './assets/collabo-kanu.webp'
 import styles from './CollaboSection.module.css'
-
-gsap.registerPlugin(ScrollTrigger)
 
 /**
  * CollaboSection
@@ -79,34 +75,21 @@ const clamp01 = (v) => Math.min(1, Math.max(0, v))
 function CollaboSection() {
   const wrapRef = useRef(null)
   const titleRef = useRef(null)
-  const headingRef = useRef(null)
-  const descRef = useRef(null)
   const viewportRef = useRef(null)
   const trackRef = useRef(null)
 
-  // 제목 + 아래 한글 문장 — 섹션 진입 시 왼쪽 → 오른쪽으로 쓰여지듯 리빌 (ScrollTrigger)
+  // 제목 + 아래 한글 문장 — 화면 진입 시 blur-in(흐림 → 선명) 스태거 등장.
+  // .intro에 isVisible 클래스를 토글하면 자식(.fxBlurIn)들이 순서대로 또렷해진다.
+  // (나가면 클래스 제거되어 초기화 → 다시 들어올 때 재생)
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const targets = [headingRef.current, descRef.current].filter(Boolean)
-    if (!targets.length) return
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        targets,
-        { clipPath: 'inset(0 100% 0 0)' },
-        {
-          clipPath: 'inset(0 0% 0 0)',
-          duration: 1.2,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: wrapRef.current,
-            // 섹션 상단이 화면 40%에 닿으면 진입 → 스크롤과 무관하게 끝까지 1회 재생.
-            start: 'top 40%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      )
-    }, wrapRef)
-    return () => ctx.revert()
+    const el = titleRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => el.classList.toggle(styles.isVisible, entry.isIntersecting),
+      { threshold: 0.4 }
+    )
+    io.observe(el)
+    return () => io.disconnect()
   }, [])
 
   useEffect(() => {
@@ -241,12 +224,12 @@ function CollaboSection() {
     <section id="collabo" ref={wrapRef} className={styles.collabo}>
       <div className={styles.sticky}>
         <div ref={titleRef} className={styles.intro}>
-          <h2 ref={headingRef} className={styles.title}>
+          <h2 className={`${styles.title} ${styles.fxBlurIn}`}>
             <span className="type-title-1">COLLABO</span>{' '}
             <span className="type-italic-1">with</span>{' '}
             <span className="type-title-1">ILKW.</span>
           </h2>
-          <p ref={descRef} className={`${styles.desc} type-body-3`}>
+          <p className={`${styles.desc} ${styles.fxBlurIn} type-body-3`}>
             다양한 브랜드와 함께 새로운 빛의 경험을 만들어갑니다.
           </p>
         </div>

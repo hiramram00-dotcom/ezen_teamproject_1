@@ -1,9 +1,7 @@
-/* Hero — 자동 인트로(ILKW. 조립) → 검정 오버레이 빛 reveal → 영상 + 하단 로고 */
+/* Hero — 검정 패널 + 혜성 빛으로 서브카피 등장 → 화면 위/아래 분할 → 영상 + 큰 로고 */
 
 .hero {
-  --bulb-x: 50%;   /* 영상 속 전구 가로 위치 (튜닝) */
-  --bulb-y: 44%;   /* 영상 속 전구 세로 위치 (튜닝) */
-  --reveal: 0%;    /* GSAP가 키움: 0 → 165% */
+  --sweep: 0; /* 혜성 빛 진행도 0→1 (서브카피 리빌) */
   position: relative;
   width: 100%;
   height: 100vh;
@@ -11,7 +9,7 @@
   overflow: hidden;
 }
 
-/* 배경 영상 */
+/* 배경 영상 (패널 뒤에서 분할로 드러남) */
 .video {
   position: absolute;
   inset: 0;
@@ -19,130 +17,130 @@
   height: 100%;
   object-fit: cover;
   z-index: 1;
+  /* AI 인물 티 줄이기 — 덜 어둡게 + 살짝 흐릿 + 차분한 색감 (수치 조절 노브) */
+  filter: brightness(0.82) contrast(1.03) saturate(0.78) blur(1.3px);
 }
 
-/* 검정 오버레이 — 전구 위치에서 빛이 퍼지듯 걷힘 */
-.overlay {
+/* 검정 패널 — 영상을 덮었다가 위/아래로 갈라짐 */
+.panelTop,
+.panelBottom {
   position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at var(--bulb-x) var(--bulb-y),
-    transparent calc(var(--reveal) - 10%),
-    #000 var(--reveal)
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: #000;
+  z-index: 3; /* 검정 패널이 맨 위 — 걷히면서 뒤(영상·로고)가 드러남 */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  will-change: transform;
+}
+.panelTop {
+  top: 0;
+  align-items: flex-end; /* 윗줄 카피 = 패널 아래(분할선) 근처 */
+}
+.panelBottom {
+  bottom: 0;
+  align-items: flex-start; /* 한글 카피 = 패널 위(분할선) 근처 */
+}
+
+/* ===== 서브카피 — 혜성 빛(--sweep) 지나간 만큼 드러남, 패널 따라 갈라져 사라짐 ===== */
+.copyEn,
+.copyKr {
+  margin: 0;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+  /* 글자색: 빛 막 지난 곳=옐로우흰빛 → 뒤로=흰색 정착 */
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  /* 왼→오 부드럽게(파도처럼) 리빌 */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    #000 calc(var(--sweep) * 100% - 8%),
+    transparent calc(var(--sweep) * 100% + 5%)
+  );
+  mask-image: linear-gradient(
+    90deg,
+    #000 calc(var(--sweep) * 100% - 8%),
+    transparent calc(var(--sweep) * 100% + 5%)
+  );
+}
+.copyEn {
+  margin-bottom: 14px; /* 분할선에서 살짝 위 */
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-style: italic;
+  font-size: clamp(15px, 1.15vw, 22px);
+  letter-spacing: 0.01em;
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(255, 255, 255, 0.62) calc(var(--sweep) * 100% - 13%),
+    #fff2cc calc(var(--sweep) * 100% - 3%),
+    #ffe199 calc(var(--sweep) * 100%),
+    #ffe199 100%
+  );
+}
+.copyKr {
+  margin-top: 14px; /* 분할선에서 살짝 아래 */
+  font-family: var(--font-kr, 'Pretendard', sans-serif);
+  font-size: clamp(14px, 1.05vw, 20px);
+  letter-spacing: -0.01em;
+  text-shadow: 0 0 7px rgba(244, 147, 7, 0.25);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 255, 255, 0.85) calc(var(--sweep) * 100% - 13%),
+    #fff4d2 calc(var(--sweep) * 100% - 3%),
+    #ffe39a calc(var(--sweep) * 100%),
+    #ffe39a 100%
   );
 }
 
-/* ===== ILKW 워드마크 (자연 위치 = 최종 한 줄, GSAP가 조립) ===== */
+/* ===== 혜성 빛 — 분할선(가운데)에서 가로로 지나감 ===== */
+.filament {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--sweep) * 100%);
+  width: 58%; /* 가로 길이(꼬리 포함) */
+  height: 24px; /* 머리(원점) 세로 두께 */
+  transform: translate(-100%, -50%);
+  z-index: 4; /* 패널 위 — 서브카피 비추며 지나감 */
+  /* 꼬리=주황 → 머리=밝은 피크 → 맨 오른쪽 다시 투명(머리 하드엣지 녹임) */
+  background: linear-gradient(
+    90deg,
+    rgba(244, 147, 7, 0) 0%,
+    rgba(244, 147, 7, 0.3) 30%,
+    rgba(255, 200, 110, 0.6) 64%,
+    rgba(255, 240, 200, 0.95) 84%,
+    rgba(255, 248, 232, 0.45) 95%,
+    rgba(255, 248, 232, 0) 100%
+  );
+  clip-path: polygon(100% 0, 100% 100%, 0% 50%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 42%, #000 58%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 42%, #000 58%, transparent 100%);
+  filter: blur(1.8px) drop-shadow(0 0 12px rgba(244, 147, 7, 0.55));
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ===== 메인 로고 — 현재 위치, 2배 크기, 등장 후 유지 ===== */
 .logo {
   position: absolute;
   left: 50%;
-  top: 6%;
+  bottom: 5%;
+  transform: translateX(-50%);
   display: flex;
   align-items: flex-end;
   gap: 0;
-  font-size: clamp(56px, 16vw, 320px);
-  z-index: 3;
+  font-size: clamp(40px, 11vw, 224px); /* 원래 크기의 0.7배 — 크기 조절 노브 */
+  z-index: 2; /* 패널(3) 뒤 — 패널 걷히면서 드러남 */
   user-select: none;
-  opacity: 0;
+  opacity: 1;
 }
 .letter {
   height: 1em;
   width: auto;
   display: block;
-  will-change: transform; /* 인트로 시작 첫 프레임 버벅임 방지 (미리 GPU 레이어로) */
-}
-/* 새 로고 글자는 자연스레 붙음 (gap:0). 자간 미세조정 필요하면 .logo { gap } 사용 */
-
-/* ===== 중앙 서브카피 ===== */
-.copy {
-  position: absolute;
-  left: 50%;
-  top: 46%;
-  text-align: center;
-  z-index: 3;
-  user-select: none;
-  pointer-events: none;
-  white-space: nowrap;
-  opacity: 0;
-  will-change: transform; /* 첫 프레임 버벅임 방지 */
-}
-.copyEn {
-  margin: 0 0 4px;
-  font-family: var(--font-display, 'Playfair Display', serif);
-  font-style: italic;
-  font-size: clamp(15px, 1.15vw, 22px);
-  color: rgba(255, 255, 255, 0.6);
-  letter-spacing: 0.01em;
-}
-.copyKr {
-  margin: 0;
-  font-family: var(--font-kr, 'Pretendard', sans-serif);
-  font-size: clamp(14px, 1.05vw, 20px);
-  color: rgba(255, 255, 255, 0.78);
-  letter-spacing: -0.01em;
-}
-
-/* ===== 하단 로고 — 영상 위 작은 ILKW ===== */
-.bottomLogo {
-  position: absolute;
-  left: 50%;
-  bottom: 7%;          /* 위치 튜닝 (896:385 기준 하단) */
-  display: flex;
-  align-items: flex-end;
-  gap: 0;
-  font-size: clamp(24px, 6.3vw, 126px);
-  z-index: 4;
-  user-select: none;
-  opacity: 0;          /* GSAP가 끝에 보이게 */
-}
-
-/* ===== 하단중앙 스크롤 힌트 — 마우스 휠 인디케이터 ===== */
-.hint {
-  position: absolute;
-  left: 50%;
-  bottom: 5.5%;
-  transform: translateX(-50%);
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  opacity: 0;          /* GSAP가 전구 상태에서 보이게 */
-  pointer-events: none;
-}
-/* 마우스 외형 — 세로 길고 가로 짧은 라운드 사각형 */
-.mouse {
-  width: 24px;
-  height: 38px;
-  border: 1.5px solid rgba(255, 255, 255, 0.55);
-  border-radius: 12px;
-  display: flex;
-  justify-content: center;
-}
-/* 휠 — 안에서 아래로 내려가는 작은 막대 */
-.wheel {
-  width: 3px;
-  height: 8px;
-  margin-top: 7px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.85);
-  animation: wheelScroll 1.7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-@keyframes wheelScroll {
-  0%   { transform: translateY(0); opacity: 0; }
-  25%  { opacity: 1; }
-  70%  { transform: translateY(12px); opacity: 0; }
-  100% { transform: translateY(12px); opacity: 0; }
-}
-.hintLabel {
-  font-family: var(--font-en, sans-serif);
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
-}
-@media (prefers-reduced-motion: reduce) {
-  .wheel { animation: none; }
 }

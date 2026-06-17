@@ -47,7 +47,7 @@ export default function SpaceMiddleSection() {
           scrollTrigger: {
             trigger: img1Ref.current,
             start: "top 85%",
-            toggleActions: "play none none reverse"
+            toggleActions: "play none none none"
           }
         }
       );
@@ -65,7 +65,7 @@ export default function SpaceMiddleSection() {
             scrollTrigger: {
               trigger: img,
               start: "top 85%",
-              toggleActions: "play none none reverse"
+              toggleActions: "play none none none"
             }
           }
         );
@@ -84,7 +84,7 @@ export default function SpaceMiddleSection() {
             trigger: sectionRef.current, // Use unscaled parent
             start: () => `top+=${650 * scale}px 85%`, // Mathematically calculate scaled position
             invalidateOnRefresh: true, // Recalculate on resize
-            toggleActions: "play none none reverse"
+            toggleActions: "play none none none"
           }
         }
       );
@@ -93,17 +93,51 @@ export default function SpaceMiddleSection() {
       ScrollTrigger.create({
         trigger: sectionRef.current, // Use unscaled parent
         start: () => `top+=${650 * scale}px 80px`, // Starts exactly when the 650px offset hits the 80px sticky point
-        end: () => `top+=${3133 * scale}px bottom`, // Ends exactly when the container finishes
+        end: () => `top+=${3133 * scale}px top`, // Ends when the container finishes scrolling completely out of view
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           const words = ["Spaces", "Moments", "Warmth", "Memories", "Atmospheres"];
           const index = Math.min(Math.floor(self.progress * words.length), words.length - 1);
-          if (highlightWordRef.current && highlightWordRef.current.innerText !== words[index]) {
-            highlightWordRef.current.innerText = words[index];
+          const targetWord = words[index];
+          
+          if (highlightWordRef.current && highlightWordRef.current.dataset.currentWord !== targetWord) {
+            highlightWordRef.current.dataset.currentWord = targetWord;
+            
+            // Kill any ongoing tweens to prevent flashing
+            gsap.killTweensOf(highlightWordRef.current);
+            
+            // Fade out, change text, fade in
+            gsap.to(highlightWordRef.current, {
+              opacity: 0,
+              duration: 0.3, // Slower fade out
+              ease: "power1.inOut",
+              onComplete: () => {
+                if (highlightWordRef.current) {
+                  highlightWordRef.current.innerText = targetWord;
+                  gsap.to(highlightWordRef.current, { 
+                    opacity: 1, 
+                    duration: 0.3, // Slower fade in
+                    ease: "power1.inOut" 
+                  });
+                }
+              }
+            });
           }
         }
       });
 
+      // 1. Cinematic Fade to Black (The Void) Transition
+      // Fades out the entire container (images and text) as it leaves the screen
+      gsap.to(containerRef.current, {
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "bottom 60%", // Starts fading out when the bottom of the section is slightly past the middle of the screen
+          end: "bottom top", // Fully transparent by the time it reaches the top
+          scrub: 1, // Slight inertia for smooth fading
+        },
+        opacity: 0,
+        ease: "power1.inOut"
+      });
 
     }, sectionRef);
     return () => ctx.revert();

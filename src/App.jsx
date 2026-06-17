@@ -1,7 +1,6 @@
 import { useLayoutEffect } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import HeroSection from './sections/HeroSection/HeroSection'
-import NewIntroSection from './sections/NewIntroSection/NewIntroSection'
 import NewIntroSectionNew from './sections/NewIntroSection_new/NewIntroSection_new'
 import MakeLightSection from './sections/MakeLightSection/MakeLightSection'
 import StorySection from './sections/StorySection/StorySection'
@@ -36,7 +35,6 @@ function Home() {
     <main>
       <Header index />
       <HeroSection />
-      <NewIntroSection />
       <NewIntroSectionNew />
       <MakeLightSection />
       <StorySection />
@@ -44,7 +42,7 @@ function Home() {
       <StoryEndingSection />
       <Snowman1Section />
       <SpacesSection />
-      {/* 고정된 Dining(ON) 위로 Collabo가 슬라이드업 */}
+      {/* 고정된 Dining(ON) 위로 Collabo가 슬라이드업 (한 번만 렌더) */}
       <div style={{ position: 'relative', zIndex: 2, marginTop: '-100vh' }}>
         <CollaboSection />
       </div>
