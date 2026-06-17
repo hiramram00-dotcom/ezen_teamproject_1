@@ -7,8 +7,8 @@
 /* 스크롤 거리 제공 — 단어 채우기(완만) + 확장 + 슬라이드 자동전환 + 여운 */
 .intro {
   position: relative;
-  height: 520vh;
-  margin-bottom: 20vh; /* 스토리텔링 ↔ 마무리 화면 사이 텀 */
+  height: 330vh;
+  margin-bottom: 0;
   background: var(--color-base-2); /* #FFF7EA 크림 */
 }
 
@@ -45,19 +45,26 @@
   font-size: clamp(28px, 3.65vw, 70px); /* 70px @1920 */
   line-height: 1.4;
   letter-spacing: 0.02em; /* 1.4px @70px */
-  color: rgba(37, 37, 37, 0.22); /* 시작: 연한색 (글자별로 검정으로 채워짐) */
+  color: #000;
   transform-origin: center center;
   will-change: transform, opacity, filter;
 }
 .quote strong {
   font-weight: 600; /* ILKW = SemiBold */
 }
-/* 글자 단위 — 스크롤에 따라 첫 글자부터 검정으로 채워진다 */
+/* 글자/이미지 단위 — 회색 없이 스크롤에 따라 검정으로 나타난다 */
+.reveal {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 .ch {
-  transition: color 0.3s ease;
+  color: #000;
 }
 .lit {
-  color: #000;
+  opacity: 1;
+}
+.initial {
+  transition: none;
 }
 /* 디자인과 동일한 4줄 고정 — 줄 내부는 줄바꿈 금지 */
 .line {
@@ -79,7 +86,7 @@
 .w4 { width: 2.83em; } /* 198px */
 /* word-4는 자리만 차지 — 실제 램프는 .lamp 오버레이가 담당 */
 .slot {
-  visibility: hidden;
+  visibility: visible;
 }
 
 /* 자라나는 프레임 (left/top/width/height는 JS가 매 프레임 갱신) */
@@ -95,29 +102,76 @@
   transform-origin: center center;
   will-change: transform, opacity;
 }
-/* 세로 트랙 — 사진 슬라이드들이 위로 쌓여 translateY로 교체.
-   트리거(.advanced)를 지나면 자동으로 한 번에 슬라이드된다. */
 .track {
   position: absolute;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  transform: translateY(0);
-  transition: transform 0.85s cubic-bezier(0.7, 0, 0.2, 1);
-  will-change: transform;
 }
 .slide {
-  flex: 0 0 100%;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
-.slide img {
+.activeSlide {
+  opacity: 1;
+}
+.sliceImage {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+.baseImage {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
+  opacity: 1;
+}
+.slice {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  opacity: 0;
+  background-image: var(--slice-image);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  clip-path: inset(0 var(--slice-right) 0 var(--slice-left));
+}
+.slice:nth-of-type(1) { --slice-left: 0%; --slice-start: 25%; --slice-right: 75%; }
+.slice:nth-of-type(2) { --slice-left: 25%; --slice-start: 50%; --slice-right: 50%; }
+.slice:nth-of-type(3) { --slice-left: 50%; --slice-start: 75%; --slice-right: 25%; }
+.slice:nth-of-type(4) { --slice-left: 75%; --slice-start: 100%; --slice-right: 0%; }
+.splitActive .activeSlide .baseImage {
+  opacity: 0;
+}
+.splitActive .activeSlide .slice {
+  opacity: 1;
+  animation: sliceRevealRightToLeft 0.32s cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+.splitActive .activeSlide .slice:nth-of-type(2) { animation-delay: 0.03s; }
+.splitActive .activeSlide .slice:nth-of-type(3) { animation-delay: 0.06s; }
+.splitActive .activeSlide .slice:nth-of-type(4) { animation-delay: 0.09s; }
+
+@keyframes sliceRevealRightToLeft {
+  0% {
+    clip-path: inset(0 var(--slice-right) 0 var(--slice-start));
+  }
+  100% {
+    clip-path: inset(0 var(--slice-right) 0 var(--slice-left));
+  }
 }
 
 /* 브랜드 스토리텔링 라벨 */

@@ -1,12 +1,13 @@
 import { useRef, useEffect } from 'react'
-import styles from './NewIntroSection.module.css'
+import styles from './NewIntroSection_new.module.css'
 
-import word1 from './assets/intro-word-1.webp'
 import word2 from './assets/intro-word-2.webp'
 import word3 from './assets/intro-word-3.webp'
 import lamp from './assets/lamp.webp'
 import story2 from './assets/story-2.webp'
 import story3 from './assets/story-3.webp'
+
+const HERO_VIDEO_SRC = 'https://res.cloudinary.com/dg9hg29hc/video/upload/hero-video_rtcktn.mp4'
 
 /**
  * NewIntroSection — 브랜드 철학 인용 → 브랜드 스토리텔링 (핀 고정)
@@ -34,10 +35,27 @@ const FILL_P_END = 0.2
 // 전환 구간 (스크롤 진행도 p 기준)
 const GROW_START = 0.28 // 단어 채우기 완료 뒤 정지 구간을 두고 확대 시작
 const GROW_END = 0.38 // 램프 확장 완료
-const STORY_AT = 0.38 // 양옆/가운데 라벨 등장
-const SLIDE_TRIGGERS = [0.55, 0.78] // 각 임계값을 넘을 때마다 다음 슬라이드로 자동 교체
+const STORY_AT = 0.4 // 양옆/가운데 라벨 등장
+const SLIDE_TRIGGERS = [0.53, 0.72] // 각 임계값을 넘을 때마다 다음 슬라이드로 자동 교체
 
-function NewIntroSection() {
+function SlicedImage({ src, alt }) {
+  return (
+    <div
+      className={styles.sliceImage}
+      role="img"
+      aria-label={alt}
+      style={{ '--slice-image': `url(${src})` }}
+    >
+      <img className={styles.baseImage} src={src} alt="" aria-hidden="true" />
+      <span className={styles.slice} aria-hidden="true" />
+      <span className={styles.slice} aria-hidden="true" />
+      <span className={styles.slice} aria-hidden="true" />
+      <span className={styles.slice} aria-hidden="true" />
+    </div>
+  )
+}
+
+function NewIntroSectionNew() {
   const sectionRef = useRef(null)
   const stageRef = useRef(null)
   const bgRef = useRef(null)
@@ -60,12 +78,16 @@ function NewIntroSection() {
     const track = trackRef.current
     const sideLabels = sideLabelsRef.current
     const centers = [center1Ref.current, center2Ref.current, center3Ref.current]
+    const slides = Array.from(track.querySelectorAll(`.${styles.slide}`))
 
-    const chars = Array.from(quote.querySelectorAll(`.${styles.ch}`))
+    const revealItems = Array.from(
+      quote.querySelectorAll(`.${styles.reveal}:not(.${styles.initial})`)
+    )
+    const allRevealItems = Array.from(quote.querySelectorAll(`.${styles.reveal}`))
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) {
-      chars.forEach((ch) => ch.classList.add(styles.lit))
+      allRevealItems.forEach((item) => item.classList.add(styles.lit))
       section.style.height = 'auto'
       stage.style.position = 'static'
       word4.style.visibility = 'visible'
@@ -80,14 +102,6 @@ function NewIntroSection() {
     let lastLit = -1
 
     const measure = () => {
-      // word4(인라인 램프)는 quote의 transform(scale)·blur 영향을 받으므로,
-      // 스크롤이 내려간 상태(축소됨)에서 측정하면 시작 위치가 틀어진다.
-      // 측정하는 동안만 quote를 기본 상태(scale 1, blur 0)로 되돌려 자연 위치를 읽는다.
-      const prevTransform = quote.style.transform
-      const prevFilter = quote.style.filter
-      quote.style.transform = 'translate(-50%, -50%)'
-      quote.style.filter = 'none'
-
       const s = stage.getBoundingClientRect()
       const w = word4.getBoundingClientRect()
       const sw = stage.offsetWidth
@@ -96,10 +110,6 @@ function NewIntroSection() {
         start: { left: w.left - s.left, top: w.top - s.top, width: w.width, height: w.height },
         end: { left: sw * 0.1854, top: sh * 0.1491, width: sw * 0.6286, height: sh * 0.6676 },
       }
-
-      // 원래 상태로 복원 (직후 apply()가 현재 스크롤 위치에 맞게 다시 설정)
-      quote.style.transform = prevTransform
-      quote.style.filter = prevFilter
     }
 
     const apply = () => {
@@ -108,25 +118,36 @@ function NewIntroSection() {
       const rectTop = section.getBoundingClientRect().top
       const dist = section.offsetHeight - stage.offsetHeight
       const p = clamp01(-rectTop / dist)
-      const { start, end } = metrics
+      const { end } = metrics
 
       // ===== 단어 색 채우기: 중앙에 멈춘(핀 고정) 뒤부터 첫 단어부터 연한색→검정 =====
-      const lit = Math.round(clamp01(p / FILL_P_END) * chars.length)
+      const lit = Math.round(clamp01(p / FILL_P_END) * revealItems.length)
       if (lit !== lastLit) {
         const lo = Math.min(lit, lastLit < 0 ? 0 : lastLit)
         const hi = Math.max(lit, lastLit < 0 ? 0 : lastLit)
-        for (let i = lo; i < hi; i++) chars[i]?.classList.toggle(styles.lit, i < lit)
+        for (let i = lo; i < hi; i++) revealItems[i]?.classList.toggle(styles.lit, i < lit)
         lastLit = lit
       }
 
       // ===== Phase A: 램프 확장 (스크롤 연동) =====
       const gp = clamp01((p - GROW_START) / (GROW_END - GROW_START))
       const lp = smooth(gp)
+      const wordReady = word4.classList.contains(styles.lit)
+      const frameActive = wordReady && gp > 0
+      const stageRect = stage.getBoundingClientRect()
+      const wordRect = word4.getBoundingClientRect()
+      const start = {
+        left: wordRect.left - stageRect.left,
+        top: wordRect.top - stageRect.top,
+        width: wordRect.width,
+        height: wordRect.height,
+      }
       frame.style.left = `${lerp(start.left, end.left, lp)}px`
       frame.style.top = `${lerp(start.top, end.top, lp)}px`
       frame.style.width = `${lerp(start.width, end.width, lp)}px`
       frame.style.height = `${lerp(start.height, end.height, lp)}px`
-      frame.style.opacity = '1'
+      frame.style.opacity = frameActive ? '1' : '0'
+      word4.style.opacity = frameActive ? '0' : ''
 
       // 램프 외 요소: 뒤로 멀어지듯 축소·블러·페이드
       const recede = smooth(gp)
@@ -139,10 +160,15 @@ function NewIntroSection() {
 
       // ===== Phase B: 임계값을 넘을 때마다 다음 슬라이드로 자동 교체 (CSS 트랜지션) =====
       const ready = p >= STORY_AT
+      const splitActive = ready
       let idx = 0
       for (let i = 0; i < SLIDE_TRIGGERS.length; i++) if (p >= SLIDE_TRIGGERS[i]) idx = i + 1
 
-      track.style.transform = `translateY(${-idx * 100}%)`
+      track.style.transform = 'none'
+      track.classList.toggle(styles.splitActive, splitActive)
+      slides.forEach((slide, j) => {
+        slide.classList.toggle(styles.activeSlide, frameActive && j === idx)
+      })
       sideLabels.style.opacity = ready ? '1' : '0'
       centers.forEach((el, j) => {
         if (!ready || j > idx) {
@@ -166,53 +192,22 @@ function NewIntroSection() {
       apply()
     }
 
-    // 재측정 + 즉시 반영 (어긋났을 때 제자리로 복원)
-    const remeasure = () => {
-      measure()
-      apply()
-    }
-
     measure()
     apply()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onResize)
-    // 모든 리소스 로드 완료 시 한 번 더 (이미지 늦게 로드되며 줄바꿈 바뀌는 경우)
-    window.addEventListener('load', remeasure)
-
-    // 웹폰트 로드 후 텍스트가 리플로우되면 인라인 램프(word4) 위치가 바뀌므로 재측정
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(remeasure)
-    }
-
-    // 인용문 안 이미지(워드/램프)가 늦게 로드되어 위치가 바뀌는 경우 각각 재측정
-    const imgs = Array.from(quote.querySelectorAll('img'))
-    imgs.forEach((img) => {
-      if (!img.complete) img.addEventListener('load', remeasure)
-    })
-
-    // 레이아웃이 어떤 이유로든 바뀌면(폰트/이미지/리사이즈) 항상 다시 맞춤
-    const ro = new ResizeObserver(remeasure)
-    ro.observe(stage)
-    ro.observe(quote)
-
-    // 느린 환경 대비 지연 보정
-    const settle1 = window.setTimeout(remeasure, 300)
-    const settle2 = window.setTimeout(remeasure, 1200)
+    const settle = window.setTimeout(onResize, 300)
 
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
-      window.removeEventListener('load', remeasure)
-      imgs.forEach((img) => img.removeEventListener('load', remeasure))
-      ro.disconnect()
       if (raf) cancelAnimationFrame(raf)
-      window.clearTimeout(settle1)
-      window.clearTimeout(settle2)
+      window.clearTimeout(settle)
     }
   }, [])
 
   // 텍스트를 단어 단위 span으로 분해 (스크롤에 따라 단어가 하나씩 색이 채워진다)
-  const T = (text, base) => {
+  const T = (text, base, initialCount = 0) => {
     const out = []
     if (text.startsWith(' ')) out.push(' ')
     text
@@ -220,8 +215,14 @@ function NewIntroSection() {
       .split(/\s+/)
       .forEach((w, i) => {
         if (i > 0) out.push(' ')
+        const isInitial = i < initialCount
         out.push(
-          <span key={`${base}${i}`} className={styles.ch}>
+          <span
+            key={`${base}${i}`}
+            className={`${styles.ch} ${styles.reveal} ${
+              isInitial ? `${styles.initial} ${styles.lit}` : ''
+            }`}
+          >
             {w}
           </span>
         )
@@ -237,25 +238,34 @@ function NewIntroSection() {
 
         <p ref={quoteRef} className={styles.quote}>
           <span className={styles.line}>
-            {T('We think ', 'a')}
-            <img className={`${styles.word} ${styles.w1}`} src={word1} alt="" />
-            {T(' about every moment light', 'b')}
+            {T('We think ', 'a', 2)}
+            <video
+              className={`${styles.word} ${styles.w1}`}
+              src={HERO_VIDEO_SRC}
+              muted
+              loop
+              autoPlay
+              playsInline
+              preload="auto"
+              aria-hidden="true"
+            />
+            {T(' about every moment light', 'b', 2)}
           </span>
           <span className={styles.line}>
             {T('becomes part of life. ', 'c')}
-            <img className={`${styles.word} ${styles.w2}`} src={word2} alt="" />
+            <img className={`${styles.word} ${styles.w2} ${styles.reveal}`} src={word2} alt="" />
             {T(' Creating better', 'd')}
           </span>
           <span className={styles.line}>
             {T('light ', 'e')}
-            <img className={`${styles.word} ${styles.w3}`} src={word3} alt="" />
+            <img className={`${styles.word} ${styles.w3} ${styles.reveal}`} src={word3} alt="" />
             {T(' for people and the spaces they', 'f')}
           </span>
           <span className={styles.line}>
             {T('inhabit— that is the value ', 'g')}
             <img
               ref={word4Ref}
-              className={`${styles.word} ${styles.w4} ${styles.slot}`}
+              className={`${styles.word} ${styles.w4} ${styles.slot} ${styles.reveal}`}
               src={lamp}
               alt=""
             />{' '}
@@ -268,13 +278,13 @@ function NewIntroSection() {
         <div ref={frameRef} className={styles.frame}>
           <div ref={trackRef} className={styles.track}>
             <div className={styles.slide}>
-              <img src={lamp} alt="일광전구 포터블 조명을 든 손" />
+              <SlicedImage src={lamp} alt="일광전구 포터블 조명을 든 손" />
             </div>
             <div className={styles.slide}>
-              <img src={story2} alt="조명을 포장하는 모습" />
+              <SlicedImage src={story2} alt="조명을 포장하는 모습" />
             </div>
             <div className={styles.slide}>
-              <img src={story3} alt="공간에 스며든 조명" />
+              <SlicedImage src={story3} alt="공간에 스며든 조명" />
             </div>
           </div>
         </div>
@@ -304,4 +314,4 @@ function NewIntroSection() {
   )
 }
 
-export default NewIntroSection
+export default NewIntroSectionNew

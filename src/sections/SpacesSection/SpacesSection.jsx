@@ -1,55 +1,96 @@
-import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
-import { Observer } from 'gsap/Observer'
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
+import { useEffect, useRef, useState } from 'react'
 import styles from './SpacesSection.module.css'
 
-import livingRoomVideo from '../../assets/spaces/spaces-livingroom.mp4'
-import bedRoomVideo from '../../assets/spaces/spaces-bedroom.mp4'
-import diningRoom from '../../assets/spaces/dining-room.webp'
+import livingImg from '../../assets/spaces/spaces2-living.png'
+import livingOnImg from '../../assets/spaces/spaces2-living-on.png'
+import bedImg from '../../assets/spaces/spaces2-bed.png'
+import bedOnImg from '../../assets/spaces/spaces2-bed-on.png'
+import diningImg from '../../assets/spaces/spaces2-dining.png'
+import diningOnImg from '../../assets/spaces/spaces2-dining-on.png'
 
-gsap.registerPlugin(Observer, ScrollToPlugin)
-
-const spaces = [
+const rooms = [
   {
     title: 'Living Room',
-    media: livingRoomVideo,
-    mediaType: 'video',
-    alt: '따뜻한 빛이 드는 거실 벤치와 펜던트 조명',
+    image: livingImg,
+    imageOn: livingOnImg,
+    alt: '빈티지 텔레비전과 의자가 놓인 거실',
     caption: (
       <>
-        가족들이 모이고 시간이 쌓이는 곳.
+        머무르고, 쉬고, 대화를 나누는 거실.
         <br />
-        일광전구는 그 순간을 더욱 특별하게 만듭니다.
+        일광전구는 공간의 크기와 생활 방식을 살펴
+        <br />
+        머무는 시간이 더욱 편안해지도록
+        <br />
+        거실의 빛과 분위기를 완성합니다.
       </>
     ),
   },
   {
     title: 'Bed Room',
-    media: bedRoomVideo,
-    mediaType: 'video',
-    alt: '은은한 벽 조명이 켜진 침실',
+    image: bedImg,
+    imageOn: bedOnImg,
+    alt: '은은한 빛이 드는 침실의 침대',
     caption: (
       <>
-        하루의 긴 여정을 마무리하는 시간.
+        하루의 끝에는 밝음보다 편안함이 필요합니다.
         <br />
-        편안한 빛은 깊은 휴식으로 이어집니다.
+        눈에 부담을 덜어주는 은은한 빛과
+        <br />
+        차분하게 가라앉는 따뜻한 온기로,
+        <br />
+        침실을 깊은 휴식의 공간으로 바꿉니다.
       </>
     ),
   },
   {
     title: 'Dining Room',
-    media: diningRoom,
-    mediaType: 'image',
-    alt: '창가 테이블 위에 놓인 일광전구 테이블 조명',
+    image: diningImg,
+    imageOn: diningOnImg,
+    alt: '촛불이 켜진 다이닝 테이블',
     caption: (
       <>
-        매일의 식사가 더욱 따뜻해지도록.
+        한 끼의 식사와 자연스러운 대화가 이어지는 곳.
         <br />
-        식탁 위의 분위기를 완성합니다.
+        식탁 위에 고르게 머무는 따뜻한 빛이
+        <br />
+        음식과 사람의 표정을 선명하게 비추고,
+        <br />
+        함께하는 시간을 더욱 풍성하게 만듭니다.
       </>
     ),
   },
+]
+
+// 각 룸 사진 속 램프 실루엣 아이콘 (Living/Bed/Dining 순). viewBox 0 0 40 54 공통
+const LAMP_ICONS = [
+  // 0) 거실 — 2단 디스크 플로어 램프
+  (
+    <>
+      <path d="M14 12.5Q20 7.5 26 12.5" />
+      <path d="M9 18Q20 10 31 18" />
+      <line x1="20" y1="18" x2="20" y2="46" />
+      <ellipse cx="20" cy="47.5" rx="7" ry="2.3" />
+    </>
+  ),
+  // 1) 침실 — 줄에 매달린 돔 펜던트
+  (
+    <>
+      <line x1="20" y1="6" x2="20" y2="20" />
+      <path d="M10 33C10 22 14 20 20 20C26 20 30 22 30 33Z" />
+    </>
+  ),
+  // 2) 다이닝 — 주름진 둥근 셰이드 테이블 램프
+  (
+    <>
+      <path d="M11 23Q11 13 20 13Q29 13 29 23Q29 32 20 32Q11 32 11 23Z" />
+      <line x1="13" y1="18.5" x2="27" y2="18.5" />
+      <line x1="12" y1="23" x2="28" y2="23" />
+      <line x1="13.5" y1="28" x2="26.5" y2="28" />
+      <line x1="20" y1="32" x2="20" y2="44" />
+      <ellipse cx="20" cy="45.5" rx="5.5" ry="1.8" />
+    </>
+  ),
 ]
 
 const clamp = (value, min = 0, max = 1) =>
@@ -60,530 +101,227 @@ const easeInOutCubic = (value) =>
     ? 4 * value * value * value
     : 1 - Math.pow(-2 * value + 2, 3) / 2
 
-const TITLE_TRAVEL = 150
-const LIVING_TO_BED = { start: 0.05, end: 0.46 }
-const BED_TO_DINING = { start: 0.54, end: 0.94 }
-const SCENE_ANCHORS = [0, 0.5, 0.98]
-const AUTO_TRANSITION_DURATION = 1.24
-const MIN_TRANSITION_DURATION = 0.62
-const MAX_TRANSITION_DURATION = 1.42
-const MAX_TRANSITION_TIMESCALE = 2.3
-const INPUT_RELEASE_DELAY = 24
-const WHEEL_THRESHOLD = 1.5
-const CAPTURE_START = 0.025
-const CAPTURE_END = 0.965
-const REVERSE_CAPTURE_END = 0.995
-const END_HANDOFF_DURATION = 96
-
-const getRangeProgress = (value, start, end) =>
-  easeInOutCubic(clamp((value - start) / (end - start)))
-
-const getTransitionDuration = (inputDelta = 0) => {
-  const intensity = clamp((Math.abs(inputDelta) - 18) / 360)
-
-  return (
-    MAX_TRANSITION_DURATION -
-    (MAX_TRANSITION_DURATION - MIN_TRANSITION_DURATION) *
-      easeInOutCubic(intensity)
-  )
-}
-
-const getSceneProgress = (progress) => ({
-  livingToBed: getRangeProgress(
-    progress,
-    LIVING_TO_BED.start,
-    LIVING_TO_BED.end,
-  ),
-  bedToDining: getRangeProgress(
-    progress,
-    BED_TO_DINING.start,
-    BED_TO_DINING.end,
-  ),
-})
-
-const getTitleStyle = (index, livingToBed, bedToDining) => {
-  if (index === 0) {
-    return {
-      opacity: 1 - livingToBed,
-      transform: `translate3d(0, ${livingToBed * TITLE_TRAVEL}px, 0)`,
-    }
-  }
-
-  if (index === 1) {
-    const enteringFromLiving = (livingToBed - 1) * TITLE_TRAVEL
-    const leavingToDining = bedToDining * TITLE_TRAVEL
-
-    return {
-      opacity: Math.min(livingToBed, 1 - bedToDining),
-      transform: `translate3d(0, ${
-        bedToDining > 0 ? leavingToDining : enteringFromLiving
-      }px, 0)`,
-    }
-  }
-
-  return {
-    opacity: bedToDining,
-    transform: `translate3d(0, ${(bedToDining - 1) * TITLE_TRAVEL}px, 0)`,
-  }
-}
-
-const getImageStyle = (index, livingToBed, bedToDining) => {
-  if (index === 0) return { transform: 'translate3d(0, 0, 0)' }
-
-  const imageProgress = index === 1 ? livingToBed : bedToDining
-
-  return {
-    transform: `translate3d(0, ${(1 - imageProgress) * 100}%, 0)`,
-  }
-}
+// 진행도 구간: 텍스트 고정 → 검정 절반 등장(REVEAL) → 전체화면 확장(WIDEN) → 가로 패닝+조명 스윕
+const REVEAL_START = 0.1
+const REVEAL_END = 0.26
+const WIDEN_END = 0.56
+const CARD_MIN_SCALE = 0.05
+// 스윕(조명 ON 라인) 구간이 룸 이동보다 몇 배 더 긴지 — 클수록 라인이 천천히 지나간다
+const SWEEP_WEIGHT = 1.7
+// 이 진행도에서 애니메이션 완료(Dining ON). 이후 끝까지는 고정 유지 + Collabo가 위로 올라옴
+const ANIM_END = 0.85
+// 고정 구간에서 Dining이 위로 드리프트하는 양(px) — 클수록 더 많이 올라감
+const DINING_DRIFT = 200
 
 function SpacesSection() {
-  const transitionRef = useRef(null)
-  const titleRefs = useRef([])
-  const imageLayerRefs = useRef([])
-  const imageRefs = useRef([])
-  const activeMediaIndexRef = useRef(-1)
-  const visibleMediaSignatureRef = useRef('')
-  const visualFrameRef = useRef(null)
-  const observerFrameRef = useRef(null)
-  const observerRef = useRef(null)
-  const scrollTweenRef = useRef(null)
-  const targetAnchorRef = useRef(null)
-  const releaseTimerRef = useRef(null)
-  const endHandoffTimerRef = useRef(null)
-  const isHandingOffFromEndRef = useRef(false)
-  const isAnimatingRef = useRef(false)
-  const animationDirectionRef = useRef(0)
-  const transitionTimeScaleRef = useRef(1)
+  const rangeRef = useRef(null)
+  const cardRef = useRef(null)
+  const trackRef = useRef(null)
+  const photoOnRefs = useRef([])
+  const lineRefs = useRef([])
+  const bulbRefs = useRef([])
+  const frameRef = useRef(null)
+  const introRef = useRef(null)
+  const [introVisible, setIntroVisible] = useState(false)
 
   useEffect(() => {
-    const renderProgress = () => {
-      visualFrameRef.current = null
-      const section = transitionRef.current
-      if (!section) return
+    const intro = introRef.current
+    if (!intro) return
 
-      const rect = section.getBoundingClientRect()
-      const scrollableDistance = section.offsetHeight - window.innerHeight
-      const progress = scrollableDistance > 0
-        ? clamp(-rect.top / scrollableDistance)
-        : 0
-      const { livingToBed, bedToDining } = getSceneProgress(progress)
-      const activeImageIndex =
-        bedToDining > 0.5 ? 2 : livingToBed > 0.5 ? 1 : 0
-      const sectionIsNearViewport =
-        rect.top < window.innerHeight && rect.bottom > 0
-      const playableMediaIndexes = new Set()
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setIntroVisible(entries[0].isIntersecting)
+      },
+      { threshold: 0.4 },
+    )
 
-      if (sectionIsNearViewport && livingToBed < 1) {
-        playableMediaIndexes.add(0)
-      }
-
-      if (sectionIsNearViewport && livingToBed > 0) {
-        playableMediaIndexes.add(1)
-      }
-
-      titleRefs.current.forEach((title, index) => {
-        if (!title) return
-        const titleStyle = getTitleStyle(
-          index,
-          livingToBed,
-          bedToDining,
-        )
-        title.style.opacity = titleStyle.opacity
-        title.style.transform = titleStyle.transform
-      })
-
-      imageLayerRefs.current.forEach((layer, index) => {
-        if (!layer) return
-        layer.style.transform = getImageStyle(
-          index,
-          livingToBed,
-          bedToDining,
-        ).transform
-      })
-
-      if (activeMediaIndexRef.current !== activeImageIndex) {
-        activeMediaIndexRef.current = activeImageIndex
-
-        imageRefs.current.forEach((image, index) => {
-          image?.setAttribute(
-            'aria-hidden',
-            String(index !== activeImageIndex),
-          )
-        })
-      }
-
-      const visibleMediaSignature = [...playableMediaIndexes].join(',')
-
-      if (visibleMediaSignatureRef.current !== visibleMediaSignature) {
-        visibleMediaSignatureRef.current = visibleMediaSignature
-
-        imageRefs.current.forEach((media, index) => {
-          if (media?.tagName !== 'VIDEO') return
-
-          const shouldPlay = playableMediaIndexes.has(index)
-
-          if (shouldPlay && media.paused) {
-            media.play().catch(() => undefined)
-          } else if (!shouldPlay && !media.paused) {
-            media.pause()
-          }
-        })
-      }
-    }
-
-    const requestProgressRender = () => {
-      if (visualFrameRef.current !== null) return
-      visualFrameRef.current = window.requestAnimationFrame(renderProgress)
-    }
-
-    renderProgress()
-    window.addEventListener('scroll', requestProgressRender, { passive: true })
-    window.addEventListener('resize', requestProgressRender)
-
-    return () => {
-      window.removeEventListener('scroll', requestProgressRender)
-      window.removeEventListener('resize', requestProgressRender)
-      if (visualFrameRef.current !== null) {
-        window.cancelAnimationFrame(visualFrameRef.current)
-      }
-    }
+    observer.observe(intro)
+    return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
-    const getTransitionMetrics = () => {
-      const section = transitionRef.current
-      if (!section) return null
+    const render = () => {
+      frameRef.current = null
+      const range = rangeRef.current
+      const card = cardRef.current
+      const track = trackRef.current
+      if (!range || !card || !track) return
 
-      const top = section.getBoundingClientRect().top + window.scrollY
-      const distance = section.offsetHeight - window.innerHeight
-      if (distance <= 0) return null
+      const rect = range.getBoundingClientRect()
+      const distance = range.offsetHeight - window.innerHeight
+      const progress = distance > 0 ? clamp(-rect.top / distance) : 0
+      // 애니메이션은 ANIM_END에서 끝나고 나머지(끝부분)는 Dining ON 상태로 고정 유지
+      // → 그 고정 구간 위로 Collabo가 올라온다
+      const animProgress = clamp(progress / ANIM_END)
+      // 고정 구간 동안 Dining이 위로 드리프트 — Collabo가 완전히 올라올 때까지 등속으로 계속
+      const holdP = clamp((progress - ANIM_END) / (1 - ANIM_END))
+      const driftY = holdP * DINING_DRIFT
 
-      return { distance, top }
-    }
+      const viewportWidth = window.innerWidth
+      const halfWidth = viewportWidth * 0.5
 
-    const getRawProgress = (metrics) =>
-      (window.scrollY - metrics.top) / metrics.distance
-
-    const getCurrentProgress = (metrics) =>
-      clamp(getRawProgress(metrics))
-
-    const setInputLocked = (locked) => {
-      window.clearTimeout(releaseTimerRef.current)
-
-      if (locked) {
-        isAnimatingRef.current = true
-        return
-      }
-
-      releaseTimerRef.current = window.setTimeout(() => {
-        isAnimatingRef.current = false
-      }, INPUT_RELEASE_DELAY)
-    }
-
-    const animateTo = (
-      targetTop,
-      duration = AUTO_TRANSITION_DURATION,
-      onComplete,
-      direction = 0,
-    ) => {
-      const reduceMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches
-
-      scrollTweenRef.current?.kill()
-
-      if (reduceMotion) {
-        window.scrollTo({ top: targetTop, behavior: 'auto' })
-        onComplete?.()
-        return
-      }
-
-      setInputLocked(true)
-      animationDirectionRef.current = direction
-      transitionTimeScaleRef.current = 1
-      scrollTweenRef.current = gsap.to(window, {
-        duration,
-        ease: 'power3.inOut',
-        overwrite: true,
-        scrollTo: {
-          y: targetTop,
-          autoKill: false,
-        },
-        onComplete: () => {
-          onComplete?.()
-          targetAnchorRef.current = null
-          animationDirectionRef.current = 0
-          transitionTimeScaleRef.current = 1
-          setInputLocked(false)
-        },
-      })
-    }
-
-    const accelerateTransition = (direction, inputDelta) => {
-      if (
-        !scrollTweenRef.current ||
-        animationDirectionRef.current !== direction
-      ) {
-        return
-      }
-
-      const speedBoost = clamp(Math.abs(inputDelta) / 260, 0.08, 0.42)
-      const nextTimeScale = clamp(
-        transitionTimeScaleRef.current + speedBoost,
-        1,
-        MAX_TRANSITION_TIMESCALE,
+      // 1) 우하단 작은 카드 → 화면 우측 절반(검정 텍스트면)
+      const revealP = easeInOutCubic(
+        clamp((animProgress - REVEAL_START) / (REVEAL_END - REVEAL_START)),
       )
+      const scale = CARD_MIN_SCALE + (1 - CARD_MIN_SCALE) * revealP
+      card.style.transform = `translate3d(0, ${-driftY}px, 0) scale(${scale})`
+      card.style.borderRadius = `${(1 - revealP) * 28}px`
+      card.style.opacity = String(clamp((animProgress - REVEAL_START) / 0.04))
 
-      transitionTimeScaleRef.current = nextTimeScale
-      scrollTweenRef.current.timeScale(nextTimeScale)
-    }
+      // 2) 우측 절반 → 전체화면으로 확장
+      const widenP = easeInOutCubic(
+        clamp((animProgress - REVEAL_END) / (WIDEN_END - REVEAL_END)),
+      )
+      card.style.width = `${halfWidth + (viewportWidth - halfWidth) * widenP}px`
 
-    const getNextAnchor = (currentProgress, direction) => {
-      const margin = 0.012
-
-      if (direction > 0) {
-        return SCENE_ANCHORS.find((anchor) => anchor > currentProgress + margin)
+      // 3) 가로 패닝: 룸마다 [조명 스윕 → 다음 룸으로 이동]
+      // 스윕 세그먼트에 가중치를 줘서 라인이 더 천천히 지나가게 한다.
+      const panP = clamp((animProgress - WIDEN_END) / (1 - WIDEN_END))
+      const count = rooms.length
+      const segs = []
+      for (let i = 0; i < count; i += 1) {
+        segs.push({ kind: 'sweep', room: i, weight: SWEEP_WEIGHT })
+        if (i < count - 1) segs.push({ kind: 'pan', room: i, weight: 1 })
       }
+      const totalWeight = segs.reduce((sum, s) => sum + s.weight, 0)
 
-      if (currentProgress >= SCENE_ANCHORS[2] - margin) {
-        return SCENE_ANCHORS[1]
+      let position = count - 1
+      const sweptAmount = new Array(count).fill(0)
+      const target = panP * totalWeight
+      let acc = 0
+      for (let s = 0; s < segs.length; s += 1) {
+        const seg = segs[s]
+        const isLast = s === segs.length - 1
+        if (target <= acc + seg.weight || isLast) {
+          const segLocal = clamp((target - acc) / seg.weight)
+          for (let k = 0; k < seg.room; k += 1) sweptAmount[k] = 1
+          if (seg.kind === 'sweep') {
+            position = seg.room
+            sweptAmount[seg.room] = segLocal
+          } else {
+            sweptAmount[seg.room] = 1
+            position = seg.room + easeInOutCubic(segLocal)
+          }
+          break
+        }
+        acc += seg.weight
       }
+      track.style.transform = `translate3d(${-position * viewportWidth}px, 0, 0)`
 
-      return [...SCENE_ANCHORS]
-        .reverse()
-        .find((anchor) => anchor < currentProgress - margin)
-    }
+      // 조명 스윕: 세로 라인이 지나가며 OFF → ON
+      photoOnRefs.current.forEach((img, i) => {
+        if (!img) return
+        const sweep = easeInOutCubic(sweptAmount[i])
+        img.style.clipPath = `inset(0 ${(1 - sweep) * 100}% 0 0)`
 
-    const goToScene = (direction, inputDelta = 0) => {
-      if (isAnimatingRef.current) return
-      const metrics = getTransitionMetrics()
-      if (!metrics) return
+        const line = lineRefs.current[i]
+        if (line) {
+          line.style.left = `${sweep * 100}%`
+          line.style.opacity = sweep > 0.002 && sweep < 0.998 ? '1' : '0'
+        }
 
-      const currentProgress = getCurrentProgress(metrics)
-      const targetAnchor = getNextAnchor(currentProgress, direction)
-
-      if (targetAnchor !== undefined) {
-        targetAnchorRef.current = targetAnchor
-        animateTo(
-          metrics.top + metrics.distance * targetAnchor,
-          getTransitionDuration(inputDelta),
-          undefined,
-          direction,
-        )
-      }
-    }
-
-    const syncObserver = () => {
-      const metrics = getTransitionMetrics()
-      const observer = observerRef.current
-      if (!metrics || !observer) return
-
-      const rawProgress = getRawProgress(metrics)
-      const isInsideCaptureZone =
-        rawProgress >= CAPTURE_START &&
-        rawProgress <= REVERSE_CAPTURE_END
-
-      if (isInsideCaptureZone && !observer.isEnabled) {
-        observer.enable()
-      } else if (!isInsideCaptureZone && observer.isEnabled) {
-        observer.disable()
-      }
-    }
-
-    const handleWheel = (event) => {
-      const direction = Math.sign(event.deltaY)
-      if (!direction || Math.abs(event.deltaY) < WHEEL_THRESHOLD) return
-
-      const metrics = getTransitionMetrics()
-      if (!metrics) return
-
-      const rawProgress = getRawProgress(metrics)
-
-      if (direction > 0) {
-        window.clearTimeout(endHandoffTimerRef.current)
-        isHandingOffFromEndRef.current = false
-      }
-
-      if (direction < 0 && rawProgress > REVERSE_CAPTURE_END) {
-        isHandingOffFromEndRef.current = true
-        window.clearTimeout(endHandoffTimerRef.current)
-        endHandoffTimerRef.current = window.setTimeout(() => {
-          isHandingOffFromEndRef.current = false
-        }, END_HANDOFF_DURATION)
-        return
-      }
-
-      const shouldHandOffToIntro =
-        isAnimatingRef.current &&
-        direction < 0 &&
-        targetAnchorRef.current === SCENE_ANCHORS[0] &&
-        rawProgress <= 0.08
-
-      if (shouldHandOffToIntro) {
-        scrollTweenRef.current?.kill()
-        targetAnchorRef.current = null
-        animationDirectionRef.current = 0
-        transitionTimeScaleRef.current = 1
-        window.clearTimeout(releaseTimerRef.current)
-        isAnimatingRef.current = false
-        observerRef.current?.disable()
-        return
-      }
-
-      const shouldCapture =
-        direction > 0
-          ? rawProgress >= 0 && rawProgress < CAPTURE_END
-          : rawProgress > CAPTURE_START && rawProgress <= REVERSE_CAPTURE_END
-
-      if (direction < 0 && isHandingOffFromEndRef.current) return
-      if (!shouldCapture) return
-
-      event.preventDefault()
-      if (isAnimatingRef.current) {
-        accelerateTransition(direction, event.deltaY)
-        return
-      }
-      goToScene(direction, event.deltaY)
-    }
-
-    const requestObserverSync = () => {
-      if (observerFrameRef.current !== null) return
-
-      observerFrameRef.current = window.requestAnimationFrame(() => {
-        observerFrameRef.current = null
-        syncObserver()
+        // 전구도 스윕에 맞춰 같이 점등
+        const bulb = bulbRefs.current[i]
+        if (bulb) bulb.style.opacity = String(sweep)
       })
     }
 
-    const handleScroll = () => {
-      requestObserverSync()
+    const requestRender = () => {
+      if (frameRef.current !== null) return
+      frameRef.current = window.requestAnimationFrame(render)
     }
 
-    observerRef.current = Observer.create({
-      target: window,
-      type: 'touch',
-      preventDefault: true,
-      tolerance: 24,
-      dragMinimum: 12,
-      onDown: () => goToScene(1),
-      onUp: () => goToScene(-1),
-    })
-    observerRef.current.disable()
-
-    window.addEventListener('wheel', handleWheel, { passive: false })
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    window.addEventListener('resize', requestObserverSync)
-    syncObserver()
+    render()
+    window.addEventListener('scroll', requestRender, { passive: true })
+    window.addEventListener('resize', requestRender)
 
     return () => {
-      window.removeEventListener('wheel', handleWheel)
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('resize', requestObserverSync)
-      window.clearTimeout(releaseTimerRef.current)
-      window.clearTimeout(endHandoffTimerRef.current)
-      if (observerFrameRef.current !== null) {
-        window.cancelAnimationFrame(observerFrameRef.current)
+      window.removeEventListener('scroll', requestRender)
+      window.removeEventListener('resize', requestRender)
+      if (frameRef.current !== null) {
+        window.cancelAnimationFrame(frameRef.current)
       }
-      scrollTweenRef.current?.kill()
-      targetAnchorRef.current = null
-      animationDirectionRef.current = 0
-      transitionTimeScaleRef.current = 1
-      observerRef.current?.kill()
     }
   }, [])
-
-  const initialProgress = getSceneProgress(0)
 
   return (
     <section id="showroom" className={styles.spaces} aria-label="공간 큐레이션">
-      <div className={styles.inner}>
-        <article className={styles.introPanel} aria-label="Spaces introduction">
-          <div className={styles.introCopy}>
-            <h2 className={styles.introTitle}>
-              <span className={styles.spaceWord}>SPACE</span>
-              <span>,</span>
+      <div className={styles.range} ref={rangeRef}>
+        <div className={styles.stage}>
+          <div
+            className={`${styles.introCopy} ${introVisible ? styles.introVisible : ''}`}
+            ref={introRef}
+          >
+            <p className={styles.introLabel}>SPACE, DEFINED BY ILKW.</p>
+            <h2 className={styles.introHeadline}>
+              Every space has its own purpose,
               <br />
-              <em>defined by</em>
-              <span className={styles.ilkwWord}> ILKW.</span>
+              rhythm, and atmosphere.
+              <br />
+              ILKW brings the right light to each one.
             </h2>
-            <p className={styles.introDescription}>
-              거실부터 침실, 다이닝룸까지.
-              <br />
-              공간에 맞는 일광전구의 역할을 제안합니다.
+            <p className={styles.introSub}>
+              일광전구는 공간에 가장 잘 어울리는 빛을 제안합니다.
             </p>
           </div>
-        </article>
 
-        <div className={styles.transitionSection} ref={transitionRef}>
-          <article className={styles.transitionStage}>
-            <div className={styles.titleSlot} aria-live="polite">
-              {spaces.map((space, index) => (
-                <h2
-                  className={styles.title}
-                  key={space.title}
-                  ref={(node) => {
-                    titleRefs.current[index] = node
-                  }}
-                  style={getTitleStyle(
-                    index,
-                    initialProgress.livingToBed,
-                    initialProgress.bedToDining,
-                  )}
-                >
-                  {space.title}
-                </h2>
-              ))}
-            </div>
-
-            <div className={styles.imageFrame}>
-              {spaces.map((space, index) => (
-                <div
-                  className={styles.imageLayer}
-                  key={space.title}
-                  ref={(node) => {
-                    imageLayerRefs.current[index] = node
-                  }}
-                  style={getImageStyle(
-                    index,
-                    initialProgress.livingToBed,
-                    initialProgress.bedToDining,
-                  )}
-                >
-                  {space.mediaType === 'video' ? (
-                    <video
-                      className={styles.image}
-                      src={space.media}
-                      aria-label={space.alt}
-                      aria-hidden={index !== 0}
-                      muted
-                      loop
-                      playsInline
-                      preload="auto"
-                      ref={(node) => {
-                        imageRefs.current[index] = node
-                      }}
-                    />
-                  ) : (
+          <div
+            className={styles.card}
+            ref={cardRef}
+            style={{
+              transform: 'scale(0.05)',
+              borderRadius: '28px',
+              opacity: 0,
+              width: '50vw',
+            }}
+          >
+            <div className={styles.track} ref={trackRef}>
+              {rooms.map((room, index) => (
+                <article className={styles.panel} key={room.title}>
+                  <div className={styles.panelText}>
+                    <p className={styles.caption}>{room.caption}</p>
+                    <span className={styles.bulb} aria-hidden="true">
+                      <svg className={styles.bulbBase} viewBox="0 0 40 54">
+                        {LAMP_ICONS[index]}
+                      </svg>
+                      <svg
+                        className={styles.bulbGlow}
+                        viewBox="0 0 40 54"
+                        ref={(node) => {
+                          bulbRefs.current[index] = node
+                        }}
+                      >
+                        {LAMP_ICONS[index]}
+                      </svg>
+                    </span>
+                    <h3 className={styles.roomTitle}>{room.title}</h3>
+                  </div>
+                  <div className={styles.panelPhoto}>
+                    <img className={styles.photoOff} src={room.image} alt={room.alt} />
                     <img
-                      className={styles.image}
-                      src={space.media}
-                      alt={space.alt}
-                      aria-hidden={index !== 0}
+                      className={styles.photoOn}
+                      src={room.imageOn}
+                      alt=""
+                      aria-hidden="true"
+                      style={{ clipPath: 'inset(0 100% 0 0)' }}
                       ref={(node) => {
-                        imageRefs.current[index] = node
+                        photoOnRefs.current[index] = node
                       }}
                     />
-                  )}
-                  {space.caption ? (
-                    <p className={styles.imageCaption}>
-                      {space.caption}
-                    </p>
-                  ) : null}
-                </div>
+                    <span
+                      className={styles.sweepLine}
+                      aria-hidden="true"
+                      style={{ left: '0%', opacity: 0 }}
+                      ref={(node) => {
+                        lineRefs.current[index] = node
+                      }}
+                    />
+                  </div>
+                </article>
               ))}
             </div>
-          </article>
+          </div>
         </div>
       </div>
     </section>
