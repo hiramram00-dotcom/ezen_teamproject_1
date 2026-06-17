@@ -1,0 +1,208 @@
+/* =========================================================
+   NewIntroSection — Figma 1139:197(인용) → 1106:483(스토리텔링)
+   인용 화면이 핀 고정된 채 스크롤하면 인라인 램프가 커지며
+   검은 배경의 브랜드 스토리 화면으로 전환된다.
+   ========================================================= */
+
+/* 스크롤 거리 제공 — 단어 채우기(완만) + 확장 + 슬라이드 자동전환 + 여운 */
+.intro {
+  position: relative;
+  height: 330vh;
+  margin-bottom: 0;
+  background: var(--color-base-2); /* #FFF7EA 크림 */
+}
+
+/* 핀 고정 스테이지 */
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 배경 (크림→검정, JS가 갱신) */
+.bg {
+  position: absolute;
+  inset: 0;
+  background: var(--color-base-2);
+  z-index: 0;
+}
+
+/* 흐르는 인용 문구 — 화면 중앙 */
+.quote {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 1490px;
+  margin: 0;
+  padding: 0 24px;
+  box-sizing: border-box;
+  z-index: 1;
+  font-family: var(--font-deco); /* Playfair Display */
+  font-weight: 400;
+  font-size: clamp(28px, 3.65vw, 70px); /* 70px @1920 */
+  line-height: 1.4;
+  letter-spacing: 0.02em; /* 1.4px @70px */
+  color: #000;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+}
+.quote strong {
+  font-weight: 600; /* ILKW = SemiBold */
+}
+/* 글자/이미지 단위 — 회색 없이 스크롤에 따라 검정으로 나타난다 */
+.reveal {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.ch {
+  color: #000;
+}
+.lit {
+  opacity: 1;
+}
+.initial {
+  transition: none;
+}
+/* 디자인과 동일한 4줄 고정 — 줄 내부는 줄바꿈 금지 */
+.line {
+  display: block;
+  white-space: nowrap;
+}
+
+/* 인라인 사진 — 높이 85/70 ≈ 1.214em, 텍스트와 함께 스케일 */
+.word {
+  display: inline-block;
+  height: 1.214em;
+  vertical-align: middle;
+  object-fit: cover;
+  margin: 0 0.12em;
+}
+.w1 { width: 2.84em; } /* 199px */
+.w2 { width: 3.87em; } /* 271px */
+.w3 { width: 3.64em; } /* 255px */
+.w4 { width: 2.83em; } /* 198px */
+/* word-4는 자리만 차지 — 실제 램프는 .lamp 오버레이가 담당 */
+.slot {
+  visibility: visible;
+}
+
+/* 자라나는 프레임 (left/top/width/height는 JS가 매 프레임 갱신) */
+.frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  z-index: 3;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+.track {
+  position: absolute;
+  inset: 0;
+}
+.slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+.activeSlide {
+  opacity: 1;
+}
+.sliceImage {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+.baseImage {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 1;
+}
+.slice {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  opacity: 0;
+  background-image: var(--slice-image);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  clip-path: inset(0 var(--slice-right) 0 var(--slice-left));
+}
+.slice:nth-of-type(1) { --slice-left: 0%; --slice-start: 25%; --slice-right: 75%; }
+.slice:nth-of-type(2) { --slice-left: 25%; --slice-start: 50%; --slice-right: 50%; }
+.slice:nth-of-type(3) { --slice-left: 50%; --slice-start: 75%; --slice-right: 25%; }
+.slice:nth-of-type(4) { --slice-left: 75%; --slice-start: 100%; --slice-right: 0%; }
+.splitActive .activeSlide .baseImage {
+  opacity: 0;
+}
+.splitActive .activeSlide .slice {
+  opacity: 1;
+  animation: sliceRevealRightToLeft 0.32s cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+.splitActive .activeSlide .slice:nth-of-type(2) { animation-delay: 0.03s; }
+.splitActive .activeSlide .slice:nth-of-type(3) { animation-delay: 0.06s; }
+.splitActive .activeSlide .slice:nth-of-type(4) { animation-delay: 0.09s; }
+
+@keyframes sliceRevealRightToLeft {
+  0% {
+    clip-path: inset(0 var(--slice-right) 0 var(--slice-start));
+  }
+  100% {
+    clip-path: inset(0 var(--slice-right) 0 var(--slice-left));
+  }
+}
+
+/* 브랜드 스토리텔링 라벨 */
+.labels {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+}
+/* 양옆(ILKWANG/LIGHTING): 등장 후 고정 (opacity는 JS가 제어) */
+.sideLabels {
+  transition: opacity 0.6s ease;
+}
+/* 가운데 문구: 슬라이드와 함께 위로 빠지며 교체 (opacity·transform은 JS가 제어) */
+.centerSet {
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.7, 0, 0.2, 1);
+}
+.label {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(14px, 1.25vw, 24px); /* 24px @1920 */
+  line-height: 1.5;
+  letter-spacing: -0.02em; /* -0.48px @24px */
+  color: #fff;
+  white-space: nowrap;
+}
+.labelEn { font-family: var(--font-en); font-weight: 400; }  /* Instrument Sans */
+.labelKr { font-family: var(--font-kr); font-weight: 600; }  /* Pretendard SemiBold */
+.lbl1 { left: 4.45%; }  /* ILKWANG  (30+111/2)/1920 */
+.lbl2 { left: 28.4%; }  /* 세상을   (514+62/2)/1920 */
+.lbl3 { left: 71.4%; }  /* 밝히고   (1340+62/2)/1920 */
+.lbl4 { left: 95.5%; }  /* LIGHTING (1779+111/2)/1920 */

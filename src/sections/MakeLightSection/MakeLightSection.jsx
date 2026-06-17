@@ -59,10 +59,9 @@ function MakeLightSection() {
       },
     })
     // 검정 정지 → 가로 타원이 커짐. 사진은 처음부터 어둡다가 원래 밝기로(한 방향) 돌아옴.
-    // 시작부터 보이는 크기(r=18)에서 빠르게(duration 0.38) 커짐 → 원 리빌이 일찍 시작돼 보임
-    tl.fromTo(oval, { r: 18 }, { r: 130, ease: 'none', duration: 0.38, onUpdate: setClip }, 0)
-      .fromTo(dim, { opacity: 0.75 }, { opacity: 0, ease: 'none', duration: 0.42 }, 0.18) // 어둠 → 원본
-      .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', duration: 0.08 }, 0.5)
+    tl.to(oval, { r: 130, ease: 'none', duration: 0.34, onUpdate: setClip }, 0.02)
+      .fromTo(dim, { opacity: 0.75 }, { opacity: 0, ease: 'none', duration: 0.28 }, 0.14) // 어둠 → 원본
+      .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', duration: 0.08 }, 0.42)
       // 글씨 한꺼번에 (헤드라인 + 본문 동시)
       .fromTo(
         [headline, desc],
