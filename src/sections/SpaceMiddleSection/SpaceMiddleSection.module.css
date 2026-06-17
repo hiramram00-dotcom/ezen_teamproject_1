@@ -1,0 +1,68 @@
+.section {
+  width: 100%;
+  background-color: #000000;
+  position: relative;
+  z-index: 10;
+}
+
+.container {
+  width: 1920px;
+  height: 3133px; /* Restored to its exact original height */
+  position: relative;
+  transform-origin: top left;
+}
+
+.imgWrapper {
+  position: absolute;
+  overflow: hidden;
+  z-index: 10; /* Ensures images are rendered ON TOP of the light beam */
+  background-color: #000000; /* Blocks the light beam from showing through while the image is transparent */
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.imageReduced {
+  width: calc(100% - 2px);
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+}
+
+.whiteBox {
+  position: absolute;
+  background-color: #ffffff;
+}
+
+.textBlock {
+  position: absolute;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+}
+
+.textLine {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 500;
+  font-size: 71px;
+  line-height: 1.11;
+  letter-spacing: -1.42px;
+  margin: 0;
+}
+
+.textHighlight {
+  font-family: 'Playfair Display', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 67px;
+  line-height: 1.11;
+  letter-spacing: -1.34px;
+  color: #f49307;
+  margin: 0;
+}

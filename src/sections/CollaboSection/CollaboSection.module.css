@@ -8,6 +8,8 @@
   position: relative;
   width: 100%;
   height: 160vh; /* 핀 구간: 타이틀 상승까지만 (끝부분 죽은 스크롤 제거) */
+  /* border-box라 패딩이 높이에 포함 → 스크롤 양 유지하면서 푸터 사진 전 크림 여백 확보 */
+  padding-bottom: 170px;
   background: var(--color-base-2); /* 크림 */
   color: var(--color-base-3); /* 검정 */
 }
@@ -76,9 +78,9 @@
   left: 0;
   width: 100vw;
   overflow: hidden;
-  cursor: grab;
   touch-action: pan-y;
 }
+/* grab 커서는 카드 위에서만 (빈 영역엔 기본 커서), 드래그 중엔 영역 전체 grabbing */
 .galleryViewport:active {
   cursor: grabbing;
 }
@@ -98,6 +100,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  cursor: grab; /* 카드 위에서만 드래그 가능 표시 */
   /* 은은한 둥둥(위아래) — duration/delay 는 인라인(카드별 시간차) */
   animation-name: floatY;
   animation-timing-function: ease-in-out;
@@ -222,6 +225,28 @@
   .galleryViewport {
     top: 336px;
   }
+}
+
+/* ----- 화면 높이가 낮은 환경 대응 (데스크톱/노트북) -----
+   갤러리 총높이(top + padding-top + 카드 스택 ≈ 1100px)가 sticky의 100vh를 넘으면
+   하단이 잘린다. 브라우저별 툴바 차이로 실제 vh가 작아질 때 카드 하단이 잘리는 문제.
+   화면이 낮을수록 갤러리의 고정 상단 오프셋을 줄여 100vh 안에 들어오게 한다.
+   (모바일 레이아웃은 건드리지 않도록 min-width: 768px로 한정) */
+@media (max-height: 1100px) and (min-width: 768px) {
+  .galleryViewport { top: 290px; }
+  .galleryTrack { padding-top: 104px; }
+}
+@media (max-height: 950px) and (min-width: 768px) {
+  .galleryViewport { top: 200px; }
+  .galleryTrack { padding-top: 70px; }
+}
+@media (max-height: 820px) and (min-width: 768px) {
+  .galleryViewport { top: 130px; }
+  .galleryTrack { padding-top: 44px; }
+}
+@media (max-height: 720px) and (min-width: 768px) {
+  .galleryViewport { top: 56px; }
+  .galleryTrack { padding-top: 16px; }
 }
 
 /* 모션 최소화: 둥둥/마퀴 끄고, 타이틀 상단 고정 + 가로 네이티브 스크롤 */

@@ -3,11 +3,12 @@
    검은 배경에서 아래의 원이 커지며 사진 등장 → 카피 시차 등장
    ========================================================= */
 
-/* 스크롤 거리 제공 — 검정 정지 + (천천히) 원형 리빌 + 글씨 + 여운 */
+/* 스크롤 거리 제공 — 검정 정지 + (천천히) 원형 리빌 + 글씨 + 여운
+   height가 작을수록 인터랙션이 더 짧은 스크롤에 압축돼 더 빨리 나온다. */
 .section {
   position: relative;
   width: 100%;
-  height: 380vh;
+  height: 300vh;
   background: #000;
 }
 
@@ -28,8 +29,8 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  /* 화면 맨 아래의 작은 가로 타원에서 시작 (GSAP가 반지름을 키움) */
-  clip-path: ellipse(0% 0% at 50% 100%);
+  /* 화면 60%(약간 위)의 작은 가로 타원에서 시작 (GSAP가 반지름을 키움) */
+  clip-path: ellipse(0% 0% at 50% 60%);
   will-change: clip-path;
 }
 

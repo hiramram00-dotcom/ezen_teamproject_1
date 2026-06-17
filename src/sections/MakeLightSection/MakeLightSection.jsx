@@ -45,13 +45,14 @@ function MakeLightSection() {
 
     // 가로로 긴 타원 (rx = ry * 1.7) — clip-path만 갱신(필터 없음 → 부드럽게)
     const oval = { r: 0 }
+    // 중심을 화면 60%(더 위)에 둬서 작은 타원이 위쪽에서 온전히 보인 채로 확대된다.
     const setClip = () => {
-      bgEl.style.clipPath = `ellipse(${oval.r * 1.7}% ${oval.r}% at 50% 100%)`
+      bgEl.style.clipPath = `ellipse(${oval.r * 1.7}% ${oval.r}% at 50% 50%)`
     }
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        start: 'top top',
+        start: 'top 30%', // 핀 직전(섹션 top이 화면 10%)부터 시작 → 원이 조금 더 일찍 커지기 시작
         end: 'bottom bottom',
         scrub: true,
         invalidateOnRefresh: true,
@@ -66,11 +67,11 @@ function MakeLightSection() {
         [headline, desc],
         { autoAlpha: 0, y: 48 },
         { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.12 },
-        0.44
+        0.52
       )
       // "LIGHT" — 흰색 유지 → 점차 한 번 밝아졌다가 → 서서히 다시 흰색 (CSS 변수 보간으로 매끄럽게)
-      .to(light, { '--glow': 1, ease: 'power1.inOut', duration: 0.16 }, 0.54)
-      .to(light, { '--glow': 0, ease: 'power1.inOut', duration: 0.28 }, 0.72)
+      .to(light, { '--glow': 1, ease: 'power1.inOut', duration: 0.16 }, 0.6)
+      .to(light, { '--glow': 0, ease: 'power1.inOut', duration: 0.28 }, 0.8)
 
     return () => {
       tl.scrollTrigger && tl.scrollTrigger.kill()
