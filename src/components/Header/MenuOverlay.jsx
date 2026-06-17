@@ -42,13 +42,19 @@ function MenuOverlay({ open, onNavigate }) {
             >
               {label}
             </Link>
-            {/* hover 시 시안비율(세로형) 슬롯이 펼쳐지며 아래 항목 밀어냄 */}
-            <div className={`${styles.preview} ${active === i ? styles.previewOn : ''}`}>
+            {/* hover 시 프리뷰 펼쳐짐 — 이미지 클릭해도 해당 페이지로 이동 (버튼 안 쫓아가도 됨) */}
+            <Link
+              to={to}
+              onClick={onNavigate}
+              className={`${styles.preview} ${active === i ? styles.previewOn : ''}`}
+              tabIndex={active === i ? 0 : -1}
+              aria-hidden={active !== i}
+            >
               <div className={styles.previewInner}>
                 {/* ⚠️ 테스트 이미지 — 각 페이지에 맞는 이미지로 교체해야 합니다. */}
-                <img src={TEST_IMAGES[imgIdx]} alt="" />
+                <img src={TEST_IMAGES[imgIdx]} alt={`${label} 미리보기`} />
               </div>
-            </div>
+            </Link>
           </div>
         ))}
       </nav>
