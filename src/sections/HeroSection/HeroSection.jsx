@@ -27,6 +27,12 @@ const FULL_R = 165           // 완전 공개 (%)
 const PLAY_AT = 0.88         // 영상 재생 시점 (스크롤 진행도 0~1 — 거의 다 밝아졌을 때)
 const COMPLETE_AT = 0.97     // 이 진행도 넘으면 '완료'로 잠금 (이후 스크롤 업 해도 안 어두워짐)
 const BOTTOM_ALPHA = 0.65    // 하단 로고 최종 불투명도(회색감)
+const HERO_TO_INTRO_START = 0
+const HERO_TO_INTRO_FADE_START = 0.96
+
+const clamp01 = (x) => Math.min(1, Math.max(0, x))
+const lerp = (a, b, t) => a + (b - a) * t
+const smooth = (t) => t * t * (3 - 2 * t)
 
 // 동작 줄이기(reduce-motion) 여부
 const prefersReduced = () =>
@@ -80,12 +86,91 @@ function HeroSection() {
     const bottomLogo = bottomLogoRef.current
     const hint = hintRef.current
     if (letters.length < 4 || !logo) return
+    if (video) gsap.set(video, { clearProps: 'position,inset,left,top,right,bottom,width,height,zIndex,borderRadius,transform,opacity,visibility' })
 
     let tl
     let scrollST
+    let heroToIntroST
     let cancelled = false // StrictMode/언마운트 시 중복 실행·잔여 타임라인 방지
     const imgCleanups = []
     const setReveal = (v) => overlay && overlay.style.setProperty('--reveal', v + '%')
+    const resetHeroVideo = () => {
+      if (!video) return
+      gsap.set(video, { clearProps: 'position,inset,left,top,right,bottom,width,height,zIndex,borderRadius,transform,opacity,visibility' })
+    }
+    const setupHeroToIntro = () => {
+      if (!video) return
+      const targetVideo = document.querySelector('[data-intro-hero-video]')
+      const introStage = document.querySelector('[data-intro-stage]')
+      if (!targetVideo || !introStage) return
+
+      heroToIntroST && heroToIntroST.kill()
+      heroToIntroST = ScrollTrigger.create({
+        trigger: '#intro',
+        start: 'top bottom',
+        end: 'top top',
+        scrub: true,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          const raw = clamp01((self.progress - HERO_TO_INTRO_START) / (1 - HERO_TO_INTRO_START))
+          const p = raw
+          // 핀 고정 전엔 stage가 아직 sticky로 붙지 않아 화면상 top이 계속 움직인다.
+          // stage 기준 상대 오프셋으로 환산해 "핀 고정됐다고 가정한" 안정적인 목표 위치를 구한다.
+          const videoRectNow = targetVideo.getBoundingClientRect()
+          const stageRectNow = introStage.getBoundingClientRect()
+          const target = {
+            left: videoRectNow.left,
+            top: videoRectNow.top - stageRectNow.top,
+            width: videoRectNow.width,
+            height: videoRectNow.height,
+          }
+          const targetAlpha = smooth(clamp01((p - HERO_TO_INTRO_FADE_START) / (1 - HERO_TO_INTRO_FADE_START)))
+
+          gsap.set(targetVideo, { opacity: targetAlpha })
+          gsap.set(overlay, { autoAlpha: 1 - p })
+          gsap.set(bottomLogo, { autoAlpha: (1 - p) * BOTTOM_ALPHA })
+          if (p <= 0) {
+            gsap.set(overlay, { clearProps: 'opacity,visibility' })
+            resetHeroVideo()
+            return
+          }
+
+          // width/height/left/top을 직접 바꾸면 매 프레임 레이아웃이 다시 계산되어
+          // 리페인트 잔상(흐릿한 이전 프레임)이 남는다. 항상 풀스크린 크기를 유지한 채
+          // transform(translate+scale)만 움직여 GPU 합성으로 처리 → 잔상 없음.
+          gsap.set(video, {
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            right: 'auto',
+            bottom: 'auto',
+            width: window.innerWidth,
+            height: window.innerHeight,
+            xPercent: 0,
+            yPercent: 0,
+            transformOrigin: '0 0',
+            x: lerp(0, target.left, p),
+            y: lerp(0, target.top, p),
+            scaleX: lerp(1, target.width / window.innerWidth, p),
+            scaleY: lerp(1, target.height / window.innerHeight, p),
+            borderRadius: 0,
+            zIndex: 30,
+            autoAlpha: 1 - targetAlpha,
+          })
+        },
+        onLeave: () => {
+          gsap.set(targetVideo, { opacity: 1 })
+          gsap.set(overlay, { autoAlpha: 0 })
+          gsap.set(bottomLogo, { autoAlpha: 0 })
+          gsap.set(video, { autoAlpha: 0 })
+        },
+        onLeaveBack: () => {
+          gsap.set(targetVideo, { opacity: 0 })
+          gsap.set(overlay, { clearProps: 'opacity,visibility' })
+          resetHeroVideo()
+        },
+      })
+    }
 
     // 전구 등장 후 → 스크롤로 빛을 밝히는 단계로 핸드오프
     const setupScrollReveal = () => {
@@ -127,6 +212,7 @@ function HeroSection() {
         },
       })
 
+      setupHeroToIntro()
       ScrollTrigger.refresh()
     }
 
@@ -137,6 +223,8 @@ function HeroSection() {
       gsap.set(hint, { autoAlpha: 0 })
       setReveal(FULL_R)
       if (video) video.play().catch(() => {})
+      setupHeroToIntro()
+      ScrollTrigger.refresh()
       document.body.dataset.heroRevealed = 'true' // 스킵 시 영상 바로 보임 → 헤더도 바로 등장
       document.body.style.overflow = ''
       document.body.style.paddingRight = ''
@@ -216,6 +304,9 @@ function HeroSection() {
       imgCleanups.forEach((fn) => fn())
       tl && tl.kill()
       scrollST && scrollST.kill()
+      heroToIntroST && heroToIntroST.kill()
+      gsap.set(overlay, { clearProps: 'opacity,visibility' })
+      resetHeroVideo()
     }
   }, [])
 
@@ -225,7 +316,7 @@ function HeroSection() {
       <video
         ref={videoRef}
         className={styles.video}
-        src="https://res.cloudinary.com/dg9hg29hc/video/upload/hero-video_rtcktn.mp4"
+        src="https://res.cloudinary.com/dg9hg29hc/video/upload/0616_1_xt8vzh.mp4"
         muted
         loop
         playsInline
