@@ -78,19 +78,8 @@ function CollaboSection() {
   const viewportRef = useRef(null)
   const trackRef = useRef(null)
 
-  // 제목 + 아래 한글 문장 — 화면 진입 시 blur-in(흐림 → 선명) 스태거 등장.
-  // .intro에 isVisible 클래스를 토글하면 자식(.fxBlurIn)들이 순서대로 또렷해진다.
-  // (나가면 클래스 제거되어 초기화 → 다시 들어올 때 재생)
-  useEffect(() => {
-    const el = titleRef.current
-    if (!el) return
-    const io = new IntersectionObserver(
-      ([entry]) => el.classList.toggle(styles.isVisible, entry.isIntersecting),
-      { threshold: 0.4 }
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [])
+  // 제목 + 아래 한글 문장 blur-in(흐림→선명 스태거)은 아래 rAF에서 스크롤 진행도(aP)로
+  // .intro에 isVisible 토글 → 섹션이 핀되어 들어오면 표시, 위로 벗어나면 초기화.
 
   useEffect(() => {
     const wrap = wrapRef.current
@@ -169,6 +158,8 @@ function CollaboSection() {
       const aP = ease(clamp01(scrolled / (total * 0.85)))
       const rise = Math.max(0, vh / 2 - (title.offsetTop + title.offsetHeight / 2))
       title.style.transform = `translateY(${(1 - aP) * rise}px)`
+      // 제목+설명 blur-in: 섹션이 핀되어 들어오면(aP>0.02) 표시, 위로 벗어나면 초기화
+      title.classList.toggle(styles.isVisible, aP > 0.02)
       // 갤러리: 페이드인은 앞 85%에 걸쳐 더 천천히, 상승은 전체 구간에서 360px 진행.
       // 상승 거리를 크게 잡아 페이드 중에도 또렷이 올라오는 게 보이도록(=인터랙션 강조).
       // (트랙 transform은 마퀴 translateX가 쓰므로 상승은 부모 viewport에 적용)
