@@ -23,18 +23,20 @@ export default function StoryEndingSection() {
         }
       });
 
-      // Set initial positions for slide-up effect
-      gsap.set(text1Ref.current, { y: 100, opacity: 0 });
-      gsap.set(text2Ref.current, { y: 100, opacity: 0 });
+      // Set initial positions for slide-up effect (reduced distance for gentler motion)
+      gsap.set(text1Ref.current, { y: 50, opacity: 0 });
+      gsap.set(text2Ref.current, { y: 50, opacity: 0 });
       gsap.set(bgRef.current, { opacity: 0 });
 
-      // Sequence: background fades in slowly -> text 1 slides up & fades in -> stays -> slides up & fades out -> text 2 slides up & fades in -> stays
-      tl.to(bgRef.current, { opacity: 1, duration: 150, ease: "power1.inOut" }) // 1. Extremely slow background reveal
-        .to(text1Ref.current, { y: 0, opacity: 1, duration: 125, ease: "power2.out" }) // 2. Extremely slow text 1 fade in
-        .to(text1Ref.current, { opacity: 1, duration: 50 }) // 3. Hold text 1
-        .to(text1Ref.current, { y: -100, opacity: 0, duration: 500, ease: "none" }) // 4. "조금만 더 느리게" (Fade out duration pushed to the absolute extreme, takes half the section)
-        .to(text2Ref.current, { y: 0, opacity: 1, duration: 125, ease: "power2.out" }, "+=50") // 5. Long pause (+=50), then extremely slow text 2 fade in
-        .to(text2Ref.current, { opacity: 1, duration: 75 }); // 6. Hold Text 2
+      // Sequence: background in -> text1 in -> hold -> text1 fades out VERY slowly -> wait -> text2 in -> hold -> text2 fades out -> background fades out (Fade to Black)
+      tl.to(bgRef.current, { opacity: 1, duration: 200, ease: "power1.inOut" }) // 1. Extremely slow background reveal
+        .to(text1Ref.current, { y: 0, opacity: 1, duration: 150, ease: "power1.out" }) // 2. Text 1 fades in softly
+        .to(text1Ref.current, { opacity: 1, duration: 100 }) // 3. Hold text 1
+        .to(text1Ref.current, { y: -30, opacity: 0, duration: 400, ease: "power1.inOut" }) // 4. Text 1 fades out VERY slowly
+        .to(text2Ref.current, { y: 0, opacity: 1, duration: 300, ease: "power1.out" }, "+=50") // 5. SEQUENTIAL: Wait for Text 1 to disappear entirely, then short pause, then Text 2 fades in
+        .to(text2Ref.current, { opacity: 1, duration: 100 }) // 6. Hold Text 2
+        .to(text2Ref.current, { y: -30, opacity: 0, duration: 300, ease: "power1.inOut" }) // 7. Text 2 fades out slowly
+        .to(bgRef.current, { opacity: 0, duration: 300, ease: "power1.inOut" }, "+=50"); // 8. Background fades to black (The Void Bookend)
     }, sectionRef);
 
     return () => ctx.revert();

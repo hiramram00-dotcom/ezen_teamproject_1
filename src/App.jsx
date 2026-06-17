@@ -35,6 +35,7 @@ function Home() {
     <main>
       <Header index />
       <HeroSection />
+      <NewIntroSection />
       <NewIntroSectionNew />
       <MakeLightSection />
       <StorySection />
@@ -42,6 +43,7 @@ function Home() {
       <StoryEndingSection />
       <Snowman1Section />
       <SpacesSection />
+      <CollaboSection />
       {/* 고정된 Dining(ON) 위로 Collabo가 슬라이드업 */}
       <div style={{ position: 'relative', zIndex: 2, marginTop: '-100vh' }}>
         <CollaboSection />
