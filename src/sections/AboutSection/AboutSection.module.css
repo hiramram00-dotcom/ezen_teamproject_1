@@ -325,10 +325,10 @@
 
 .storyImage {
   position: absolute;
-  top: 18.5vw;
-  left: 13.18vw;
-  width: 43.85vw;
-  height: 28.2vw;
+  top: 18.9vw;
+  left: 10.8vw;
+  width: 38.8vw;
+  height: 24.9vw;
   object-fit: cover;
   clip-path: inset(0 0 100% 0);
   filter: brightness(0.28) saturate(0.3);
@@ -376,9 +376,32 @@
 
 .storyClosing {
   position: absolute;
-  top: 40.5vw;
-  left: 34.58vw;
-  width: 63.5vw;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-align: left;
+}
+
+.storyClosingLine {
+  position: absolute;
+  display: block;
+  white-space: nowrap;
+}
+
+.storyClosingLine:nth-child(1) {
+  top: 35.1vw;
+  left: 54vw;
+}
+
+.storyClosingLine:nth-child(2) {
+  top: 41.7vw;
+  left: 31.5vw;
+}
+
+.storyClosingLine:nth-child(3) {
+  top: 46vw;
+  left: 38.6vw;
 }
 
 .storyClosing strong {
@@ -408,10 +431,23 @@
 
 .storyPhaseTwo > .storyLead,
 .storyPhaseTwo > .storyImage,
+.storyPhaseTwo > .storyClosing,
+.storyPassed > .storyLead,
+.storyPassed > .storyImage,
+.storyPassed > .storyClosing {
+  pointer-events: none;
+}
+
+.storyPhaseTwo > .storyLead,
+.storyPhaseTwo > .storyImage,
 .storyPhaseTwo > .storyClosing {
-  opacity: 0;
+  opacity: 0 !important;
   filter: blur(0.45vw);
   transform: translateY(-1.4vw) scale(0.985);
+}
+
+.story:not(.storyPhaseTwo) .storySecond {
+  opacity: 0 !important;
 }
 
 .storyPhaseTwo .storySecond {
@@ -428,9 +464,37 @@
 }
 
 .storySecond .storyImage {
+  top: 19.1vw;
+  left: 11.2vw;
+  width: 38vw;
+  height: 24.4vw;
   clip-path: inset(0);
   filter: brightness(0.85) saturate(0.78);
   transform: scale(1);
+}
+
+.storySecond .storyClosing {
+  font-size: 2.72vw;
+}
+
+.storySecond .storyClosingLine:nth-child(1) {
+  top: 34.7vw;
+  left: 55vw;
+}
+
+.storySecond .storyClosingLine:nth-child(2) {
+  top: 38.3vw;
+  left: 55vw;
+}
+
+.storySecond .storyClosingLine:nth-child(3) {
+  top: 42vw;
+  left: 40vw;
+}
+
+.storySecond .storyClosingLine:nth-child(4) {
+  top: 45.6vw;
+  left: 40vw;
 }
 
 .videoPlaceholder {

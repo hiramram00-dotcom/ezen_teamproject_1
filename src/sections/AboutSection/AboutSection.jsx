@@ -7,44 +7,12 @@ import tableLampImage from './assets/about-table-lamp.webp'
 import livingRoomImage from './assets/about-living-room.webp'
 import cafeImage from '../../assets/spaces/cafe-studio.jpg'
 
-const INTRO_PARTICLE_COUNT = 1200
+const INTRO_PARTICLE_COUNT = 2200
 const INTRO_DURATION = 6800
 const INTRO_HOLD = 0.44
 
 function easeInOutCubic(value) {
   return value < 0.5 ? 4 * value ** 3 : 1 - (-2 * value + 2) ** 3 / 2
-}
-
-function sampleTextPoints(width, height, layout) {
-  const canvas = document.createElement('canvas')
-  const context = canvas.getContext('2d')
-  const ratio = window.devicePixelRatio || 1
-
-  canvas.width = width * ratio
-  canvas.height = height * ratio
-  context.scale(ratio, ratio)
-  context.clearRect(0, 0, width, height)
-  context.fillStyle = '#fff'
-  context.textAlign = 'center'
-  context.textBaseline = 'middle'
-
-  layout.forEach((line) => {
-    context.font = line.font
-    context.fillText(line.text, width / 2, line.y)
-  })
-
-  const image = context.getImageData(0, 0, canvas.width, canvas.height).data
-  const points = []
-  const step = Math.max(3, Math.round(width / 230))
-
-  for (let y = 0; y < canvas.height; y += step * ratio) {
-    for (let x = 0; x < canvas.width; x += step * ratio) {
-      const alpha = image[(y * canvas.width + x) * 4 + 3]
-      if (alpha > 80) points.push({ x: x / ratio, y: y / ratio })
-    }
-  }
-
-  return points
 }
 
 function AboutIntroParticles({ onComplete }) {
@@ -65,9 +33,6 @@ function AboutIntroParticles({ onComplete }) {
       const centerX = width / 2
       const centerY = height / 2
       const ringRadius = Math.min(width, height) * 0.31
-      const sinceSize = width * 0.058
-      const yearSize = width * 0.094
-      const textCenterY = centerY - width * 0.01
 
       canvas.width = width * ratio
       canvas.height = height * ratio
@@ -76,38 +41,21 @@ function AboutIntroParticles({ onComplete }) {
       context.setTransform(ratio, 0, 0, ratio, 0, 0)
       context.clearRect(0, 0, width, height)
 
-      const textPoints = sampleTextPoints(width, height, [
-        {
-          text: 'Since',
-          font: `italic ${sinceSize}px Georgia, serif`,
-          y: textCenterY - yearSize * 0.42,
-        },
-        {
-          text: '1962',
-          font: `600 ${yearSize}px Arial, sans-serif`,
-          y: textCenterY + sinceSize * 0.62,
-        },
-      ])
-
-      const targetPoints = Array.from({ length: INTRO_PARTICLE_COUNT }, (_, index) => {
-        const point = textPoints[Math.floor((index / INTRO_PARTICLE_COUNT) * textPoints.length)]
-        return point || { x: centerX, y: centerY }
-      })
-
-      particles = targetPoints.map((target) => {
-        const targetAngle = Math.atan2(target.y - centerY, target.x - centerX)
-        const angle = targetAngle + (Math.random() - 0.5) * 0.28
+      particles = Array.from({ length: INTRO_PARTICLE_COUNT }, (_, index) => {
+        const angle = (index / INTRO_PARTICLE_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.2
         const radius = ringRadius + (Math.random() - 0.5) * width * 0.045
         const x = centerX + Math.cos(angle) * radius
         const y = centerY + Math.sin(angle) * radius
+        const clusterRadius = Math.random() ** 1.8 * width * 0.035
+        const clusterAngle = Math.random() * Math.PI * 2
 
         return {
           x,
           y,
           px: x,
           py: y,
-          targetX: target.x + (Math.random() - 0.5) * 1.2,
-          targetY: target.y + (Math.random() - 0.5) * 1.2,
+          targetX: centerX + Math.cos(clusterAngle) * clusterRadius,
+          targetY: centerY + Math.sin(clusterAngle) * clusterRadius,
           angle,
           radius,
           size: 0.45 + Math.random() * 1.35,
@@ -156,39 +104,48 @@ function AboutIntroParticles({ onComplete }) {
 
         particle.px = particle.x
         particle.py = particle.y
-        particle.x += (targetX - particle.x) * 0.12
-        particle.y += (targetY - particle.y) * 0.12
+        particle.x += (targetX - particle.x) * (0.12 + write * 0.1)
+        particle.y += (targetY - particle.y) * (0.12 + write * 0.1)
 
         const velocity = Math.hypot(particle.x - particle.px, particle.y - particle.py)
-        const alpha = Math.min(0.78, 0.08 + velocity / 24 + gather * 0.34) * (1 - write * 0.42)
-        const weight = particle.size * (0.34 + Math.min(velocity / 24, 0.55) + gather * 0.28)
+        const ringGlow = 1 - gather
+        const lineFade = 1 - write ** 1.6
+        const alpha =
+          Math.min(0.9, 0.18 + velocity / 18 + ringGlow * 0.22 + gather * 0.28) * lineFade
+        const weight =
+          particle.size *
+          (0.52 + Math.min(velocity / 20, 0.62) + ringGlow * 0.34 + gather * 0.22) *
+          (0.55 + lineFade * 0.45)
 
-        context.beginPath()
-        context.strokeStyle = `rgba(247, 242, 232, ${alpha})`
-        context.shadowColor = 'rgba(247, 242, 232, 0.42)'
-        context.shadowBlur = 2.4 + write * 2
-        context.lineWidth = weight
-        context.moveTo(particle.px, particle.py)
-        context.lineTo(particle.x, particle.y)
-        context.stroke()
+        if (alpha > 0.01) {
+          context.beginPath()
+          context.strokeStyle = `rgba(247, 242, 232, ${alpha})`
+          context.shadowColor = 'rgba(247, 242, 232, 0.68)'
+          context.shadowBlur = (4.8 + ringGlow * 5) * lineFade
+          context.lineCap = 'round'
+          context.lineWidth = weight
+          context.moveTo(particle.px, particle.py)
+          context.lineTo(particle.x, particle.y)
+          context.stroke()
+        }
+
       })
 
-      const textOpacity = write
-      if (textOpacity > 0) {
+      if (write > 0) {
         context.save()
-        const revealWidth = width * 0.24 * textOpacity
-        const revealHeight = width * 0.18 * textOpacity
+        const revealWidth = width * 0.24 * write
+        const revealHeight = width * 0.18 * write
         context.beginPath()
         context.rect(centerX - revealWidth / 2, textCenterY - revealHeight / 2, revealWidth, revealHeight)
         context.clip()
         context.textAlign = 'center'
         context.textBaseline = 'middle'
-        context.fillStyle = `rgba(255, 255, 255, ${0.92 * textOpacity})`
-        context.shadowColor = `rgba(247, 242, 232, ${0.28 * textOpacity})`
-        context.shadowBlur = 10 * textOpacity
+        context.fillStyle = `rgba(255, 255, 255, ${0.98 * write})`
+        context.shadowColor = `rgba(247, 242, 232, ${0.24 * write})`
+        context.shadowBlur = 7 * write
         context.font = `italic ${sinceSize}px Georgia, serif`
         context.fillText('Since', centerX, textCenterY - yearSize * 0.42)
-        context.shadowBlur = 5 * textOpacity
+        context.shadowBlur = 3 * write
         context.font = `600 ${yearSize}px Arial, sans-serif`
         context.fillText('1962', centerX, textCenterY + sinceSize * 0.62)
         context.restore()
@@ -425,11 +382,13 @@ function AboutSection() {
         />
 
         <p className={styles.storyClosing}>
-          for over 60 years,
-          <br />
-          <strong>ILKWANG</strong> has brought light
-          <br />
-          into people’s lives.
+          <span className={`${styles.storyClosingLine} ${styles.storyClosingLineFirst}`}>
+            for over 60 years,
+          </span>
+          <span className={styles.storyClosingLine}>
+            <strong>ILKWANG</strong> has brought light
+          </span>
+          <span className={styles.storyClosingLine}>into people’s lives.</span>
         </p>
 
         <div className={styles.storySecond}>
@@ -444,13 +403,12 @@ function AboutSection() {
           <img className={styles.storyImage} src={cafeImage} alt="" />
 
           <p className={styles.storyClosing}>
-            Beyond a single
-            <br />
-            source of light,
-            <br />
-            we continue to understand people
-            <br />
-            and the spaces they inhabit.
+            <span className={`${styles.storyClosingLine} ${styles.storyClosingLineFirst}`}>
+              Beyond a single
+            </span>
+            <span className={styles.storyClosingLine}>source of light,</span>
+            <span className={styles.storyClosingLine}>we continue to understand people</span>
+            <span className={styles.storyClosingLine}>and the spaces they inhabit.</span>
           </p>
         </div>
       </div>
