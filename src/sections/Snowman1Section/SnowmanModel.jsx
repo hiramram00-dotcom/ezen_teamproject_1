@@ -149,17 +149,23 @@ function SnowmanModel({
         const turn = Number.parseFloat(canvas.parentElement.dataset.turn) || 0
         const enter = Number.parseFloat(canvas.parentElement.dataset.enter) || 0
         const light = Number.parseFloat(canvas.parentElement.dataset.light) || 0
+        const final = Number.parseFloat(canvas.parentElement.dataset.final) || 0
+        const showcase = canvas.parentElement.dataset.showcase === '1'
+        const showcaseSpin = showcase ? final * elapsed * 0.16 : 0
 
-        model.rotation.y = -0.16 + turn + Math.sin(elapsed * 0.45) * 0.04
+        model.rotation.y =
+          -0.16 + turn + showcaseSpin + Math.sin(elapsed * 0.45) * 0.04
         model.rotation.x = Math.sin(enter * Math.PI * 2) * 0.1
         model.rotation.z = Math.sin(enter * Math.PI) * -0.07
-        lampLight.intensity = light * 5.5
+        lampLight.intensity = light * (showcase ? 10.5 : 5.5)
         glassMaterials.forEach((material) => {
-          material.color.copy(baseGlassColor).lerp(litGlassColor, light * 0.42)
-          material.emissiveIntensity = light * 0.35
+          material.color
+            .copy(baseGlassColor)
+            .lerp(litGlassColor, light * (showcase ? 0.62 : 0.42))
+          material.emissiveIntensity = light * (showcase ? 0.72 : 0.35)
         })
         glowMaterials.forEach((material) => {
-          material.emissiveIntensity = light * 3.8
+          material.emissiveIntensity = light * (showcase ? 6.2 : 3.8)
         })
       }
 

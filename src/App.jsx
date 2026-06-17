@@ -3,9 +3,8 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import HeroSection from './sections/HeroSection/HeroSection'
 import NewIntroSection from './sections/NewIntroSection/NewIntroSection'
 import MakeLightSection from './sections/MakeLightSection/MakeLightSection'
-import Story2Section from './sections/Story2Section/Story2Section'
 import StorySection from './sections/StorySection/StorySection'
-import SpaceSection from './sections/SpaceSection/SpaceSection'
+import SpaceMiddleSection from './sections/SpaceMiddleSection/SpaceMiddleSection'
 import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection'
 import Snowman1Section from './sections/Snowman1Section/Snowman1Section'
 import ProductSection from './sections/ProductSection/ProductSection'
@@ -16,6 +15,7 @@ import Footer from './components/Footer/Footer'
 import AboutPage from './pages/AboutPage/AboutPage'
 import ShowroomPage from './pages/ShowroomPage/ShowroomPage'
 import Header from './components/Header/Header'
+import LightCursor from './components/LightCursor/LightCursor'
 
 // 라우트 바뀔 때마다 맨 위로 (엉뚱한 스크롤 위치 방지)
 // useLayoutEffect = 페인트 전 / 다음 프레임에 한 번 더 = ScrollTrigger 등이 위치 복원하려는 것까지 눌러줌
@@ -33,13 +33,12 @@ function ScrollToTop() {
 function Home() {
   return (
     <main>
-      <Header index />
-      <HeroSection />
-      <NewIntroSection />
-      <MakeLightSection />
-      <Story2Section />
+      {/* <Header index /> */}
+      {/* <HeroSection /> */}
+      {/* <NewIntroSection /> */}
+      {/* <MakeLightSection /> */}
       <StorySection />
-      <SpaceSection />
+      <SpaceMiddleSection />
       <StoryEndingSection />
       <Snowman1Section />
       <SpacesSection />
@@ -67,6 +66,7 @@ function ProductRoute() {
 function App() {
   return (
     <>
+      <LightCursor />
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />

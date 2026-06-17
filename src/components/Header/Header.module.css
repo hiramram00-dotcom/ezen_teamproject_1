@@ -10,9 +10,21 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--layout-gutter, 38px);
-  background: rgba(0, 0, 0, 0.25);
   z-index: 100;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* 배경 스크림 — Intro top0에서 위에서 슥 내려오는 레이어 (.bgShown 토글, 이후 유지 / Hero 재진입 시 사라짐) */
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(0, 0, 0, 0.25);
+  transform: translateY(-100%);
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bgShown::before {
+  transform: translateY(0);
 }
 
 /* 숨김 = 화면 위로 올라가서 안 보임 (올라감만 더 느리게) */
@@ -24,6 +36,10 @@
 /* 메뉴 열렸을 때 — 크림 오버레이에 맞춰 배경 투명 + 검정 (시안 기준) */
 .menuMode {
   background: transparent;
+}
+/* 메뉴(크림 오버레이) 열리면 스크림 숨김 */
+.menuMode::before {
+  transform: translateY(-100%);
 }
 /* 메뉴 열리면 로고는 안 띄움 */
 .menuMode .logoLink {

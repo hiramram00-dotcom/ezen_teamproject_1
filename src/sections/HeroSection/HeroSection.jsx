@@ -115,6 +115,8 @@ function HeroSection() {
           if (self.progress >= COMPLETE_AT) completed = true
           const p = completed ? 1 : self.progress // 완료 전엔 스크롤 따라(양방향), 완료 후 잠금
           apply(p)
+          // 오버레이 충분히 걷히면(영상 보임) 헤더 등장 신호 / 다시 어두워지면 숨김
+          document.body.dataset.heroRevealed = p > 0.8 ? 'true' : 'false'
           if (p > PLAY_AT && video && video.paused) video.play().catch(() => {})
         },
         onLeave: () => {
@@ -133,6 +135,7 @@ function HeroSection() {
       gsap.set(hint, { autoAlpha: 0 })
       setReveal(FULL_R)
       if (video) video.play().catch(() => {})
+      document.body.dataset.heroRevealed = 'true' // 스킵 시 영상 바로 보임 → 헤더도 바로 등장
       document.body.style.overflow = ''
       document.body.style.paddingRight = ''
       // introDone은 스킵일 때 초기값이 이미 true → 여기서 setState 불필요
