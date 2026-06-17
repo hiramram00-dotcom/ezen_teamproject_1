@@ -33,17 +33,17 @@ function ScrollToTop() {
 function Home() {
   return (
     <main>
-      {/* <Header index /> */}
-      {/* <HeroSection /> */}
-      {/* <NewIntroSection /> */}
-      {/* <MakeLightSection /> */}
+      <Header index />
+      <HeroSection />
+      <NewIntroSection />
+      <MakeLightSection />
       <StorySection />
       <SpaceMiddleSection />
       <StoryEndingSection />
-      {/* <Snowman1Section /> */}
-      {/* <SpacesSection /> */}
-      {/* <CollaboSection /> */}
-      {/* <Footer /> */}
+      <Snowman1Section />
+      <SpacesSection />
+      <CollaboSection />
+      <Footer />
     </main>
   );
 }
