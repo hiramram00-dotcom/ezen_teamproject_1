@@ -47,6 +47,7 @@ function HeroSection() {
   const logoRef = useRef(null)
   const lettersRef = useRef([])
   const copyRef = useRef(null)
+  const filamentRef = useRef(null)
   const videoRef = useRef(null)
   const overlayRef = useRef(null)
   const bottomLogoRef = useRef(null)
@@ -73,6 +74,7 @@ function HeroSection() {
     const letters = lettersRef.current.filter(Boolean)
     const logo = logoRef.current
     const copy = copyRef.current
+    const filament = filamentRef.current
     const video = videoRef.current
     const overlay = overlayRef.current
     const bottomLogo = bottomLogoRef.current
@@ -156,7 +158,7 @@ function HeroSection() {
       letters.forEach((el, i) =>
         gsap.set(el, { x: startX[i], y: startY[i], autoAlpha: 0 }),
       )
-      gsap.set(copy, { xPercent: -50, y: 24, autoAlpha: 0 })
+      gsap.set(copy, { y: 24, autoAlpha: 0 })
       setReveal(0) // 오버레이 완전 검정
 
       const bulb = { v: 0 }
@@ -168,6 +170,13 @@ function HeroSection() {
       // ── 타이포 인트로 ──
       tl.to(letters, { autoAlpha: 1, duration: APPEAR, stagger: 0.04 }, 0)
       tl.to(copy, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power2.out' }, 0.1)
+      // ── 한글 서브카피: 전구 필라멘트 빛이 가로로 지나가며 글자가 켜지듯 드러남 ──
+      if (filament) {
+        // 빛 라인이 화면을 가로질러 → 두 줄(영문·한글) 같이 켜짐
+        tl.fromTo(copy, { '--sweep': 0 }, { '--sweep': 1, duration: 1.1, ease: 'power1.inOut' }, 0.5)
+        tl.fromTo(filament, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, 0.5)
+        tl.to(filament, { autoAlpha: 0, duration: 0.28 }, 1.45) // 빛 라인 끝나면 사라짐
+      }
       tl.to(letters, { x: 0, duration: P1_DUR, ease: 'power2.out' }, APPEAR)
       tl.to([letters[2], letters[3]], { y: 0, duration: P2_BOT_DUR, ease: 'power3.inOut', stagger: KW_DELAY }, p2Start)
       // ── 카피만 페이드아웃 → 전구 등장 (로고는 스크롤 전까지 유지) ──
@@ -239,6 +248,7 @@ function HeroSection() {
       <div className={styles.copy} ref={copyRef}>
         <p className={styles.copyEn}>We make Light</p>
         <p className={styles.copyKr}>빛이 머문 자리에, 온기가 남습니다</p>
+        <span className={styles.filament} ref={filamentRef} aria-hidden="true" />
       </div>
 
       {/* 하단 로고 — 영상 위에 남는 작은 ILKW */}
