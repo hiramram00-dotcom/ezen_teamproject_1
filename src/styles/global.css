@@ -4,7 +4,9 @@
 *, *::before, *::after { box-sizing: border-box; }
 * { margin: 0; padding: 0; }
 
-html, body { min-height: 100%; height: auto; overflow-x: hidden; }
+/* ⚠️ html/body에 overflow-x:hidden 금지 — overflow-y가 auto로 변해 스크롤 컨테이너가 바뀌면서
+   position:sticky / GSAP ScrollTrigger pin 이 깨짐(스크롤 연동 섹션 안 보임). 가로 overflow는 넘치는 섹션에서 처리. */
+html, body { min-height: 100%; height: auto; }
 
 body {
   font-family: var(--font-kr);
