@@ -103,11 +103,15 @@ const easeInOutCubic = (value) =>
 
 // 진행도 구간: 텍스트 고정 → 검정 절반 등장(REVEAL) → 전체화면 확장(WIDEN) → 가로 패닝+조명 스윕
 const REVEAL_START = 0.1
-const REVEAL_END = 0.26
-const WIDEN_END = 0.56
+const REVEAL_END = 0.15
+const WIDEN_END = 0.3
 const CARD_MIN_SCALE = 0.05
 // 스윕(조명 ON 라인) 구간이 룸 이동보다 몇 배 더 긴지 — 클수록 라인이 천천히 지나간다
-const SWEEP_WEIGHT = 1.7
+const SWEEP_WEIGHT = 1.9
+// 룸 간 이동(전환) 구간 비중 — 작을수록 더 스냅처럼 빠르게 다음 룸으로 넘어간다 (앞/뒤 양방향 동일)
+const PAN_WEIGHT = 0.5
+// 한 룸에 머무는 동안 앞뒤로 잠깐 멈추는 비율(앞=조명 OFF 정지, 뒤=조명 ON 정지)
+const SWEEP_HOLD = 0.26
 // 이 진행도에서 애니메이션 완료(Dining ON). 이후 끝까지는 고정 유지 + Collabo가 위로 올라옴
 const ANIM_END = 0.85
 // 고정 구간에서 Dining이 위로 드리프트하는 양(px) — 클수록 더 많이 올라감
@@ -182,7 +186,7 @@ function SpacesSection() {
       const segs = []
       for (let i = 0; i < count; i += 1) {
         segs.push({ kind: 'sweep', room: i, weight: SWEEP_WEIGHT })
-        if (i < count - 1) segs.push({ kind: 'pan', room: i, weight: 1 })
+        if (i < count - 1) segs.push({ kind: 'pan', room: i, weight: PAN_WEIGHT })
       }
       const totalWeight = segs.reduce((sum, s) => sum + s.weight, 0)
 
@@ -198,7 +202,10 @@ function SpacesSection() {
           for (let k = 0; k < seg.room; k += 1) sweptAmount[k] = 1
           if (seg.kind === 'sweep') {
             position = seg.room
-            sweptAmount[seg.room] = segLocal
+            // 앞: 조명 OFF로 잠깐 정지 → 중간: 스윕 → 뒤: 조명 ON으로 잠깐 정지
+            sweptAmount[seg.room] = clamp(
+              (segLocal - SWEEP_HOLD) / (1 - 2 * SWEEP_HOLD),
+            )
           } else {
             sweptAmount[seg.room] = 1
             position = seg.room + easeInOutCubic(segLocal)
