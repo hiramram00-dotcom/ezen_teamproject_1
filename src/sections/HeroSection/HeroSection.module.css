@@ -58,7 +58,8 @@
 /* ===== 중앙 서브카피 ===== */
 .copy {
   position: absolute;
-  left: 50%;
+  left: 0;
+  width: 100%;
   top: 46%;
   text-align: center;
   z-index: 3;
@@ -76,12 +77,53 @@
   color: rgba(255, 255, 255, 0.6);
   letter-spacing: 0.01em;
 }
+/* 한글 서브카피 — 전구 필라멘트 빛 스윕 리빌 (--sweep 0→1, GSAP가 구동) */
+.copyKrWrap {
+  --sweep: 0; /* GSAP가 0→1: 빛이 화면 왼쪽(0)→오른쪽(100%) 지나는 진행도 */
+  position: relative;
+  display: block;
+  width: 100%;
+}
 .copyKr {
+  display: block;
+  width: 100%;
+  text-align: center; /* 텍스트는 가운데, 빛은 전체폭을 지나감 */
   margin: 0;
   font-family: var(--font-kr, 'Pretendard', sans-serif);
   font-size: clamp(14px, 1.05vw, 20px);
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.82);
   letter-spacing: -0.01em;
+  /* 빛(전체폭)이 지나간 만큼 부드럽게 드러남 → 가운데 텍스트는 빛이 가운데 올 때 켜짐 */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    #000 calc(var(--sweep) * 100% - 5%),
+    transparent calc(var(--sweep) * 100% + 3%)
+  );
+  mask-image: linear-gradient(
+    90deg,
+    #000 calc(var(--sweep) * 100% - 5%),
+    transparent calc(var(--sweep) * 100% + 3%)
+  );
+  text-shadow: 0 0 7px rgba(244, 147, 7, 0.22); /* 은은한 온기 글로우 */
+}
+/* 가로 빛줄기 — 화면 전체폭(왼쪽0→오른쪽100%)을 지나감, 빛 끝이 리빌 경계 */
+.filament {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--sweep) * 100%); /* 전체폭 = .copy가 width:100% 라 화면 끝까지 */
+  width: 28%; /* 빛줄기 길이(전체폭 기준) — 길게/짧게 조절 */
+  height: 1.9em;
+  transform: translate(-100%, -50%); /* 빛 끝을 리빌 경계에 맞추고 왼쪽으로 꼬리 */
+  background: linear-gradient(
+    90deg,
+    rgba(255, 205, 130, 0) 0%,
+    rgba(255, 216, 150, 0.18) 55%,
+    rgba(255, 238, 205, 0.55) 88%,
+    #fff6e6 100%
+  );
+  filter: blur(5px);
+  opacity: 0; /* GSAP가 스윕 동안만 켬 */
+  pointer-events: none;
 }
 
 /* ===== 하단 로고 — 영상 위 작은 ILKW ===== */
