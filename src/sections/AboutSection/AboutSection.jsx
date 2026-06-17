@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import styles from './AboutSection.module.css'
 
 import logoIlkw from '../../assets/ilkw-logo-header.svg'
@@ -7,71 +7,227 @@ import tableLampImage from './assets/about-table-lamp.webp'
 import livingRoomImage from './assets/about-living-room.webp'
 import cafeImage from '../../assets/spaces/cafe-studio.jpg'
 
+const INTRO_PARTICLE_COUNT = 1200
+const INTRO_DURATION = 6800
+const INTRO_HOLD = 0.44
+
+function easeInOutCubic(value) {
+  return value < 0.5 ? 4 * value ** 3 : 1 - (-2 * value + 2) ** 3 / 2
+}
+
+function sampleTextPoints(width, height, layout) {
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d')
+  const ratio = window.devicePixelRatio || 1
+
+  canvas.width = width * ratio
+  canvas.height = height * ratio
+  context.scale(ratio, ratio)
+  context.clearRect(0, 0, width, height)
+  context.fillStyle = '#fff'
+  context.textAlign = 'center'
+  context.textBaseline = 'middle'
+
+  layout.forEach((line) => {
+    context.font = line.font
+    context.fillText(line.text, width / 2, line.y)
+  })
+
+  const image = context.getImageData(0, 0, canvas.width, canvas.height).data
+  const points = []
+  const step = Math.max(3, Math.round(width / 230))
+
+  for (let y = 0; y < canvas.height; y += step * ratio) {
+    for (let x = 0; x < canvas.width; x += step * ratio) {
+      const alpha = image[(y * canvas.width + x) * 4 + 3]
+      if (alpha > 80) points.push({ x: x / ratio, y: y / ratio })
+    }
+  }
+
+  return points
+}
+
+function AboutIntroParticles({ onComplete }) {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const context = canvas.getContext('2d')
+    let animationFrame = null
+    let startTime = null
+    let particles = []
+    let completed = false
+
+    const buildParticles = () => {
+      const ratio = window.devicePixelRatio || 1
+      const width = window.innerWidth
+      const height = Math.max(window.innerHeight, width * 0.5625)
+      const centerX = width / 2
+      const centerY = height / 2
+      const ringRadius = Math.min(width, height) * 0.31
+      const sinceSize = width * 0.058
+      const yearSize = width * 0.094
+      const textCenterY = centerY - width * 0.01
+
+      canvas.width = width * ratio
+      canvas.height = height * ratio
+      canvas.style.width = `${width}px`
+      canvas.style.height = `${height}px`
+      context.setTransform(ratio, 0, 0, ratio, 0, 0)
+      context.clearRect(0, 0, width, height)
+
+      const textPoints = sampleTextPoints(width, height, [
+        {
+          text: 'Since',
+          font: `italic ${sinceSize}px Georgia, serif`,
+          y: textCenterY - yearSize * 0.42,
+        },
+        {
+          text: '1962',
+          font: `600 ${yearSize}px Arial, sans-serif`,
+          y: textCenterY + sinceSize * 0.62,
+        },
+      ])
+
+      const targetPoints = Array.from({ length: INTRO_PARTICLE_COUNT }, (_, index) => {
+        const point = textPoints[Math.floor((index / INTRO_PARTICLE_COUNT) * textPoints.length)]
+        return point || { x: centerX, y: centerY }
+      })
+
+      particles = targetPoints.map((target) => {
+        const targetAngle = Math.atan2(target.y - centerY, target.x - centerX)
+        const angle = targetAngle + (Math.random() - 0.5) * 0.28
+        const radius = ringRadius + (Math.random() - 0.5) * width * 0.045
+        const x = centerX + Math.cos(angle) * radius
+        const y = centerY + Math.sin(angle) * radius
+
+        return {
+          x,
+          y,
+          px: x,
+          py: y,
+          targetX: target.x + (Math.random() - 0.5) * 1.2,
+          targetY: target.y + (Math.random() - 0.5) * 1.2,
+          angle,
+          radius,
+          size: 0.45 + Math.random() * 1.35,
+          speed: 0.42 + Math.random() * 0.82,
+          jitter: Math.random() * Math.PI * 2,
+          orbitOffset: (Math.random() - 0.5) * 0.22,
+        }
+      })
+    }
+
+    const draw = (now) => {
+      if (!startTime) startTime = now
+      const elapsed = now - startTime
+      const progress = Math.min(elapsed / INTRO_DURATION, 1)
+      const gather = easeInOutCubic(Math.min(Math.max((progress - INTRO_HOLD) / 0.34, 0), 1))
+      const write = easeInOutCubic(Math.min(Math.max((progress - INTRO_HOLD - 0.24) / 0.36, 0), 1))
+      const ratio = window.devicePixelRatio || 1
+      const width = canvas.width / ratio
+      const height = canvas.height / ratio
+      const centerX = width / 2
+      const centerY = height / 2
+      const sinceSize = width * 0.058
+      const yearSize = width * 0.094
+      const textCenterY = centerY - width * 0.01
+
+      context.globalCompositeOperation = 'source-over'
+      context.clearRect(0, 0, width, height)
+
+      particles.forEach((particle) => {
+        const freeSpin = elapsed * 0.00042 * particle.speed
+        const ringAngle =
+          particle.angle +
+          particle.orbitOffset +
+          freeSpin +
+          Math.sin(elapsed * 0.0012 + particle.jitter) * 0.045 * (1 - gather)
+        const ringRadius =
+          particle.radius + Math.sin(elapsed * 0.0015 + particle.jitter) * width * 0.014 * (1 - gather)
+        const ringX = centerX + Math.cos(ringAngle) * ringRadius
+        const ringY = centerY + Math.sin(ringAngle) * ringRadius
+        const compactX = centerX + (particle.targetX - centerX) * 0.16
+        const compactY = centerY + (particle.targetY - centerY) * 0.16
+        const gatheredX = ringX + (compactX - ringX) * gather
+        const gatheredY = ringY + (compactY - ringY) * gather
+        const targetX = gatheredX
+        const targetY = gatheredY
+
+        particle.px = particle.x
+        particle.py = particle.y
+        particle.x += (targetX - particle.x) * 0.12
+        particle.y += (targetY - particle.y) * 0.12
+
+        const velocity = Math.hypot(particle.x - particle.px, particle.y - particle.py)
+        const alpha = Math.min(0.78, 0.08 + velocity / 24 + gather * 0.34) * (1 - write * 0.42)
+        const weight = particle.size * (0.34 + Math.min(velocity / 24, 0.55) + gather * 0.28)
+
+        context.beginPath()
+        context.strokeStyle = `rgba(247, 242, 232, ${alpha})`
+        context.shadowColor = 'rgba(247, 242, 232, 0.42)'
+        context.shadowBlur = 2.4 + write * 2
+        context.lineWidth = weight
+        context.moveTo(particle.px, particle.py)
+        context.lineTo(particle.x, particle.y)
+        context.stroke()
+      })
+
+      const textOpacity = write
+      if (textOpacity > 0) {
+        context.save()
+        const revealWidth = width * 0.24 * textOpacity
+        const revealHeight = width * 0.18 * textOpacity
+        context.beginPath()
+        context.rect(centerX - revealWidth / 2, textCenterY - revealHeight / 2, revealWidth, revealHeight)
+        context.clip()
+        context.textAlign = 'center'
+        context.textBaseline = 'middle'
+        context.fillStyle = `rgba(255, 255, 255, ${0.92 * textOpacity})`
+        context.shadowColor = `rgba(247, 242, 232, ${0.28 * textOpacity})`
+        context.shadowBlur = 10 * textOpacity
+        context.font = `italic ${sinceSize}px Georgia, serif`
+        context.fillText('Since', centerX, textCenterY - yearSize * 0.42)
+        context.shadowBlur = 5 * textOpacity
+        context.font = `600 ${yearSize}px Arial, sans-serif`
+        context.fillText('1962', centerX, textCenterY + sinceSize * 0.62)
+        context.restore()
+      }
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(draw)
+      } else if (!completed) {
+        completed = true
+        onComplete()
+      }
+    }
+
+    buildParticles()
+    animationFrame = requestAnimationFrame(draw)
+    window.addEventListener('resize', buildParticles)
+
+    return () => {
+      window.removeEventListener('resize', buildParticles)
+      if (animationFrame) cancelAnimationFrame(animationFrame)
+    }
+  }, [onComplete])
+
+  return <canvas className={styles.introParticles} ref={canvasRef} aria-hidden="true" />
+}
+
 function AboutSection() {
   const legacyLightRef = useRef(null)
   const storyLightRef = useRef(null)
   const aboutRef = useRef(null)
-  const countFrameRef = useRef(null)
-  const countTimerRef = useRef(null)
-  const lightTimerRef = useRef(null)
   const legacyScrollStartRef = useRef(0)
-  const [lightVisible, setLightVisible] = useState(false)
-  const [lightArrived, setLightArrived] = useState(false)
-  const [originMoving, setOriginMoving] = useState(false)
-  const [year, setYear] = useState(null)
   const [yearRevealed, setYearRevealed] = useState(false)
   const [legacyRevealed, setLegacyRevealed] = useState(false)
   const [storyRevealed, setStoryRevealed] = useState(false)
   const [storyPhase, setStoryPhase] = useState('before')
 
-  useEffect(() => {
-    lightTimerRef.current = window.setTimeout(() => setLightVisible(true), 700)
-    const originTimer = window.setTimeout(() => setOriginMoving(true), 1550)
-    const arriveTimer = window.setTimeout(() => setLightArrived(true), 2300)
-
-    return () => {
-      if (lightTimerRef.current) window.clearTimeout(lightTimerRef.current)
-      window.clearTimeout(originTimer)
-      window.clearTimeout(arriveTimer)
-      if (countTimerRef.current) window.clearTimeout(countTimerRef.current)
-      if (countFrameRef.current) cancelAnimationFrame(countFrameRef.current)
-    }
+  const handleIntroComplete = useCallback(() => {
+    setYearRevealed(true)
   }, [])
-
-  useEffect(() => {
-    if (!lightArrived || year !== null) return
-
-    countTimerRef.current = window.setTimeout(() => {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        setYear(1962)
-        setYearRevealed(true)
-        return
-      }
-
-      const startTime = performance.now()
-      const duration = 1350
-
-      const count = (now) => {
-        const progress = Math.min((now - startTime) / duration, 1)
-        setYear(1900 + Math.floor(progress * 62))
-
-        if (progress < 1) {
-          countFrameRef.current = requestAnimationFrame(count)
-        } else {
-          setYear(1962)
-          setYearRevealed(true)
-          countFrameRef.current = null
-        }
-      }
-
-      countFrameRef.current = requestAnimationFrame(count)
-      countTimerRef.current = null
-    }, 180)
-
-    return () => {
-      if (countTimerRef.current) window.clearTimeout(countTimerRef.current)
-    }
-  }, [lightArrived, year])
 
   useEffect(() => {
     if (!yearRevealed) return
@@ -205,29 +361,7 @@ function AboutSection() {
         <span />
       </div>
 
-      <div className={`${styles.origin} ${originMoving ? styles.originRaised : ''}`}>
-        <p className={styles.originLabel}>Since</p>
-      </div>
-
-      <div className={styles.since}>
-        <strong
-          className={`${styles.year} ${year !== null ? styles.yearCounting : ''} ${
-            yearRevealed ? styles.yearRevealed : ''
-          }`}
-          aria-live="polite"
-        >
-          {year ?? '1962'}
-        </strong>
-      </div>
-
-      <div
-        className={`${styles.yearLight} ${lightVisible && year === null ? styles.lightVisible : ''} ${
-          year !== null ? styles.lightHidden : ''
-        }`}
-        aria-hidden="true"
-      >
-        <span className={styles.glowDot} aria-hidden="true" />
-      </div>
+      <AboutIntroParticles onComplete={handleIntroComplete} />
 
       <div
         ref={legacyLightRef}
