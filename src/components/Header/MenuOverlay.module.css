@@ -79,6 +79,11 @@
 .preview:hover .previewInner img {
   transform: translateY(0) scale(1.06);
 }
+/* 클릭(누르는 순간)엔 아주 살짝 작아지며 눌리는 듯한 피드백 */
+.preview:active .previewInner img {
+  transform: translateY(0) scale(1.03);
+  transition-duration: 0.12s; /* 빠르게 반응 */
+}
 /* menu-1: 대비↓ + 밝기↑ + 채도↓ + 미세 블러로 부드럽게 */
 .previewInner img.softImg {
   filter: contrast(0.9) brightness(1.04) saturate(0.95);
