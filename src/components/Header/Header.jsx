@@ -75,7 +75,13 @@ function Header() {
         ref={headerRef}
         className={`${styles.header} ${menuOpen ? styles.menuMode : ''}`}
       >
-        <Link className={styles.logoLink} to="/" onClick={handleLogo} aria-label="메인으로">
+        <Link
+          className={styles.logoLink}
+          to="/"
+          onClick={handleLogo}
+          aria-label="메인으로"
+          data-cursor="pointer"
+        >
           <img className={styles.logo} src={logo} alt="ILKW" />
         </Link>
         <button
@@ -83,6 +89,7 @@ function Header() {
           type="button"
           onClick={() => setMenuOpen((o) => !o)}
           aria-label={menuOpen ? '메뉴 닫기' : '메뉴 열기'}
+          data-cursor="pointer"
         >
           <span className={styles.arrow} aria-hidden="true">
             <svg viewBox="0 0 28 16" fill="none">

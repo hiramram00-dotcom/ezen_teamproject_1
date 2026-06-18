@@ -235,6 +235,7 @@ function CollaboSection() {
                   key={`${card.brand}-${i}`}
                   className={styles.card}
                   data-card
+                  data-cursor="pointer"
                   aria-hidden={isClone ? 'true' : undefined}
                   style={{
                     marginTop: `${card.offset}px`,
