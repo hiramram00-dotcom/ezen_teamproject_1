@@ -122,6 +122,12 @@ function Header() {
             </svg>
           </span>
           <span className={styles.menuLabel}>{menuOpen ? 'Close' : 'Menu'}</span>
+          {/* 모바일 전용 햄버거 (CSS로 모바일에서만 표시) */}
+          <span className={styles.hamburger} aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
         </button>
       </header>
       <MenuOverlay open={menuOpen} onNavigate={() => setMenuOpen(false)} />
