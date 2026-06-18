@@ -8,7 +8,7 @@ import menu4 from '../../assets/header/menu-4.jpg'
 
 // 각 메뉴 항목 → 해당 페이지 대표 이미지 (hover 시 프리뷰로 펼쳐짐)
 const ITEMS = [
-  { label: 'ABOUT', to: '/about', img: menu1 },
+  { label: 'ABOUT', to: '/about', img: menu1, soft: true }, // menu-1: 대비 살짝 낮춰 부드럽게
   { label: 'PRODUCT', to: '/product', img: menu2 },
   { label: 'SHOWROOM', to: '/showroom', img: menu3 },
   { label: 'COLLABO', to: '/collabo', img: menu4 },
@@ -20,7 +20,7 @@ function MenuOverlay({ open, onNavigate }) {
   return (
     <div className={`${styles.overlay} ${open ? styles.open : ''}`} aria-hidden={!open}>
       <nav className={styles.list} onMouseLeave={() => setActive(null)}>
-        {ITEMS.map(({ label, to, img }, i) => (
+        {ITEMS.map(({ label, to, img, soft }, i) => (
           <div className={styles.row} key={label}>
             <Link
               className={`${styles.item} ${active !== null && active !== i ? styles.dim : ''}`}
@@ -39,7 +39,7 @@ function MenuOverlay({ open, onNavigate }) {
               aria-hidden={active !== i}
             >
               <div className={styles.previewInner}>
-                <img src={img} alt={`${label} 미리보기`} />
+                <img className={soft ? styles.softImg : undefined} src={img} alt={`${label} 미리보기`} />
               </div>
             </Link>
           </div>
