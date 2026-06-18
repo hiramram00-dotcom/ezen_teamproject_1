@@ -9,6 +9,7 @@ import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection
 import Snowman1Section from './sections/Snowman1Section/Snowman1Section'
 
 import FixSnowman2Section from './sections/FixSnowman2Section/FixSnowman2Section'
+import FixStorySection from './sections/FixStorySection/FixStorySection'
 import ProductSection from './sections/ProductSection/ProductSection'
 import FlamingoDetailSection from './sections/FlamingoDetailSection/FlamingoDetailSection'
 import SpacesSection from './sections/SpacesSection/SpacesSection'
@@ -79,6 +80,8 @@ function App() {
         <Route path="/showroom" element={<><Header /><ShowroomPage /></>} />
         {/* ⚠️ /collabo 는 아직 전용 페이지 미정(취합 전) → 임시로 홈 콜라보 섹션 단독 렌더 */}
         <Route path="/collabo" element={<><Header /><CollaboSection /></>} />
+        {/* 작업용 미리보기 — FixStorySection 단독 확인용 (이전 섹션 포함) */}
+        <Route path="/fixstory" element={<><Header /><NewIntroSectionNew /><FixStorySection /></>} />
 
         {/* 작업용 미리보기 — FixSnowman2Section 단독 확인용, 메인 페이지에는 미연결 */}
         <Route path="/fixsnowman2" element={<><Header /><FixSnowman2Section /></>} />
