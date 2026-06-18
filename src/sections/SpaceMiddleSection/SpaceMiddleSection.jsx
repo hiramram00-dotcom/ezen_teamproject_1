@@ -1,4 +1,5 @@
 import { useState, useLayoutEffect, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './SpaceMiddleSection.module.css';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -21,10 +22,8 @@ export default function SpaceMiddleSection() {
   const highlightWordRef = useRef(null);
   const lightRef = useRef(null);
   const imageRefs = useRef([]);
-  const bgOverlayRef = useRef(null);
-  const textWrapperRef = useRef(null);
-  const endText1Ref = useRef(null);
-  const endText2Ref = useRef(null);
+  const heroRef = useRef(null);
+  const heroDimRef = useRef(null);
   const [scale, setScale] = useState(1);
 
   useLayoutEffect(() => {
@@ -39,20 +38,21 @@ export default function SpaceMiddleSection() {
 
   useLayoutEffect(() => {
     let ctx = gsap.context(() => {
-      // Reveal animation for text block lines
-      gsap.fromTo(textRef.current.children,
+      // Reveal animation for the whole text block (rises + fades in as one
+      // unit, not line by line), replaying every time it's scrolled past
+      // and back into view in either direction.
+      gsap.fromTo(textRef.current,
         { y: 50, opacity: 0 },
         {
           y: 0,
           opacity: 1,
           duration: 1.8,
-          stagger: 0.25,
           ease: "power2.out",
           scrollTrigger: {
             trigger: sectionRef.current,
             start: () => `top+=${650 * scale}px 85%`,
             invalidateOnRefresh: true,
-            toggleActions: "play none none none"
+            toggleActions: "restart none restart reset"
           }
         }
       );
@@ -102,33 +102,62 @@ export default function SpaceMiddleSection() {
         ease: "power1.inOut"
       });
 
-      // Ending sequence: Space 8 zoom-in bg + text overlay
-      gsap.set(bgOverlayRef.current, { opacity: 0, scale: 0.35, transformOrigin: 'center center' });
-      gsap.set(endText1Ref.current, { y: 50, opacity: 0 });
-      gsap.set(endText2Ref.current, { y: 50, opacity: 0 });
-
-      const endingTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: textWrapperRef.current,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 1,
-        }
-      });
-
-      endingTl
-        .to(bgOverlayRef.current, { opacity: 1, scale: 1, duration: 200, ease: 'power2.out' })
-        .to(endText1Ref.current, { y: 0, opacity: 1, duration: 150, ease: 'power1.out' })
-        .to(endText1Ref.current, { opacity: 1, duration: 100 })
-        .to(endText1Ref.current, { y: -30, opacity: 0, duration: 300, ease: 'power1.inOut' })
-        .to(endText2Ref.current, { y: 0, opacity: 1, duration: 200, ease: 'power1.out' }, '+=50')
-        .to(endText2Ref.current, { opacity: 1, duration: 100 })
-        .to(endText2Ref.current, { y: -30, opacity: 0, duration: 300, ease: 'power1.inOut' })
-        .to(bgOverlayRef.current, { opacity: 0, duration: 200, ease: 'power1.inOut' }, '+=50');
-
     }, sectionRef);
     return () => ctx.revert();
   }, []);
+
+  // When the last image scrolls up beside the sticky text block, scrolling
+  // pauses there (pinned) — further scroll input grows that exact in-place
+  // image to fullscreen while a dark scrim fades in at the same time, then
+  // unpins so the page continues into StoryEndingSection's text.
+  useEffect(() => {
+    const lastWrapper = imageRefs.current[8];
+    const hero = heroRef.current;
+    const dim = heroDimRef.current;
+    const section = sectionRef.current;
+    if (!lastWrapper || !hero || !dim || !section) return;
+
+    const IMAGE8_DESIGN_TOP = 2645;
+    const MAX_DIM = 0.55;
+    let fromRect = null;
+
+    const setProgress = (p) => {
+      if (!fromRect) return;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      hero.style.left = `${fromRect.left + (0 - fromRect.left) * p}px`;
+      hero.style.top = `${fromRect.top + (0 - fromRect.top) * p}px`;
+      hero.style.width = `${fromRect.width + (vw - fromRect.width) * p}px`;
+      hero.style.height = `${fromRect.height + (vh - fromRect.height) * p}px`;
+      dim.style.opacity = `${MAX_DIM * p}`;
+    };
+
+    const st = ScrollTrigger.create({
+      trigger: section,
+      start: () => `top+=${IMAGE8_DESIGN_TOP * scale}px 8%`,
+      end: () => `+=${window.innerHeight}`,
+      pin: true,
+      pinSpacing: true,
+      scrub: true,
+      invalidateOnRefresh: true,
+      onEnter: () => {
+        fromRect = lastWrapper.getBoundingClientRect();
+        hero.style.opacity = '1';
+        dim.style.opacity = '0';
+      },
+      onEnterBack: () => {
+        fromRect = lastWrapper.getBoundingClientRect();
+        hero.style.opacity = '1';
+      },
+      onLeaveBack: () => {
+        hero.style.opacity = '0';
+        dim.style.opacity = '0';
+      },
+      onUpdate: (self) => setProgress(self.progress)
+    });
+
+    return () => st.kill();
+  }, [scale]);
 
   // Light beam follows scroll, reveals images on contact
   useEffect(() => {
@@ -268,25 +297,21 @@ export default function SpaceMiddleSection() {
 
       </div>
 
-      {/* Fixed bg overlay — Space 8 zooms in, text appears on top */}
-      <div ref={bgOverlayRef} className={styles.bgOverlay}>
-        <img src={img8} alt="" className={styles.bgOverlayImg} />
-        <div className={styles.bgOverlayDim} />
-      </div>
-
-      {/* 400vh scroll area for ending sequence */}
-      <div ref={textWrapperRef} style={{ height: '400vh', position: 'relative', backgroundColor: '#000' }}>
-        <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'grid', placeItems: 'center' }}>
-          <div ref={endText1Ref} className={styles.endingText}>
-            <p>60년이 넘는 시간 동안 우리는 오직 하나,</p>
-            <p><span className={styles.endingTextBold}>'빛의 본질'</span><span>에 몰두해 왔습니다.</span></p>
+      {/* Hero clone of the last image — grows to fullscreen once the grid
+          section has finished scrolling past, darkening at the same time,
+          and stays as the backdrop for StoryEndingSection's text. Rendered
+          via a portal because GSAP's pin applies a transform to this
+          section, which would otherwise become the containing block for
+          these fixed-position elements and break their viewport coordinates. */}
+      {createPortal(
+        <>
+          <div ref={heroRef} className={styles.heroImage}>
+            <img src={img8} alt="" />
           </div>
-          <div ref={endText2Ref} className={styles.endingText}>
-            <p>사람과 공간이</p>
-            <p><span className={styles.endingTextBold}>'가장 자연스럽게 연결되는 순간'</span><span>을 위해.</span></p>
-          </div>
-        </div>
-      </div>
+          <div ref={heroDimRef} className={styles.heroDim} />
+        </>,
+        document.body
+      )}
     </section>
   );
 }
