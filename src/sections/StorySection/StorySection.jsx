@@ -79,7 +79,7 @@ export default function StorySection() {
         </div>
         <div className={styles.imageCard}>
           <div className={`${styles.imageRevealMask} ${styles.delay2}`}>
-            <img src={imgStoryWarm} alt="온기 어린 공간" className={styles.imgWarm} />
+            <video src="https://res.cloudinary.com/dg9hg29hc/video/upload/1_2_wfmfy5.mp4" className={styles.imgWarm} autoPlay loop muted playsInline />
           </div>
           <div className={styles.gradientOverlay}></div>
         </div>

@@ -69,6 +69,28 @@
   color: var(--color-base-3);
 }
 
+/* ----- 글씨 등장: blur-in (흐림→선명) 스태거 ----- */
+/* 기본(숨김): 흐리고 투명하게 */
+.fxBlurIn {
+  opacity: 0;
+  filter: blur(8px);
+  transform: scale(1.02);
+  transition: none; /* 화면 벗어나면 즉시 초기화 */
+}
+/* 보일 때(선명): 부모 .intro에 .isVisible 붙으면 또렷해짐 */
+.isVisible .fxBlurIn {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+  transition:
+    opacity 2s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 2s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* 줄별 시차(스태거) — 제목 → 설명 순서대로 */
+.isVisible .fxBlurIn:nth-child(1) { transition-delay: 0.08s; }
+.isVisible .fxBlurIn:nth-child(2) { transition-delay: 0.32s; }
+
 /* ----- 가로 무한 마퀴 갤러리 ----- */
 /* top 을 살짝 올리고 track 에 위쪽 여유(padding-top)를 줘서
    카드가 둥둥 떠올라도 윗부분이 잘리지 않게 한다. */
@@ -94,9 +116,10 @@
 }
 
 .card {
+  position: relative; /* ::after 구분선 기준 */
   flex: 0 0 379px;
   width: 379px;
-  margin-right: 68px; /* 카드 사이 간격(끝에도 붙어 마퀴 이음새 균일) */
+  margin-right: 130px; /* 카드 사이 간격(끝에도 붙어 마퀴 이음새 균일) */
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -106,6 +129,17 @@
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   will-change: transform;
+}
+/* 카드 사이 간격(68px)의 정가운데에 연한 회색 세로 구분선 */
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -65px; /* 간격 130px의 절반 → 카드와 카드 정중앙 */
+  width: 1px;
+  background: rgba(0, 0, 0, 0.12);
+  pointer-events: none;
 }
 /* 호버한 카드는 둥둥 멈춤 */
 .card:hover {
@@ -267,5 +301,13 @@
   }
   .card {
     animation: none !important;
+  }
+  /* 글씨 blur-in 즉시 표시 (isVisible 유무와 무관) */
+  .fxBlurIn,
+  .isVisible .fxBlurIn {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
   }
 }

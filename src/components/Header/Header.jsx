@@ -134,7 +134,10 @@ function Header({ index = false }) {
           onClick={() => setMenuOpen((o) => !o)}
           aria-label={menuOpen ? '메뉴 닫기' : '메뉴 열기'}
         >
-          <span className={styles.arrow} aria-hidden="true">→</span>
+          <span className={`${styles.arrow} ${menuOpen ? styles.arrowClose : ''}`} aria-hidden="true">
+            <span className={styles.arrowShaft} />
+            <span className={styles.arrowHead} />
+          </span>
           <span>{menuOpen ? 'Close' : 'Menu'}</span>
         </button>
       </header>

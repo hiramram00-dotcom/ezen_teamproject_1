@@ -232,7 +232,12 @@
   object-fit: cover;
 }
 
-/* 조명 ON 레이어: 세로 라인 스윕으로 좌→우 공개 */
+/* 조명 OFF 레이어: 흑백 (스윕이 지나가면 컬러 ON 레이어가 덮음) */
+.photoOff {
+  filter: grayscale(1);
+}
+
+/* 조명 ON 레이어: 세로 라인 스윕으로 좌→우 공개 (컬러) */
 .photoOn {
   z-index: 2;
   will-change: clip-path;
