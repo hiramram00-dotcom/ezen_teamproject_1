@@ -6,8 +6,6 @@ import MakeLightSection from './sections/MakeLightSection/MakeLightSection'
 import StorySection from './sections/StorySection/StorySection'
 import SpaceMiddleSection from './sections/SpaceMiddleSection/SpaceMiddleSection'
 import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection'
-import Snowman1Section from './sections/Snowman1Section/Snowman1Section'
-
 import FixSnowman2Section from './sections/FixSnowman2Section/FixSnowman2Section'
 import ProductSection from './sections/ProductSection/ProductSection'
 import FlamingoDetailSection from './sections/FlamingoDetailSection/FlamingoDetailSection'

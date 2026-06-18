@@ -26,11 +26,13 @@ export default function SpaceMiddleSection() {
   const heroRef = useRef(null);
   const heroDimRef = useRef(null);
   const [scale, setScale] = useState(1);
+  const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth);
 
   useLayoutEffect(() => {
     const handleResize = () => {
       const clientWidth = document.documentElement.clientWidth;
       setScale(clientWidth / 1920);
+      setViewportWidth(clientWidth);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -211,6 +213,7 @@ export default function SpaceMiddleSection() {
     let safetyLockCall = null;
     let previousScroll = 0;
     let previousWindowY = window.scrollY;
+    let lightProgress = 0;
     let rafId;
 
     const getRenderedScale = () => {
@@ -364,7 +367,11 @@ export default function SpaceMiddleSection() {
       const scrollInsideSection = (window.scrollY - sectionTop) / renderedScale;
       // Keep the viewport offset in screen pixels. Dividing this value by a
       // very small mobile scale makes the light jump far ahead of the images.
-      const viewportOffset = Math.min(window.innerHeight * 0.5, 420);
+      const isTablet = window.innerWidth >= 768 && window.innerWidth < 1200;
+      const isMobile = window.innerWidth < 768;
+      const viewportRatio = isMobile ? 0.9 : isTablet ? 0.8 : 0.65;
+      const viewportOffset =
+        (window.innerHeight * viewportRatio) / renderedScale;
       return scrollInsideSection + viewportOffset;
     };
 
@@ -393,9 +400,32 @@ export default function SpaceMiddleSection() {
         }
       }
 
-      const activeScroll = lockedStopIndex >= 0
+      const desiredProgress = lockedStopIndex >= 0
         ? stops[lockedStopIndex].scroll
         : Math.max(0, Math.min(CONTAINER_HEIGHT, targetScroll));
+      const freeScrollMode = !canLockScroll();
+
+      if (freeScrollMode) {
+        const progressDistance = desiredProgress - lightProgress;
+        const maxProgressStep = Math.max(8, Math.min(22, window.innerHeight * 0.018));
+        lightProgress += Math.max(
+          -maxProgressStep,
+          Math.min(maxProgressStep, progressDistance)
+        );
+
+        // Keep the light from falling so far behind that an image switches on
+        // only after it has nearly left the viewport.
+        const maxProgressLag = 180;
+        if (desiredProgress - lightProgress > maxProgressLag) {
+          lightProgress = desiredProgress - maxProgressLag;
+        } else if (lightProgress - desiredProgress > maxProgressLag) {
+          lightProgress = desiredProgress + maxProgressLag;
+        }
+      } else {
+        lightProgress = desiredProgress;
+      }
+
+      const activeScroll = lightProgress;
       const target = lockedStopIndex >= 0
         ? { x: stops[lockedStopIndex].x, y: stops[lockedStopIndex].y }
         : getPathPosition(activeScroll);
@@ -500,6 +530,7 @@ export default function SpaceMiddleSection() {
       trailPoints.length = 0;
       trailContext.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
       previousScroll = getTargetScroll();
+      lightProgress = Math.max(0, Math.min(CONTAINER_HEIGHT, previousScroll));
       previousWindowY = window.scrollY;
     };
     window.addEventListener('resize', handleResize);
@@ -567,7 +598,20 @@ export default function SpaceMiddleSection() {
 
         {/* Central Text Block Wrapper for Sticky */}
         <div style={{ position: 'absolute', left: 1192, top: 0, bottom: 0, zIndex: 20 }}>
-          <div ref={textRef} className={styles.textBlock} style={{ position: 'sticky', top: '100px', marginTop: 350 }}>
+          <div
+            ref={textRef}
+            className={styles.textBlock}
+            style={{
+              position: 'sticky',
+              top:
+                viewportWidth < 768
+                  ? '450px'
+                  : viewportWidth < 1200
+                    ? '350px'
+                    : '100px',
+              marginTop: 350,
+            }}
+          >
             <p className={styles.textLine}>We bring</p>
             <p ref={highlightWordRef} className={styles.textHighlight}>Spaces</p>
             <p className={styles.textLine}>to life</p>
