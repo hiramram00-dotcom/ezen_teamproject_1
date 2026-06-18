@@ -1,0 +1,255 @@
+.snowman {
+  position: relative;
+  width: 100%;
+  height: 500svh; /* Increased from 360svh to slow down animations naturally */
+  background: var(--color-base-1);
+  overflow: visible;
+}
+
+.sticky {
+  --intro-bg: rgb(0, 0, 0);
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100svh;
+  background: var(--intro-bg);
+  color: var(--color-base-1);
+  overflow: hidden;
+}
+
+.title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 4;
+  width: 550px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+
+.title p {
+  width: 100%;
+}
+
+.meetLine {
+  --meet-opacity: 1;
+  --meet-y: 0px;
+  opacity: var(--meet-opacity);
+  transform: translateY(var(--meet-y));
+  will-change: transform, opacity;
+}
+
+.textInnerLeft {
+  display: inline-block;
+  opacity: 0;
+  transform: translateX(-50vw);
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease-out;
+  will-change: transform, opacity;
+}
+
+.meetLine.triggered .textInnerLeft {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.snowmanLine {
+  --snowman-y: 0px;
+  --snowman-color: rgb(255, 255, 255);
+  --snowman-opacity: 1;
+  --snowman-weight: 700;
+  --snowman-scale: 1;
+  --snowman-blur: 0px;
+  color: var(--snowman-color);
+  filter: blur(var(--snowman-blur));
+  font-weight: var(--snowman-weight);
+  opacity: var(--snowman-opacity);
+  transform:
+    translateY(var(--snowman-y))
+    scale(var(--snowman-scale));
+  will-change: transform, color, opacity, font-weight, filter;
+}
+
+.textInnerRight {
+  display: inline-block;
+  opacity: 0;
+  transform: translateX(50vw);
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease-out;
+  will-change: transform, opacity;
+}
+
+.snowmanLine.triggered .textInnerRight {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.cardStage {
+  --cards-opacity: 0.42;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  opacity: var(--cards-opacity);
+  perspective: 35em;
+  pointer-events: none;
+  mask: linear-gradient(90deg, #0000, #000 20% 80%, #0000);
+  will-change: opacity;
+}
+
+.cardStage::before {
+  position: absolute;
+  width: min(132vw, 2020px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 247, 234, 0.13), transparent 58%),
+    radial-gradient(circle, rgba(244, 147, 7, 0.1), transparent 70%);
+  content: '';
+  filter: blur(28px);
+}
+
+.cardTunnel {
+  --n: 16;
+  --carousel-rotation: 0deg;
+  display: grid;
+  place-items: center;
+  width: 0;
+  height: 0;
+  transform: rotateY(var(--carousel-rotation));
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.card {
+  --w: min(17.5em, 18vw);
+  --ba: calc(1turn / var(--n));
+  position: absolute;
+  grid-area: 1 / 1;
+  width: var(--w);
+  aspect-ratio: 7 / 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.06)),
+    rgba(255, 255, 255, 0.08);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+  transform:
+    rotateY(calc(var(--i) * var(--ba)))
+    translateZ(calc(-1 * (0.5 * var(--w) + 0.5em) / tan(0.5 * var(--ba))));
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.58;
+  filter: grayscale(0.25) saturate(0.8) brightness(0.75);
+}
+
+.card::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 36%, rgba(0, 0, 0, 0.5));
+  content: '';
+}
+
+.card figcaption {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-en);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.snowmanCard {
+  border-color: rgba(255, 247, 234, 0.56);
+  background:
+    linear-gradient(180deg, rgba(255, 247, 234, 0.28), rgba(255, 247, 234, 0.08)),
+    rgba(255, 255, 255, 0.1);
+}
+
+.productLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.product {
+  --x: 0vw;
+  --y: 0vh;
+  --rotation: 0deg;
+  --scale: 1;
+  --opacity: 0;
+  --blur: 0px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--size);
+  aspect-ratio: 1 / 1;
+  opacity: var(--opacity);
+  filter: blur(var(--blur));
+  transform:
+    translate(-50%, -50%)
+    translate(var(--x), var(--y))
+    rotate(var(--rotation))
+    scale(var(--scale));
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.productCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 767px) {
+  .snowman {
+    height: 450svh; /* Increased from 330svh to match slower pacing */
+  }
+
+  .title {
+    width: auto;
+  }
+
+  .title :global(.type-italic-2),
+  .title :global(.type-title-semibold) {
+    font-size: 56px;
+  }
+
+  .cardStage {
+    --cards-opacity: 0.26;
+  }
+
+  .card {
+    --w: min(12em, 36vw);
+    border-radius: 20px;
+  }
+
+  .product {
+    width: calc(var(--size) * 1.75);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snowman {
+    height: 120svh;
+  }
+}

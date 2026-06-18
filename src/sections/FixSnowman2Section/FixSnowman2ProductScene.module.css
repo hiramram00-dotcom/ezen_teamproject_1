@@ -1,0 +1,218 @@
+.snowman {
+  position: relative;
+  height: 500svh; /* Increased from 390svh to provide more scroll runway for the 3D spiral rise */
+  background: var(--color-base-1);
+  color: var(--color-base-3);
+}
+
+.stage {
+  position: sticky;
+  top: -12svh;
+  height: 124svh;
+  overflow: hidden;
+  background: var(--color-base-1);
+}
+
+.featureTitle {
+  --feature-title-opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 4;
+  margin: 0;
+  font-family: var(--font-en);
+  font-size: clamp(64px, 5.2vw, 100px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  text-align: center;
+  white-space: nowrap;
+  opacity: var(--feature-title-opacity);
+  transform: translate(-50%, -50%);
+  will-change: opacity;
+}
+
+.modelWrap {
+  --model-opacity: 0;
+  --model-x: 0vw;
+  --model-y: 70vh;
+  --model-scale: 0.62;
+  --model-turn: 0;
+  --model-light: 0;
+  --model-shadow: 0;
+  --model-wobble-x: 0vw;
+  --model-wobble-rotate: 0deg;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: min(70vw, 1180px);
+  aspect-ratio: 1 / 1;
+  opacity: var(--model-opacity);
+  transform:
+    translate(-50%, -50%)
+    translate(var(--model-x), var(--model-y))
+    translateX(var(--model-wobble-x))
+    rotate(var(--model-wobble-rotate))
+    scale(var(--model-scale));
+  will-change: transform, opacity;
+}
+
+.modelWrap::before,
+.modelWrap::after {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  z-index: -1;
+  width: 66%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  content: '';
+  opacity: var(--model-light);
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(calc(0.6 + var(--model-light) * 0.54));
+  transition: opacity 80ms linear;
+}
+
+.modelWrap::before {
+  background: radial-gradient(
+    circle,
+    rgba(255, 225, 178, 0.88) 0%,
+    rgba(255, 203, 135, 0.44) 34%,
+    rgba(255, 195, 118, 0.18) 58%,
+    rgba(255, 205, 145, 0) 78%
+  );
+  filter: blur(26px);
+}
+
+.modelWrap::after {
+  width: 104%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 229, 195, 0.34) 0%,
+    rgba(255, 213, 166, 0.14) 48%,
+    rgba(255, 210, 160, 0) 76%
+  );
+  filter: blur(48px);
+}
+
+.modelShadow {
+  position: absolute;
+  left: 50%;
+  bottom: 15%;
+  z-index: 0;
+  width: 46%;
+  height: 9%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgba(0, 0, 0, 0.24) 0%,
+    rgba(0, 0, 0, 0.1) 48%,
+    rgba(0, 0, 0, 0) 74%
+  );
+  opacity: calc(var(--model-shadow) * 0.9);
+  transform: translateX(-50%) scale(calc(0.72 + var(--model-shadow) * 0.28));
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.modelCanvas {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.detail {
+  --detail-opacity: 0;
+  --detail-x: 6vw;
+  position: absolute;
+  top: 50%;
+  left: 52.6%;
+  z-index: 4;
+  opacity: var(--detail-opacity);
+  transform: translate(var(--detail-x), -50%);
+  will-change: transform, opacity;
+}
+
+.detail h3 {
+  margin: 0 0 26px;
+  font-family: var(--font-en);
+  font-size: clamp(28px, 2.1vw, 40px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.detail p {
+  margin: 0;
+  font-size: clamp(17px, 1.1vw, 21px);
+  font-weight: 300;
+  line-height: 1.5;
+  letter-spacing: -0.04em;
+}
+
+.buyLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 154px;
+  height: 44px;
+  margin-top: 34px;
+  padding: 0 22px;
+  border: 1px solid rgba(0, 0, 0, 0.72);
+  border-radius: 999px;
+  color: var(--color-base-3);
+  font-family: var(--font-kr);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-decoration: none;
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.buyLink:hover {
+  background: var(--color-base-3);
+  color: var(--color-base-1);
+  transform: translateY(-2px);
+}
+
+.buyLink:focus-visible {
+  outline: 2px solid var(--color-base-3);
+  outline-offset: 4px;
+}
+
+@media (max-width: 900px) {
+  .snowman {
+    height: 480svh; /* Increased from 360svh proportionally for mobile */
+  }
+
+  .modelWrap {
+    width: min(100vw, 620px);
+  }
+
+  .detail {
+    top: 72%;
+    left: 50%;
+    width: min(82%, 420px);
+    text-align: center;
+    transform: translate(-50%, var(--detail-x));
+  }
+
+  .buyLink {
+    height: 42px;
+    margin-top: 26px;
+    font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snowman {
+    height: 100svh;
+  }
+}
