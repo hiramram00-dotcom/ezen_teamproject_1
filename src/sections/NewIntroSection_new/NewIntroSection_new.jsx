@@ -7,7 +7,7 @@ import lamp from './assets/lamp.webp'
 import story2 from './assets/story-2.webp'
 import story3 from './assets/story-3.webp'
 
-const HERO_VIDEO_SRC = 'https://res.cloudinary.com/dg9hg29hc/video/upload/hero-video_rtcktn.mp4'
+const HERO_VIDEO_SRC = 'https://res.cloudinary.com/dg9hg29hc/video/upload/0616_1_xt8vzh.mp4'
 
 /**
  * NewIntroSection — 브랜드 철학 인용 → 브랜드 스토리텔링 (핀 고정)
@@ -22,6 +22,8 @@ const HERO_VIDEO_SRC = 'https://res.cloudinary.com/dg9hg29hc/video/upload/hero-v
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
 const lerp = (a, b, t) => a + (b - a) * t
 const smooth = (t) => t * t * (3 - 2 * t) // smoothstep
+const TEXT_REVEAL_START = 1.02 // 핀 고정 전에는 글자가 미리 켜지지 않도록 (1 이상 = 항상 비활성)
+const TEXT_REVEAL_END = 1.3
 const CREAM = [255, 247, 234] // #FFF7EA
 const BLACK = [0, 0, 0]
 const mix = (a, b, t) =>
@@ -30,13 +32,13 @@ const mix = (a, b, t) =>
   )})`
 
 // 단어 색 채우기 — 인용문이 중앙에 멈춘(핀 고정) 뒤부터 진행 (스크롤 업 시 역재생)
-const FILL_P_END = 0.2
-
 // 전환 구간 (스크롤 진행도 p 기준)
-const GROW_START = 0.28 // 단어 채우기 완료 뒤 정지 구간을 두고 확대 시작
-const GROW_END = 0.38 // 램프 확장 완료
-const STORY_AT = 0.4 // 양옆/가운데 라벨 등장
-const SLIDE_TRIGGERS = [0.53, 0.72] // 각 임계값을 넘을 때마다 다음 슬라이드로 자동 교체
+const TEXT_REVEAL_SCROLL_RANGE = 0.5 // 단어 채우기에 필요한 스크롤 비율 (클수록 천천히 채워짐)
+const TEXT_REVEAL_SCROLL_OFFSET = 0.04 // 단어가 켜지기 시작하는 지점을 살짝 앞당김
+const GROW_START = 0.53 // 단어 채우기 완료 뒤 정지 구간을 두고 확대 시작
+const GROW_END = 0.61 // 램프 확장 완료
+const STORY_AT = 0.63 // 양옆/가운데 라벨 등장
+const SLIDE_TRIGGERS = [0.8, 0.91] // 각 임계값을 넘을 때마다 다음 슬라이드로 자동 교체
 
 function SlicedImage({ src, alt }) {
   return (
@@ -90,6 +92,9 @@ function NewIntroSectionNew() {
       allRevealItems.forEach((item) => item.classList.add(styles.lit))
       section.style.height = 'auto'
       stage.style.position = 'static'
+      quote.style.opacity = '1'
+      quote.style.transform = 'translate(-50%, -50%)'
+      quote.style.filter = 'none'
       word4.style.visibility = 'visible'
       frame.style.display = 'none'
       sideLabels.style.display = 'none'
@@ -100,7 +105,6 @@ function NewIntroSectionNew() {
     let metrics = null
     let raf = 0
     let lastLit = -1
-
     const measure = () => {
       const s = stage.getBoundingClientRect()
       const w = word4.getBoundingClientRect()
@@ -118,10 +122,21 @@ function NewIntroSectionNew() {
       const rectTop = section.getBoundingClientRect().top
       const dist = section.offsetHeight - stage.offsetHeight
       const p = clamp01(-rectTop / dist)
+      const handoffProgress = clamp01((window.innerHeight - rectTop) / window.innerHeight)
+      const handoffTextReveal = clamp01(
+        (handoffProgress - TEXT_REVEAL_START) / (TEXT_REVEAL_END - TEXT_REVEAL_START)
+      )
+      const pinnedTextReveal = clamp01((p + TEXT_REVEAL_SCROLL_OFFSET) / TEXT_REVEAL_SCROLL_RANGE)
+      const textReveal = Math.max(handoffTextReveal, pinnedTextReveal)
       const { end } = metrics
 
+      const lockQuoteToViewport = rectTop > 0 && textReveal > 0
+      quote.style.position = lockQuoteToViewport ? 'fixed' : 'absolute'
+      quote.style.top = '50%'
+      quote.style.left = '50%'
+
       // ===== 단어 색 채우기: 중앙에 멈춘(핀 고정) 뒤부터 첫 단어부터 연한색→검정 =====
-      const lit = Math.round(clamp01(p / FILL_P_END) * revealItems.length)
+      const lit = Math.round(textReveal * revealItems.length)
       if (lit !== lastLit) {
         const lo = Math.min(lit, lastLit < 0 ? 0 : lastLit)
         const hi = Math.max(lit, lastLit < 0 ? 0 : lastLit)
@@ -233,14 +248,14 @@ function NewIntroSectionNew() {
 
   return (
     <section id="intro" ref={sectionRef} className={styles.intro} aria-label="ILKW 브랜드 철학">
-      <div ref={stageRef} className={styles.stage}>
+      <div ref={stageRef} className={styles.stage} data-intro-stage>
         <div ref={bgRef} className={styles.bg} />
-
         <p ref={quoteRef} className={styles.quote}>
           <span className={styles.line}>
-            {T('We think ', 'a', 2)}
+            {T('We think ', 'a')}
             <video
-              className={`${styles.word} ${styles.w1}`}
+              data-intro-hero-video
+              className={`${styles.word} ${styles.w1} ${styles.introHeroVideo}`}
               src={HERO_VIDEO_SRC}
               muted
               loop
@@ -249,16 +264,24 @@ function NewIntroSectionNew() {
               preload="auto"
               aria-hidden="true"
             />
-            {T(' about every moment light', 'b', 2)}
+            {T(' about every moment light', 'b')}
           </span>
           <span className={styles.line}>
             {T('becomes part of life. ', 'c')}
-            <img className={`${styles.word} ${styles.w2} ${styles.reveal}`} src={word2} alt="" />
+            <img
+              className={`${styles.word} ${styles.w2} ${styles.reveal}`}
+              src={word2}
+              alt=""
+            />
             {T(' Creating better', 'd')}
           </span>
           <span className={styles.line}>
             {T('light ', 'e')}
-            <img className={`${styles.word} ${styles.w3} ${styles.reveal}`} src={word3} alt="" />
+            <img
+              className={`${styles.word} ${styles.w3} ${styles.reveal}`}
+              src={word3}
+              alt=""
+            />
             {T(' for people and the spaces they', 'f')}
           </span>
           <span className={styles.line}>

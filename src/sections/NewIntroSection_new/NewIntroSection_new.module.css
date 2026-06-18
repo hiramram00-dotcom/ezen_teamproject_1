@@ -7,7 +7,7 @@
 /* 스크롤 거리 제공 — 단어 채우기(완만) + 확장 + 슬라이드 자동전환 + 여운 */
 .intro {
   position: relative;
-  height: 330vh;
+  height: 660vh;
   margin-bottom: 0;
   background: var(--color-base-2); /* #FFF7EA 크림 */
 }
@@ -34,6 +34,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  opacity: 0;
   width: 100%;
   max-width: 1490px;
   margin: 0;
@@ -55,7 +56,7 @@
 /* 글자/이미지 단위 — 회색 없이 스크롤에 따라 검정으로 나타난다 */
 .reveal {
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.35s ease;
 }
 .ch {
   color: #000;
@@ -81,6 +82,7 @@
   margin: 0 0.12em;
 }
 .w1 { width: 2.84em; } /* 199px */
+.introHeroVideo { opacity: 0; }
 .w2 { width: 3.87em; } /* 271px */
 .w3 { width: 3.64em; } /* 255px */
 .w4 { width: 2.83em; } /* 198px */

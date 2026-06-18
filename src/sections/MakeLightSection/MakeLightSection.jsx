@@ -10,7 +10,7 @@ gsap.registerPlugin(ScrollTrigger)
  * MakeLightSection — 브랜드 마무리 화면 (Figma node 1106:489)
  * 스토리텔링 섹션이 위로 사라진 뒤 등장.
  * 검은 배경에서 화면 아래의 작은 원이 점점 커져 마무리 사진이 전체화면으로 전환되고,
- * 이어서 "We Make LIGHT, ILKW." 카피가 아래에서 위로(헤드라인 → 본문 시차) 등장한다.
+ * 이어서 "We Make Light, ILKW." 카피가 아래에서 위로(헤드라인 → 본문 시차) 등장한다.
  */
 function MakeLightSection() {
   const sectionRef = useRef(null)
@@ -89,7 +89,7 @@ function MakeLightSection() {
         <h2 ref={headlineRef} className={styles.headline}>
           We Make{' '}
           <strong ref={lightRef} className={styles.light}>
-            LIGHT
+            Light
           </strong>
           , ILKW.
         </h2>
