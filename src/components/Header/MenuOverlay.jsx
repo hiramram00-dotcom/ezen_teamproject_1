@@ -17,6 +17,18 @@ const ITEMS = [
 function MenuOverlay({ open, onNavigate }) {
   const [active, setActive] = useState(null) // hover된 항목 index
 
+  // 터치(모바일/타블렛): 첫 탭 = 프리뷰 펼치기, 두 번째 탭(같은 항목) = 이동
+  // 데스크탑(hover 가능): 기존대로 바로 이동
+  const handleItemClick = (e, i) => {
+    const isTouch = window.matchMedia('(hover: none)').matches
+    if (isTouch && active !== i) {
+      e.preventDefault() // 첫 탭 — 이동 막고 프리뷰만 펼침
+      setActive(i)
+    } else {
+      onNavigate() // 데스크탑 or 두 번째 탭 — 이동(Link의 to가 처리)
+    }
+  }
+
   return (
     <div className={`${styles.overlay} ${open ? styles.open : ''}`} aria-hidden={!open}>
       <nav className={styles.list} onMouseLeave={() => setActive(null)}>
@@ -25,7 +37,7 @@ function MenuOverlay({ open, onNavigate }) {
             <Link
               className={`${styles.item} ${active !== null && active !== i ? styles.dim : ''}`}
               to={to}
-              onClick={onNavigate}
+              onClick={(e) => handleItemClick(e, i)}
               onMouseEnter={() => setActive(i)}
               data-cursor="pointer"
             >
