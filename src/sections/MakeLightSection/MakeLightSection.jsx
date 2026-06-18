@@ -75,26 +75,21 @@ function MakeLightSection() {
       // "LIGHT" — 흰색 유지 → 점차 한 번 밝아졌다가 → 서서히 다시 흰색 (CSS 변수 보간으로 매끄럽게)
       .to(light, { '--glow': 1, ease: 'power1.inOut', duration: 0.16 }, 0.6)
       .to(light, { '--glow': 0, ease: 'power1.inOut', duration: 0.28 }, 0.8)
+      // 섹션이 끝나갈 무렵 사진/딤/오버레이/본문은 평범하게 페이드 아웃
+      // (헤드라인은 아래 별도 효과로 직접 텍스트 자리로 이동하므로 제외)
+      .to([bgEl, dim, overlay, desc], { opacity: 0, ease: 'none', duration: 0.06 }, 0.94)
 
-    // Once this section's reveal has finished, the real bg photo itself
-    // (not a clone) detaches from the sticky stage and becomes
-    // position:fixed, then shrinks via transform into StorySection's
-    // right-hand video card spot — the video already playing there takes
-    // over the instant it arrives. A solid black backdrop covers
-    // everything behind it (headline/desc text included) for the whole
-    // trip so only the photo is visible against black while it travels —
-    // otherwise the headline/desc would be seen sliding away underneath
-    // it as the section's normal scroll continues. The destination is
-    // re-queried live every tick (not captured once) because that card is
-    // a normal in-flow element whose screen position keeps changing as
-    // the user keeps scrolling.
-    //
-    // Only `transform: translate/scale` is animated, never width/height
-    // directly — otherwise object-fit: cover would recompute which part
-    // of the photo is visible on every frame as the box's aspect ratio
-    // changes, making the image appear to swim internally instead of
-    // just shrinking. Scaling the whole fixed-crop box via transform
-    // keeps the visible content rigid.
+    // Once this section's reveal has finished, the real headline element
+    // itself (not a clone) detaches from the sticky stage and becomes
+    // position:fixed, then shrinks via transform down into StorySection's
+    // title ("We Make Light") spot — landing right as that title is
+    // already revealed underneath, so it reads as one continuous line of
+    // text carrying the page down rather than two separate headlines. A
+    // solid black backdrop covers everything behind it for the whole trip
+    // so only the moving text is visible against black. The destination
+    // is re-queried live every tick (not captured once) because that
+    // title is a normal in-flow element whose screen position keeps
+    // changing as the user keeps scrolling.
     let fromRect = null
     const applyTransform = (toRect, p) => {
       const scaleX = toRect.width / fromRect.width
@@ -103,50 +98,49 @@ function MakeLightSection() {
       const dy = toRect.top - fromRect.top
       const sx = 1 + (scaleX - 1) * p
       const sy = 1 + (scaleY - 1) * p
-      bgEl.style.transform = `translate(${dx * p}px, ${dy * p}px) scale(${sx}, ${sy})`
+      headline.style.transform = `translate(${dx * p}px, ${dy * p}px) scale(${sx}, ${sy})`
       const fadeP = p > 0.92 ? 1 - (p - 0.92) / 0.08 : 1
-      bgEl.style.opacity = `${fadeP}`
+      headline.style.opacity = `${fadeP}`
       backdrop.style.opacity = `${fadeP}`
     }
-    const bgNextSibling = bgEl.nextSibling
-    const bgParent = bgEl.parentNode
+    const headlineNextSibling = headline.nextSibling
+    const headlineParent = headline.parentNode
     let detached = false
-    const detachBg = () => {
-      fromRect = bgEl.getBoundingClientRect()
-      bgEl.style.position = 'fixed'
-      bgEl.style.left = `${fromRect.left}px`
-      bgEl.style.top = `${fromRect.top}px`
-      bgEl.style.width = `${fromRect.width}px`
-      bgEl.style.height = `${fromRect.height}px`
-      bgEl.style.zIndex = '25'
-      bgEl.style.pointerEvents = 'none'
-      bgEl.style.transform = 'translate(0px, 0px) scale(1, 1)'
-      bgEl.style.opacity = '1'
+    const detachHeadline = () => {
+      fromRect = headline.getBoundingClientRect()
+      headline.style.position = 'fixed'
+      headline.style.left = `${fromRect.left}px`
+      headline.style.top = `${fromRect.top}px`
+      headline.style.width = `${fromRect.width}px`
+      headline.style.height = `${fromRect.height}px`
+      headline.style.zIndex = '25'
+      headline.style.pointerEvents = 'none'
+      headline.style.transform = 'translate(0px, 0px) scale(1, 1)'
+      headline.style.opacity = '1'
       // Physically move the real DOM node to document.body so it shares
       // the exact same stacking context as the backdrop (also appended to
-      // body) — bg stays nested deep inside .stage/.section otherwise,
-      // and some ancestor along that chain was making it paint behind the
-      // backdrop no matter how high its z-index was set, even though no
-      // ancestor reported creating a stacking context. Moving the node
-      // itself sidesteps the mystery entirely.
+      // body) — left nested inside .stage/.section, some ancestor along
+      // that chain made it paint behind the backdrop no matter how high
+      // its z-index was set, even though no ancestor reported creating a
+      // stacking context. Moving the node itself sidesteps that entirely.
       if (!detached) {
-        document.body.appendChild(bgEl)
+        document.body.appendChild(headline)
         detached = true
       }
       backdrop.style.opacity = '1'
     }
-    const reattachBg = () => {
-      bgEl.style.position = ''
-      bgEl.style.left = ''
-      bgEl.style.top = ''
-      bgEl.style.width = ''
-      bgEl.style.height = ''
-      bgEl.style.zIndex = ''
-      bgEl.style.pointerEvents = ''
-      bgEl.style.transform = ''
-      bgEl.style.opacity = ''
+    const reattachHeadline = () => {
+      headline.style.position = ''
+      headline.style.left = ''
+      headline.style.top = ''
+      headline.style.width = ''
+      headline.style.height = ''
+      headline.style.zIndex = ''
+      headline.style.pointerEvents = ''
+      headline.style.transform = ''
+      headline.style.opacity = ''
       if (detached) {
-        bgParent.insertBefore(bgEl, bgNextSibling)
+        headlineParent.insertBefore(headline, headlineNextSibling)
         detached = false
       }
       backdrop.style.opacity = '0'
@@ -158,12 +152,12 @@ function MakeLightSection() {
       end: () => `+=${window.innerHeight}`,
       scrub: 0.5,
       invalidateOnRefresh: true,
-      onEnter: detachBg,
-      onEnterBack: detachBg,
-      onLeaveBack: reattachBg,
+      onEnter: detachHeadline,
+      onEnterBack: detachHeadline,
+      onLeaveBack: reattachHeadline,
       onUpdate: (self) => {
         if (!fromRect) return
-        const target = document.querySelector('[data-make-light-target]')
+        const target = document.querySelector('[data-make-light-text-target]')
         if (!target) return
         const toRect = target.getBoundingClientRect()
         applyTransform(toRect, self.progress)
@@ -174,7 +168,7 @@ function MakeLightSection() {
       tl.scrollTrigger && tl.scrollTrigger.kill()
       tl.kill()
       migrateTrigger.kill()
-      reattachBg()
+      reattachHeadline()
     }
   }, [])
 
@@ -199,10 +193,10 @@ function MakeLightSection() {
         </p>
       </div>
 
-      {/* Solid black backdrop shown only while the real bg photo above is
-          mid-migration into StorySection's card — covers the headline/desc
-          text and anything scrolling up underneath so only the photo is
-          visible against black during the trip. */}
+      {/* Solid black backdrop shown only while the headline above is
+          mid-migration into StorySection's title — covers everything
+          scrolling up underneath so only the moving text is visible
+          against black during the trip. */}
       {createPortal(
         <div ref={backdropRef} className={styles.migrateBackdrop} aria-hidden="true" />,
         document.body

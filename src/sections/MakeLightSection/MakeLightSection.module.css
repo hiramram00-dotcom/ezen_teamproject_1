@@ -33,9 +33,6 @@
   /* 화면 60%(약간 위)의 작은 가로 타원에서 시작 (GSAP가 반지름을 키움) */
   clip-path: ellipse(0% 0% at 50% 60%);
   will-change: clip-path;
-  /* StorySection 카드로 이동(translate/scale)할 때 좌상단 기준으로
-     계산하므로, 평소엔 transform을 안 써서 영향 없다. */
-  transform-origin: top left;
 }
 
 /* 사진 어둡게 처리용 검은 오버레이 (GSAP가 opacity 제어 — 처음 어둡게→원본). 원본보다 밝아지진 않음 */
@@ -73,6 +70,9 @@
   letter-spacing: -0.02em;
   color: #fff;
   white-space: nowrap;
+  /* StorySection 제목 자리로 이동(translate/scale)할 때 좌상단 기준으로
+     계산하므로, 평소엔 transform을 안 써서 영향 없다. */
+  transform-origin: top left;
 }
 .headline strong {
   font-weight: 700; /* LIGHT */
@@ -105,7 +105,7 @@
   color: #fff;
 }
 
-/* 사진(.bg)이 StorySection 카드 자리로 이동하는 동안 뒤쪽(헤드라인/본문 등)을
+/* 헤드라인(.headline)이 StorySection 제목 자리로 이동하는 동안 뒤쪽을
    완전히 가리는 검은 배경 — document.body에 포털 렌더링. */
 .migrateBackdrop {
   position: fixed;
