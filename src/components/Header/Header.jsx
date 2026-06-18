@@ -7,9 +7,9 @@ import logo from '../../assets/common/logo/ilkw.svg'
 /* ===== 헤더 규칙 =====
  * 배경 없음. 흰 로고/메뉴가 mix-blend-mode:difference 로 뒤 배경 밝기에 따라
  * 자동 반전(어두우면 흰색, 밝으면 검정). 메뉴 열리면 반전 끄고 검정(#111).
- * index(홈): 아래로 스크롤 → 헤더 위로 사라짐 / 위로 스크롤 → 등장 (맨 위 근처 항상 표시).
+ * 모든 페이지: 아래로 스크롤 → 헤더 위로 사라짐 / 위로 스크롤 → 등장 (맨 위 근처 항상 표시).
  */
-function Header({ index = false }) {
+function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const headerRef = useRef(null)
 
@@ -25,10 +25,8 @@ function Header({ index = false }) {
     }
   }, [menuOpen])
 
-  // 인덱스: 헤더 항상 상단 고정. 아래로 스크롤 → 위로 사라짐 / 위로 스크롤 → 다시 등장.
-  // (맨 위 근처에선 항상 표시) + 배경 스크림 토글(#intro top0 지나면 켬)
+  // 모든 페이지 공통: 아래로 스크롤 → 헤더 위로 사라짐 / 위로 스크롤 → 다시 등장 (맨 위 근처는 항상 표시)
   useLayoutEffect(() => {
-    if (!index) return
     const h = headerRef.current
     if (!h) return
     const TOP_ALWAYS_SHOW = 80 // 맨 위 이 범위(px)에선 항상 표시
@@ -63,7 +61,7 @@ function Header({ index = false }) {
       window.removeEventListener('resize', onScroll)
       if (raf) cancelAnimationFrame(raf)
     }
-  }, [index, menuOpen])
+  }, [menuOpen])
 
   // 로고 클릭 → 메뉴 닫고 메인('/')으로. (이미 메인이면 맨 위로 부드럽게)
   const handleLogo = () => {
