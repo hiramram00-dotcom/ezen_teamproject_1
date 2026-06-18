@@ -7,10 +7,11 @@
    height가 작을수록 인터랙션이 더 짧은 스크롤에 압축돼 더 빨리 나온다. */
 .section {
   position: relative;
+  z-index: 10;
   width: 100%;
   height: 460vh;
   background: #000;
-  margin-bottom: 30vh;
+  margin-bottom: 0;
 }
 
 /* 핀 고정 스테이지 */
