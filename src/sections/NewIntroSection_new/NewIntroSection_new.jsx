@@ -22,8 +22,9 @@ const HERO_VIDEO_SRC = 'https://res.cloudinary.com/dg9hg29hc/video/upload/0616_1
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
 const lerp = (a, b, t) => a + (b - a) * t
 const smooth = (t) => t * t * (3 - 2 * t) // smoothstep
-const TEXT_REVEAL_START = 1.02 // 핀 고정 전에는 글자가 미리 켜지지 않도록 (1 이상 = 항상 비활성)
-const TEXT_REVEAL_END = 1.3
+const TEXT_REVEAL_START = 0.72
+const TEXT_REVEAL_END = 1
+const HANDOFF_TEXT_REVEAL_MAX = 0.08
 const CREAM = [255, 247, 234] // #FFF7EA
 const BLACK = [0, 0, 0]
 const mix = (a, b, t) =>
@@ -33,12 +34,11 @@ const mix = (a, b, t) =>
 
 // 단어 색 채우기 — 인용문이 중앙에 멈춘(핀 고정) 뒤부터 진행 (스크롤 업 시 역재생)
 // 전환 구간 (스크롤 진행도 p 기준)
-const TEXT_REVEAL_SCROLL_RANGE = 0.5 // 단어 채우기에 필요한 스크롤 비율 (클수록 천천히 채워짐)
-const TEXT_REVEAL_SCROLL_OFFSET = 0.04 // 단어가 켜지기 시작하는 지점을 살짝 앞당김
-const GROW_START = 0.53 // 단어 채우기 완료 뒤 정지 구간을 두고 확대 시작
-const GROW_END = 0.61 // 램프 확장 완료
-const STORY_AT = 0.63 // 양옆/가운데 라벨 등장
-const SLIDE_TRIGGERS = [0.8, 0.91] // 각 임계값을 넘을 때마다 다음 슬라이드로 자동 교체
+const TEXT_REVEAL_SCROLL_RANGE = 0.56 // 단어 채우기에 필요한 스크롤 비율 (클수록 천천히 채워짐)
+const GROW_START = 0.6 // 단어 채우기 완료 뒤 정지 구간을 두고 확대 시작
+const GROW_END = 0.7 // 램프 확장 완료
+const STORY_AT = 0.72 // 양옆/가운데 라벨 등장
+const SLIDE_TRIGGERS = [0.84, 0.93] // 각 임계값을 넘을 때마다 다음 슬라이드로 자동 교체
 
 function SlicedImage({ src, alt }) {
   return (
@@ -123,15 +123,14 @@ function NewIntroSectionNew() {
       const dist = section.offsetHeight - stage.offsetHeight
       const p = clamp01(-rectTop / dist)
       const handoffProgress = clamp01((window.innerHeight - rectTop) / window.innerHeight)
-      const handoffTextReveal = clamp01(
-        (handoffProgress - TEXT_REVEAL_START) / (TEXT_REVEAL_END - TEXT_REVEAL_START)
-      )
-      const pinnedTextReveal = clamp01((p + TEXT_REVEAL_SCROLL_OFFSET) / TEXT_REVEAL_SCROLL_RANGE)
+      const handoffTextReveal =
+        smooth(clamp01((handoffProgress - TEXT_REVEAL_START) / (TEXT_REVEAL_END - TEXT_REVEAL_START))) *
+        HANDOFF_TEXT_REVEAL_MAX
+      const pinnedTextReveal = clamp01(p / TEXT_REVEAL_SCROLL_RANGE)
       const textReveal = Math.max(handoffTextReveal, pinnedTextReveal)
       const { end } = metrics
 
-      const lockQuoteToViewport = rectTop > 0 && textReveal > 0
-      quote.style.position = lockQuoteToViewport ? 'fixed' : 'absolute'
+      quote.style.position = 'absolute'
       quote.style.top = '50%'
       quote.style.left = '50%'
 
