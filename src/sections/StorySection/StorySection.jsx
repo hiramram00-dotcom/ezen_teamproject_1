@@ -59,7 +59,7 @@ export default function StorySection() {
         style={{ position: 'sticky', top: 0, height: '100vh' }}
       >
         <div className={styles.header}>
-        <h2 className={styles.title} data-make-light-text-target="true">
+        <h2 className={styles.title}>
           <span className={styles.titleRegular}>We Make</span>
           <span className={styles.titleItalic}> Light</span>
         </h2>

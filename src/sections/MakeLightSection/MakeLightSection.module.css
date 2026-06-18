@@ -70,16 +70,16 @@
   letter-spacing: -0.02em;
   color: #fff;
   white-space: nowrap;
-  /* StorySection 제목 자리로 이동(translate/scale)할 때 좌상단 기준으로
-     계산하므로, 평소엔 transform을 안 써서 영향 없다. */
-  transform-origin: top left;
 }
 .headline strong {
-  font-weight: 700; /* LIGHT */
+  font-weight: 400;
 }
-/* LIGHT — 흰색으로 보이다가 스크롤 시 빛남.
-   GSAP가 --glow(0~1)를 보간하고, calc로 그림자를 만들어 매끄럽게 켜졌다 꺼진다. */
+/* Light — StorySection 제목의 "Light"(Playfair Display 이탤릭)와 폰트를 맞춤.
+   흰색으로 보이다가 스크롤 시 빛남 — GSAP가 --glow(0~1)를 보간하고,
+   calc로 그림자를 만들어 매끄럽게 켜졌다 꺼진다. */
 .light {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
   color: #fff;
   --glow: 0;
   text-shadow:
@@ -103,18 +103,6 @@
   line-height: 1.4;
   letter-spacing: -0.02em;
   color: #fff;
-}
-
-/* 헤드라인(.headline)이 StorySection 제목 자리로 이동하는 동안 뒤쪽을
-   완전히 가리는 검은 배경 — document.body에 포털 렌더링. */
-.migrateBackdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 24;
-  background: #000;
-  opacity: 0;
-  pointer-events: none;
-  will-change: opacity;
 }
 
 @media (max-width: 767px) {
