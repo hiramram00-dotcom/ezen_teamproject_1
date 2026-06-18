@@ -155,6 +155,7 @@
   left: -1px;
   top: -1px;
   object-fit: cover;
+  object-position: 35% center;
 }
 
 .imgDesc {

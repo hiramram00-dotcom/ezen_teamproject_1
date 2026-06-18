@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './MakeLightSection.module.css'
@@ -21,6 +22,7 @@ function MakeLightSection() {
   const headlineRef = useRef(null)
   const lightRef = useRef(null)
   const descRef = useRef(null)
+  const backdropRef = useRef(null)
 
   useEffect(() => {
     const section = sectionRef.current
@@ -31,6 +33,7 @@ function MakeLightSection() {
     const headline = headlineRef.current
     const light = lightRef.current
     const desc = descRef.current
+    const backdrop = backdropRef.current
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) {
@@ -73,9 +76,105 @@ function MakeLightSection() {
       .to(light, { '--glow': 1, ease: 'power1.inOut', duration: 0.16 }, 0.6)
       .to(light, { '--glow': 0, ease: 'power1.inOut', duration: 0.28 }, 0.8)
 
+    // Once this section's reveal has finished, the real bg photo itself
+    // (not a clone) detaches from the sticky stage and becomes
+    // position:fixed, then shrinks via transform into StorySection's
+    // right-hand video card spot — the video already playing there takes
+    // over the instant it arrives. A solid black backdrop covers
+    // everything behind it (headline/desc text included) for the whole
+    // trip so only the photo is visible against black while it travels —
+    // otherwise the headline/desc would be seen sliding away underneath
+    // it as the section's normal scroll continues. The destination is
+    // re-queried live every tick (not captured once) because that card is
+    // a normal in-flow element whose screen position keeps changing as
+    // the user keeps scrolling.
+    //
+    // Only `transform: translate/scale` is animated, never width/height
+    // directly — otherwise object-fit: cover would recompute which part
+    // of the photo is visible on every frame as the box's aspect ratio
+    // changes, making the image appear to swim internally instead of
+    // just shrinking. Scaling the whole fixed-crop box via transform
+    // keeps the visible content rigid.
+    let fromRect = null
+    const applyTransform = (toRect, p) => {
+      const scaleX = toRect.width / fromRect.width
+      const scaleY = toRect.height / fromRect.height
+      const dx = toRect.left - fromRect.left
+      const dy = toRect.top - fromRect.top
+      const sx = 1 + (scaleX - 1) * p
+      const sy = 1 + (scaleY - 1) * p
+      bgEl.style.transform = `translate(${dx * p}px, ${dy * p}px) scale(${sx}, ${sy})`
+      const fadeP = p > 0.92 ? 1 - (p - 0.92) / 0.08 : 1
+      bgEl.style.opacity = `${fadeP}`
+      backdrop.style.opacity = `${fadeP}`
+    }
+    const bgNextSibling = bgEl.nextSibling
+    const bgParent = bgEl.parentNode
+    let detached = false
+    const detachBg = () => {
+      fromRect = bgEl.getBoundingClientRect()
+      bgEl.style.position = 'fixed'
+      bgEl.style.left = `${fromRect.left}px`
+      bgEl.style.top = `${fromRect.top}px`
+      bgEl.style.width = `${fromRect.width}px`
+      bgEl.style.height = `${fromRect.height}px`
+      bgEl.style.zIndex = '25'
+      bgEl.style.pointerEvents = 'none'
+      bgEl.style.transform = 'translate(0px, 0px) scale(1, 1)'
+      bgEl.style.opacity = '1'
+      // Physically move the real DOM node to document.body so it shares
+      // the exact same stacking context as the backdrop (also appended to
+      // body) — bg stays nested deep inside .stage/.section otherwise,
+      // and some ancestor along that chain was making it paint behind the
+      // backdrop no matter how high its z-index was set, even though no
+      // ancestor reported creating a stacking context. Moving the node
+      // itself sidesteps the mystery entirely.
+      if (!detached) {
+        document.body.appendChild(bgEl)
+        detached = true
+      }
+      backdrop.style.opacity = '1'
+    }
+    const reattachBg = () => {
+      bgEl.style.position = ''
+      bgEl.style.left = ''
+      bgEl.style.top = ''
+      bgEl.style.width = ''
+      bgEl.style.height = ''
+      bgEl.style.zIndex = ''
+      bgEl.style.pointerEvents = ''
+      bgEl.style.transform = ''
+      bgEl.style.opacity = ''
+      if (detached) {
+        bgParent.insertBefore(bgEl, bgNextSibling)
+        detached = false
+      }
+      backdrop.style.opacity = '0'
+      fromRect = null
+    }
+    const migrateTrigger = ScrollTrigger.create({
+      trigger: section,
+      start: 'bottom bottom',
+      end: () => `+=${window.innerHeight}`,
+      scrub: 0.5,
+      invalidateOnRefresh: true,
+      onEnter: detachBg,
+      onEnterBack: detachBg,
+      onLeaveBack: reattachBg,
+      onUpdate: (self) => {
+        if (!fromRect) return
+        const target = document.querySelector('[data-make-light-target]')
+        if (!target) return
+        const toRect = target.getBoundingClientRect()
+        applyTransform(toRect, self.progress)
+      }
+    })
+
     return () => {
       tl.scrollTrigger && tl.scrollTrigger.kill()
       tl.kill()
+      migrateTrigger.kill()
+      reattachBg()
     }
   }, [])
 
@@ -99,6 +198,15 @@ function MakeLightSection() {
           사람과 공간을 위한 더 나은 빛, 그것이 일광전구가 만드는 가치입니다.
         </p>
       </div>
+
+      {/* Solid black backdrop shown only while the real bg photo above is
+          mid-migration into StorySection's card — covers the headline/desc
+          text and anything scrolling up underneath so only the photo is
+          visible against black during the trip. */}
+      {createPortal(
+        <div ref={backdropRef} className={styles.migrateBackdrop} aria-hidden="true" />,
+        document.body
+      )}
     </section>
   )
 }

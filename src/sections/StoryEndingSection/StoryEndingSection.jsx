@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import styles from './StoryEndingSection.module.css';
-import img8 from '../../../img/8.png';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,49 +9,78 @@ export default function StoryEndingSection() {
   const sectionRef = useRef(null);
   const text1Ref = useRef(null);
   const text2Ref = useRef(null);
-  const bgRef = useRef(null);
 
   useEffect(() => {
+    // While the sequence plays, scrolling is locked so the user can't
+    // scroll past/through it — it's released the moment it finishes.
+    const preventScroll = (e) => e.preventDefault();
+    const lockScroll = () => {
+      window.addEventListener('wheel', preventScroll, { passive: false });
+      window.addEventListener('touchmove', preventScroll, { passive: false });
+    };
+    const unlockScroll = () => {
+      window.removeEventListener('wheel', preventScroll, { passive: false });
+      window.removeEventListener('touchmove', preventScroll, { passive: false });
+    };
+
     let ctx = gsap.context(() => {
+      const text1Lines = text1Ref.current.children;
+      const text2Lines = text2Ref.current.children;
+      gsap.set(text1Ref.current, { opacity: 1, y: 0 });
+      gsap.set(text2Ref.current, { opacity: 1, y: 0 });
+      gsap.set(text1Lines, { y: 30, opacity: 0, filter: "blur(10px)", scale: 1.04 });
+      gsap.set(text2Lines, { y: 30, opacity: 0, filter: "blur(10px)", scale: 1.04 });
+
+      // SpaceMiddleSection's hero image + dim scrim are fixed-position
+      // elements that stay on screen indefinitely once shown, so they must
+      // be explicitly faded out here once text2 is done, or they'd
+      // permanently cover Snowman1Section beneath.
+      const heroEl = document.querySelector(`[class*="heroImage"]`);
+      const dimEl = document.querySelector(`[class*="heroDim"]`);
+
+      // This whole sequence plays on its own fixed real-world clock, not
+      // tied to scroll distance/speed at all — scrolling only decides
+      // *when* it (re)starts. text1/text2 are position:fixed (see CSS), so
+      // once started the sequence keeps playing to completion no matter how
+      // far past the (short, 100svh) trigger zone the user tries to scroll
+      // — input is locked for its whole real duration and released on
+      // completion. Scrolling back up out of the zone (before it has even
+      // started) resets it to hidden, and re-entering restarts it from the top.
       const tl = gsap.timeline({
+        paused: true,
+        onStart: lockScroll,
+        onComplete: unlockScroll,
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top top", // Starts when section reaches the top of the viewport
-          end: "bottom bottom", // Ends when the entire 2200px container finishes scrolling
-          scrub: true
+          start: "top bottom",
+          end: "bottom top",
+          toggleActions: "restart none restart reset",
+          onLeaveBack: unlockScroll
         }
       });
 
-      // Set initial positions for slide-up effect (reduced distance for gentler motion)
-      gsap.set(text1Ref.current, { y: 50, opacity: 0 });
-      gsap.set(text2Ref.current, { y: 50, opacity: 0 });
-      gsap.set(bgRef.current, { opacity: 0 });
-
-      // Sequence: background in -> text1 in -> hold -> text1 fades out VERY slowly -> wait -> text2 in -> hold -> text2 fades out -> background fades out (Fade to Black)
-      tl.to(bgRef.current, { opacity: 1, duration: 200, ease: "power1.inOut" }) // 1. Extremely slow background reveal
-        .to(text1Ref.current, { y: 0, opacity: 1, duration: 150, ease: "power1.out" }) // 2. Text 1 fades in softly
-        .to(text1Ref.current, { opacity: 1, duration: 100 }) // 3. Hold text 1
-        .to(text1Ref.current, { y: -30, opacity: 0, duration: 400, ease: "power1.inOut" }) // 4. Text 1 fades out VERY slowly
-        .to(text2Ref.current, { y: 0, opacity: 1, duration: 300, ease: "power1.out" }, "+=50") // 5. SEQUENTIAL: Wait for Text 1 to disappear entirely, then short pause, then Text 2 fades in
-        .to(text2Ref.current, { opacity: 1, duration: 100 }) // 6. Hold Text 2
-        .to(text2Ref.current, { y: -30, opacity: 0, duration: 300, ease: "power1.inOut" }) // 7. Text 2 fades out slowly
-        .to(bgRef.current, { opacity: 0, duration: 300, ease: "power1.inOut" }, "+=50"); // 8. Background fades to black (The Void Bookend)
+      // Sequence: text1 lines blur into focus one after another -> hold
+      // -> text1 fades out -> wait -> text2 lines blur in -> hold
+      // -> text2 fades out -> hero image + dim fade out
+      tl.to(text1Lines, { y: 0, opacity: 1, filter: "blur(0px)", scale: 1, duration: 1.6, stagger: 0.25, ease: "power3.out" }) // 1. Text 1 lines blur into focus in sequence
+        .to(text1Ref.current, { opacity: 1, duration: 0.5 }) // 2. Hold text 1 (shorter)
+        .to(text1Ref.current, { y: -30, opacity: 0, duration: 0.6, ease: "power1.inOut" }) // 3. Text 1 fades out
+        .to(text2Lines, { y: 0, opacity: 1, filter: "blur(0px)", scale: 1, duration: 1.6, stagger: 0.25, ease: "power3.out" }, "+=0.1") // 4. Text 2 lines blur into focus, sooner after Text 1
+        .to(text2Ref.current, { opacity: 1, duration: 0.5 }) // 5. Hold Text 2 (shorter)
+        .to(text2Ref.current, { y: -30, opacity: 0, duration: 1.0, ease: "power1.inOut" }) // 6. Text 2 fades out slowly
+        .to([heroEl, dimEl], { opacity: 0, duration: 1.0, ease: "power1.inOut" }, "+=0.3"); // 7. Hero image + dim fade to reveal the next section
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      unlockScroll();
+    };
   }, []);
 
   return (
     <section className={styles.endingSection} ref={sectionRef}>
       <div className={styles.container}>
         <div className={styles.stickyWrapper}>
-          {/* Full Screen Background Image */}
-          <div ref={bgRef} style={{ position: 'absolute', inset: 0, zIndex: -1 }}>
-            <img src={img8} alt="Ending Background" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            {/* Dark overlay for text readability */}
-            <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)' }}></div>
-          </div>
-
           <div className={styles.textBlock1} ref={text1Ref}>
             <p>60년이 넘는 시간 동안 우리는 오직 하나,</p>
             <p>

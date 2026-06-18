@@ -123,50 +123,30 @@
   margin: 0;
 }
 
-/* Ending sequence overlay */
-.bgOverlay {
+/* Hero clone of the last image — grows from its grid position to fullscreen */
+.heroImage {
   position: fixed;
-  inset: 0;
-  z-index: 12;
-  pointer-events: none;
+  z-index: 16;
+  overflow: hidden;
   opacity: 0;
+  pointer-events: none;
+  will-change: left, top, width, height;
 }
 
-.bgOverlayImg {
+.heroImage img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.bgOverlayDim {
-  position: absolute;
+.heroDim {
+  position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-}
-
-.endingText {
-  grid-area: 1 / 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #ffffff;
-  font-family: var(--font-kr, 'Pretendard', sans-serif);
-  font-size: 40px;
-  line-height: 1.4;
-  letter-spacing: -1.2px;
-  text-align: center;
+  z-index: 17;
+  pointer-events: none;
+  background-color: #000000;
   opacity: 0;
-  position: relative;
-  z-index: 13;
-}
-
-.endingText p {
-  margin: 0;
-}
-
-.endingTextBold {
-  font-weight: 600;
 }
 
 .textHighlight {

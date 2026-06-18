@@ -77,9 +77,9 @@ export default function StorySection() {
           </div>
           <div className={styles.gradientOverlay}></div>
         </div>
-        <div className={styles.imageCard}>
+        <div className={styles.imageCard} data-make-light-target="true">
           <div className={`${styles.imageRevealMask} ${styles.delay2}`}>
-            <video src="https://res.cloudinary.com/dg9hg29hc/video/upload/1_2_wfmfy5.mp4" className={styles.imgWarm} autoPlay loop muted playsInline />
+            <video src="https://res.cloudinary.com/ddit4bjrw/video/upload/v1781749340/Lamp_glows_on_bedsheets_202606181112_vqzy0z.mp4" className={styles.imgWarm} autoPlay loop muted playsInline />
           </div>
           <div className={styles.gradientOverlay}></div>
         </div>
