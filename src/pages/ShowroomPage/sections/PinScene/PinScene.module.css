@@ -34,6 +34,16 @@
   object-fit: contain;
 }
 
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.68);
+  opacity: 0;
+  will-change: opacity;
+}
+
 /* ---------- 카드 + 라벨: 이미지 위 겹침, 아래에서 올라옴 ---------- */
 .cardLayer {
   position: absolute;
@@ -73,10 +83,20 @@
 .card {
   width: 100%;
   max-width: 1340px;
-  background: var(--color-base-1);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 249, 246, 0.25) 100%
+  );
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
   color: var(--color-base-3);
   padding: clamp(40px, 4vw, 72px);
-  box-shadow: 9px 14px 34px 10px color-mix(in srgb, var(--color-base-3) 16%, transparent);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .top {
@@ -112,9 +132,55 @@
   justify-content: center;
 }
 
-.mapImg {
+.mapGraphic {
   width: 100%;
   height: auto;
+  overflow: visible;
+}
+
+.mapRoad {
+  fill: none;
+  stroke: var(--color-base-3);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.mapDot {
+  fill: var(--color-base-3);
+}
+
+.mapPin {
+  fill: #f49307;
+}
+
+.mapRoadLabelBg {
+  fill: var(--color-base-3);
+}
+
+.mapRoadLabel,
+.mapLabel,
+.mapLabelStrong {
+  font-family: var(--font-kr);
+  font-size: 18px;
+  line-height: 1.3;
+  letter-spacing: -1px;
+}
+
+.mapRoadLabel {
+  fill: var(--color-base-1);
+  font-size: 16px;
+  font-weight: 300;
+  text-anchor: middle;
+}
+
+.mapLabel {
+  fill: var(--color-base-3);
+  font-weight: 300;
+}
+
+.mapLabelStrong {
+  fill: var(--color-base-3);
+  font-weight: 600;
 }
 
 .divider {

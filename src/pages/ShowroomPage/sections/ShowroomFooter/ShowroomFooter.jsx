@@ -1,5 +1,4 @@
-import ilkwMark from './assets/showroom-footer-ilkw.svg'
-import Reveal from '../../components/Reveal/Reveal'
+import logoIlkw from '../../../../components/Footer/assets/ilkw-logo.svg'
 import styles from './ShowroomFooter.module.css'
 
 /**
@@ -12,40 +11,42 @@ const NAV = [
   { label: '빛의 철학', href: '#philosophy' },
   { label: '제품', href: '#products' },
   { label: '공간 큐레이션', href: '#space' },
-  { label: '쇼룸', href: '#showroom' },
+  { label: '콜라보', href: '#collabo' },
 ]
 
 function ShowroomFooter() {
   return (
     <footer className={styles.footer}>
-      <Reveal className={styles.markWrap}>
-        <img className={styles.mark} src={ilkwMark} alt="ILKW" />
-      </Reveal>
+      <div className={styles.logo}>
+        <img src={logoIlkw} alt="ILKW." />
+      </div>
 
-      <Reveal as="nav" className={styles.nav} aria-label="푸터 내비게이션">
-        {NAV.map((item) => (
-          <a key={item.label} href={item.href} className={`${styles.navLink} type-body-3`}>
-            {item.label}
-          </a>
-        ))}
-      </Reveal>
+      <div className={styles.bottom}>
+        <nav className={styles.nav} aria-label="푸터 내비게이션">
+          {NAV.map((item) => (
+            <a key={item.label} href={item.href} className={`${styles.navLink} type-body-3`}>
+              {item.label}
+            </a>
+          ))}
+        </nav>
 
-      <div className={styles.divider} />
+        <div className={styles.divider} />
 
-      <div className={styles.legal}>
-        <p className={styles.legalText}>
-          © 2026 일광전구 주식회사 &nbsp;·&nbsp; 서울 성동구 성수동 &nbsp;·&nbsp; 사업자
-          000-00-00000 &nbsp;·&nbsp; 통신판매업 신고번호 000-000-0000
-        </p>
-        <p className={styles.legalText}>
-          <a href="#privacy" className={styles.legalLink}>
-            Privacy Policy
-          </a>
-          &nbsp;·&nbsp;
-          <a href="#terms" className={styles.legalLink}>
-            Terms of Use
-          </a>
-        </p>
+        <div className={styles.legal}>
+          <p className={styles.legalText}>
+            © 2026 일광전구 주식회사 &nbsp;·&nbsp; 서울 성동구 성수동 &nbsp;·&nbsp; 사업자
+            000-00-00000 &nbsp;·&nbsp; 통신판매업 신고번호 000-000-0000
+          </p>
+          <p className={styles.legalText}>
+            <a href="#privacy" className={styles.legalLink}>
+              Privacy Policy
+            </a>
+            &nbsp;·&nbsp;
+            <a href="#terms" className={styles.legalLink}>
+              Terms of Use
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   )

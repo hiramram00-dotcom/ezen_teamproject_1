@@ -72,7 +72,7 @@
 .darkPhotos {
   display: flex;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-end;
   gap: clamp(20px, 2.4vw, 44px);
   padding: 0 var(--layout-gutter) clamp(80px, 12vw, 200px);
 }
