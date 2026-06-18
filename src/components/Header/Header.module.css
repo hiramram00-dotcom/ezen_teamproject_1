@@ -12,19 +12,8 @@
   padding: 0 var(--layout-gutter, 38px);
   z-index: 100;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-/* 배경 스크림 — Intro top0에서 위에서 슥 내려오는 레이어 (.bgShown 토글, 이후 유지 / Hero 재진입 시 사라짐) */
-.header::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: rgba(0, 0, 0, 0.25);
-  transform: translateY(-100%);
-  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.bgShown::before {
-  transform: translateY(0);
+  /* 배경 없음. 흰 로고/메뉴가 뒤 배경 밝기에 따라 자동 반전 (어두우면 흰색, 밝으면 검정) */
+  mix-blend-mode: difference;
 }
 
 /* 숨김 = 화면 위로 올라가서 안 보임 (올라감만 더 느리게) */
@@ -33,13 +22,10 @@
   transition-duration: 0.8s;
 }
 
-/* 메뉴 열렸을 때 — 크림 오버레이에 맞춰 배경 투명 + 검정 (시안 기준) */
+/* 메뉴 열렸을 때 — 크림 오버레이 위. 반전 끄고 명시 색(#111) 사용 */
 .menuMode {
   background: transparent;
-}
-/* 메뉴(크림 오버레이) 열리면 스크림 숨김 */
-.menuMode::before {
-  transform: translateY(-100%);
+  mix-blend-mode: normal;
 }
 /* 메뉴 열리면 로고는 안 띄움 */
 .menuMode .logoLink {
@@ -53,9 +39,12 @@
   display: inline-flex;
   align-items: center;
   cursor: pointer;
+  /* 클릭 영역 확대 + 같은 만큼 음수 마진으로 레이아웃 상쇄 */
+  padding: 14px 18px;
+  margin: -14px -18px;
 }
 .logo {
-  height: 22px;
+  height: 26px;
   width: auto;
   display: block;
 }
@@ -64,6 +53,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-left: auto; /* 로고 사라져도 항상 오른쪽 고정 → Close 위치 = Menu 위치 */
   padding: 0;
   background: none;
   border: none;
@@ -71,38 +61,63 @@
   color: #fff;
   font-family: var(--font-en, sans-serif);
   font-size: 26px;
-  letter-spacing: 0.01em;
+  font-weight: 450;
+  line-height: 1;
+  letter-spacing: -0.02em;
 }
-/* 화살표 — 꼬리(shaft) 짧음→길어졌다→짧아짐 반복(방향 가리키는 느낌). Close일 땐 반대 방향 */
+/* 화살표 — 가는 선 + 셰브론 머리(→). Close일 땐 좌향 반전 */
 .arrow {
   display: inline-flex;
   align-items: center;
-  width: 26px; /* 고정폭 — shaft 늘어나도 버튼 레이아웃 안 흔들림 */
-  height: 12px;
+  width: 22px;
+  height: 13px;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.arrowShaft {
-  height: 2px;
-  width: 5px;
-  background: currentColor;
-  flex-shrink: 0;
-  animation: arrowReach 1.3s ease-in-out infinite;
+.arrow svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
-.arrowHead {
-  width: 0;
-  height: 0;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
-  border-left: 8px solid currentColor;
-  flex-shrink: 0;
+/* 호버 시 화살표가 오른쪽으로 살짝 이동 (Menu/Close 동일) */
+.menu:hover .arrow {
+  transform: translateX(8px);
 }
-@keyframes arrowReach {
-  0%, 100% { width: 4px; }
-  55% { width: 17px; }
+
+/* Menu 텍스트 — 호버하면 글자 모양 따라 빛이 왼→오로 샤라락 ✨ */
+.menuLabel {
+  position: relative;
+  display: inline-block;
 }
-/* 메뉴 열림(Close) — 화살표만 반대 방향 */
-.arrowClose {
-  transform: scaleX(-1);
+/* 호버 시 완전 투명한 띠가 글자 위를 왼→오로 한 번 훑고 지나감 (배경이 비쳐 = 빛 느낌, 배경색 무관) */
+.menu:hover .menuLabel {
+  -webkit-mask-image: radial-gradient(
+    circle 55px at center,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 30%,
+    #000 95%
+  );
+  mask-image: radial-gradient(
+    circle 55px at center,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 30%,
+    #000 95%
+  );
+  -webkit-mask-size: 330% 100%;
+  mask-size: 330% 100%;
+  -webkit-mask-repeat: no-repeat; /* 반복 끄기 → 한 번만 지나감 */
+  mask-repeat: no-repeat;
+  animation: menuSweep 1s ease;
 }
-@media (prefers-reduced-motion: reduce) {
-  .arrowShaft { animation: none; width: 12px; }
+@keyframes menuSweep {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  } /* 띠가 글자 왼쪽 밖 */
+  to {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  } /* 왼→오로 한 번 훑고 오른쪽 밖으로 */
 }
