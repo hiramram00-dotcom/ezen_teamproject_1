@@ -93,7 +93,6 @@ function MakeLightSection() {
         <div ref={overlayRef} className={styles.overlay} aria-hidden="true" />
 
         <h2 ref={headlineRef} className={styles.headline}>
-<<<<<<< HEAD
           <span ref={moveTextRef}>
             We Make{' '}
             <strong ref={lightRef} className={styles.light}>
@@ -101,13 +100,6 @@ function MakeLightSection() {
             </strong>
           </span>
           <span ref={restTextRef}>, ILKW.</span>
-=======
-          We Make{' '}
-          <strong ref={lightRef} className={styles.light}>
-            Light
-          </strong>
-          , ILKW.
->>>>>>> 22654e124833021ac9326404386865a72c68affd
         </h2>
         <p ref={descRef} className={styles.desc}>
           우리는 빛이 머무는 모든 순간을 생각합니다.
