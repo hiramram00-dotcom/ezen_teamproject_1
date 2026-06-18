@@ -21,6 +21,7 @@ export default function SpaceMiddleSection() {
   const textRef = useRef(null);
   const highlightWordRef = useRef(null);
   const lightRef = useRef(null);
+  const trailCanvasRef = useRef(null);
   const imageRefs = useRef([]);
   const heroRef = useRef(null);
   const heroDimRef = useRef(null);
@@ -168,84 +169,352 @@ export default function SpaceMiddleSection() {
     return () => st.kill();
   }, [scale]);
 
-  // Light beam follows scroll, reveals images on contact
+  // A small light follows a curved route, pauses at each image, sparkles,
+  // and then switches that image on.
   useEffect(() => {
     const section = sectionRef.current;
     const light = lightRef.current;
-    if (!section || !light) return;
+    const trailCanvas = trailCanvasRef.current;
+    if (!section || !light || !trailCanvas) return;
+
+    const trailContext = trailCanvas.getContext('2d');
+    const trailPoints = [];
+    trailCanvas.width = 1920;
+    trailCanvas.height = 3133;
 
     const CONTAINER_HEIGHT = 3133;
-
-    // Light path: waypoints in design coordinates (1920px space)
-    // X = center of each image, Y = top of each image
-    const waypoints = [
-      { y: 0,               x: 404 },
-      { y: 995,             x: 972 },
-      { y: 1317,            x: 561 },
-      { y: 1729,            x: 158 },
-      { y: 1923,            x: 910 },
-      { y: 2190,            x: 533 },
-      { y: 2410,            x: 191 },
-      { y: 2645,            x: 781 },
-      { y: CONTAINER_HEIGHT, x: 781 },
+    const DESIGN_WIDTH = 1920;
+    const stops = [
+      { scroll: 300, x: 404, y: 498, images: [0], bounds: { left: 0, top: 0, right: 808, bottom: 995 } },
+      { scroll: 995, x: 974, y: 1156, images: [1], bounds: { left: 808, top: 995, right: 1139, bottom: 1317 } },
+      { scroll: 1340, x: 561, y: 1521, images: [2, 3], bounds: { left: 317, top: 1317, right: 805, bottom: 1725 } },
+      { scroll: 1729, x: 159, y: 1859, images: [4], bounds: { left: 0, top: 1729, right: 317, bottom: 1989 } },
+      { scroll: 1923, x: 910, y: 2081, images: [5], bounds: { left: 682, top: 1923, right: 1138, bottom: 2238 } },
+      { scroll: 2190, x: 533, y: 2332, images: [6], bounds: { left: 383, top: 2190, right: 683, bottom: 2473 } },
+      { scroll: 2410, x: 192, y: 2551, images: [7], bounds: { left: 0, top: 2410, right: 383, bottom: 2691 } },
+      { scroll: 2645, x: 781, y: 2889, images: [8], bounds: { left: 383, top: 2645, right: 1179, bottom: 3133 } },
     ];
 
-    // Y position where each imageRefs[i] gets revealed
-    const revealTriggers = [300, 995, 1317, 1336, 1729, 1923, 2190, 2410, 2645];
+    const HOLD_BEFORE = 70;
+    const HOLD_AFTER = 120;
+    const revealed = new Set();
+    const revealCalls = new Map();
+    let currentX = stops[0].x;
+    let currentY = 0;
+    let previousX = currentX;
+    let previousY = currentY;
+    let flashingStop = -1;
+    let flashCall = null;
+    let lockedStopIndex = -1;
+    let lockedWindowY = 0;
+    let releaseLockCall = null;
+    let safetyLockCall = null;
+    let previousScroll = 0;
+    let previousWindowY = window.scrollY;
+    let rafId;
 
-    const getLightX = (y) => {
-      for (let i = 0; i < waypoints.length - 1; i++) {
-        if (y <= waypoints[i + 1].y) {
-          const t = (y - waypoints[i].y) / (waypoints[i + 1].y - waypoints[i].y);
-          return waypoints[i].x + (waypoints[i + 1].x - waypoints[i].x) * t;
-        }
-      }
-      return waypoints[waypoints.length - 1].x;
+    const getRenderedScale = () => {
+      const renderedWidth = containerRef.current?.getBoundingClientRect().width;
+      return renderedWidth ? renderedWidth / DESIGN_WIDTH : scale;
     };
 
-    let currentY = 0;
-    let currentX = 0;
-    let rafId = null;
+    const canLockScroll = () =>
+      window.innerWidth >= 1200 && getRenderedScale() >= 0.625;
 
-    const getTargetY = () => {
+    const smooth = value => value * value * value * (value * (value * 6 - 15) + 10);
+    const catmullRom = (p0, p1, p2, p3, t) => {
+      const t2 = t * t;
+      const t3 = t2 * t;
+      return 0.5 * (
+        (2 * p1) +
+        (-p0 + p2) * t +
+        (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
+        (-p0 + 3 * p1 - 3 * p2 + p3) * t3
+      );
+    };
+
+    const getPathPosition = scrollY => {
+      if (scrollY <= stops[0].scroll - HOLD_BEFORE) {
+        const progress = Math.max(0, scrollY / (stops[0].scroll - HOLD_BEFORE));
+        const eased = smooth(progress);
+        return { x: stops[0].x, y: stops[0].y * eased };
+      }
+
+      for (let index = 0; index < stops.length; index++) {
+        const stop = stops[index];
+        const arrival = stop.scroll - HOLD_BEFORE;
+        const departure = stop.scroll + HOLD_AFTER;
+        if (scrollY <= departure && scrollY >= arrival) return { x: stop.x, y: stop.y };
+
+        const next = stops[index + 1];
+        if (next && scrollY < next.scroll - HOLD_BEFORE) {
+          const start = departure;
+          const end = next.scroll - HOLD_BEFORE;
+          const progress = Math.max(0, Math.min(1, (scrollY - start) / (end - start)));
+          const eased = smooth(progress);
+          const previous = stops[Math.max(0, index - 1)];
+          const afterNext = stops[Math.min(stops.length - 1, index + 2)];
+          return {
+            x: Math.max(
+              24,
+              Math.min(1170, catmullRom(previous.x, stop.x, next.x, afterNext.x, eased))
+            ),
+            y: Math.max(
+              0,
+              Math.min(CONTAINER_HEIGHT, catmullRom(previous.y, stop.y, next.y, afterNext.y, eased))
+            ),
+          };
+        }
+      }
+
+      const last = stops[stops.length - 1];
+      return { x: last.x, y: last.y };
+    };
+
+    const sparkleAndReveal = (stop, index) => {
+      if (revealed.has(index)) return;
+      revealed.add(index);
+      flashingStop = index;
+      light.classList.remove(styles.spark);
+      void light.offsetWidth;
+      light.classList.add(styles.spark);
+
+      const call = gsap.delayedCall(0.38, () => {
+        stop.images.forEach(imageIndex => {
+          const image = imageRefs.current[imageIndex];
+          if (image) image.classList.add(styles.lit);
+        });
+      });
+      revealCalls.set(index, call);
+
+      flashCall?.kill();
+      flashCall = gsap.delayedCall(0.45, () => {
+        flashingStop = -1;
+        light.classList.remove(styles.spark);
+      });
+    };
+
+    const revealWithoutSparkle = (stop, index) => {
+      if (revealed.has(index)) return;
+      revealed.add(index);
+      stop.images.forEach(imageIndex => {
+        imageRefs.current[imageIndex]?.classList.add(styles.lit);
+      });
+    };
+
+    const releaseScrollLock = () => {
+      lockedStopIndex = -1;
+      releaseLockCall?.kill();
+      releaseLockCall = null;
+      safetyLockCall?.kill();
+      safetyLockCall = null;
+    };
+
+    const lockAtStop = index => {
+      const stop = stops[index];
       const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-      return (window.scrollY - sectionTop + window.innerHeight / 2) / scale;
+      lockedStopIndex = index;
+      lockedWindowY = Math.max(
+        0,
+        sectionTop + stop.scroll * getRenderedScale() - window.innerHeight / 2
+      );
+      window.scrollTo(0, lockedWindowY);
+
+      // Never leave the page trapped if media decoding or a frame stalls.
+      safetyLockCall?.kill();
+      safetyLockCall = gsap.delayedCall(2, releaseScrollLock);
+    };
+
+    const blockScrollInput = event => {
+      if (lockedStopIndex < 0) return;
+      event.preventDefault();
+    };
+
+    const blockScrollKeys = event => {
+      if (
+        lockedStopIndex >= 0 &&
+        ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)
+      ) {
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener('wheel', blockScrollInput, { passive: false });
+    window.addEventListener('touchmove', blockScrollInput, { passive: false });
+    window.addEventListener('keydown', blockScrollKeys);
+
+    const hideAfterReverse = (stop, index) => {
+      if (!revealed.has(index)) return;
+      revealed.delete(index);
+      revealCalls.get(index)?.kill();
+      revealCalls.delete(index);
+      if (flashingStop === index) {
+        flashCall?.kill();
+        flashingStop = -1;
+        light.classList.remove(styles.spark);
+      }
+      stop.images.forEach(imageIndex => {
+        imageRefs.current[imageIndex]?.classList.remove(styles.lit);
+      });
+    };
+
+    const getTargetScroll = () => {
+      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      const renderedScale = getRenderedScale();
+      const scrollInsideSection = (window.scrollY - sectionTop) / renderedScale;
+      // Keep the viewport offset in screen pixels. Dividing this value by a
+      // very small mobile scale makes the light jump far ahead of the images.
+      const viewportOffset = Math.min(window.innerHeight * 0.5, 420);
+      return scrollInsideSection + viewportOffset;
     };
 
     const animate = () => {
-      const targetY = getTargetY();
-      const LERP = 0.06;
-      currentY += (targetY - currentY) * LERP;
+      if (lockedStopIndex >= 0 && Math.abs(window.scrollY - lockedWindowY) > 1) {
+        window.scrollTo(0, lockedWindowY);
+      }
 
-      const clampedY = Math.max(0, Math.min(CONTAINER_HEIGHT, currentY));
-      const targetX = getLightX(clampedY);
-      currentX += (targetX - currentX) * LERP;
+      let targetScroll = getTargetScroll();
+      const clampedScroll = Math.max(0, Math.min(CONTAINER_HEIGHT, targetScroll));
+      const physicalScrollDelta = Math.abs(window.scrollY - previousWindowY);
+      const fastScrollThreshold = Math.max(140, window.innerHeight * 0.16);
+      const crossedStopIndex = stops.findIndex((stop, index) =>
+        !revealed.has(index) &&
+        previousScroll < stop.scroll &&
+        clampedScroll >= stop.scroll &&
+        physicalScrollDelta > fastScrollThreshold
+      );
 
-      // Expand light when near an image trigger
-      const nearImage = revealTriggers.some(t => Math.abs(clampedY - t) < 220);
-      light.style.width = nearImage ? '180px' : '70px';
-
-      light.style.left = `${currentX}px`;
-      light.style.top = `${clampedY}px`;
-      light.style.opacity = (targetY >= 0 && targetY <= CONTAINER_HEIGHT) ? '1' : '0';
-
-      imageRefs.current.forEach((el, i) => {
-        if (!el) return;
-        if (clampedY >= revealTriggers[i]) {
-          el.classList.add(styles.lit);
+      if (lockedStopIndex < 0 && crossedStopIndex >= 0) {
+        if (canLockScroll()) {
+          lockAtStop(crossedStopIndex);
+          targetScroll = stops[crossedStopIndex].scroll;
         } else {
-          el.classList.remove(styles.lit);
+          revealWithoutSparkle(stops[crossedStopIndex], crossedStopIndex);
         }
+      }
+
+      const activeScroll = lockedStopIndex >= 0
+        ? stops[lockedStopIndex].scroll
+        : Math.max(0, Math.min(CONTAINER_HEIGHT, targetScroll));
+      const target = lockedStopIndex >= 0
+        ? { x: stops[lockedStopIndex].x, y: stops[lockedStopIndex].y }
+        : getPathPosition(activeScroll);
+      currentX += (target.x - currentX) * 0.065;
+      currentY += (target.y - currentY) * 0.065;
+
+      const lastTrailPoint = trailPoints[trailPoints.length - 1];
+      if (
+        !lastTrailPoint ||
+        Math.hypot(currentX - lastTrailPoint.x, currentY - lastTrailPoint.y) > 3
+      ) {
+        trailPoints.push({ x: currentX, y: currentY, life: 1 });
+      }
+
+      trailContext.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+      for (let index = trailPoints.length - 1; index >= 0; index--) {
+        trailPoints[index].life -= 0.012;
+        if (trailPoints[index].life <= 0) trailPoints.splice(index, 1);
+      }
+
+      if (trailPoints.length > 1) {
+        trailContext.lineCap = 'round';
+        trailContext.lineJoin = 'round';
+        for (let index = 1; index < trailPoints.length; index++) {
+          const previous = trailPoints[index - 1];
+          const point = trailPoints[index];
+          const beforePrevious = trailPoints[Math.max(0, index - 2)];
+          const startX = (beforePrevious.x + previous.x) / 2;
+          const startY = (beforePrevious.y + previous.y) / 2;
+          const endX = (previous.x + point.x) / 2;
+          const endY = (previous.y + point.y) / 2;
+          const alpha = Math.min(previous.life, point.life) * 0.34;
+          trailContext.beginPath();
+          trailContext.moveTo(startX, startY);
+          trailContext.quadraticCurveTo(previous.x, previous.y, endX, endY);
+          trailContext.strokeStyle = `rgba(255, 205, 132, ${alpha})`;
+          trailContext.lineWidth = 2.2;
+          trailContext.shadowColor = `rgba(255, 231, 184, ${alpha * 0.8})`;
+          trailContext.shadowBlur = 7;
+          trailContext.stroke();
+        }
+        trailContext.shadowBlur = 0;
+      }
+
+      const angle = Math.atan2(currentY - previousY, currentX - previousX) * 180 / Math.PI;
+      light.style.left = `${currentX}px`;
+      light.style.top = `${currentY}px`;
+      light.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+
+      const lightIsInsideRevealedImage = stops.some((stop, index) => {
+        if (!revealed.has(index) || flashingStop === index) return false;
+        const margin = 16;
+        return (
+          currentX >= stop.bounds.left - margin &&
+          currentX <= stop.bounds.right + margin &&
+          currentY >= stop.bounds.top - margin &&
+          currentY <= stop.bounds.bottom + margin
+        );
       });
 
+      light.style.opacity =
+        targetScroll >= 0 &&
+        targetScroll <= CONTAINER_HEIGHT &&
+        !lightIsInsideRevealedImage
+          ? '1'
+          : '0';
+      previousX = currentX;
+      previousY = currentY;
+
+      stops.forEach((stop, index) => {
+        const distance = Math.hypot(currentX - stop.x, currentY - stop.y);
+        if (
+          activeScroll >= stop.scroll - HOLD_BEFORE &&
+          activeScroll <= stop.scroll + HOLD_AFTER &&
+          distance < 8
+        ) {
+          sparkleAndReveal(stop, index);
+          if (lockedStopIndex === index && !releaseLockCall) {
+            releaseLockCall = gsap.delayedCall(1.2, releaseScrollLock);
+          }
+        }
+        // Fast scrolling can skip the narrow center-hit window. Once the
+        // trigger has clearly been crossed, guarantee the image reveal.
+        if (
+          lockedStopIndex < 0 &&
+          !revealed.has(index) &&
+          activeScroll >= stop.scroll &&
+          activeScroll > stop.scroll + HOLD_AFTER
+        ) {
+          revealWithoutSparkle(stop, index);
+        }
+        if (activeScroll < stop.scroll - HOLD_BEFORE) hideAfterReverse(stop, index);
+      });
+
+      previousScroll = activeScroll;
+      previousWindowY = window.scrollY;
       rafId = requestAnimationFrame(animate);
     };
 
-    currentY = getTargetY();
-    rafId = requestAnimationFrame(animate);
+    const handleResize = () => {
+      releaseScrollLock();
+      trailPoints.length = 0;
+      trailContext.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+      previousScroll = getTargetScroll();
+      previousWindowY = window.scrollY;
+    };
+    window.addEventListener('resize', handleResize);
 
+    rafId = requestAnimationFrame(animate);
     return () => {
       cancelAnimationFrame(rafId);
+      flashCall?.kill();
+      releaseLockCall?.kill();
+      safetyLockCall?.kill();
+      revealCalls.forEach(call => call.kill());
+      window.removeEventListener('wheel', blockScrollInput);
+      window.removeEventListener('touchmove', blockScrollInput);
+      window.removeEventListener('keydown', blockScrollKeys);
+      window.removeEventListener('resize', handleResize);
     };
   }, [scale]);
 
@@ -254,9 +523,11 @@ export default function SpaceMiddleSection() {
 
       <div ref={containerRef} className={styles.container} style={{ zoom: scale, margin: scale < 1 ? '0' : '0 auto' }}>
 
-        {/* Light beam */}
+        {/* Small travelling light with a short, faint tail */}
+        <canvas ref={trailCanvasRef} className={styles.lightTrailCanvas} aria-hidden="true" />
         <div ref={lightRef} className={styles.travelLight} aria-hidden="true">
-          <span className={styles.glowDot} />
+          <span className={styles.lightTail} />
+          <span className={styles.lightCore} />
         </div>
 
         {/* Images */}
@@ -296,7 +567,7 @@ export default function SpaceMiddleSection() {
 
         {/* Central Text Block Wrapper for Sticky */}
         <div style={{ position: 'absolute', left: 1192, top: 0, bottom: 0, zIndex: 20 }}>
-          <div ref={textRef} className={styles.textBlock} style={{ position: 'sticky', top: '80px', marginTop: 350 }}>
+          <div ref={textRef} className={styles.textBlock} style={{ position: 'sticky', top: '100px', marginTop: 350 }}>
             <p className={styles.textLine}>We bring</p>
             <p ref={highlightWordRef} className={styles.textHighlight}>Spaces</p>
             <p className={styles.textLine}>to life</p>
