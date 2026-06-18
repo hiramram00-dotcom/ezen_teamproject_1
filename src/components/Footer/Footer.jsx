@@ -18,6 +18,49 @@ gsap.registerPlugin(ScrollTrigger)
  *  - 푸터 본문: 워드마크 로고가 왼쪽부터 써지듯 리빌
  */
 
+const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
+
+// 거리와 무관하게 일정한 시간·ease로 부드럽게 스크롤 (브라우저 기본 smooth는 멀수록 빨라져 정신없음).
+// 도중에 사용자가 스크롤/키 입력하면 즉시 중단.
+function smoothScrollTo(targetY) {
+  const startY = window.scrollY
+  const dist = targetY - startY
+  if (Math.abs(dist) < 2) return
+
+  // 모션 최소화 설정이면 즉시 이동
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.scrollTo(0, targetY)
+    return
+  }
+
+  // 거리에 비례하되 600~1400ms로 제한 → 가까우면 짧게, 멀어도 과하지 않게
+  const duration = Math.min(1400, Math.max(600, Math.abs(dist) * 0.5))
+  let startTime = null
+  let raf = 0
+
+  const cleanup = () => {
+    window.removeEventListener('wheel', onInterrupt)
+    window.removeEventListener('touchstart', onInterrupt)
+    window.removeEventListener('keydown', onInterrupt)
+  }
+  const onInterrupt = () => {
+    if (raf) cancelAnimationFrame(raf)
+    cleanup()
+  }
+  window.addEventListener('wheel', onInterrupt, { passive: true })
+  window.addEventListener('touchstart', onInterrupt, { passive: true })
+  window.addEventListener('keydown', onInterrupt)
+
+  const step = (now) => {
+    if (startTime === null) startTime = now
+    const p = Math.min(1, (now - startTime) / duration)
+    window.scrollTo(0, startY + dist * easeInOutCubic(p))
+    if (p < 1) raf = requestAnimationFrame(step)
+    else cleanup()
+  }
+  raf = requestAnimationFrame(step)
+}
+
 // target: 'top'은 최상단, 그 외엔 해당 섹션 id로 위로 스크롤
 const NAV = [
   { label: '브랜드', target: 'top' },
@@ -110,14 +153,16 @@ function Footer() {
     }
   }, [])
 
-  // 푸터 내비: 해당 섹션으로 부드럽게 위로 스크롤 ('top'은 최상단)
+  // 푸터 내비: 해당 섹션으로 일정 속도·부드러운 ease로 위로 스크롤 ('top'은 최상단)
   const handleNavClick = (e, target) => {
     e.preventDefault()
     if (target === 'top') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      smoothScrollTo(0)
       return
     }
-    document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+    const el = document.getElementById(target)
+    if (!el) return
+    smoothScrollTo(el.getBoundingClientRect().top + window.scrollY)
   }
 
   return (

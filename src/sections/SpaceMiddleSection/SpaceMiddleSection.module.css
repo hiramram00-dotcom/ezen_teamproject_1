@@ -7,7 +7,7 @@
 
 .container {
   width: 1920px;
-  height: 3133px; /* Restored to its exact original height */
+  height: 3133px;
   position: relative;
   transform-origin: top left;
 }
@@ -15,8 +15,9 @@
 .imgWrapper {
   position: absolute;
   overflow: hidden;
-  z-index: 10; /* Ensures images are rendered ON TOP of the light beam */
-  background-color: #000000; /* Blocks the light beam from showing through while the image is transparent */
+  z-index: 10;
+  background-color: #000000;
+  opacity: 0;
 }
 
 .image {
@@ -37,6 +38,72 @@
 .whiteBox {
   position: absolute;
   background-color: #ffffff;
+  opacity: 0;
+}
+
+/* Light-on reveal animation */
+.lit {
+  animation: lightOn 1.0s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes lightOn {
+  0%   { opacity: 0; filter: brightness(0); }
+  20%  { opacity: 1; filter: brightness(2.2); }
+  100% { opacity: 1; filter: brightness(1); }
+}
+
+/* Travelling light beam */
+.travelLight {
+  position: absolute;
+  z-index: 15;
+  width: 70px;
+  aspect-ratio: 1;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  will-change: opacity, left, top, width;
+  opacity: 0;
+  transition: width 0.5s ease;
+}
+
+.glowDot {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 250, 231, 0.88) 0%,
+    rgba(247, 235, 215, 0.52) 16%,
+    rgba(247, 235, 215, 0.2) 38%,
+    rgba(247, 235, 215, 0.06) 58%,
+    rgba(247, 235, 215, 0) 78%
+  );
+  filter: blur(6px);
+}
+
+.glowDot::before {
+  position: absolute;
+  inset: 50%;
+  content: '';
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  width: 27%;
+  aspect-ratio: 1;
+  background: rgba(255, 252, 238, 0.72);
+  filter: blur(8px);
+}
+
+.glowDot::after {
+  position: absolute;
+  inset: 50%;
+  content: '';
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  width: 145%;
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(247, 235, 215, 0.08), transparent 68%);
+  filter: blur(18px);
 }
 
 .textBlock {
@@ -56,6 +123,52 @@
   margin: 0;
 }
 
+/* Ending sequence overlay */
+.bgOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.bgOverlayImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bgOverlayDim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.endingText {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #ffffff;
+  font-family: var(--font-kr, 'Pretendard', sans-serif);
+  font-size: 40px;
+  line-height: 1.4;
+  letter-spacing: -1.2px;
+  text-align: center;
+  opacity: 0;
+  position: relative;
+  z-index: 13;
+}
+
+.endingText p {
+  margin: 0;
+}
+
+.endingTextBold {
+  font-weight: 600;
+}
+
 .textHighlight {
   font-family: 'Playfair Display', serif;
   font-weight: 400;
@@ -64,5 +177,5 @@
   line-height: 1.11;
   letter-spacing: -1.34px;
   color: #f49307;
-  margin: 0;
+  margin-top: -12px;
 }

@@ -10,6 +10,7 @@
   width: 100%;
   height: 300vh;
   background: #000;
+  margin-bottom: 30vh;
 }
 
 /* 핀 고정 스테이지 */
@@ -53,7 +54,7 @@
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, #000 100%);
 }
 
-/* "We Make LIGHT, ILKW." — Instrument Sans 120px @1920 */
+/* "We Make Light, ILKW." — Instrument Sans + Playfair Display 120px @1920 */
 .headline {
   position: absolute;
   z-index: 4;
@@ -71,11 +72,14 @@
   white-space: nowrap;
 }
 .headline strong {
-  font-weight: 700; /* LIGHT */
+  font-weight: 400;
 }
-/* LIGHT — 흰색으로 보이다가 스크롤 시 빛남.
+/* Light — 흰색으로 보이다가 스크롤 시 빛남.
    GSAP가 --glow(0~1)를 보간하고, calc로 그림자를 만들어 매끄럽게 켜졌다 꺼진다. */
 .light {
+  font-family: var(--font-deco);
+  font-style: italic;
+  font-weight: 400;
   color: #fff;
   --glow: 0;
   text-shadow:

@@ -33,7 +33,19 @@
   top: 19.477%;    /* 335/1720 */
   width: 54.219%;  /* 1041/1920 */
   height: 61.047%; /* 1050/1720 */
-  background: #fff9f6;
+  /* 글래스(반투명 + 배경 블러) — 뒤 사진이 비치며 흐릿하게 */
+  border-radius: 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 249, 246, 0.25) 100%
+  );
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8); /* 안쪽 상단 하이라이트(유리 sheen) */
   text-align: center;
 }
 /* 카드 안 텍스트 — 폰트는 1920 기준 px를 vw로 환산해 비례 스케일 */
@@ -87,11 +99,13 @@
   letter-spacing: -0.02em;
   text-transform: uppercase;
   color: #d1ccc4;
+  opacity: 0.6; /* 기본을 기존 호버(연한) 모습으로 */
   text-decoration: none;
-  transition: opacity 0.2s ease;
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
 .cardEmail:hover {
-  opacity: 0.6;
+  color: #d1ccc4; /* 호버 시 더 어둡게 */
+  opacity: 0.8;
 }
 
 /* 크림 푸터 블록 */
