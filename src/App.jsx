@@ -33,7 +33,7 @@ function ScrollToTop() {
 function Home() {
   return (
     <main>
-      <Header index />
+      <Header />
       <HeroSection />
       <NewIntroSectionNew />
       <MakeLightSection />
