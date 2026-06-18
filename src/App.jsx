@@ -7,6 +7,8 @@ import StorySection from './sections/StorySection/StorySection'
 import SpaceMiddleSection from './sections/SpaceMiddleSection/SpaceMiddleSection'
 import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection'
 import Snowman1Section from './sections/Snowman1Section/Snowman1Section'
+
+import FixSnowman2Section from './sections/FixSnowman2Section/FixSnowman2Section'
 import ProductSection from './sections/ProductSection/ProductSection'
 import FlamingoDetailSection from './sections/FlamingoDetailSection/FlamingoDetailSection'
 import SpacesSection from './sections/SpacesSection/SpacesSection'
@@ -33,14 +35,14 @@ function ScrollToTop() {
 function Home() {
   return (
     <main>
-      <Header index />
+      <Header />
       <HeroSection />
       <NewIntroSectionNew />
       <MakeLightSection />
       <StorySection />
       <SpaceMiddleSection />
       <StoryEndingSection />
-      <Snowman1Section />
+      <FixSnowman2Section />
       <SpacesSection />
       {/* 고정된 Dining(ON) 위로 Collabo가 슬라이드업 (한 번만 렌더) */}
       <div style={{ position: 'relative', zIndex: 2, marginTop: '-100vh' }}>
@@ -77,6 +79,9 @@ function App() {
         <Route path="/showroom" element={<><Header /><ShowroomPage /></>} />
         {/* ⚠️ /collabo 는 아직 전용 페이지 미정(취합 전) → 임시로 홈 콜라보 섹션 단독 렌더 */}
         <Route path="/collabo" element={<><Header /><CollaboSection /></>} />
+
+        {/* 작업용 미리보기 — FixSnowman2Section 단독 확인용, 메인 페이지에는 미연결 */}
+        <Route path="/fixsnowman2" element={<><Header /><FixSnowman2Section /></>} />
       </Routes>
     </>
   )

@@ -1,0 +1,111 @@
+.scrollWrap {
+  position: relative;
+  width: 100%;
+  height: 350vh;
+  background: var(--color-base-2);
+}
+
+.sticky {
+  --video-bg-progress: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--color-base-1);
+}
+
+.sticky::before {
+  position: absolute;
+  inset: 0;
+  background: var(--color-base-2);
+  content: '';
+  opacity: var(--video-bg-progress);
+  pointer-events: none;
+  transition: opacity 80ms linear;
+}
+
+.header {
+  position: absolute;
+  top: 19px;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 26px;
+  opacity: 0;
+}
+
+.logo {
+  display: block;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.logo img {
+  width: 102.939px;
+  height: 23px;
+}
+
+.menu {
+  flex-shrink: 0;
+  color: var(--color-base-3);
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+.card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  width: 50.37vw;
+  height: 45.09vh;
+  overflow: hidden;
+  border-radius: 40px;
+  background: var(--color-base-3);
+  transform: translate(-50%, -50%);
+  will-change: width, height, border-radius;
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  left: 3.6%;
+  bottom: 8%;
+  z-index: 1;
+  color: var(--color-base-1);
+  opacity: 0;
+}
+
+.overlayTitle {
+  font-family: var(--font-en);
+  font-weight: 600;
+  font-size: clamp(20px, 1.875vw, 36px);
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+.overlayDesc {
+  margin-top: 4px;
+  color: var(--color-base-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollWrap {
+    height: 100vh;
+  }
+
+  .header,
+  .overlay {
+    opacity: 1;
+  }
+}

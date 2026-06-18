@@ -1,11 +1,14 @@
 import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './HeroSection.module.css'
 
 import iLetter from '../../assets/common/logo/ilkw-i.svg'
 import lLetter from '../../assets/common/logo/ilkw-l.svg'
 import kLetter from '../../assets/common/logo/ilkw-k.svg'
 import wLetter from '../../assets/common/logo/ilkw-w.svg'
+
+gsap.registerPlugin(ScrollTrigger)
 
 // ===== 타이밍(초) — 전부 자동 진행 =====
 const SWEEP_AT = 0.4 // 혜성 빛 시작
@@ -15,6 +18,10 @@ const SPLIT_DUR = 0.85 // 화면 위/아래로 갈라지는 시간 (텀 늘린 �
 
 const prefersReduced = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
+const HERO_TO_INTRO_FADE_START = 0.96
+const clamp01 = (x) => Math.min(1, Math.max(0, x))
+const lerp = (a, b, t) => a + (b - a) * t
+const smooth = (t) => t * t * (3 - 2 * t)
 
 // 인트로 1회만 — sessionStorage (F5·뒤로가기 스킵, 새 탭/세션 리셋)
 const INTRO_KEY = 'ilkw_intro_played'
@@ -94,6 +101,100 @@ function HeroSection() {
       document.documentElement.style.overflow = ''
       document.body.style.overflow = ''
       document.body.style.paddingRight = ''
+    }
+  }, [])
+
+  useEffect(() => {
+    const video = videoRef.current
+    const logo = logoRef.current
+    if (!video || prefersReduced()) return
+
+    let transitionST
+    const resetHeroVideo = () => {
+      gsap.set(video, {
+        clearProps:
+          'position,inset,left,top,right,bottom,width,height,zIndex,borderRadius,transform,opacity,visibility',
+      })
+    }
+
+    const setupHeroToIntro = () => {
+      const targetVideo = document.querySelector('[data-intro-hero-video]')
+      const introStage = document.querySelector('[data-intro-stage]')
+      const introQuote = targetVideo?.closest('p')
+      if (!targetVideo || !introStage) return
+
+      transitionST && transitionST.kill()
+      transitionST = ScrollTrigger.create({
+        trigger: '#intro',
+        start: 'top bottom',
+        end: 'top top',
+        scrub: true,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          const p = clamp01(self.progress)
+          const videoRectNow = targetVideo.getBoundingClientRect()
+          const stageRectNow = introStage.getBoundingClientRect()
+          const quoteIsFixed = introQuote && window.getComputedStyle(introQuote).position === 'fixed'
+          const target = {
+            left: videoRectNow.left,
+            top: quoteIsFixed ? videoRectNow.top : videoRectNow.top - stageRectNow.top,
+            width: videoRectNow.width,
+            height: videoRectNow.height,
+          }
+          const targetAlpha = smooth(
+            clamp01((p - HERO_TO_INTRO_FADE_START) / (1 - HERO_TO_INTRO_FADE_START))
+          )
+
+          gsap.set(targetVideo, { opacity: targetAlpha })
+          if (logo) gsap.set(logo, { autoAlpha: 1 - p })
+          if (p <= 0) {
+            resetHeroVideo()
+            return
+          }
+
+          gsap.set(video, {
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            right: 'auto',
+            bottom: 'auto',
+            width: window.innerWidth,
+            height: window.innerHeight,
+            xPercent: 0,
+            yPercent: 0,
+            transformOrigin: '0 0',
+            x: lerp(0, target.left, p),
+            y: lerp(0, target.top, p),
+            scaleX: lerp(1, target.width / window.innerWidth, p),
+            scaleY: lerp(1, target.height / window.innerHeight, p),
+            borderRadius: 0,
+            zIndex: 30,
+            autoAlpha: 1 - targetAlpha,
+          })
+        },
+        onLeave: () => {
+          gsap.set(targetVideo, { opacity: 1 })
+          gsap.set(video, { autoAlpha: 0 })
+          if (logo) gsap.set(logo, { autoAlpha: 0 })
+        },
+        onLeaveBack: () => {
+          gsap.set(targetVideo, { opacity: 0 })
+          if (logo) gsap.set(logo, { clearProps: 'opacity,visibility' })
+          resetHeroVideo()
+        },
+      })
+    }
+
+    setupHeroToIntro()
+    const refreshId = window.setTimeout(() => {
+      setupHeroToIntro()
+      ScrollTrigger.refresh()
+    }, 300)
+
+    return () => {
+      window.clearTimeout(refreshId)
+      transitionST && transitionST.kill()
+      resetHeroVideo()
     }
   }, [])
 
