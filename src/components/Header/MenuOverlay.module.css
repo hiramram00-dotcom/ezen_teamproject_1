@@ -73,7 +73,11 @@
 }
 .previewOn .previewInner img {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+}
+/* 마우스 올리면 사진이 살짝 확대 (슬롯은 overflow:hidden이라 크롭 줌인) */
+.preview:hover .previewInner img {
+  transform: translateY(0) scale(1.06);
 }
 
 @media (prefers-reduced-motion: reduce) {
