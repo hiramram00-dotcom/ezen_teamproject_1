@@ -16,11 +16,11 @@
   height: 100%;
 }
 
-/* text1/text2 are fixed (not sticky-scrolled) so the timed sequence keeps
-   playing in place on screen regardless of further scrolling. */
+/* text1/text2 are absolute within the section — ScrollTrigger pins the
+   section to the viewport, so absolute keeps them centered on screen. */
 .textBlock1,
 .textBlock2 {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 18;
   display: flex;
