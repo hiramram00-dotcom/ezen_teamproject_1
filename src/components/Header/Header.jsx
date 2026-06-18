@@ -63,6 +63,30 @@ function Header() {
     }
   }, [menuOpen])
 
+  // 커서가 화면 상단 근처에 오면 헤더 내려옴
+  useEffect(() => {
+    const h = headerRef.current
+    if (!h) return
+    const HOVER_ZONE = 80
+
+    const onMouseMove = (e) => {
+      if (e.clientY < HOVER_ZONE) {
+        h.classList.add(styles.hoverTop)
+      } else {
+        h.classList.remove(styles.hoverTop)
+      }
+    }
+
+    const onMouseLeave = () => h.classList.remove(styles.hoverTop)
+
+    window.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseleave', onMouseLeave)
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseleave', onMouseLeave)
+    }
+  }, [])
+
   // 로고 클릭 → 메뉴 닫고 메인('/')으로. (이미 메인이면 맨 위로 부드럽게)
   const handleLogo = () => {
     setMenuOpen(false)
