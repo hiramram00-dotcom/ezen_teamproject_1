@@ -7,7 +7,7 @@
 /* 스크롤 거리 제공 — 단어 채우기(완만) + 확장 + 슬라이드 자동전환 + 여운 */
 .intro {
   position: relative;
-  height: 600vh;
+  height: 660vh;
   margin-bottom: 0;
   background: var(--color-base-2); /* #FFF7EA 크림 */
 }

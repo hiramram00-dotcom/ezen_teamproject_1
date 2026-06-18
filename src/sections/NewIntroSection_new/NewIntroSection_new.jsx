@@ -34,10 +34,11 @@ const mix = (a, b, t) =>
 // 단어 색 채우기 — 인용문이 중앙에 멈춘(핀 고정) 뒤부터 진행 (스크롤 업 시 역재생)
 // 전환 구간 (스크롤 진행도 p 기준)
 const TEXT_REVEAL_SCROLL_RANGE = 0.5 // 단어 채우기에 필요한 스크롤 비율 (클수록 천천히 채워짐)
+const TEXT_REVEAL_SCROLL_OFFSET = 0.04 // 단어가 켜지기 시작하는 지점을 살짝 앞당김
 const GROW_START = 0.53 // 단어 채우기 완료 뒤 정지 구간을 두고 확대 시작
 const GROW_END = 0.61 // 램프 확장 완료
 const STORY_AT = 0.63 // 양옆/가운데 라벨 등장
-const SLIDE_TRIGGERS = [0.73, 0.87] // 각 임계값을 넘을 때마다 다음 슬라이드로 자동 교체
+const SLIDE_TRIGGERS = [0.8, 0.91] // 각 임계값을 넘을 때마다 다음 슬라이드로 자동 교체
 
 function SlicedImage({ src, alt }) {
   return (
@@ -125,7 +126,7 @@ function NewIntroSectionNew() {
       const handoffTextReveal = clamp01(
         (handoffProgress - TEXT_REVEAL_START) / (TEXT_REVEAL_END - TEXT_REVEAL_START)
       )
-      const pinnedTextReveal = clamp01(p / TEXT_REVEAL_SCROLL_RANGE)
+      const pinnedTextReveal = clamp01((p + TEXT_REVEAL_SCROLL_OFFSET) / TEXT_REVEAL_SCROLL_RANGE)
       const textReveal = Math.max(handoffTextReveal, pinnedTextReveal)
       const { end } = metrics
 
