@@ -1,5 +1,4 @@
 import { useRef, useEffect } from 'react'
-import { createPortal } from 'react-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './MakeLightSection.module.css'
@@ -20,9 +19,10 @@ function MakeLightSection() {
   const dimRef = useRef(null)
   const overlayRef = useRef(null)
   const headlineRef = useRef(null)
+  const moveTextRef = useRef(null)
+  const restTextRef = useRef(null)
   const lightRef = useRef(null)
   const descRef = useRef(null)
-  const backdropRef = useRef(null)
 
   useEffect(() => {
     const section = sectionRef.current
@@ -31,9 +31,10 @@ function MakeLightSection() {
     const dim = dimRef.current
     const overlay = overlayRef.current
     const headline = headlineRef.current
+    const moveText = moveTextRef.current
+    const restText = restTextRef.current
     const light = lightRef.current
     const desc = descRef.current
-    const backdrop = backdropRef.current
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) {
@@ -75,100 +76,12 @@ function MakeLightSection() {
       // "LIGHT" — 흰색 유지 → 점차 한 번 밝아졌다가 → 서서히 다시 흰색 (CSS 변수 보간으로 매끄럽게)
       .to(light, { '--glow': 1, ease: 'power1.inOut', duration: 0.16 }, 0.6)
       .to(light, { '--glow': 0, ease: 'power1.inOut', duration: 0.28 }, 0.8)
-      // 섹션이 끝나갈 무렵 사진/딤/오버레이/본문은 평범하게 페이드 아웃
-      // (헤드라인은 아래 별도 효과로 직접 텍스트 자리로 이동하므로 제외)
-      .to([bgEl, dim, overlay, desc], { opacity: 0, ease: 'none', duration: 0.06 }, 0.94)
-
-    // Once this section's reveal has finished, the real headline element
-    // itself (not a clone) detaches from the sticky stage and becomes
-    // position:fixed, then shrinks via transform down into StorySection's
-    // title ("We Make Light") spot — landing right as that title is
-    // already revealed underneath, so it reads as one continuous line of
-    // text carrying the page down rather than two separate headlines. A
-    // solid black backdrop covers everything behind it for the whole trip
-    // so only the moving text is visible against black. The destination
-    // is re-queried live every tick (not captured once) because that
-    // title is a normal in-flow element whose screen position keeps
-    // changing as the user keeps scrolling.
-    let fromRect = null
-    const applyTransform = (toRect, p) => {
-      const scaleX = toRect.width / fromRect.width
-      const scaleY = toRect.height / fromRect.height
-      const dx = toRect.left - fromRect.left
-      const dy = toRect.top - fromRect.top
-      const sx = 1 + (scaleX - 1) * p
-      const sy = 1 + (scaleY - 1) * p
-      headline.style.transform = `translate(${dx * p}px, ${dy * p}px) scale(${sx}, ${sy})`
-      const fadeP = p > 0.92 ? 1 - (p - 0.92) / 0.08 : 1
-      headline.style.opacity = `${fadeP}`
-      backdrop.style.opacity = `${fadeP}`
-    }
-    const headlineNextSibling = headline.nextSibling
-    const headlineParent = headline.parentNode
-    let detached = false
-    const detachHeadline = () => {
-      fromRect = headline.getBoundingClientRect()
-      headline.style.position = 'fixed'
-      headline.style.left = `${fromRect.left}px`
-      headline.style.top = `${fromRect.top}px`
-      headline.style.width = `${fromRect.width}px`
-      headline.style.height = `${fromRect.height}px`
-      headline.style.zIndex = '25'
-      headline.style.pointerEvents = 'none'
-      headline.style.transform = 'translate(0px, 0px) scale(1, 1)'
-      headline.style.opacity = '1'
-      // Physically move the real DOM node to document.body so it shares
-      // the exact same stacking context as the backdrop (also appended to
-      // body) — left nested inside .stage/.section, some ancestor along
-      // that chain made it paint behind the backdrop no matter how high
-      // its z-index was set, even though no ancestor reported creating a
-      // stacking context. Moving the node itself sidesteps that entirely.
-      if (!detached) {
-        document.body.appendChild(headline)
-        detached = true
-      }
-      backdrop.style.opacity = '1'
-    }
-    const reattachHeadline = () => {
-      headline.style.position = ''
-      headline.style.left = ''
-      headline.style.top = ''
-      headline.style.width = ''
-      headline.style.height = ''
-      headline.style.zIndex = ''
-      headline.style.pointerEvents = ''
-      headline.style.transform = ''
-      headline.style.opacity = ''
-      if (detached) {
-        headlineParent.insertBefore(headline, headlineNextSibling)
-        detached = false
-      }
-      backdrop.style.opacity = '0'
-      fromRect = null
-    }
-    const migrateTrigger = ScrollTrigger.create({
-      trigger: section,
-      start: 'bottom bottom',
-      end: () => `+=${window.innerHeight}`,
-      scrub: 0.5,
-      invalidateOnRefresh: true,
-      onEnter: detachHeadline,
-      onEnterBack: detachHeadline,
-      onLeaveBack: reattachHeadline,
-      onUpdate: (self) => {
-        if (!fromRect) return
-        const target = document.querySelector('[data-make-light-text-target]')
-        if (!target) return
-        const toRect = target.getBoundingClientRect()
-        applyTransform(toRect, self.progress)
-      }
-    })
+      // 섹션이 끝나갈 무렵 사진/딤/오버레이/본문/헤드라인은 평범하게 페이드 아웃
+      .to([bgEl, dim, overlay, desc, moveText, restText], { opacity: 0, ease: 'none', duration: 0.06 }, 0.94)
 
     return () => {
       tl.scrollTrigger && tl.scrollTrigger.kill()
       tl.kill()
-      migrateTrigger.kill()
-      reattachHeadline()
     }
   }, [])
 
@@ -180,11 +93,21 @@ function MakeLightSection() {
         <div ref={overlayRef} className={styles.overlay} aria-hidden="true" />
 
         <h2 ref={headlineRef} className={styles.headline}>
+<<<<<<< HEAD
+          <span ref={moveTextRef}>
+            We Make{' '}
+            <strong ref={lightRef} className={styles.light}>
+              Light
+            </strong>
+          </span>
+          <span ref={restTextRef}>, ILKW.</span>
+=======
           We Make{' '}
           <strong ref={lightRef} className={styles.light}>
             Light
           </strong>
           , ILKW.
+>>>>>>> 22654e124833021ac9326404386865a72c68affd
         </h2>
         <p ref={descRef} className={styles.desc}>
           우리는 빛이 머무는 모든 순간을 생각합니다.
@@ -192,15 +115,6 @@ function MakeLightSection() {
           사람과 공간을 위한 더 나은 빛, 그것이 일광전구가 만드는 가치입니다.
         </p>
       </div>
-
-      {/* Solid black backdrop shown only while the headline above is
-          mid-migration into StorySection's title — covers everything
-          scrolling up underneath so only the moving text is visible
-          against black during the trip. */}
-      {createPortal(
-        <div ref={backdropRef} className={styles.migrateBackdrop} aria-hidden="true" />,
-        document.body
-      )}
     </section>
   )
 }

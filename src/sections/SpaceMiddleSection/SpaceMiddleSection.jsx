@@ -58,14 +58,23 @@ export default function SpaceMiddleSection() {
       );
 
       // Change the highlight word while the text is sticky
+      const words = ["Spaces", "Moments", "Warmth", "Memories", "Atmospheres"];
+      let wordIndex = 0;
+      // Dead zone around each word boundary (in word-units) — without it,
+      // tiny scroll jitter right at a boundary (e.g. trackpad momentum)
+      // flips the index back and forth and replays the same word twice.
+      const WORD_HYSTERESIS = 0.15;
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: () => `top+=${650 * scale}px 80px`,
         end: () => `top+=${3133 * scale}px top`,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          const words = ["Spaces", "Moments", "Warmth", "Memories", "Atmospheres"];
-          const index = Math.min(Math.floor(self.progress * words.length), words.length - 1);
+          const raw = self.progress * words.length;
+          let index = wordIndex;
+          while (index < words.length - 1 && raw > index + 1 + WORD_HYSTERESIS) index++;
+          while (index > 0 && raw < index - WORD_HYSTERESIS) index--;
+          wordIndex = index;
           const targetWord = words[index];
 
           if (highlightWordRef.current && highlightWordRef.current.dataset.currentWord !== targetWord) {
