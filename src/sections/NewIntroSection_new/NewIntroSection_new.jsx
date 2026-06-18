@@ -1,8 +1,7 @@
 import { useRef, useEffect } from 'react'
 import styles from './NewIntroSection_new.module.css'
 
-import word2 from './assets/intro-word-2.webp'
-import word3 from './assets/intro-word-3.webp'
+import ilkwLogoBlack from '../../assets/common/logo/ilkw-black.svg'
 import lamp from './assets/lamp.webp'
 import story2 from './assets/story-2.webp'
 import story3 from './assets/story-3.webp'
@@ -110,9 +109,15 @@ function NewIntroSectionNew() {
       const w = word4.getBoundingClientRect()
       const sw = stage.offsetWidth
       const sh = stage.offsetHeight
+      const end =
+        sw >= 1200
+          ? { left: sw * 0.1854, top: sh * 0.1491, width: sw * 0.6286, height: sh * 0.6676 }
+          : sw >= 768
+            ? { left: sw * 0.08, top: sh * 0.22, width: sw * 0.84, height: sh * 0.56 }
+            : { left: sw * 0.06, top: sh * 0.29, width: sw * 0.88, height: sh * 0.42 }
       metrics = {
         start: { left: w.left - s.left, top: w.top - s.top, width: w.width, height: w.height },
-        end: { left: sw * 0.1854, top: sh * 0.1491, width: sw * 0.6286, height: sh * 0.6676 },
+        end,
       }
     }
 
@@ -251,7 +256,10 @@ function NewIntroSectionNew() {
         <div ref={bgRef} className={styles.bg} />
         <p ref={quoteRef} className={styles.quote}>
           <span className={styles.line}>
-            {T('We think ', 'a')}
+            {T('We think about every moment light', 'a')}
+          </span>
+          <span className={styles.line}>
+            {T('becomes ', 'b')}
             <video
               data-intro-hero-video
               className={`${styles.word} ${styles.w1} ${styles.introHeroVideo}`}
@@ -263,43 +271,33 @@ function NewIntroSectionNew() {
               preload="auto"
               aria-hidden="true"
             />
-            {T(' about every moment light', 'b')}
+            {T(' part of life. Creating better', 'c')}
           </span>
           <span className={styles.line}>
-            {T('becomes part of life. ', 'c')}
-            <img
-              className={`${styles.word} ${styles.w2} ${styles.reveal}`}
-              src={word2}
-              alt=""
-            />
-            {T(' Creating better', 'd')}
-          </span>
-          <span className={styles.line}>
-            {T('light ', 'e')}
-            <img
-              className={`${styles.word} ${styles.w3} ${styles.reveal}`}
-              src={word3}
-              alt=""
-            />
-            {T(' for people and the spaces they', 'f')}
-          </span>
-          <span className={styles.line}>
-            {T('inhabit— that is the value ', 'g')}
+            {T('light for people and the spaces ', 'd')}
             <img
               ref={word4Ref}
               className={`${styles.word} ${styles.w4} ${styles.slot} ${styles.reveal}`}
               src={lamp}
               alt=""
-            />{' '}
-            <strong>{T('ILKW', 'h')}</strong>
-            {T(' brings.', 'i')}
+            />
+            {T(' they', 'e')}
+          </span>
+          <span className={styles.line}>
+            {T('inhabit— that is the value ', 'f')}
+            <img
+              className={`${styles.logoWord} ${styles.reveal}`}
+              src={ilkwLogoBlack}
+              alt="ILKW"
+            />
+            {T(' brings.', 'h')}
           </span>
         </p>
 
         {/* 자라나는 프레임 — 안에서 사진이 위로 슬라이드되며 교체 */}
         <div ref={frameRef} className={styles.frame}>
           <div ref={trackRef} className={styles.track}>
-            <div className={styles.slide}>
+            <div className={`${styles.slide} ${styles.noSplit}`}>
               <SlicedImage src={lamp} alt="일광전구 포터블 조명을 든 손" />
             </div>
             <div className={styles.slide}>
