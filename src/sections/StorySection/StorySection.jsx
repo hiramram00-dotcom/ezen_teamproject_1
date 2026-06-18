@@ -4,7 +4,6 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
-import videoMid2 from '../../../img/mid2.mp4';
 import imgStoryWarm from '../../../img/300.png';
 
 export default function StorySection() {
@@ -60,7 +59,7 @@ export default function StorySection() {
         style={{ position: 'sticky', top: 0, height: '100vh' }}
       >
         <div className={styles.header}>
-        <h2 className={styles.title}>
+        <h2 className={styles.title} data-make-light-text-target="true">
           <span className={styles.titleRegular}>We Make</span>
           <span className={styles.titleItalic}> Light</span>
         </h2>
@@ -73,11 +72,11 @@ export default function StorySection() {
       <div className={styles.imageGrid}>
         <div className={styles.imageCard}>
           <div className={styles.imageRevealMask}>
-            <video src={videoMid2} className={styles.imgScene} autoPlay loop muted playsInline />
+            <video src="https://res.cloudinary.com/dht6hmacp/video/upload/v1781753639/mid2_vm7bbx.mp4" className={styles.imgScene} autoPlay loop muted playsInline />
           </div>
           <div className={styles.gradientOverlay}></div>
         </div>
-        <div className={styles.imageCard} data-make-light-target="true">
+        <div className={styles.imageCard}>
           <div className={`${styles.imageRevealMask} ${styles.delay2}`}>
             <video src="https://res.cloudinary.com/ddit4bjrw/video/upload/v1781749340/Lamp_glows_on_bedsheets_202606181112_vqzy0z.mp4" className={styles.imgWarm} autoPlay loop muted playsInline />
           </div>
