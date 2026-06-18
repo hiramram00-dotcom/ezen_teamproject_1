@@ -27,6 +27,7 @@ function MenuOverlay({ open, onNavigate }) {
               to={to}
               onClick={onNavigate}
               onMouseEnter={() => setActive(i)}
+              data-cursor="pointer"
             >
               {label}
             </Link>
@@ -37,6 +38,7 @@ function MenuOverlay({ open, onNavigate }) {
               className={`${styles.preview} ${active === i ? styles.previewOn : ''}`}
               tabIndex={active === i ? 0 : -1}
               aria-hidden={active !== i}
+              data-cursor="pointer"
             >
               <div className={styles.previewInner}>
                 <img className={soft ? styles.softImg : undefined} src={img} alt={`${label} 미리보기`} />
