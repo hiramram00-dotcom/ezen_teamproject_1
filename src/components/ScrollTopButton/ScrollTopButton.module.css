@@ -1,0 +1,90 @@
+/* 서브페이지 우측 하단 고정 "맨 위로" 버튼 */
+.topButton {
+  position: fixed;
+  right: max(20px, 4vmin); /* 모바일 최소 20px / 데스크탑 ~43px 안쪽 */
+  bottom: max(20px, 4vmin);
+  z-index: 200;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%; /* 원형 */
+  background: rgba(0, 0, 0, 0.25); /* 잘 보이게 살짝 어둡게 */
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px; /* 꺾쇠 ↔ Top 사이 ~4px */
+  color: #fff;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  transition: background 0.25s ease;
+}
+.topButton:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* 꺾쇠 3개 — 위로 향하게 이어서 쌓기 */
+.chevrons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.chevron {
+  width: 18px;
+  height: auto;
+  display: block;
+  margin-top: -2px; /* 위 꺾쇠와 살짝 겹쳐 이어지게 */
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 1;
+}
+.chevron:first-child {
+  margin-top: 0;
+}
+
+/* "Top" 라벨 — 얇게(400) */
+.label {
+  font-family: var(--font-en, sans-serif);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+/* ===== 물결(투명도) 애니메이션 — hover/focus 시 아래→위로 흐르는 착시 ===== */
+.topButton:hover .chevron,
+.topButton:focus-visible .chevron {
+  animation: chevronWave 1.2s ease-in-out infinite;
+}
+/* 아래 꺾쇠부터 밝아져 위로 올라감 (위로 가는 느낌) */
+.topButton:hover .chevron:nth-child(3),
+.topButton:focus-visible .chevron:nth-child(3) {
+  animation-delay: 0s;
+}
+.topButton:hover .chevron:nth-child(2),
+.topButton:focus-visible .chevron:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.topButton:hover .chevron:nth-child(1),
+.topButton:focus-visible .chevron:nth-child(1) {
+  animation-delay: 0.3s;
+}
+
+@keyframes chevronWave {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* 동작 줄이기 */
+@media (prefers-reduced-motion: reduce) {
+  .topButton:hover .chevron,
+  .topButton:focus-visible .chevron {
+    animation: none;
+    opacity: 1;
+  }
+}

@@ -173,6 +173,12 @@ export default function SpaceMiddleSection() {
         hero.style.opacity = '0';
         dim.style.opacity = '0';
       },
+      // 아래로 빠져나갈 때(스크롤 점프 포함) 끝상태(풀스크린+딤)를 강제 →
+      // scrub가 중간값에서 멈춰 hero가 유령처럼 떠있는 현상 방지
+      onLeave: () => {
+        hero.style.opacity = '1';
+        setProgress(1);
+      },
       onUpdate: (self) => setProgress(self.progress)
     });
 

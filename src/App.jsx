@@ -7,6 +7,7 @@ import StorySection from './sections/StorySection/StorySection'
 import SpaceMiddleSection from './sections/SpaceMiddleSection/SpaceMiddleSection'
 import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection'
 import FixSnowman2Section from './sections/FixSnowman2Section/FixSnowman2Section'
+import FixStorySection from './sections/FixStorySection/FixStorySection'
 import ProductSection from './sections/ProductSection/ProductSection'
 import FlamingoDetailSection from './sections/FlamingoDetailSection/FlamingoDetailSection'
 import SpacesSection from './sections/SpacesSection/SpacesSection'
@@ -17,6 +18,7 @@ import ShowroomPage from './pages/ShowroomPage/ShowroomPage'
 import Header from './components/Header/Header'
 import LightCursor from './components/LightCursor/LightCursor'
 import ResizeAnchor from './components/ResizeAnchor/ResizeAnchor'
+import ScrollTopButton from './components/ScrollTopButton/ScrollTopButton'
 
 // 라우트 바뀔 때마다 맨 위로 (엉뚱한 스크롤 위치 방지)
 // useLayoutEffect = 페인트 전 / 다음 프레임에 한 번 더 = ScrollTrigger 등이 위치 복원하려는 것까지 눌러줌
@@ -28,6 +30,13 @@ function ScrollToTop() {
     return () => cancelAnimationFrame(id)
   }, [pathname])
   return null
+}
+
+// 서브페이지에서만 "맨 위로" 버튼 표시 (메인 '/'은 푸터 버튼이 있어 제외)
+function SubPageTopButton() {
+  const { pathname } = useLocation()
+  if (pathname === '/') return null
+  return <ScrollTopButton />
 }
 
 // 메인(인덱스) 페이지 — 헤더는 인덱스 전용 동작(index)
@@ -79,10 +88,13 @@ function App() {
         <Route path="/showroom" element={<><Header /><ShowroomPage /></>} />
         {/* ⚠️ /collabo 는 아직 전용 페이지 미정(취합 전) → 임시로 홈 콜라보 섹션 단독 렌더 */}
         <Route path="/collabo" element={<><Header /><CollaboSection /></>} />
+        {/* 작업용 미리보기 — FixStorySection 단독 확인용 (이전 섹션 포함) */}
+        <Route path="/fixstory" element={<><Header /><NewIntroSectionNew /><FixStorySection /></>} />
 
         {/* 작업용 미리보기 — FixSnowman2Section 단독 확인용, 메인 페이지에는 미연결 */}
         <Route path="/fixsnowman2" element={<><Header /><FixSnowman2Section /></>} />
       </Routes>
+      <SubPageTopButton />
     </>
   )
 }
