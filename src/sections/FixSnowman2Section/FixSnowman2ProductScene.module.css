@@ -192,12 +192,27 @@
     height: 480svh; /* Increased from 360svh proportionally for mobile */
   }
 
+  .featureTitle {
+    /* 모바일 폭에 맞춰 최소 32px ~ 최대 50px 사이로 유연하게 스케일링 (PC 화면 영향 0%) */
+    font-size: clamp(32px, 10vw, 50px);
+  }
+
   .modelWrap {
     width: min(100vw, 620px);
+    /* 모바일에서는 정중앙(50%)에 있으면 아래 텍스트 공간이 부족하므로 약간 위쪽(42%)으로 끌어올림 */
+    top: 42%;
+    /* 모바일에서는 왼쪽(-17vw)으로 비켜주지 않고 X축을 0vw로 강제 고정하여 화면 정중앙 솟아오름 구현 (PC버전 영향 0%) */
+    transform:
+      translate(-50%, -50%)
+      translate(0vw, var(--model-y))
+      translateX(var(--model-wobble-x))
+      rotate(var(--model-wobble-rotate))
+      scale(var(--model-scale));
   }
 
   .detail {
-    top: 72%;
+    /* 기존 72%에서 64%로 끌어올려 화면 하단(제품 보러가기 버튼)이 잘리는 현상 완벽 방지 */
+    top: 64%;
     left: 50%;
     width: min(82%, 420px);
     text-align: center;
