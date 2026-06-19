@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import imgKakao from './assets/collabo-kakao.webp'
 import imgKittybunnypony from './assets/collabo-kittybunnypony.webp'
 import imgHankyoreh from './assets/collabo-hankyoreh.webp'
@@ -72,16 +72,56 @@ const BASE_SPEED = 70 // px/s 자동 흐름(스크롤 가속 없음)
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
 
+// 모바일: 처음 보여줄 카드 수 (나머지는 '더보기'에 숨김)
+const MOBILE_VISIBLE = 3
+
 function CollaboSection() {
   const wrapRef = useRef(null)
   const titleRef = useRef(null)
   const viewportRef = useRef(null)
   const trackRef = useRef(null)
+  const introMobileRef = useRef(null) // 모바일 헤더 blur-in 토글용
+
+  // 모바일이면 마퀴 대신 세로 리스트로 렌더 (가로 스크롤 없음)
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches,
+  )
+  const [expanded, setExpanded] = useState(false) // '더보기'로 전체 표시 여부
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)')
+    const onChange = () => setIsMobile(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  // 모바일 헤더(타이틀+설명) blur-in — 마퀴 JS가 없으니 IO로 화면 진입 시 .isVisible 토글
+  useEffect(() => {
+    if (!isMobile) return
+    const el = introMobileRef.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.classList.add(styles.isVisible)
+      return
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add(styles.isVisible)
+          io.unobserve(el)
+        }
+      },
+      { threshold: 0.3 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [isMobile])
 
   // 제목 + 아래 한글 문장 blur-in(흐림→선명 스태거)은 아래 rAF에서 스크롤 진행도(aP)로
   // .intro에 isVisible 토글 → 섹션이 핀되어 들어오면 표시, 위로 벗어나면 초기화.
 
   useEffect(() => {
+    if (isMobile) return // 모바일은 마퀴 미사용
     const wrap = wrapRef.current
     const title = titleRef.current
     const viewport = viewportRef.current
@@ -206,7 +246,70 @@ function CollaboSection() {
       viewport.removeEventListener('pointerup', onUp)
       viewport.removeEventListener('pointercancel', onUp)
     }
-  }, [])
+  }, [isMobile])
+
+  // ----- 모바일: 세로 리스트 (가로 스크롤 없음 · 3개 + 더보기) -----
+  if (isMobile) {
+    const visible = expanded ? CARDS : CARDS.slice(0, MOBILE_VISIBLE)
+    return (
+      <section id="collabo" className={styles.collaboMobile}>
+        <div className={styles.introMobile} ref={introMobileRef}>
+          <h2 className={`${styles.title} ${styles.fxBlurIn}`}>
+            <span className="type-title-1">COLLABO</span>{' '}
+            <span className="type-italic-1">with</span>{' '}
+            <span className="type-title-1">ILKW.</span>
+          </h2>
+          <p className={`${styles.desc} ${styles.fxBlurIn} type-body-3`}>
+            다양한 브랜드와 함께 새로운 빛의 경험을 만들어갑니다.
+          </p>
+        </div>
+
+        <ul className={styles.mList}>
+          {visible.map((card) => (
+            <li key={card.brand} className={styles.mCard}>
+              <div className={styles.mImage}>
+                <img src={card.img} alt={`ILKW x ${card.brand}`} loading="lazy" />
+              </div>
+              <div className={styles.cardText}>
+                <p className={`${styles.cardTitle} type-body-semibold-2`}>
+                  ILKW <span className={styles.cardX}>x</span> {card.brand}
+                </p>
+                <p className={`${styles.cardDesc} type-body-4`}>
+                  {card.desc[0]}
+                  <br />
+                  {card.desc[1]}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        {CARDS.length > MOBILE_VISIBLE && (
+          <button
+            type="button"
+            className={styles.moreBtn}
+            onClick={() => setExpanded((v) => !v)}
+            data-cursor="pointer"
+            aria-expanded={expanded}
+          >
+            <span>{expanded ? '닫기' : '더보기'}</span>
+            <svg
+              className={styles.moreIcon}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+        )}
+      </section>
+    )
+  }
 
   // 무한 마퀴용으로 카드 세트를 2벌 렌더
   const loopCards = [...CARDS, ...CARDS]
@@ -243,7 +346,7 @@ function CollaboSection() {
                     animationDelay: FLOAT_DELAY[base],
                   }}
                 >
-                  <div className={styles.cardImage} style={{ height: `${card.imgH}px` }}>
+                  <div className={styles.cardImage} style={{ '--img-h': `${card.imgH}px` }}>
                     <img src={card.img} alt={`ILKW x ${card.brand}`} loading="lazy" draggable="false" />
                     <div className={styles.cardOverlay}>
                       <span className={styles.cardArrow} aria-hidden="true">

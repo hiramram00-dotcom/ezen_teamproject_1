@@ -37,9 +37,10 @@ function Header() {
     const apply = () => {
       raf = 0
       const y = window.scrollY
+      const isMobile = window.matchMedia('(max-width: 767px)').matches
 
       // 메뉴 열렸으면 항상 표시, 맨 위 근처도 항상 표시
-      if (menuOpen || y <= TOP_ALWAYS_SHOW) {
+      if (isMobile || menuOpen || y <= TOP_ALWAYS_SHOW) {
         h.classList.remove(styles.hidden)
       } else if (y > lastY + DELTA) {
         h.classList.add(styles.hidden) // 아래로 → 숨김

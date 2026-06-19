@@ -35,6 +35,13 @@ const introWasPlayed = () => {
 const markIntroPlayed = () => {
   try { sessionStorage.setItem(INTRO_KEY, '1') } catch { /* 스토리지 차단 무시 */ }
 }
+// 새로고침(F5/Cmd-R) 여부 — reload일 땐 같은 세션이라도 인트로를 새 탭처럼 다시 재생
+const isReload = () => {
+  try {
+    const nav = performance.getEntriesByType('navigation')[0]
+    return nav ? nav.type === 'reload' : false
+  } catch { return false }
+}
 
 function HeroSection() {
   const heroRef = useRef(null)
@@ -66,8 +73,9 @@ function HeroSection() {
       document.body.dataset.heroRevealed = 'true' // 헤더 등장 신호
     }
 
-    // 스킵(reduce-motion / 뒤로·새로고침): 인트로 없이 최종 상태(영상 + 로고)
-    if (prefersReduced() || introWasPlayed()) {
+    // 스킵(reduce-motion / 같은 세션 내 재방문): 인트로 없이 최종 상태(영상 + 로고)
+    // ※ 새로고침(F5)이면 introWasPlayed여도 스킵하지 않고 인트로를 새 탭처럼 풀 재생
+    if (prefersReduced() || (introWasPlayed() && !isReload())) {
       gsap.set(panelTop, { yPercent: -100 })
       gsap.set(panelBottom, { yPercent: 100 })
       gsap.set(filament, { autoAlpha: 0 })
@@ -75,6 +83,9 @@ function HeroSection() {
       playVideo()
       return
     }
+
+    // 새로고침 시 브라우저가 직전 스크롤 위치를 복원해 hero를 지나치지 않도록 맨 위로
+    window.scrollTo(0, 0)
 
     // 인트로 동안 스크롤 잠금
     const sbw = window.innerWidth - document.documentElement.clientWidth
@@ -159,7 +170,7 @@ function HeroSection() {
           )
 
           gsap.set(targetVideo, { opacity: targetAlpha })
-          if (logo) gsap.set(logo, { autoAlpha: 1 - clamp01(p / 0.3) }) // 초반 30%에서 로고 완전히 사라짐(영상 줄기 전) — 0.3이 속도 노브
+          if (logo) gsap.set(logo, { autoAlpha: p > 0.01 ? 0 : 1 })
           if (p <= 0) {
             resetHeroVideo()
             return
@@ -231,7 +242,7 @@ function HeroSection() {
       </div>
       {/* 검정 패널 — 갈라지며 아래로 (한글 카피 포함) */}
       <div className={styles.panelBottom} ref={panelBottomRef}>
-        <p className={styles.copyKr}>빛이 머문 자리에, 온기가 남습니다</p>
+        <p className={styles.copyKr}>우리는 세상을 이롭게 하는 빛을 만듭니다</p>
       </div>
 
       {/* 혜성 빛 — 분할선(가운데)에서 가로로 지나감 */}
