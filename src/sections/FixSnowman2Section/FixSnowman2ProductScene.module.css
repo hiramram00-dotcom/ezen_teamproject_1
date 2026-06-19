@@ -211,8 +211,8 @@
   }
 
   .detail {
-    /* 기존 72%에서 64%로 끌어올려 화면 하단(제품 보러가기 버튼)이 잘리는 현상 완벽 방지 */
-    top: 64%;
+    /* 3D 캔버스 투명 여백을 상쇄하되 발끝에 닿지 않는 황금 비율 여백 확보 (PC버전 영향 0%) */
+    top: 59%;
     left: 50%;
     width: min(82%, 420px);
     text-align: center;
@@ -225,6 +225,45 @@
     font-size: 14px;
   }
 }
+
+/* 2. 대형 태블릿 전용 구역 (901px ~ 1199px)
+   - 모바일(<900px)과 PC(>1200px)에는 100% 영향을 주지 않도록 완벽히 격리
+   - 이 구역에 진입하는 대형 기기(예: 아이패드 프로 세로모드)를 위해 위아래 배치 구조 복사 */
+@media (min-width: 901px) and (max-width: 1199px) {
+  .snowman {
+    height: 480svh;
+  }
+
+  .featureTitle {
+    font-size: clamp(32px, 8vw, 50px);
+  }
+
+  .modelWrap {
+    width: min(100vw, 620px);
+    top: 42%;
+    transform:
+      translate(-50%, -50%)
+      translate(0vw, var(--model-y))
+      translateX(var(--model-wobble-x))
+      rotate(var(--model-wobble-rotate))
+      scale(var(--model-scale));
+  }
+
+  .detail {
+    top: 59%;
+    left: 50%;
+    width: min(82%, 420px);
+    text-align: center;
+    transform: translate(-50%, var(--detail-x));
+  }
+
+  .buyLink {
+    height: 42px;
+    margin-top: 26px;
+    font-size: 14px;
+  }
+}
+
 
 @media (prefers-reduced-motion: reduce) {
   .snowman {
