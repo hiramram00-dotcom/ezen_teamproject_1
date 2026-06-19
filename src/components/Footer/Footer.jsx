@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { Fragment, useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import logoIlkw from './assets/ilkw-logo.svg'
@@ -70,7 +70,15 @@ const NAV = [
   { label: '콜라보', target: 'collabo' },
 ]
 
-function Footer({ hidePhoto = false }) {
+function Footer({
+  hidePhoto = false,
+  photo = footerTop,
+  photoPosition = 'center', // 사진 보이는 구간(object-position). 윗부분 더 보이려면 'center 15%' 등
+  headingLines = ['Ilkwang Lighting has SHAPEd light', 'with passion and craftsmanship.'],
+  contact = null, // 지정 시 네이버 링크 대신 이탤릭 안내문 표시: { lines: ['Please', 'Contact us'], href }
+  email = 'INFO@ILKWDESIGN.com',
+  emailHref = '#',
+}) {
   const footerRef = useRef(null)
   const photoRef = useRef(null)
   const photoImgRef = useRef(null)
@@ -173,24 +181,38 @@ function Footer({ hidePhoto = false }) {
       {/* 비주얼 사진 + 흰 카드 오버레이 (footer_C / 778:521) — hidePhoto면 생략 */}
       {!hidePhoto && (
         <div className={styles.photo} ref={photoRef}>
-          <img className={styles.photoImg} src={footerTop} alt="" loading="lazy" ref={photoImgRef} />
+          <img className={styles.photoImg} src={photo} alt="" loading="lazy" ref={photoImgRef} style={{ objectPosition: photoPosition }} />
           <div className={styles.card} ref={cardRef}>
             <p className={styles.cardHeading}>
-              Ilkwang Lighting has SHAPEd light
-              <br />
-              with passion and craftsmanship.
+              {headingLines.map((line, i) => (
+                <Fragment key={i}>
+                  {i > 0 && <br />}
+                  {line}
+                </Fragment>
+              ))}
             </p>
-            <a
-              className={styles.cardLink}
-              href="https://brand.naver.com/iklamp"
-              target="_blank"
-              rel="noopener noreferrer"
-              data-cursor="pointer"
-            >
-              <span>Go to Naver Brand Store </span>
-              <span className={styles.cardArrow}>→</span>
-            </a>
-            <a className={styles.cardEmail} href="#">INFO@ILKWDESIGN.com</a>
+            {contact ? (
+              <a className={styles.cardLink} href={contact.href} data-cursor="pointer">
+                {contact.lines.map((line, i) => (
+                  <Fragment key={i}>
+                    {i > 0 && <br />}
+                    {line}
+                  </Fragment>
+                ))}
+              </a>
+            ) : (
+              <a
+                className={styles.cardLink}
+                href="https://brand.naver.com/iklamp"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="pointer"
+              >
+                <span>Go to Naver Brand Store </span>
+                <span className={styles.cardArrow}>→</span>
+              </a>
+            )}
+            <a className={styles.cardEmail} href={emailHref}>{email}</a>
           </div>
         </div>
       )}

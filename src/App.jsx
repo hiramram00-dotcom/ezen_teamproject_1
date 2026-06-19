@@ -11,6 +11,9 @@ import ProductSection from './sections/ProductSection/ProductSection'
 import FlamingoDetailSection from './sections/FlamingoDetailSection/FlamingoDetailSection'
 import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
+import CollaboLandingSection from './sections/CollaboLandingSection/CollaboLandingSection'
+import CollaboGallerySection from './sections/CollaboGallerySection/CollaboGallerySection'
+import collaboFooterPhoto from './sections/CollaboGallerySection/assets/collabo-footer-photo.webp'
 import CollaboDetailSection from './sections/CollaboDetailSection/CollaboDetailSection'
 import CollaboDetailContentSection from './sections/CollaboDetailSection/CollaboDetailContentSection'
 import kbpCollabo from './sections/CollaboDetailSection/collabos/kbp'
@@ -79,8 +82,26 @@ function App() {
         <Route path="/product" element={<><Header /><ProductRoute /></>} />
         <Route path="/product/flamingo" element={<FlamingoDetailSection />} />
         <Route path="/showroom" element={<><Header /><ShowroomPage /></>} />
-        {/* ⚠️ /collabo 는 아직 전용 페이지 미정(취합 전) → 임시로 홈 콜라보 섹션 단독 렌더 */}
-        <Route path="/collabo" element={<><Header /><CollaboSection /></>} />
+        {/* 메뉴 COLLABO → 콜라보 랜딩(ILKW × 브랜드 룰렛). Figma 1565:194 */}
+        <Route path="/collabo" element={<><Header /><CollaboLandingSection /></>} />
+        {/* 콜라보 컬렉션 목록(룰렛 다음 화면). Figma 1565:270 */}
+        <Route
+          path="/collabo/list"
+          element={
+            <>
+              <Header />
+              <CollaboGallerySection />
+              <Footer
+                photo={collaboFooterPhoto}
+                photoPosition="center 15%"
+                headingLines={['IF YOU HAVE AN IDEA FOR A COLLABORATION,', "WE'D LOVE TO HEAR FROM YOU."]}
+                contact={{ lines: ['Please', 'Contact us'], href: 'mailto:info@ilkwdesign.com' }}
+                email="INFO@ILKWDESIGN.COM"
+                emailHref="mailto:info@ilkwdesign.com"
+              />
+            </>
+          }
+        />
         {/* 콜라보 상세 — 히어로 + 스크롤 시 본문 + 푸터(사진 없이). 데이터만 갈아끼움 */}
         <Route
           path="/collabo-detail"
