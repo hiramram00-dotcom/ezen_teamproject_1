@@ -99,6 +99,13 @@
   background-color: transparent;
 }
 
+.isHandoffActive .imageCard:first-child,
+.isHandoffActive .footer {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: none !important;
+}
+
 .imageRevealMask {
   position: absolute;
   top: 0;

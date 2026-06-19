@@ -21,9 +21,9 @@ const HERO_VIDEO_SRC = 'https://res.cloudinary.com/dg9hg29hc/video/upload/0616_1
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
 const lerp = (a, b, t) => a + (b - a) * t
 const smooth = (t) => t * t * (3 - 2 * t) // smoothstep
-const TEXT_REVEAL_START = 0.72
-const TEXT_REVEAL_END = 1
-const HANDOFF_TEXT_REVEAL_MAX = 0.08
+const TEXT_REVEAL_START = 0.34
+const TEXT_REVEAL_END = 0.82
+const HANDOFF_TEXT_REVEAL_MAX = 0.27
 const CREAM = [255, 247, 234] // #FFF7EA
 const BLACK = [0, 0, 0]
 const mix = (a, b, t) =>
@@ -131,7 +131,9 @@ function NewIntroSectionNew() {
       const handoffTextReveal =
         smooth(clamp01((handoffProgress - TEXT_REVEAL_START) / (TEXT_REVEAL_END - TEXT_REVEAL_START))) *
         HANDOFF_TEXT_REVEAL_MAX
-      const pinnedTextReveal = clamp01(p / TEXT_REVEAL_SCROLL_RANGE)
+      const pinnedTextReveal = clamp01(
+        HANDOFF_TEXT_REVEAL_MAX + (p / TEXT_REVEAL_SCROLL_RANGE) * (1 - HANDOFF_TEXT_REVEAL_MAX)
+      )
       const textReveal = Math.max(handoffTextReveal, pinnedTextReveal)
       const { end } = metrics
 
