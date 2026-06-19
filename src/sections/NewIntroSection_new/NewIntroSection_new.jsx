@@ -41,6 +41,7 @@ const GROW_START = 0.6 // 단어 채우기 완료 뒤 정지 구간을 두고 �
 const GROW_END = 0.7 // 램프 확장 완료
 const STORY_AT = 0.72 // 양옆/가운데 라벨 등장
 const SLIDE_TRIGGERS = [0.84, 0.93] // 각 임계값을 넘을 때마다 다음 슬라이드로 자동 교체
+const END_SCROLL_HOLD = 1 // 마지막 4분할 이미지가 한 화면 더 머무는 구간
 
 function SlicedImage({ src, alt }) {
   return (
@@ -125,12 +126,36 @@ function NewIntroSectionNew() {
         sw >= 1200
           ? { left: sw * 0.1854, top: sh * 0.1491, width: sw * 0.6286, height: sh * 0.6676 }
           : sw >= 768
-            ? { left: sw * 0.08, top: sh * 0.22, width: sw * 0.84, height: sh * 0.56 }
-            : { left: sw * 0.06, top: sh * 0.29, width: sw * 0.88, height: sh * 0.42 }
+            ? { left: 0, top: 0, width: sw, height: sh }
+            : { left: 0, top: 0, width: sw, height: sh }
       metrics = {
         start: { left: w.left - s.left, top: w.top - s.top, width: w.width, height: w.height },
         end,
       }
+    }
+
+    const syncLabelsToFrame = (rect) => {
+      const left = rect.left
+      const width = rect.width
+      const centerY = rect.top + rect.height / 2
+
+      sideLabels.style.setProperty('--labels-top', `${centerY}px`)
+      centers.forEach((el) => el.style.setProperty('--labels-top', `${centerY}px`))
+
+      const stageWidth = stage.offsetWidth
+      const positions =
+        stageWidth >= 1200
+          ? [0.0445, 0.284, 0.714, 0.955]
+          : stageWidth >= 768
+            ? [0.125, 0.375, 0.625, 0.875]
+            : [0.125, 0.375, 0.625, 0.875]
+
+      sideLabels.style.setProperty('--lbl1-left', `${left + width * positions[0]}px`)
+      centers.forEach((el) => {
+        el.style.setProperty('--lbl2-left', `${left + width * positions[1]}px`)
+        el.style.setProperty('--lbl3-left', `${left + width * positions[2]}px`)
+      })
+      sideLabels.style.setProperty('--lbl4-left', `${left + width * positions[3]}px`)
     }
 
     const apply = () => {
@@ -138,7 +163,8 @@ function NewIntroSectionNew() {
       if (!metrics) return
       const rectTop = section.getBoundingClientRect().top
       const dist = section.offsetHeight - stage.offsetHeight
-      const p = clamp01(-rectTop / dist)
+      const animationDist = Math.max(1, dist - window.innerHeight * END_SCROLL_HOLD)
+      const p = clamp01(-rectTop / animationDist)
       const handoffProgress = clamp01((window.innerHeight - rectTop) / window.innerHeight)
       const handoffTextReveal =
         smooth(clamp01((handoffProgress - TEXT_REVEAL_START) / (TEXT_REVEAL_END - TEXT_REVEAL_START))) *
@@ -148,6 +174,7 @@ function NewIntroSectionNew() {
       )
       const textReveal = Math.max(handoffTextReveal, pinnedTextReveal)
       const { end } = metrics
+      syncLabelsToFrame(end)
 
       quote.style.position = 'absolute'
       quote.style.top = '50%'

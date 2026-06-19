@@ -59,8 +59,8 @@
   .textBlock1,
   .textBlock2 {
     padding: 0 24px;
-    font-size: 20px;
+    font-size: 17px;
     line-height: 1.5;
-    letter-spacing: -0.6px;
+    letter-spacing: -0.5px;
   }
 }
