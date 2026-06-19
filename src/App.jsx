@@ -7,6 +7,7 @@ import StorySection from './sections/StorySection/StorySection'
 import SpaceMiddleSection from './sections/SpaceMiddleSection/SpaceMiddleSection'
 import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection'
 import FixSnowman2Section from './sections/FixSnowman2Section/FixSnowman2Section'
+import FixStorySection from './sections/FixStorySection/FixStorySection'
 import ProductSection from './sections/ProductSection/ProductSection'
 import FlamingoDetailSection from './sections/FlamingoDetailSection/FlamingoDetailSection'
 import SpacesSection from './sections/SpacesSection/SpacesSection'
@@ -16,6 +17,7 @@ import AboutPage from './pages/AboutPage/AboutPage'
 import ShowroomPage from './pages/ShowroomPage/ShowroomPage'
 import Header from './components/Header/Header'
 import LightCursor from './components/LightCursor/LightCursor'
+import ResizeAnchor from './components/ResizeAnchor/ResizeAnchor'
 import ScrollTopButton from './components/ScrollTopButton/ScrollTopButton'
 
 // 라우트 바뀔 때마다 맨 위로 (엉뚱한 스크롤 위치 방지)
@@ -53,6 +55,8 @@ function Home() {
       {/* 고정된 Dining(ON) 위로 Collabo가 슬라이드업 (한 번만 렌더).
           모바일은 .home-collabo-wrap에서 margin-top:0 (세로 리스트 겹침 방지) */}
       <div className="home-collabo-wrap">
+      {/* 고정된 Dining(ON) 위로 Collabo가 슬라이드업 (한 번만 렌더) */}
+      <div className="collaboOverlap">
         <CollaboSection />
       </div>
       <Footer />
@@ -77,6 +81,7 @@ function App() {
     <>
       <LightCursor />
       <ScrollToTop />
+      <ResizeAnchor />
       <Routes>
         <Route path="/" element={<Home />} />
         {/* 서브페이지는 전역 헤더 상시표시(index 없음). About은 자체 헤더 없어 바로 적용 */}
@@ -86,6 +91,8 @@ function App() {
         <Route path="/showroom" element={<><Header /><ShowroomPage /></>} />
         {/* ⚠️ /collabo 는 아직 전용 페이지 미정(취합 전) → 임시로 홈 콜라보 섹션 단독 렌더 */}
         <Route path="/collabo" element={<><Header /><CollaboSection /></>} />
+        {/* 작업용 미리보기 — FixStorySection 단독 확인용 (이전 섹션 포함) */}
+        <Route path="/fixstory" element={<><Header /><NewIntroSectionNew /><FixStorySection /></>} />
 
         {/* 작업용 미리보기 — FixSnowman2Section 단독 확인용, 메인 페이지에는 미연결 */}
         <Route path="/fixsnowman2" element={<><Header /><FixSnowman2Section /></>} />

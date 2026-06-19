@@ -107,20 +107,20 @@
   height: 24px; /* 머리(원점) 세로 두께 */
   transform: translate(-100%, -50%);
   z-index: 4; /* 패널 위 — 서브카피 비추며 지나감 */
-  /* 꼬리=주황 → 머리=밝은 피크 → 맨 오른쪽 다시 투명(머리 하드엣지 녹임) */
+  /* 커서 스타일의 부드러운 다단계 — 꼬리(투명 앰버) → 머리(밝은 흰빛)로 완만하게 */
   background: linear-gradient(
     90deg,
-    rgba(244, 147, 7, 0) 0%,
-    rgba(244, 147, 7, 0.3) 30%,
-    rgba(255, 200, 110, 0.6) 64%,
-    rgba(255, 240, 200, 0.95) 84%,
-    rgba(255, 248, 232, 0.45) 95%,
-    rgba(255, 248, 232, 0) 100%
+    rgba(255, 188, 104, 0) 0%,
+    rgba(255, 188, 104, 0.08) 22%,
+    rgba(255, 225, 154, 0.26) 48%,
+    rgba(255, 248, 224, 0.58) 74%,
+    rgba(255, 255, 255, 0.82) 94%,
+    rgba(255, 255, 255, 0) 100%
   );
   clip-path: polygon(100% 0, 100% 100%, 0% 50%);
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 42%, #000 58%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0%, #000 42%, #000 58%, transparent 100%);
-  filter: blur(1.8px) drop-shadow(0 0 12px rgba(244, 147, 7, 0.55));
+  filter: blur(2.2px) drop-shadow(0 0 14px rgba(255, 210, 122, 0.4)); /* 글로우도 커서처럼 따뜻하게 */
   opacity: 0;
   pointer-events: none;
 }
