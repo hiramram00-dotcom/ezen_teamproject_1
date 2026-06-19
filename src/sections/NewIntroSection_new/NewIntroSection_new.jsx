@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import styles from './NewIntroSection_new.module.css'
 
 import ilkwLogoBlack from '../../assets/common/logo/ilkw-black.svg'
@@ -6,7 +6,10 @@ import lamp from './assets/lamp.webp'
 import story2 from './assets/story-2.webp'
 import story3 from './assets/story-3.webp'
 
-const HERO_VIDEO_SRC = 'https://res.cloudinary.com/ddit4bjrw/video/upload/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.mp4'
+const VIDEO_MOBILE_Q = '(max-width: 767px)'
+const VIDEO_WIDE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/hero-video2_ojabtt.mp4'
+const VIDEO_MOBILE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.mp4'
+const pickVideoSrc = () => typeof window !== 'undefined' && window.matchMedia(VIDEO_MOBILE_Q).matches ? VIDEO_MOBILE : VIDEO_WIDE
 
 /**
  * NewIntroSection — 브랜드 철학 인용 → 브랜드 스토리텔링 (핀 고정)
@@ -57,6 +60,15 @@ function SlicedImage({ src, alt }) {
 }
 
 function NewIntroSectionNew() {
+  const [videoSrc, setVideoSrc] = useState(pickVideoSrc)
+
+  useEffect(() => {
+    const mq = window.matchMedia(VIDEO_MOBILE_Q)
+    const onChange = () => setVideoSrc(pickVideoSrc())
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
   const sectionRef = useRef(null)
   const stageRef = useRef(null)
   const bgRef = useRef(null)
@@ -265,7 +277,7 @@ function NewIntroSectionNew() {
             <video
               data-intro-hero-video
               className={`${styles.word} ${styles.w1} ${styles.introHeroVideo}`}
-              src={HERO_VIDEO_SRC}
+              src={videoSrc}
               muted
               loop
               autoPlay
