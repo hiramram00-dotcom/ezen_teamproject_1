@@ -17,6 +17,7 @@ import AboutPage from './pages/AboutPage/AboutPage'
 import ShowroomPage from './pages/ShowroomPage/ShowroomPage'
 import Header from './components/Header/Header'
 import LightCursor from './components/LightCursor/LightCursor'
+import ResizeAnchor from './components/ResizeAnchor/ResizeAnchor'
 import ScrollTopButton from './components/ScrollTopButton/ScrollTopButton'
 
 // 라우트 바뀔 때마다 맨 위로 (엉뚱한 스크롤 위치 방지)
@@ -52,7 +53,7 @@ function Home() {
       <FixSnowman2Section />
       <SpacesSection />
       {/* 고정된 Dining(ON) 위로 Collabo가 슬라이드업 (한 번만 렌더) */}
-      <div style={{ position: 'relative', zIndex: 2, marginTop: '-100vh' }}>
+      <div className="collaboOverlap">
         <CollaboSection />
       </div>
       <Footer />
@@ -77,6 +78,7 @@ function App() {
     <>
       <LightCursor />
       <ScrollToTop />
+      <ResizeAnchor />
       <Routes>
         <Route path="/" element={<Home />} />
         {/* 서브페이지는 전역 헤더 상시표시(index 없음). About은 자체 헤더 없어 바로 적용 */}

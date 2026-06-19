@@ -16,12 +16,12 @@ const rooms = [
     alt: '빈티지 텔레비전과 의자가 놓인 거실',
     caption: (
       <>
-        머무르고, 쉬고, 대화를 나누는 거실.
-        <br />
-        일광전구는 공간의 크기와 생활 방식을 살펴
-        <br />
-        머무는 시간이 더욱 편안해지도록
-        <br />
+        머무르고, 쉬고, 대화를 나누는 거실.{' '}
+        <br className={styles.brDesktop} />
+        일광전구는 공간의 크기와 생활 방식을 살펴{' '}
+        <br className={styles.brDesktop} />
+        머무는 시간이 더욱 편안해지도록{' '}
+        <br className={styles.brDesktop} />
         거실의 빛과 분위기를 완성합니다.
       </>
     ),
@@ -33,12 +33,12 @@ const rooms = [
     alt: '은은한 빛이 드는 침실의 침대',
     caption: (
       <>
-        하루의 끝에는 밝음보다 편안함이 필요합니다.
-        <br />
-        눈에 부담을 덜어주는 은은한 빛과
-        <br />
-        차분하게 가라앉는 따뜻한 온기로,
-        <br />
+        하루의 끝에는 밝음보다 편안함이 필요합니다.{' '}
+        <br className={styles.brDesktop} />
+        눈에 부담을 덜어주는 은은한 빛과{' '}
+        <br className={styles.brDesktop} />
+        차분하게 가라앉는 따뜻한 온기로,{' '}
+        <br className={styles.brDesktop} />
         침실을 깊은 휴식의 공간으로 바꿉니다.
       </>
     ),
@@ -50,12 +50,12 @@ const rooms = [
     alt: '촛불이 켜진 다이닝 테이블',
     caption: (
       <>
-        한 끼의 식사와 자연스러운 대화가 이어지는 곳.
-        <br />
-        식탁 위에 고르게 머무는 따뜻한 빛이
-        <br />
-        음식과 사람의 표정을 선명하게 비추고,
-        <br />
+        한 끼의 식사와 자연스러운 대화가 이어지는 곳.{' '}
+        <br className={styles.brDesktop} />
+        식탁 위에 고르게 머무는 따뜻한 빛이{' '}
+        <br className={styles.brDesktop} />
+        음식과 사람의 표정을 선명하게 비추고,{' '}
+        <br className={styles.brDesktop} />
         함께하는 시간을 더욱 풍성하게 만듭니다.
       </>
     ),
@@ -121,12 +121,31 @@ function SpacesSection() {
   const rangeRef = useRef(null)
   const cardRef = useRef(null)
   const trackRef = useRef(null)
+  const photoRefs = useRef([])
   const photoOnRefs = useRef([])
   const lineRefs = useRef([])
   const bulbRefs = useRef([])
+  const handleRefs = useRef([])
+  const panelTextRefs = useRef([])
   const frameRef = useRef(null)
   const introRef = useRef(null)
   const [introVisible, setIntroVisible] = useState(false)
+  // 각 룸 텍스트(타이틀+캡션)의 진입 reveal 여부 (리렌더에도 유지되도록 상태로 관리)
+  const [revealed, setRevealed] = useState(() => rooms.map(() => false))
+  // 태블릿·모바일(≤1199px) = 세로 스택 모드. 가로 패닝용 "숨김" 초기 인라인 스타일을
+  // 적용하지 않기 위한 플래그(리렌더 시 카드가 opacity:0으로 되돌아가 이미지가 사라지는 것 방지).
+  const [isStacked, setIsStacked] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia('(max-width: 1199px)').matches,
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1199px)')
+    const onChange = (e) => setIsStacked(e.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
 
   useEffect(() => {
     const intro = introRef.current
@@ -143,9 +162,123 @@ function SpacesSection() {
     return () => observer.disconnect()
   }, [])
 
+  // 세로 스택(≤1199px) 전용: 각 룸 타이틀+캡션이 화면에 들어오면 fade-up 1회 reveal.
+  // (데스크톱은 CSS에서 숨김 상태가 없어 항상 보임 → 기존 패닝 연출과 충돌 없음)
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const i = panelTextRefs.current.indexOf(entry.target)
+          if (i === -1) return
+          // 진입하면 reveal, 화면을 벗어나면 reset → 다시 들어올 때 재생
+          setRevealed((prev) => {
+            if (prev[i] === entry.isIntersecting) return prev
+            const next = [...prev]
+            next[i] = entry.isIntersecting
+            return next
+          })
+        })
+      },
+      { threshold: 0.2, rootMargin: '0px 0px -12% 0px' },
+    )
+    panelTextRefs.current.forEach((el) => el && observer.observe(el))
+    return () => observer.disconnect()
+  }, [])
+
+  // 태블릿·모바일 전용: 이미지별 드래그 비교 슬라이더 (off 흑백 ↔ on 컬러)
+  useEffect(() => {
+    const mobileMq = window.matchMedia('(max-width: 1199px)')
+    const cleanups = []
+
+    const applySlider = (i, p) => {
+      const img = photoOnRefs.current[i]
+      const line = lineRefs.current[i]
+      const handle = handleRefs.current[i]
+      if (img) img.style.clipPath = `inset(0 ${(1 - p) * 100}% 0 0)`
+      if (line) {
+        line.style.left = `${p * 100}%`
+        line.style.opacity = '1'
+      }
+      if (handle) handle.style.left = `${p * 100}%`
+    }
+
+    const teardown = () => {
+      while (cleanups.length) cleanups.pop()()
+    }
+
+    const setup = () => {
+      teardown()
+      if (!mobileMq.matches) return
+
+      photoRefs.current.forEach((photo, i) => {
+        if (!photo) return
+        applySlider(i, 0.5) // 초기: 절반씩 보여 비교 가능함을 암시
+
+        let dragging = false
+        const update = (clientX) => {
+          const rect = photo.getBoundingClientRect()
+          if (!rect.width) return
+          applySlider(i, clamp((clientX - rect.left) / rect.width))
+        }
+        const onDown = (e) => {
+          dragging = true
+          e.currentTarget.setPointerCapture?.(e.pointerId)
+          update(e.clientX)
+        }
+        const onMove = (e) => {
+          if (dragging) update(e.clientX)
+        }
+        const onUp = (e) => {
+          dragging = false
+          e.currentTarget.releasePointerCapture?.(e.pointerId)
+        }
+
+        const handle = handleRefs.current[i]
+        if (!handle) return
+        handle.addEventListener('pointerdown', onDown)
+        handle.addEventListener('pointermove', onMove)
+        handle.addEventListener('pointerup', onUp)
+        handle.addEventListener('pointercancel', onUp)
+        cleanups.push(() => {
+          handle.removeEventListener('pointerdown', onDown)
+          handle.removeEventListener('pointermove', onMove)
+          handle.removeEventListener('pointerup', onUp)
+          handle.removeEventListener('pointercancel', onUp)
+        })
+      })
+    }
+
+    setup()
+    mobileMq.addEventListener('change', setup)
+    return () => {
+      mobileMq.removeEventListener('change', setup)
+      teardown()
+    }
+  }, [])
+
+  useEffect(() => {
+    // 태블릿·모바일(≤1199px)에선 가로 패닝 대신 세로 스택 → 카드/트랙 변형만 비운다.
+    // off↔on은 아래 별도 useEffect의 드래그 비교 슬라이더가 제어한다.
+    const mobileMq = window.matchMedia('(max-width: 1199px)')
+
+    const renderMobile = () => {
+      const card = cardRef.current
+      const track = trackRef.current
+      if (card) {
+        card.style.transform = ''
+        card.style.borderRadius = ''
+        card.style.opacity = ''
+        card.style.width = ''
+      }
+      if (track) track.style.transform = ''
+    }
+
     const render = () => {
       frameRef.current = null
+      if (mobileMq.matches) {
+        renderMobile()
+        return
+      }
       const range = rangeRef.current
       const card = cardRef.current
       const track = trackRef.current
@@ -242,10 +375,12 @@ function SpacesSection() {
     render()
     window.addEventListener('scroll', requestRender, { passive: true })
     window.addEventListener('resize', requestRender)
+    mobileMq.addEventListener('change', requestRender)
 
     return () => {
       window.removeEventListener('scroll', requestRender)
       window.removeEventListener('resize', requestRender)
+      mobileMq.removeEventListener('change', requestRender)
       if (frameRef.current !== null) {
         window.cancelAnimationFrame(frameRef.current)
       }
@@ -260,7 +395,11 @@ function SpacesSection() {
             className={`${styles.introCopy} ${introVisible ? styles.introVisible : ''}`}
             ref={introRef}
           >
-            <p className={styles.introLabel}>SPACE, DEFINED BY ILKW.</p>
+            <p className={styles.introLabel}>
+              SPACE,{' '}
+              <br className={styles.introLabelBr} />
+              <span className={styles.introLabelDeco}>defined by</span> ILKW.
+            </p>
             <h2 className={styles.introHeadline}>
               Every space has its own purpose,
               <br />
@@ -276,17 +415,28 @@ function SpacesSection() {
           <div
             className={styles.card}
             ref={cardRef}
-            style={{
-              transform: 'scale(0.05)',
-              borderRadius: '28px',
-              opacity: 0,
-              width: '50vw',
-            }}
+            style={
+              isStacked
+                ? undefined
+                : {
+                    transform: 'scale(0.05)',
+                    borderRadius: '28px',
+                    opacity: 0,
+                    width: '50vw',
+                  }
+            }
           >
             <div className={styles.track} ref={trackRef}>
               {rooms.map((room, index) => (
                 <article className={styles.panel} key={room.title}>
-                  <div className={styles.panelText}>
+                  <div
+                    className={`${styles.panelText} ${
+                      revealed[index] ? styles.textRevealed : ''
+                    }`}
+                    ref={(node) => {
+                      panelTextRefs.current[index] = node
+                    }}
+                  >
                     <p className={styles.caption}>{room.caption}</p>
                     <span className={styles.bulb} aria-hidden="true">
                       <svg className={styles.bulbBase} viewBox="0 0 40 54">
@@ -304,14 +454,23 @@ function SpacesSection() {
                     </span>
                     <h3 className={styles.roomTitle}>{room.title}</h3>
                   </div>
-                  <div className={styles.panelPhoto}>
+                  <div
+                    className={styles.panelPhoto}
+                    ref={(node) => {
+                      photoRefs.current[index] = node
+                    }}
+                  >
                     <img className={styles.photoOff} src={room.image} alt={room.alt} />
                     <img
                       className={styles.photoOn}
                       src={room.imageOn}
                       alt=""
                       aria-hidden="true"
-                      style={{ clipPath: 'inset(0 100% 0 0)' }}
+                      style={{
+                        clipPath: isStacked
+                          ? 'inset(0 50% 0 0)'
+                          : 'inset(0 100% 0 0)',
+                      }}
                       ref={(node) => {
                         photoOnRefs.current[index] = node
                       }}
@@ -319,11 +478,30 @@ function SpacesSection() {
                     <span
                       className={styles.sweepLine}
                       aria-hidden="true"
-                      style={{ left: '0%', opacity: 0 }}
+                      style={
+                        isStacked
+                          ? { left: '50%', opacity: 1 }
+                          : { left: '0%', opacity: 0 }
+                      }
                       ref={(node) => {
                         lineRefs.current[index] = node
                       }}
                     />
+                    {/* 모바일 전용: 드래그 비교 슬라이더 핸들 (off↔on) */}
+                    <button
+                      type="button"
+                      className={styles.compareHandle}
+                      aria-label="조명 비교 슬라이더 드래그"
+                      ref={(node) => {
+                        handleRefs.current[index] = node
+                      }}
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <line x1="6.5" y1="12" x2="17.5" y2="12" />
+                        <polyline points="9 9 6 12 9 15" />
+                        <polyline points="15 9 18 12 15 15" />
+                      </svg>
+                    </button>
                   </div>
                 </article>
               ))}
