@@ -1,5 +1,5 @@
 /* =========================================================
-   MakeLightSection — Figma node 1106:489 (1920×1080)
+   FixStorySection — Figma node 1106:489 (1920×1080)
    검은 배경에서 아래의 원이 커지며 사진 등장 → 카피 시차 등장
    ========================================================= */
 
@@ -9,7 +9,7 @@
   position: relative;
   z-index: 10;
   width: 100%;
-  height: 460vh;
+  height: 600vh; /* 애플 감성의 우아한 속도를 위해 스크롤 구간을 460vh에서 600vh로 연장 */
   background: #000;
   margin-bottom: 0;
 }
@@ -35,32 +35,15 @@
 }
 
 /* 가장자리가 부드러운 안개 걷힘 마스크 효과 (단색 덮개에 적용하여 성능 최적화) */
-  will-change: transform;
-}
-
-/* 부드러운 타원형 마스크 오버레이. --reveal이 커지며 이미지가 그라데이션으로 열린다. */
 .dim {
-  --reveal: 0%;
-  --feather: 9%;
   position: absolute;
-  inset: -10%;
+  inset: 0;
   z-index: 2;
   background: #000;
   /* GSAP에서 이 CSS 변수를 0%에서 150%로 증가시켜 구멍을 넓힙니다. */
   --mask-radius: 0%;
   -webkit-mask-image: radial-gradient(circle at 0% 100%, transparent var(--mask-radius), black calc(var(--mask-radius) + 20%));
   mask-image: radial-gradient(circle at 0% 100%, transparent var(--mask-radius), black calc(var(--mask-radius) + 20%));
-  opacity: 1;
-  background:
-    radial-gradient(
-      ellipse 170% 100% at 50% 50%,
-      rgba(0, 0, 0, 0) max(0%, calc(var(--reveal) - var(--feather))),
-      rgba(0, 0, 0, 0.34) var(--reveal),
-      #000 calc(var(--reveal) + var(--feather))
-    );
-  filter: blur(14px);
-  transform: scale(1.03);
-  will-change: opacity, background;
 }
 
 /* 하단으로 갈수록 검정 (위 절반 투명) */
@@ -83,7 +66,7 @@
   will-change: transform, opacity;
   font-family: var(--font-en);
   font-weight: 400;
-  font-size: clamp(72px, 6.25vw, 120px); /* 120px @1920 */
+  font-size: 6.25vw; /* 120px @1920 */
   line-height: 1;
   letter-spacing: -0.02em;
   color: #fff;
@@ -117,52 +100,20 @@
   will-change: transform, opacity;
   font-family: var(--font-kr);
   font-weight: 400;
-  font-size: clamp(18px, 1.25vw, 24px); /* 24px @1920 */
+  font-size: 1.25vw; /* 24px @1920 */
   line-height: 1.4;
   letter-spacing: -0.02em;
   color: #fff;
 }
 
-@media (min-width: 768px) and (max-width: 1199px) {
-  .headline {
-    left: 5.5%;
-    top: 65%;
-    width: 89%;
-    font-size: clamp(54px, 7.5vw, 82px);
-    white-space: nowrap;
-  }
-
-  .desc {
-    left: 5.5%;
-    top: 79%;
-    width: 74%;
-    font-size: clamp(16px, 2vw, 20px);
-  }
-
-  .dim {
-    --feather: 11%;
-  }
-}
-
 @media (max-width: 767px) {
   .headline {
-    left: 5%;
-    top: 60%;
-    width: 90%;
-    font-size: clamp(38px, 11vw, 52px);
-    line-height: 1.08;
+    font-size: 40px;
     white-space: normal;
-  }
-
-  .desc {
-    left: 5%;
-    top: 77%;
     width: 90%;
-    font-size: clamp(13px, 3.7vw, 15px);
-    line-height: 1.55;
   }
-
-  .dim {
-    --feather: 13%;
+  .desc {
+    font-size: 14px;
+    width: 90%;
   }
 }
