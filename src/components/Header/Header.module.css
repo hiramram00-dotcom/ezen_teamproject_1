@@ -146,6 +146,10 @@
 
 /* ===== 반응형 — 모바일 (≤767px) ===== */
 @media (max-width: 767px) {
+  .header.hidden {
+    transform: translateY(0);
+  }
+
   /* 좌우여백은 --layout-gutter 토큰이 자동(16px) */
   .logo {
     height: 16px;
