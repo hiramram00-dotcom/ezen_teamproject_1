@@ -3,10 +3,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './HeroSection.module.css'
 
-import iLetter from '../../assets/common/logo/ilkw-i.svg'
-import lLetter from '../../assets/common/logo/ilkw-l.svg'
-import kLetter from '../../assets/common/logo/ilkw-k.svg'
-import wLetter from '../../assets/common/logo/ilkw-w.svg'
+import ilkwLogo from '../../assets/common/logo/ilkw.svg' // 합쳐진 완성형(커닝 정확)
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -162,7 +159,7 @@ function HeroSection() {
           )
 
           gsap.set(targetVideo, { opacity: targetAlpha })
-          if (logo) gsap.set(logo, { autoAlpha: 1 - p })
+          if (logo) gsap.set(logo, { autoAlpha: 1 - clamp01(p / 0.3) }) // 초반 30%에서 로고 완전히 사라짐(영상 줄기 전) — 0.3이 속도 노브
           if (p <= 0) {
             resetHeroVideo()
             return
@@ -242,10 +239,7 @@ function HeroSection() {
 
       {/* 메인 로고 — 2배 크기, 등장 후 유지 */}
       <div className={styles.logo} ref={logoRef} aria-label="ILKW">
-        <img className={styles.letter} src={iLetter} alt="" aria-hidden="true" />
-        <img className={styles.letter} src={lLetter} alt="" aria-hidden="true" />
-        <img className={styles.letter} src={kLetter} alt="" aria-hidden="true" />
-        <img className={styles.letter} src={wLetter} alt="" aria-hidden="true" />
+        <img className={styles.letter} src={ilkwLogo} alt="" aria-hidden="true" />
       </div>
     </section>
   )
