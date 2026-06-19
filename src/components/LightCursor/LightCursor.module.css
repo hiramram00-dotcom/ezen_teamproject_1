@@ -11,6 +11,10 @@
   opacity: 1;
 }
 
+.isPointer {
+  opacity: 0;
+}
+
 .lightCore {
   position: fixed;
   top: 0;

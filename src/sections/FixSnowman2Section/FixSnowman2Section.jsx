@@ -1,5 +1,6 @@
 import FixSnowman2Intro from './FixSnowman2Intro'
 import FixSnowman2ProductScene from './FixSnowman2ProductScene'
+import FixSnowman2Video from './FixSnowman2Video'
 
 /**
  * FixSnowman2Section
@@ -13,6 +14,7 @@ function FixSnowman2Section() {
     <>
       <FixSnowman2Intro />
       <FixSnowman2ProductScene />
+      <FixSnowman2Video />
     </>
   )
 }

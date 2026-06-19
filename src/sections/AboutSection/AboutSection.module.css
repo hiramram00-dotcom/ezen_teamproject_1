@@ -84,101 +84,6 @@
   letter-spacing: -0.02em;
 }
 
-.glowDot {
-  position: relative;
-  display: block;
-  width: 5.4vw;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 250, 231, 0.88) 0%,
-    rgba(247, 235, 215, 0.52) 16%,
-    rgba(247, 235, 215, 0.2) 38%,
-    rgba(247, 235, 215, 0.06) 58%,
-    rgba(247, 235, 215, 0) 78%
-  );
-  filter: blur(0.32vw);
-}
-
-.glowDot::before,
-.glowDot::after {
-  position: absolute;
-  inset: 50%;
-  content: '';
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.glowDot::before {
-  width: 27%;
-  aspect-ratio: 1;
-  background: rgba(255, 252, 238, 0.72);
-  filter: blur(0.4vw);
-}
-
-.glowDot::after {
-  width: 145%;
-  aspect-ratio: 1;
-  background: radial-gradient(circle, rgba(247, 235, 215, 0.08), transparent 68%);
-  filter: blur(0.9vw);
-}
-
-.legacyTravelLight {
-  position: absolute;
-  z-index: 4;
-  top: 29vw;
-  left: 50%;
-  width: 7vw;
-  aspect-ratio: 1;
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-}
-
-.legacyTravelLight .glowDot {
-  width: 100%;
-}
-
-.legacyLightMoving {
-  will-change: opacity, transform;
-}
-
-.legacyLightMoving .glowDot {
-  animation: none;
-}
-
-.legacyLightArrived {
-  opacity: 0 !important;
-}
-
-.arrivalFlash,
-.storyArrivalFlash {
-  position: absolute;
-  z-index: 0;
-  top: -4vw;
-  left: 50%;
-  width: 8vw;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  opacity: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    circle,
-    rgba(255, 250, 231, 0.82) 0%,
-    rgba(247, 235, 215, 0.28) 24%,
-    rgba(247, 235, 215, 0.08) 48%,
-    transparent 72%
-  );
-  filter: blur(0.55vw);
-  transform: translate(-50%, -50%) scale(0.25);
-}
-
-.arrivalFlash {
-  top: 4.2vw;
-  left: 88%;
-}
-
 .legacy {
   position: absolute;
   top: 68vw;
@@ -191,23 +96,41 @@
   transform: translateX(-50%);
 }
 
-.legacyCopy,
-.legacyGallery {
+.legacyHolding {
+  position: fixed;
+  z-index: 3;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.legacyCopy {
   opacity: 0;
+  filter: blur(0.5vw);
   transform: translateY(2.4vw);
 }
 
 .legacyRevealed .legacyCopy {
-  animation: legacyReveal 1.1s ease-out forwards;
+  animation: storyCopyReveal 1.25s ease-out forwards;
 }
 
-.legacyRevealed .legacyGallery {
-  animation: legacyReveal 1.2s 380ms ease-out forwards;
+.legacyCopy h2,
+.legacyCopy p {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 1) 48%,
+    rgba(255, 255, 255, 0.18) 52%,
+    rgba(255, 255, 255, 0.18) 100%
+  );
+  background-position: 100% 0;
+  background-size: 220% 100%;
+  background-clip: text;
+  color: transparent;
 }
 
-.legacyRevealed .arrivalFlash,
-.storyRevealed .storyArrivalFlash {
-  animation: arrivalGlow 1.35s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+.legacyRevealed .legacyCopy h2,
+.legacyRevealed .legacyCopy p {
+  animation: storyTextFill 2.6s 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .legacyCopy {
@@ -240,7 +163,8 @@
   height: 27.6vw;
   object-fit: cover;
   clip-path: inset(0 0 100% 0);
-  transform: scale(1.14);
+  filter: brightness(0.5) saturate(0.55);
+  transform: scale(1.18);
   transform-origin: center;
 }
 
@@ -249,40 +173,11 @@
 }
 
 .legacyRevealed .legacyGallery img {
-  animation: imageTurnOn 1.6s 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: storyImageTurnOn 2s 850ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .legacyRevealed .legacyGallery img:last-child {
-  animation-delay: 900ms;
-}
-
-.legacyRevealed .legacyGallery img:first-child {
-  animation: imageTurnOn 1.6s 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.legacyRevealed .legacyGallery img:last-child {
-  animation: imageTurnOn 1.6s 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.storyTravelLight {
-  position: absolute;
-  z-index: 4;
-  top: 74vw;
-  left: 50%;
-  width: 7vw;
-  aspect-ratio: 1;
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  will-change: opacity, transform;
-}
-
-.storyTravelLight .glowDot {
-  width: 100%;
-}
-
-.storyLightArrived {
-  opacity: 0 !important;
+  animation-delay: 1.15s;
 }
 
 .story {
@@ -291,12 +186,12 @@
   top: 155vw;
   left: 0;
   width: 100%;
-  height: 56.25vw;
+  height: max(56.25vw, 100svh);
   overflow: hidden;
   background: var(--color-base-3);
   color: rgba(255, 255, 255, 0.3);
   font-family: var(--font-en);
-  font-size: 3.35vw;
+  font-size: clamp(2.8rem, 4.25vw, 5.1rem);
   font-weight: 500;
   line-height: 1.3;
   letter-spacing: -0.03em;
@@ -311,24 +206,19 @@
   top: 211vw;
 }
 
-.storyArrivalFlash {
-  top: 2vw;
-  left: 50%;
-}
-
 .storyLead {
   position: absolute;
-  top: 5vw;
-  left: 3vw;
-  width: 56vw;
+  top: 5vh;
+  left: 1.8vw;
+  width: 58vw;
 }
 
 .storyImage {
   position: absolute;
-  top: 18.9vw;
-  left: 10.8vw;
-  width: 38.8vw;
-  height: 24.9vw;
+  top: 31vh;
+  left: 17vw;
+  width: 41vw;
+  height: 44vh;
   object-fit: cover;
   clip-path: inset(0 0 100% 0);
   filter: brightness(0.28) saturate(0.3);
@@ -370,38 +260,29 @@
 
 .storyRevealed .storyClosing {
   animation:
-    storyCopyReveal 1.35s 1.8s ease-out forwards,
-    storyTextFill 2.6s 2.05s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    storyCopyReveal 1.35s 450ms ease-out forwards,
+    storyTextFill 2.6s 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .storyClosing {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  text-align: left;
-}
-
-.storyClosingLine {
-  position: absolute;
-  display: block;
+  width: max-content;
+  height: auto;
   white-space: nowrap;
 }
 
-.storyClosingLine:nth-child(1) {
-  top: 35.1vw;
-  left: 54vw;
+.storyClosingYears {
+  top: 68vh;
+  left: 59vw;
 }
 
-.storyClosingLine:nth-child(2) {
-  top: 41.7vw;
-  left: 31.5vw;
+.storyClosingStatement {
+  top: 77vh;
+  left: 39vw;
 }
 
-.storyClosingLine:nth-child(3) {
-  top: 46vw;
-  left: 38.6vw;
+.storyClosingStatement span {
+  display: block;
 }
 
 .storyClosing strong {
@@ -464,37 +345,23 @@
 }
 
 .storySecond .storyImage {
-  top: 19.1vw;
-  left: 11.2vw;
-  width: 38vw;
-  height: 24.4vw;
+  top: 31vh;
+  left: 17vw;
+  width: 41vw;
+  height: 44vh;
   clip-path: inset(0);
   filter: brightness(0.85) saturate(0.78);
   transform: scale(1);
 }
 
-.storySecond .storyClosing {
-  font-size: 2.72vw;
+.storySecond .storyClosingYears {
+  top: 60vh;
+  left: 59vw;
 }
 
-.storySecond .storyClosingLine:nth-child(1) {
-  top: 34.7vw;
-  left: 55vw;
-}
-
-.storySecond .storyClosingLine:nth-child(2) {
-  top: 38.3vw;
-  left: 55vw;
-}
-
-.storySecond .storyClosingLine:nth-child(3) {
-  top: 42vw;
-  left: 40vw;
-}
-
-.storySecond .storyClosingLine:nth-child(4) {
-  top: 45.6vw;
-  left: 40vw;
+.storySecond .storyClosingStatement {
+  top: 76vh;
+  left: 39vw;
 }
 
 .videoPlaceholder {
@@ -551,11 +418,6 @@
 @media (prefers-reduced-motion: reduce) {
   .introAtmosphere span {
     animation: none;
-  }
-
-  .legacyTravelLight,
-  .storyTravelLight {
-    display: none;
   }
 
   .legacyCopy,
@@ -619,23 +481,6 @@
     opacity: 1;
     filter: blur(0);
     transform: translateY(0);
-  }
-}
-
-@keyframes arrivalGlow {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.18);
-  }
-  38% {
-    opacity: 0.92;
-    filter: blur(0.38vw) brightness(1.35);
-    transform: translate(-50%, -50%) scale(2.1);
-  }
-  100% {
-    opacity: 0;
-    filter: blur(1.2vw) brightness(0.8);
-    transform: translate(-50%, -50%) scale(4.2);
   }
 }
 

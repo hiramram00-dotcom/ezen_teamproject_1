@@ -29,4 +29,9 @@ button { font: inherit; cursor: pointer; background: none; border: none; }
   .has-light-cursor * {
     cursor: none !important;
   }
+
+  .has-light-cursor [data-cursor='pointer'],
+  .has-light-cursor [data-cursor='pointer'] * {
+    cursor: pointer !important;
+  }
 }

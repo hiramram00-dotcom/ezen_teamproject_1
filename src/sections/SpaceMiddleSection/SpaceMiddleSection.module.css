@@ -35,75 +35,86 @@
   margin: 0 auto;
 }
 
-.whiteBox {
-  position: absolute;
-  background-color: #ffffff;
-  opacity: 0;
-}
-
-/* Light-on reveal animation */
+/* Image fades in after the travelling light sparkles */
 .lit {
-  animation: lightOn 1.0s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: lightOn 0.9s ease-out forwards;
 }
 
 @keyframes lightOn {
-  0%   { opacity: 0; filter: brightness(0); }
-  20%  { opacity: 1; filter: brightness(2.2); }
-  100% { opacity: 1; filter: brightness(1); }
+  0% {
+    opacity: 0;
+    filter: brightness(0.65);
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
 }
 
-/* Travelling light beam */
+/* Small travelling light */
+.lightTrailCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  width: 1920px;
+  height: 3133px;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
 .travelLight {
   position: absolute;
   z-index: 15;
-  width: 70px;
-  aspect-ratio: 1;
+  width: 30px;
+  height: 30px;
   pointer-events: none;
-  transform: translate(-50%, -50%);
-  will-change: opacity, left, top, width;
   opacity: 0;
-  transition: width 0.5s ease;
+  transition: opacity 0.16s ease;
+  will-change: left, top, transform, opacity;
 }
 
-.glowDot {
-  position: relative;
+.lightCore {
+  position: absolute;
+  inset: 0;
   display: block;
-  width: 100%;
-  aspect-ratio: 1;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(255, 250, 231, 0.88) 0%,
-    rgba(247, 235, 215, 0.52) 16%,
-    rgba(247, 235, 215, 0.2) 38%,
-    rgba(247, 235, 215, 0.06) 58%,
-    rgba(247, 235, 215, 0) 78%
+    rgba(255, 255, 245, 1) 0%,
+    rgba(255, 238, 196, 0.9) 18%,
+    rgba(247, 190, 105, 0.34) 48%,
+    rgba(247, 190, 105, 0) 78%
   );
-  filter: blur(6px);
+  filter: blur(1.5px);
+  box-shadow: 0 0 12px rgba(255, 218, 151, 0.32);
 }
 
-.glowDot::before {
+.lightTail {
   position: absolute;
-  inset: 50%;
-  content: '';
+  top: 50%;
+  right: 16px;
+  width: 54px;
+  height: 11px;
   border-radius: 50%;
-  transform: translate(-50%, -50%);
-  width: 27%;
-  aspect-ratio: 1;
-  background: rgba(255, 252, 238, 0.72);
-  filter: blur(8px);
+  transform: translateY(-50%);
+  transform-origin: right center;
+  background: linear-gradient(
+    to left,
+    rgba(255, 235, 196, 0.34),
+    rgba(255, 213, 145, 0.13) 48%,
+    rgba(255, 213, 145, 0)
+  );
+  filter: blur(3px);
 }
 
-.glowDot::after {
-  position: absolute;
-  inset: 50%;
-  content: '';
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  width: 145%;
-  aspect-ratio: 1;
-  background: radial-gradient(circle, rgba(247, 235, 215, 0.08), transparent 68%);
-  filter: blur(18px);
+.spark .lightCore {
+  animation: sparkle 0.45s ease-out;
+}
+
+@keyframes sparkle {
+  0% { transform: scale(1); filter: blur(1.5px) brightness(1); }
+  35% { transform: scale(2.2); filter: blur(1px) brightness(2.8); }
+  100% { transform: scale(1); filter: blur(1.5px) brightness(1); }
 }
 
 .textBlock {
@@ -115,6 +126,8 @@
 }
 
 .textLine {
+  display: flex;
+  align-items: baseline;
   font-family: 'Instrument Sans', sans-serif;
   font-weight: 500;
   font-size: 71px;
@@ -157,5 +170,5 @@
   line-height: 1.11;
   letter-spacing: -1.34px;
   color: #f49307;
-  margin-top: -12px;
+  margin: 0;
 }

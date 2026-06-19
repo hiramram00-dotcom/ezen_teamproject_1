@@ -10,14 +10,14 @@
   color: var(--color-base-1);
   width: 100%;
   height: 100vh;
-  padding: 120px 0;
+  padding: clamp(46px, 7vh, 92px) clamp(18px, 4vw, 64px);
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow: hidden;
   position: sticky;
   top: 0;
-  gap: 100px;
+  gap: clamp(24px, 3.8vh, 56px);
 }
 
 .header {
@@ -31,9 +31,11 @@
 .title {
   color: var(--color-base-1);
   margin: 0;
+  max-width: 100%;
   opacity: 0;
   transform: translateY(-30px);
   transition: all 1.1s cubic-bezier(0.25, 1, 0.5, 1);
+  white-space: nowrap;
 }
 
 .titleVisible {
@@ -43,27 +45,27 @@
 
 .titleRegular {
   font-family: 'Instrument Sans', sans-serif;
-  font-size: 96px;
-  line-height: 1.4;
+  font-size: clamp(48px, 6.5vw, 96px);
+  line-height: 1.08;
   font-weight: 400;
 }
 
 .titleItalic {
   font-family: 'Playfair Display', serif;
   font-style: italic;
-  font-size: 96px;
-  line-height: 1.4;
+  font-size: clamp(48px, 6.5vw, 96px);
+  line-height: 1.08;
   font-weight: 400;
-  letter-spacing: -2.4px;
+  letter-spacing: 0;
 }
 
 .desc {
   color: var(--color-base-1);
   text-align: center;
-  margin-top: -8px;
+  margin-top: 10px;
   font-family: 'Pretendard', sans-serif;
   font-weight: 300;
-  font-size: 21px;
+  font-size: clamp(14px, 1.45vw, 21px);
   line-height: 1.4;
   letter-spacing: -0.84px;
   opacity: 0;
@@ -80,17 +82,28 @@
 .imageGrid {
   display: flex;
   justify-content: center;
-  gap: 20px;
-  margin-top: -61px;
+  gap: clamp(12px, 1.4vw, 20px);
+  width: min(100%, 1054px);
+  margin-top: 0;
 }
 
 .imageCard {
   position: relative;
-  width: 517px;
-  height: 611px;
+  flex: 1 1 0;
+  width: auto;
+  max-width: 517px;
+  height: clamp(260px, 45vh, 611px);
+  min-width: 0;
   border-radius: 4px;
   overflow: hidden;
   background-color: transparent;
+}
+
+.isHandoffActive .imageCard:first-child,
+.isHandoffActive .footer {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: none !important;
 }
 
 .imageRevealMask {
@@ -182,12 +195,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 40px;
+  gap: clamp(18px, 3vw, 40px);
   width: 100%;
-  margin-top: -70px;
+  margin-top: clamp(8px, 2vh, 28px);
 }
 
 .footerTextLeft {
+  font-size: clamp(42px, 6.2vw, 86px);
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 1.1s ease-out, transform 1.1s ease-out;
@@ -200,20 +214,25 @@
 }
 
 .line {
-  width: 440px;
+  width: clamp(120px, 24vw, 440px);
   height: 1px;
+  opacity: 0;
   background-color: rgba(255, 255, 255, 0.4);
   transform-origin: left;
   transform: scaleX(0);
-  transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    opacity 0.4s ease-out,
+    transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: 0.9s;
 }
 
 .footerVisible .line {
+  opacity: 1;
   transform: scaleX(1);
 }
 
 .footerTextRight {
+  font-size: clamp(42px, 6.2vw, 86px);
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 1.1s ease-out, transform 1.1s ease-out;
@@ -250,5 +269,114 @@
 }
 
 .isVisibleTriggered .line {
+  opacity: 1;
   transform: scaleX(1);
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .storySection {
+    padding: clamp(34px, 5.8vh, 58px) clamp(20px, 4vw, 40px);
+    gap: clamp(18px, 3vh, 30px);
+  }
+
+  .title {
+    white-space: nowrap;
+  }
+
+  .titleRegular,
+  .titleItalic {
+    font-size: clamp(52px, 7.2vw, 76px);
+  }
+
+  .desc {
+    margin-top: 8px;
+    font-size: clamp(15px, 1.9vw, 18px);
+  }
+
+  .imageGrid {
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+    max-width: 900px;
+    margin-top: 0;
+  }
+
+  .imageCard {
+    flex: 1 1 0;
+    width: auto;
+    max-width: none;
+    height: clamp(220px, 38vh, 380px);
+  }
+
+  .footer {
+    gap: clamp(18px, 2.4vw, 28px);
+    margin-top: clamp(4px, 1.5vh, 16px);
+  }
+
+  .footerTextLeft,
+  .footerTextRight {
+    font-size: clamp(46px, 6.8vw, 66px);
+  }
+
+  .line {
+    width: clamp(90px, 20vw, 220px);
+  }
+}
+
+@media (max-width: 767px) {
+  .storySection {
+    padding: clamp(30px, 5vh, 44px) 12px;
+    gap: clamp(16px, 3vh, 24px);
+  }
+
+  .titleRegular,
+  .titleItalic {
+    font-size: clamp(30px, 8.2vw, 48px);
+  }
+
+  .desc {
+    margin-top: 6px;
+    font-size: clamp(12px, 3.4vw, 14px);
+    line-height: 1.45;
+  }
+
+  .imageGrid {
+    width: 100%;
+    gap: 8px;
+    margin-top: 0;
+  }
+
+  .imageCard {
+    height: clamp(132px, 27vh, 230px);
+  }
+
+  .footerTextLeft,
+  .footerTextRight {
+    font-size: clamp(28px, 8vw, 42px);
+  }
+
+  .footer {
+    gap: 10px;
+    margin-top: 0;
+  }
+
+  .line {
+    width: clamp(46px, 16vw, 92px);
+  }
+}
+
+@media (max-height: 760px) and (min-width: 901px) {
+  .storySection {
+    padding-top: clamp(28px, 5vh, 48px);
+    padding-bottom: clamp(28px, 5vh, 48px);
+    gap: clamp(16px, 3vh, 36px);
+  }
+
+  .imageCard {
+    height: clamp(220px, 38vh, 360px);
+  }
+
+  .footer {
+    margin-top: clamp(4px, 1.4vh, 14px);
+  }
 }
