@@ -36,17 +36,12 @@ button { font: inherit; cursor: pointer; background: none; border: none; }
   }
 }
 
-/* 홈: 고정된 Dining(ON) 위로 Collabo가 슬라이드업(데스크탑 핀 연출).
-   모바일에선 Collabo가 세로 리스트(일반 흐름)라 -100vh면 이전 섹션과 겹쳐 → 0으로. */
-.home-collabo-wrap {
 /* SpacesSection 종료 후 Collabo가 Dining(ON) 위로 슬라이드업 (데스크톱/태블릿 겹침 연출) */
 .collaboOverlap {
   position: relative;
   z-index: 2;
   margin-top: -100vh;
 }
-@media (max-width: 767px) {
-  .home-collabo-wrap {
 
 /* 태블릿·모바일은 spaces가 세로 스택(height:auto)이라 겹치면 하단 룸이 가려짐 → 겹침 제거 */
 @media (max-width: 1199px) {
