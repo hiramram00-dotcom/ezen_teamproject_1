@@ -7,7 +7,7 @@
 /* 스크롤 거리 제공 — 단어 채우기(완만) + 확장 + 슬라이드 자동전환 + 여운 */
 .intro {
   position: relative;
-  height: 920vh;
+  height: 1020vh;
   margin-bottom: 0;
   background: var(--color-base-2); /* #FFF7EA 크림 */
 }
@@ -147,6 +147,7 @@
   opacity: 1;
 }
 .slice {
+  --slice-overlap: 0.12%;
   position: absolute;
   inset: 0;
   display: block;
@@ -158,7 +159,12 @@
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  clip-path: inset(0 var(--slice-right) 0 var(--slice-left));
+  clip-path: inset(
+    0
+    calc(var(--slice-right) - var(--slice-overlap))
+    0
+    calc(var(--slice-left) - var(--slice-overlap))
+  );
 }
 .slice:nth-of-type(1) { --slice-left: 0%; --slice-start: 25%; --slice-right: 75%; }
 .slice:nth-of-type(2) { --slice-left: 25%; --slice-start: 50%; --slice-right: 50%; }
@@ -184,10 +190,20 @@
 
 @keyframes sliceRevealRightToLeft {
   0% {
-    clip-path: inset(0 var(--slice-right) 0 var(--slice-start));
+    clip-path: inset(
+      0
+      calc(var(--slice-right) - var(--slice-overlap))
+      0
+      calc(var(--slice-start) - var(--slice-overlap))
+    );
   }
   100% {
-    clip-path: inset(0 var(--slice-right) 0 var(--slice-left));
+    clip-path: inset(
+      0
+      calc(var(--slice-right) - var(--slice-overlap))
+      0
+      calc(var(--slice-left) - var(--slice-overlap))
+    );
   }
 }
 
@@ -209,7 +225,7 @@
 }
 .label {
   position: absolute;
-  top: 50%;
+  top: var(--labels-top, 50%);
   transform: translate(-50%, -50%);
   font-size: clamp(14px, 1.25vw, 24px); /* 24px @1920 */
   line-height: 1.5;
@@ -219,17 +235,17 @@
 }
 .labelEn { font-family: var(--font-en); font-weight: 400; }  /* Instrument Sans */
 .labelKr { font-family: var(--font-kr); font-weight: 600; }  /* Pretendard SemiBold */
-.lbl1 { left: 4.45%; }  /* ILKWANG  (30+111/2)/1920 */
-.lbl2 { left: 28.4%; }  /* 세상을   (514+62/2)/1920 */
-.lbl3 { left: 71.4%; }  /* 밝히고   (1340+62/2)/1920 */
-.lbl4 { left: 95.5%; }  /* LIGHTING (1779+111/2)/1920 */
+.lbl1 { left: var(--lbl1-left, 4.45%); }  /* ILKWANG  (30+111/2)/1920 */
+.lbl2 { left: var(--lbl2-left, 28.4%); }  /* 세상을   (514+62/2)/1920 */
+.lbl3 { left: var(--lbl3-left, 71.4%); }  /* 밝히고   (1340+62/2)/1920 */
+.lbl4 { left: var(--lbl4-left, 95.5%); }  /* LIGHTING (1779+111/2)/1920 */
 
 @media (min-width: 768px) and (max-width: 1199px) {
   .quote {
     max-width: 1040px;
     padding: 0 32px;
-    font-size: clamp(30px, 4.9vw, 54px);
-    line-height: 1.42;
+    font-size: clamp(27px, 4.1vw, 46px);
+    line-height: 1.46;
   }
 
   .line {
@@ -255,26 +271,34 @@
     margin: 0 -0.08em;
   }
 
+  .baseImage {
+    object-fit: cover;
+  }
+
+  .slice {
+    background-size: cover;
+  }
+
   .label {
     font-size: clamp(13px, 1.7vw, 18px);
   }
 
-  .lbl1 { left: 7%; }
-  .lbl2 { left: 26%; }
-  .lbl3 { left: 74%; }
-  .lbl4 { left: 93%; }
+  .lbl1 { left: var(--lbl1-left, 12.5%); }
+  .lbl2 { left: var(--lbl2-left, 37.5%); }
+  .lbl3 { left: var(--lbl3-left, 62.5%); }
+  .lbl4 { left: var(--lbl4-left, 87.5%); }
 }
 
 @media (max-width: 767px) {
   .intro {
-    height: 820vh;
+    height: 920vh;
   }
 
   .quote {
     width: min(100%, 430px);
-    padding: 0 18px;
-    font-size: clamp(22px, 7.2vw, 34px);
-    line-height: 1.5;
+    padding: 0 16px;
+    font-size: clamp(19px, 6.1vw, 29px);
+    line-height: 1.55;
     letter-spacing: 0;
   }
 
@@ -302,12 +326,30 @@
     vertical-align: -0.02em;
   }
 
+  .baseImage {
+    object-fit: cover;
+  }
+
+  .slice {
+    background-size: cover;
+  }
+
+  .slide:nth-child(1) .baseImage,
+  .slide:nth-child(3) .baseImage {
+    object-position: 30% center;
+  }
+
+  .slide:nth-child(1) .slice,
+  .slide:nth-child(3) .slice {
+    background-position: 30% center;
+  }
+
   .label {
     font-size: clamp(11px, 3vw, 14px);
   }
 
-  .lbl1 { left: 11%; }
-  .lbl2 { left: 30%; }
-  .lbl3 { left: 70%; }
-  .lbl4 { left: 89%; }
+  .lbl1 { left: var(--lbl1-left, 12.5%); }
+  .lbl2 { left: var(--lbl2-left, 37.5%); }
+  .lbl3 { left: var(--lbl3-left, 62.5%); }
+  .lbl4 { left: var(--lbl4-left, 87.5%); }
 }
