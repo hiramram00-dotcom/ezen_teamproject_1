@@ -156,7 +156,7 @@
 }
 
 .divider {
-  height: 2px;
+  height: 1.5px;
   width: 100%;
   background: var(--color-footer); /* #252525 */
 }
@@ -193,6 +193,24 @@
 }
 
 @media (max-width: 767px) {
+  /* 사진+카드 영역 세로 더 길게 (폭 대비 높이 비율 ↑ — 값 조절로 높이 변경) */
+  .photo {
+    aspect-ratio: 4 / 5;
+  }
+  /* 카드 가로 더 넓힘(중앙 유지) + 안의 글씨도 그에 맞게 확대 */
+  .card {
+    left: 13%;
+    width: 74%; /* 기존 54.219% → 74% */
+  }
+  .cardHeading {
+    font-size: 3vw; /* 기존 2.1875vw */
+  }
+  .cardLink {
+    font-size: 3vw; /* 기존 2.0833vw */
+  }
+  .cardEmail {
+    font-size: 5.4vw; /* 기존 3.125vw */
+  }
   .body {
     min-height: auto;
     padding: 24px 20px 16px;
@@ -205,14 +223,14 @@
     gap: 12px 20px;
   }
   .nav :global(.type-body-3) {
-    font-size: 16px;
+    font-size: 14px;
   }
   .legal {
     flex-direction: column;
     gap: 6px;
   }
   .legalText {
-    font-size: 14px;
+    font-size: 9px;
   }
   .legalText {
     white-space: normal;

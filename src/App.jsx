@@ -50,8 +50,9 @@ function Home() {
       <StoryEndingSection />
       <FixSnowman2Section />
       <SpacesSection />
-      {/* 고정된 Dining(ON) 위로 Collabo가 슬라이드업 (한 번만 렌더) */}
-      <div style={{ position: 'relative', zIndex: 2, marginTop: '-100vh' }}>
+      {/* 고정된 Dining(ON) 위로 Collabo가 슬라이드업 (한 번만 렌더).
+          모바일은 .home-collabo-wrap에서 margin-top:0 (세로 리스트 겹침 방지) */}
+      <div className="home-collabo-wrap">
         <CollaboSection />
       </div>
       <Footer />
