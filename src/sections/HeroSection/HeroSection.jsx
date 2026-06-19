@@ -15,8 +15,8 @@ const SPLIT_DUR = 0.85 // 화면 위/아래로 갈라지는 시간 (텀 늘린 �
 
 // ===== 영상 소스 — 모바일(≤767px)은 세로 버전으로 교체 =====
 const VIDEO_MOBILE_Q = '(max-width: 767px)'
-const VIDEO_WIDE = 'https://res.cloudinary.com/dg9hg29hc/video/upload/0616_1_xt8vzh.mp4'
-const VIDEO_MOBILE = 'https://res.cloudinary.com/dg9hg29hc/video/upload/mobile_pnwzlg.mp4'
+const VIDEO_WIDE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.mp4'
+const VIDEO_MOBILE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.mp4'
 const pickVideoSrc = () =>
   window.matchMedia(VIDEO_MOBILE_Q).matches ? VIDEO_MOBILE : VIDEO_WIDE
 
