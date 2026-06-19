@@ -264,6 +264,7 @@ function CollaboSection() {
                   className={styles.card}
                   data-card
                   data-to={card.to}
+                  data-cursor="pointer"
                   aria-hidden={isClone ? 'true' : undefined}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {

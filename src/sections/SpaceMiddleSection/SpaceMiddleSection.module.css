@@ -35,13 +35,6 @@
   margin: 0 auto;
 }
 
-.whiteBox {
-  position: absolute;
-  z-index: 10;
-  background-color: #ffffff;
-  opacity: 0;
-}
-
 /* Image fades in after the travelling light sparkles */
 .lit {
   animation: lightOn 0.9s ease-out forwards;
@@ -133,6 +126,8 @@
 }
 
 .textLine {
+  display: flex;
+  align-items: baseline;
   font-family: 'Instrument Sans', sans-serif;
   font-weight: 500;
   font-size: 71px;
@@ -175,5 +170,5 @@
   line-height: 1.11;
   letter-spacing: -1.34px;
   color: #f49307;
-  margin-top: -12px;
+  margin: 0;
 }

@@ -43,7 +43,7 @@ function MakeLightSection() {
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) {
-      bgEl.style.clipPath = 'ellipse(250% 200% at 50% 50%)'
+      dim.style.setProperty('--reveal', '140%')
       gsap.set(dim, { opacity: 0 })
       gsap.set([overlay, headline, desc], { opacity: 1, y: 0 })
       gsap.set(light, { '--glow': 0 })
@@ -52,11 +52,11 @@ function MakeLightSection() {
       return
     }
 
-    // 가로로 긴 타원 (rx = ry * 1.7) — clip-path만 갱신(필터 없음 → 부드럽게)
+    // 가로로 긴 타원형 마스크를 부드러운 그라데이션으로 확장한다.
     const oval = { r: 0 }
     // 중심을 화면 60%(더 위)에 둬서 작은 타원이 위쪽에서 온전히 보인 채로 확대된다.
-    const setClip = () => {
-      bgEl.style.clipPath = `ellipse(${oval.r * 1.7}% ${oval.r}% at 50% 50%)`
+    const setReveal = () => {
+      dim.style.setProperty('--reveal', `${oval.r}%`)
     }
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -68,8 +68,8 @@ function MakeLightSection() {
       },
     })
     // 검정 정지 → 가로 타원이 커짐. 사진은 처음부터 어둡다가 원래 밝기로(한 방향) 돌아옴.
-    tl.to(oval, { r: 130, ease: 'none', duration: 0.62, onUpdate: setClip }, 0.02)
-      .fromTo(dim, { opacity: 0.75 }, { opacity: 0, ease: 'none', duration: 0.52 }, 0.24) // 어둠 → 원본
+    tl.to(oval, { r: 120, ease: 'none', duration: 0.68, onUpdate: setReveal }, 0.02)
+      .fromTo(dim, { opacity: 1 }, { opacity: 0, ease: 'none', duration: 0.3 }, 0.58) // 어둠 → 원본
       .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', duration: 0.08 }, 0.72)
       // 글씨 한꺼번에 (헤드라인 + 본문 동시)
       .fromTo(
@@ -115,23 +115,28 @@ function MakeLightSection() {
           preload="metadata"
           aria-hidden="true"
         />
-        <div ref={dimRef} className={styles.dim} aria-hidden="true" />
-        <div ref={overlayRef} className={styles.overlay} aria-hidden="true" />
+        {/* data-make-light-copy: StorySection이 핸드오프 시작 즉시 이 레이어를 강제로 꺼서,
+            이 섹션 자체의 페이드아웃 타이밍과 어긋나도 텍스트/오버레이가 한 프레임에 통째로
+            가려지며 "컷"되는 것을 막는다. */}
+        <div data-make-light-copy style={{ transition: 'opacity 0.35s ease, visibility 0.35s ease' }}>
+          <div ref={dimRef} className={styles.dim} aria-hidden="true" />
+          <div ref={overlayRef} className={styles.overlay} aria-hidden="true" />
 
-        <h2 ref={headlineRef} className={styles.headline}>
-          <span ref={moveTextRef}>
-            We Make{' '}
-            <strong ref={lightRef} className={styles.light}>
-              Light
-            </strong>
-          </span>
-          <span ref={restTextRef}>, ILKW.</span>
-        </h2>
-        <p ref={descRef} className={styles.desc}>
-          우리는 빛이 머무는 모든 순간을 생각합니다.
-          <br />
-          사람과 공간을 위한 더 나은 빛, 그것이 일광전구가 만드는 가치입니다.
-        </p>
+          <h2 ref={headlineRef} className={styles.headline}>
+            <span ref={moveTextRef}>
+              We Make{' '}
+              <strong ref={lightRef} className={styles.light}>
+                Light
+              </strong>
+            </span>
+            <span ref={restTextRef}>, ILKW.</span>
+          </h2>
+          <p ref={descRef} className={styles.desc}>
+            우리는 빛이 머무는 모든 순간을 생각합니다.
+            <br />
+            사람과 공간을 위한 더 나은 빛, 그것이 일광전구가 만드는 가치입니다.
+          </p>
+        </div>
       </div>
     </section>
   )

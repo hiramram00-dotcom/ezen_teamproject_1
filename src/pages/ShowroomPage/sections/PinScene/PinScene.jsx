@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
 import heroImg from './assets/showroom-hero.webp'
-import mapImg from './assets/showroom-map.webp'
 import styles from './PinScene.module.css'
 
 /**
@@ -19,15 +18,18 @@ const CARD_END = 0.9
 function PinScene() {
   const sceneRef = useRef(null)
   const imageRef = useRef(null)
+  const scrimRef = useRef(null)
   const cardRef = useRef(null)
 
   useEffect(() => {
     const scene = sceneRef.current
     const image = imageRef.current
+    const scrim = scrimRef.current
     const card = cardRef.current
-    if (!scene || !image || !card) return
+    if (!scene || !image || !scrim || !card) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       image.style.transform = 'scale(1)'
+      scrim.style.opacity = '0.42'
       card.style.transform = 'translateY(0)'
       card.style.visibility = 'visible'
       return
@@ -50,6 +52,7 @@ function PinScene() {
       const cardEase = ease(cardProgress)
 
       image.style.transform = `scale(${(1.15 - 0.15 * imageEase).toFixed(4)})`
+      scrim.style.opacity = (cardEase * 0.42).toFixed(3)
       card.style.transform = `translateY(${((1 - cardEase) * 100).toFixed(2)}%)`
       card.style.visibility = cardProgress > 0 ? 'visible' : 'hidden'
     }
@@ -76,6 +79,7 @@ function PinScene() {
           <div ref={imageRef} className={styles.imageInner}>
             <img src={heroImg} alt="일광전구 서울 쇼룸 내부" />
           </div>
+          <div ref={scrimRef} className={styles.scrim} aria-hidden="true" />
 
           {/* 카드 + 라벨 — 고정 구간 후반에 이미지 위로 올라옴 */}
           <div ref={cardRef} className={styles.cardLayer}>
@@ -114,7 +118,40 @@ function PinScene() {
                 </div>
 
                 <div className={styles.map}>
-                  <img className={styles.mapImg} src={mapImg} alt="일광전구 서울 쇼룸 약도 — 회현역 4번출구, 우리은행, 교육센터 마음의씨앗 인근" />
+                  <svg
+                    className={styles.mapGraphic}
+                    viewBox="0 0 555 377"
+                    role="img"
+                    aria-label="일광전구 서울 쇼룸 약도. 회현역 4번출구, 우리은행, 교육센터 마음의씨앗 인근"
+                  >
+                    <path className={styles.mapRoad} d="M124 244 L453 0" />
+                    <path className={styles.mapRoad} d="M245 216 H555" />
+                    <path className={styles.mapRoad} d="M245 324 H555" />
+                    <path className={styles.mapRoad} d="M0 356 H205" />
+                    <path className={styles.mapRoad} d="M225 191 V377" />
+                    <rect className={styles.mapDot} x="238" y="152" width="9" height="9" />
+                    <rect className={styles.mapDot} x="163" y="301" width="9" height="9" />
+                    <rect className={styles.mapDot} x="430" y="232" width="9" height="9" />
+                    <rect className={styles.mapPin} x="270" y="231" width="14" height="14" />
+                    <g transform="translate(368 47) rotate(-37.49)">
+                      <rect className={styles.mapRoadLabelBg} width="56" height="26" />
+                      <text className={styles.mapRoadLabel} x="28" y="18">
+                        퇴계로
+                      </text>
+                    </g>
+                    <text className={styles.mapLabel} x="125" y="163">
+                      회현역 4번출구
+                    </text>
+                    <text className={styles.mapLabel} x="446" y="244">
+                      우리은행
+                    </text>
+                    <text className={styles.mapLabel} x="22" y="313">
+                      교육센터 마음의씨앗
+                    </text>
+                    <text className={styles.mapLabelStrong} x="293" y="244">
+                      일광전구 쇼룸
+                    </text>
+                  </svg>
                 </div>
               </div>
 

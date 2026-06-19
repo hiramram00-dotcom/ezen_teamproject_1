@@ -1,31 +1,35 @@
-/* ShowroomFooter — footer_bottom_B (사진 없는 크림 푸터) */
+/* ShowroomFooter — main footer beige body only */
 .footer {
-  background: var(--color-base-2); /* 크림 */
-  color: var(--color-footer); /* #252525 */
-  padding: clamp(48px, 5vw, 62px) var(--layout-gutter) 30px; /* 하단 = 화면 끝과 30px */
-}
-
-/* ---------- 거대 ILKW 워드마크 ---------- */
-.markWrap {
   display: flex;
-  justify-content: center;
-  /* 마크와 내비 사이 큰 여백 (Figma: 마크 하단 325 → 내비 724) */
-  margin-bottom: clamp(160px, 26vw, 400px);
+  flex-direction: column;
+  width: 100%;
+  min-height: min(44.3vw, 850px);
+  padding: 54px 34px 30px;
+  background: var(--color-base-2);
+  color: var(--color-footer);
 }
 
-.mark {
-  width: clamp(360px, 48vw, 928px);
+.logo {
+  width: 44%;
+  max-width: 846px;
+  margin: 0 auto;
+}
+
+.logo img {
+  display: block;
+  width: 100%;
   height: auto;
-  /* Figma 원본 비율 893.362 × 265.318 — svg가 width/height 100%라 비율 명시 필요 */
-  aspect-ratio: 893.362 / 265.318;
-  transform: skewX(-7.58deg);
 }
 
-/* ---------- 내비 ---------- */
+.bottom {
+  margin-top: auto;
+}
+
 .nav {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 14px;
 }
 
 .navLink {
@@ -34,31 +38,32 @@
   transition: opacity 0.2s ease;
 }
 
+.nav :global(.type-body-3) {
+  font-size: 22px;
+}
+
 .navLink:hover {
   opacity: 0.6;
 }
 
-/* ---------- 구분선 ---------- */
 .divider {
   height: 2px;
+  width: 100%;
   background: var(--color-footer);
-  margin-top: 20px; /* 위 내비와의 간격 */
 }
 
-/* ---------- 약관 ---------- */
 .legal {
   display: flex;
-  align-items: baseline;
   justify-content: space-between;
   gap: 24px;
-  margin-top: 22px; /* 아래 구분선과의 간격 */
+  margin-top: 22px;
 }
 
 .legalText {
-  font-family: var(--font-en); /* Instrument Sans */
+  font-family: var(--font-en);
   font-weight: 400;
-  font-size: 20px;
-  line-height: 1.4;
+  font-size: 16px;
+  line-height: normal;
   color: var(--color-footer);
   white-space: nowrap;
 }
@@ -69,4 +74,44 @@
 
 .legalLink:hover {
   opacity: 0.6;
+}
+
+@media (max-width: 1024px) {
+  .nav :global(.type-body-3) {
+    font-size: 20px;
+  }
+
+  .legalText {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  .footer {
+    min-height: auto;
+    padding: 24px 20px 16px;
+  }
+
+  .logo {
+    margin-bottom: 80px;
+  }
+
+  .nav {
+    flex-wrap: wrap;
+    gap: 12px 20px;
+  }
+
+  .nav :global(.type-body-3) {
+    font-size: 16px;
+  }
+
+  .legal {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .legalText {
+    font-size: 14px;
+    white-space: normal;
+  }
 }

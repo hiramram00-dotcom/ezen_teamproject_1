@@ -63,6 +63,30 @@ function Header() {
     }
   }, [menuOpen])
 
+  // 커서가 화면 상단 근처에 오면 헤더 내려옴
+  useEffect(() => {
+    const h = headerRef.current
+    if (!h) return
+    const HOVER_ZONE = 80
+
+    const onMouseMove = (e) => {
+      if (e.clientY < HOVER_ZONE) {
+        h.classList.add(styles.hoverTop)
+      } else {
+        h.classList.remove(styles.hoverTop)
+      }
+    }
+
+    const onMouseLeave = () => h.classList.remove(styles.hoverTop)
+
+    window.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseleave', onMouseLeave)
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseleave', onMouseLeave)
+    }
+  }, [])
+
   // 로고 클릭 → 메뉴 닫고 메인('/')으로. (이미 메인이면 맨 위로 부드럽게)
   const handleLogo = () => {
     setMenuOpen(false)
@@ -75,7 +99,13 @@ function Header() {
         ref={headerRef}
         className={`${styles.header} ${menuOpen ? styles.menuMode : ''}`}
       >
-        <Link className={styles.logoLink} to="/" onClick={handleLogo} aria-label="메인으로">
+        <Link
+          className={styles.logoLink}
+          to="/"
+          onClick={handleLogo}
+          aria-label="메인으로"
+          data-cursor="pointer"
+        >
           <img className={styles.logo} src={logo} alt="ILKW" />
         </Link>
         <button
@@ -83,6 +113,7 @@ function Header() {
           type="button"
           onClick={() => setMenuOpen((o) => !o)}
           aria-label={menuOpen ? '메뉴 닫기' : '메뉴 열기'}
+          data-cursor="pointer"
         >
           <span className={styles.arrow} aria-hidden="true">
             <svg viewBox="0 0 28 16" fill="none">
@@ -91,6 +122,12 @@ function Header() {
             </svg>
           </span>
           <span className={styles.menuLabel}>{menuOpen ? 'Close' : 'Menu'}</span>
+          {/* 모바일 전용 햄버거 (CSS로 모바일에서만 표시) */}
+          <span className={styles.hamburger} aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
         </button>
       </header>
       <MenuOverlay open={menuOpen} onNavigate={() => setMenuOpen(false)} />

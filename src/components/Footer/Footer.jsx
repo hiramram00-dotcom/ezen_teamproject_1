@@ -185,6 +185,7 @@ function Footer({ hidePhoto = false }) {
               href="https://brand.naver.com/iklamp"
               target="_blank"
               rel="noopener noreferrer"
+              data-cursor="pointer"
             >
               <span>Go to Naver Brand Store </span>
               <span className={styles.cardArrow}>→</span>
@@ -209,6 +210,7 @@ function Footer({ hidePhoto = false }) {
               href={item.target === 'top' ? '#' : `#${item.target}`}
               onClick={(e) => handleNavClick(e, item.target)}
               className={`${styles.navLink} type-body-3`}
+              data-cursor="pointer"
             >
               {item.label}
             </a>

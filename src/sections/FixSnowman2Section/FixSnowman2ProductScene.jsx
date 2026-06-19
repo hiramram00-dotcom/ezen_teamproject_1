@@ -127,6 +127,7 @@ function FixSnowman2ProductScene() {
             href="https://brand.naver.com/iklamp/products/11202568021"
             target="_blank"
             rel="noreferrer"
+            data-cursor="pointer"
           >
             제품 보러가기
           </a>

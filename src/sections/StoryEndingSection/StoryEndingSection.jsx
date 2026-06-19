@@ -11,18 +11,6 @@ export default function StoryEndingSection() {
   const text2Ref = useRef(null);
 
   useEffect(() => {
-    // While the sequence plays, scrolling is locked so the user can't
-    // scroll past/through it — it's released the moment it finishes.
-    const preventScroll = (e) => e.preventDefault();
-    const lockScroll = () => {
-      window.addEventListener('wheel', preventScroll, { passive: false });
-      window.addEventListener('touchmove', preventScroll, { passive: false });
-    };
-    const unlockScroll = () => {
-      window.removeEventListener('wheel', preventScroll, { passive: false });
-      window.removeEventListener('touchmove', preventScroll, { passive: false });
-    };
-
     let ctx = gsap.context(() => {
       const text1Lines = text1Ref.current.children;
       const text2Lines = text2Ref.current.children;
@@ -38,24 +26,18 @@ export default function StoryEndingSection() {
       const heroEl = document.querySelector(`[class*="heroImage"]`);
       const dimEl = document.querySelector(`[class*="heroDim"]`);
 
-      // This whole sequence plays on its own fixed real-world clock, not
-      // tied to scroll distance/speed at all — scrolling only decides
-      // *when* it (re)starts. text1/text2 are position:fixed (see CSS), so
-      // once started the sequence keeps playing to completion no matter how
-      // far past the (short, 100svh) trigger zone the user tries to scroll
-      // — input is locked for its whole real duration and released on
-      // completion. Scrolling back up out of the zone (before it has even
-      // started) resets it to hidden, and re-entering restarts it from the top.
+      // Pinned + scrubbed: the section pins to the viewport and the whole
+      // sequence is driven by scroll progress over the pin distance (end).
+      // Scrolling up reverses it; the user keeps full scroll control (no
+      // input lock). Pin distance (innerHeight * 3) sets the reading pace.
       const tl = gsap.timeline({
-        paused: true,
-        onStart: lockScroll,
-        onComplete: unlockScroll,
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top bottom",
-          end: "bottom top",
-          toggleActions: "restart none restart reset",
-          onLeaveBack: unlockScroll
+          start: "top top",
+          end: () => "+=" + window.innerHeight * 3, // 핀 유지 거리 = 읽는 속도 (숫자 늘리면 더 천천히)
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true,
         }
       });
 
@@ -73,7 +55,6 @@ export default function StoryEndingSection() {
 
     return () => {
       ctx.revert();
-      unlockScroll();
     };
   }, []);
 
