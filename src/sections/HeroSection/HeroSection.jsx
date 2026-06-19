@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './HeroSection.module.css'
@@ -15,6 +15,13 @@ const SWEEP_AT = 0.4 // 혜성 빛 시작
 const SWEEP_DUR = 1.2 // 혜성이 지나가며 서브카피 등장
 const SPLIT_GAP = 0.3 // 혜성 끝 → 분할 시작 사이 텀 (2배)
 const SPLIT_DUR = 0.85 // 화면 위/아래로 갈라지는 시간 (텀 늘린 만큼 줄임)
+
+// ===== 영상 소스 — 모바일(≤767px)은 세로 버전으로 교체 =====
+const VIDEO_MOBILE_Q = '(max-width: 767px)'
+const VIDEO_WIDE = 'https://res.cloudinary.com/dg9hg29hc/video/upload/0616_1_xt8vzh.mp4'
+const VIDEO_MOBILE = 'https://res.cloudinary.com/dg9hg29hc/video/upload/mobile_pnwzlg.mp4'
+const pickVideoSrc = () =>
+  window.matchMedia(VIDEO_MOBILE_Q).matches ? VIDEO_MOBILE : VIDEO_WIDE
 
 const prefersReduced = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -39,6 +46,15 @@ function HeroSection() {
   const panelBottomRef = useRef(null)
   const filamentRef = useRef(null)
   const logoRef = useRef(null)
+
+  // 모바일(≤767px)이면 세로 영상으로 교체 (리사이즈/회전 시 자동 갱신)
+  const [videoSrc, setVideoSrc] = useState(pickVideoSrc)
+  useEffect(() => {
+    const mq = window.matchMedia(VIDEO_MOBILE_Q)
+    const onChange = () => setVideoSrc(pickVideoSrc())
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
 
   useEffect(() => {
     const hero = heroRef.current
@@ -204,7 +220,7 @@ function HeroSection() {
       <video
         ref={videoRef}
         className={styles.video}
-        src="https://res.cloudinary.com/dg9hg29hc/video/upload/0616_1_xt8vzh.mp4"
+        src={videoSrc}
         muted
         loop
         playsInline
