@@ -13,6 +13,10 @@ import ProductSection from './sections/ProductSection/ProductSection'
 import FlamingoDetailSection from './sections/FlamingoDetailSection/FlamingoDetailSection'
 import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
+import CollaboDetailSection from './sections/CollaboDetailSection/CollaboDetailSection'
+import CollaboDetailContentSection from './sections/CollaboDetailSection/CollaboDetailContentSection'
+import kbpCollabo from './sections/CollaboDetailSection/collabos/kbp'
+import kakaoCollabo from './sections/CollaboDetailSection/collabos/kakao'
 import Footer from './components/Footer/Footer'
 import AboutPage from './pages/AboutPage/AboutPage'
 import ShowroomPage from './pages/ShowroomPage/ShowroomPage'
@@ -79,6 +83,27 @@ function App() {
         <Route path="/showroom" element={<><Header /><ShowroomPage /></>} />
         {/* ⚠️ /collabo 는 아직 전용 페이지 미정(취합 전) → 임시로 홈 콜라보 섹션 단독 렌더 */}
         <Route path="/collabo" element={<><Header /><CollaboSection /></>} />
+        {/* 콜라보 상세 — 히어로 + 스크롤 시 본문 + 푸터(사진 없이). 데이터만 갈아끼움 */}
+        <Route
+          path="/collabo-detail"
+          element={
+            <>
+              <CollaboDetailSection {...kbpCollabo.hero} />
+              <CollaboDetailContentSection {...kbpCollabo.content} />
+              <Footer hidePhoto />
+            </>
+          }
+        />
+        <Route
+          path="/collabo-detail/kakao"
+          element={
+            <>
+              <CollaboDetailSection {...kakaoCollabo.hero} />
+              <CollaboDetailContentSection {...kakaoCollabo.content} />
+              <Footer hidePhoto />
+            </>
+          }
+        />
 
         {/* 작업용 미리보기 — FixSnowman2Section 단독 확인용, 메인 페이지에는 미연결 */}
         <Route path="/fixsnowman2" element={<><Header /><FixSnowman2Section /></>} />
