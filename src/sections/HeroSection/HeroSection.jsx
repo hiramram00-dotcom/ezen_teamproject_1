@@ -170,7 +170,7 @@ function HeroSection() {
           )
 
           gsap.set(targetVideo, { opacity: targetAlpha })
-          if (logo) gsap.set(logo, { autoAlpha: 1 - clamp01(p / 0.3) }) // 초반 30%에서 로고 완전히 사라짐(영상 줄기 전) — 0.3이 속도 노브
+          if (logo) gsap.set(logo, { autoAlpha: p > 0.01 ? 0 : 1 })
           if (p <= 0) {
             resetHeroVideo()
             return
