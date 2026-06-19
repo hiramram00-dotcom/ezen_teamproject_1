@@ -51,18 +51,7 @@ function FixStorySection() {
       return
     }
 
-    // 애플 최고 디자이너의 선택: 빛의 번짐 (Soft Feather Mask)
-    // 시작 시 완전히 가려지도록 초기 반경을 -30으로 세팅 (페더링 30% 구간 고려)
-    const oval = { r: -30 }
-    
-    // 호환성 완벽 방어: 사파리를 위해 -webkit- 접두어 강제 동시 적용
-    const setClip = () => {
-      // 왼쪽 아래 구석(0% 100%)에서 시작해, oval.r 까지는 100% 검정(보임), 그 후 30% 구간은 투명(안보임)으로 안개처럼 스며듦
-      const maskGradient = `radial-gradient(circle at 0% 100%, black ${oval.r}%, transparent ${oval.r + 30}%)`
-      bgEl.style.webkitMaskImage = maskGradient
-      bgEl.style.maskImage = maskGradient
-    }
-    
+    // 리스크 0% 우회 기법: 영상 대신 단색 검은 덮개(.dim)에 마스크를 씌워 확장시킴
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
@@ -73,28 +62,28 @@ function FixStorySection() {
       },
     })
     
-    // 대각선 반대편 끝까지 안개빛이 완전히 덮을 수 있도록 반경을 200까지 넉넉하게 키움. (우아한 power2.inOut 가속)
-    tl.to(oval, { r: 200, ease: 'power2.inOut', duration: 0.62, onUpdate: setClip }, 0.02)
-      .fromTo(dim, { opacity: 0.75 }, { opacity: 0, ease: 'none', duration: 0.52 }, 0.24) // 어둠 → 원본
-      .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', duration: 0.08 }, 0.72)
-      // 글씨 한꺼번에 (헤드라인 + 본문 동시)
+    // 1. 대각선 안개 걷힘 (0.00 ~ 0.80): duration을 0.80으로 대폭 늘려 고급스럽고 여유로운 속도감 확보
+    tl.fromTo(dim, { '--mask-radius': '0%' }, { '--mask-radius': '150%', ease: 'power2.inOut', duration: 0.80 }, 0.00)
+      // 하단 그라데이션 오버레이 서서히 등장
+      .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', duration: 0.20 }, 0.60)
+      // 2. 타이포그래피 (0.75 ~ 0.90): 안개가 어느 정도 걷히고 나서 우아하게 등장
       .fromTo(
         headline,
         { autoAlpha: 0, y: 48 },
-        { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.12 },
-        0.78
+        { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.15 },
+        0.75
       )
       .fromTo(
         desc,
         { autoAlpha: 0, y: 48 },
-        { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.12 },
-        0.9
+        { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.15 },
+        0.80
       )
-      // "LIGHT" — 흰색 유지 → 점차 한 번 밝아졌다가 → 서서히 다시 흰색 (CSS 변수 보간으로 매끄럽게)
-      .to(light, { '--glow': 1, ease: 'power1.inOut', duration: 0.16 }, 0.6)
-      .to(light, { '--glow': 0, ease: 'power1.inOut', duration: 0.28 }, 0.8)
-      // 섹션이 끝나갈 무렵 사진/딤/오버레이/본문/헤드라인은 평범하게 페이드 아웃
-      .to([dim, overlay, desc, moveText, restText], { opacity: 0, ease: 'none', duration: 0.06 }, 1.04)
+      // "LIGHT" 글로우 효과
+      .to(light, { '--glow': 1, ease: 'power1.inOut', duration: 0.20 }, 0.75)
+      .to(light, { '--glow': 0, ease: 'power1.inOut', duration: 0.20 }, 0.95)
+      // 3. 섹션 여운 (1.05 ~ 1.15): 평범한 페이드 아웃
+      .to([bgEl, dim, overlay, desc, moveText, restText], { opacity: 0, ease: 'none', duration: 0.10 }, 1.05)
 
     return () => {
       tl.scrollTrigger && tl.scrollTrigger.kill()

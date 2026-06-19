@@ -52,43 +52,39 @@ function MakeLightSection() {
       return
     }
 
-    // 가로로 긴 타원 (rx = ry * 1.7) — clip-path만 갱신(필터 없음 → 부드럽게)
-    const oval = { r: 0 }
-    // 중심을 화면 60%(더 위)에 둬서 작은 타원이 위쪽에서 온전히 보인 채로 확대된다.
-    const setClip = () => {
-      bgEl.style.clipPath = `ellipse(${oval.r * 1.7}% ${oval.r}% at 50% 50%)`
-    }
+    // 리스크 0% 우회 기법: 영상 대신 단색 검은 덮개(.dim)에 마스크를 씌워 확장시킴
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        start: 'top 30%', // 핀 직전(섹션 top이 화면 10%)부터 시작 → 원이 조금 더 일찍 커지기 시작
+        start: 'top 30%', 
         end: 'bottom bottom',
         scrub: true,
         invalidateOnRefresh: true,
       },
     })
-    // 검정 정지 → 가로 타원이 커짐. 사진은 처음부터 어둡다가 원래 밝기로(한 방향) 돌아옴.
-    tl.to(oval, { r: 130, ease: 'none', duration: 0.62, onUpdate: setClip }, 0.02)
-      .fromTo(dim, { opacity: 0.75 }, { opacity: 0, ease: 'none', duration: 0.52 }, 0.24) // 어둠 → 원본
-      .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', duration: 0.08 }, 0.72)
-      // 글씨 한꺼번에 (헤드라인 + 본문 동시)
+    
+    // 1. 대각선 안개 걷힘 (0.00 ~ 0.80): duration을 0.80으로 대폭 늘려 고급스럽고 여유로운 속도감 확보
+    tl.fromTo(dim, { '--mask-radius': '0%' }, { '--mask-radius': '150%', ease: 'power2.inOut', duration: 0.80 }, 0.00)
+      // 하단 그라데이션 오버레이 서서히 등장
+      .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', duration: 0.20 }, 0.60)
+      // 2. 타이포그래피 (0.75 ~ 0.90): 안개가 어느 정도 걷히고 나서 우아하게 등장
       .fromTo(
         headline,
         { autoAlpha: 0, y: 48 },
-        { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.12 },
-        0.78
+        { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.15 },
+        0.75
       )
       .fromTo(
         desc,
         { autoAlpha: 0, y: 48 },
-        { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.12 },
-        0.9
+        { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.15 },
+        0.80
       )
-      // "LIGHT" — 흰색 유지 → 점차 한 번 밝아졌다가 → 서서히 다시 흰색 (CSS 변수 보간으로 매끄럽게)
-      .to(light, { '--glow': 1, ease: 'power1.inOut', duration: 0.16 }, 0.6)
-      .to(light, { '--glow': 0, ease: 'power1.inOut', duration: 0.28 }, 0.8)
-      // 섹션이 끝나갈 무렵 사진/딤/오버레이/본문/헤드라인은 평범하게 페이드 아웃
-      .to([dim, overlay, desc, moveText, restText], { opacity: 0, ease: 'none', duration: 0.06 }, 1.04)
+      // "LIGHT" 글로우 효과
+      .to(light, { '--glow': 1, ease: 'power1.inOut', duration: 0.20 }, 0.75)
+      .to(light, { '--glow': 0, ease: 'power1.inOut', duration: 0.20 }, 0.95)
+      // 3. 섹션 여운 (1.05 ~ 1.15): 평범한 페이드 아웃 (bgEl은 다음 섹션 연결을 위해 유지)
+      .to([dim, overlay, desc, moveText, restText], { opacity: 0, ease: 'none', duration: 0.10 }, 1.05)
 
     return () => {
       tl.scrollTrigger && tl.scrollTrigger.kill()
