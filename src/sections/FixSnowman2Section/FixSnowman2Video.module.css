@@ -109,3 +109,11 @@
     opacity: 1;
   }
 }
+
+/* 태블릿·모바일: 영상 확대/축소 시 흰색 → 크림 대신 리빙룸 배경색(검정)으로 전환
+   (다음 SpacesSection이 세로 스택 + 검정 배경이라 어두운 룸으로 자연스럽게 이어짐) */
+@media (max-width: 1199px) {
+  .sticky::before {
+    background: var(--color-base-3);
+  }
+}
