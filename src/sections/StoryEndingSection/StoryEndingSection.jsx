@@ -38,6 +38,8 @@ export default function StoryEndingSection() {
           pin: true,
           scrub: 1,
           invalidateOnRefresh: true,
+          // 점프로 섹션을 지나가도 SpaceMiddle의 hero/dim이 확실히 꺼지게 (어둠 잔상 방지)
+          onLeave: () => gsap.set([heroEl, dimEl], { opacity: 0 }),
         }
       });
 
