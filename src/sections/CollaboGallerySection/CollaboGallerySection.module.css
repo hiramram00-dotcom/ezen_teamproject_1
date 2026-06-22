@@ -11,19 +11,44 @@
   min-height: 100vh;
   background: var(--color-base-2); /* 크림 */
   color: var(--color-base-3);
-  padding: clamp(110px, 9vw, 173px) var(--layout-gutter) clamp(120px, 12vw, 240px);
-  overflow: hidden;
+  padding: 0 clamp(16px, 1.8vw, 32px) clamp(120px, 12vw, 240px);
+  overflow-x: clip; /* 가로 넘침만 방지(세로 sticky는 동작하도록 hidden 사용 안 함) */
 }
 
-/* ----- 헤더 ----- */
+/* ----- 헤더 — 룰렛 다음, 가운데서 blur-in 등장.
+   headWrap이 스크롤 런웨이: 헤더는 sticky로 화면에 머물다가 런웨이 끝(=리스트 직전)에서 위로 빠짐.
+   머무는 양 조절: headWrap height에서 100vh를 뺀 만큼이 '머무는' 스크롤 구간. ----- */
+.headWrap {
+  height: 135vh;
+}
 .head {
+  position: sticky;
+  top: 0;
+  height: 100vh;
   max-width: 1008px;
-  margin: 0 auto clamp(120px, 17vw, 326px);
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center; /* 세로 가운데 */
   gap: 10px;
   text-align: center;
+  /* 기본(숨김): 흐리고 투명 — 마운트되면 .headIn으로 선명해짐 */
+  opacity: 0;
+  filter: blur(10px);
+}
+.head.headIn {
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .head {
+    opacity: 1;
+    filter: none;
+  }
 }
 .title {
   display: flex;
@@ -61,7 +86,7 @@
 
 /* ----- 지그재그 리스트 ----- */
 .list {
-  max-width: 1760px; /* 좌우 여백 축소(리스트 폭 넓힘) */
+  max-width: 1900px; /* 좌우 여백 더 축소(리스트 폭 넓힘) */
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -90,16 +115,43 @@
 }
 
 .imageBox {
+  position: relative; /* 오버레이 기준 */
+  display: block;
   flex: 0 0 auto;
   width: var(--img-w);
   aspect-ratio: var(--img-ar);
   overflow: hidden;
+  transition: transform 0.15s ease;
+}
+/* 누르는 느낌(클릭/탭 피드백) — 살짝 눌림 */
+.imageBox:active {
+  transform: scale(0.97);
 }
 .imageBox img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.45s ease;
+}
+/* 호버 시 사진 살짝 줌 (홈 마퀴와 동일) */
+.imageBox:hover img {
+  transform: scale(1.06);
+}
+
+/* 사진 호버 오버레이: 어두워지며 원형 화살표 등장 */
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.imageBox:hover .imageOverlay {
+  opacity: 1;
 }
 
 .text {
@@ -136,10 +188,54 @@
   letter-spacing: -0.04em;
   color: var(--color-base-3);
 }
+/* 바로가기 — 홈 마퀴 호버 화살표(원형 ↗)와 동일. 어두운 오버레이 위 흰색.
+   --arrow-size: 브레이크포인트별로 단계적으로 작아짐(아래 미디어쿼리) */
+.goArrow {
+  --arrow-size: 60px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--arrow-size);
+  height: var(--arrow-size);
+  border-radius: 50%;
+  border: 1.5px solid var(--color-base-1);
+  color: var(--color-base-1);
+  transform: scale(0.82); /* 호버 전 살짝 작게 → 등장 시 커짐 */
+  transition: transform 0.3s ease, background 0.25s ease, color 0.25s ease;
+}
+.imageBox:hover .goArrow {
+  transform: scale(1);
+}
+.goArrow:hover {
+  background: var(--color-base-1);
+  color: var(--color-base-3);
+}
+/* 사진 아무데나 누르면(active) 화살표 원이 채워짐 */
+.imageBox:active .goArrow {
+  background: var(--color-base-1);
+  color: var(--color-base-3);
+}
+.goArrow svg {
+  width: 44%;
+  height: 44%;
+}
+/* 화살표 버튼 — 화면 작아질수록 단계적으로 축소 */
+@media (max-width: 1440px) { .goArrow { --arrow-size: 52px; } }
+@media (max-width: 1280px) { .goArrow { --arrow-size: 46px; } }
+@media (max-width: 1024px) { .goArrow { --arrow-size: 42px; } }
+@media (max-width: 767px)  { .goArrow { --arrow-size: 38px; } }
+@media (max-width: 480px)  { .goArrow { --arrow-size: 32px; } }
+
+/* 터치 기기(호버 없음): 화살표/오버레이 제거. 탭하면 .imageBox:active 눌림 모션만 남음 */
+@media (hover: none) {
+  .imageOverlay {
+    display: none;
+  }
+}
 .desc {
   font-family: var(--font-kr);
   font-weight: 400;
-  font-size: clamp(15px, 1.46vw, 28px); /* 28px @1920 (Body-2) */
+  font-size: clamp(15px, 1.46vw, 21px); /* 최대 21px, 좁아지면 축소 */
   line-height: 1.4;
   letter-spacing: -0.03em;
   color: #555; /* 디자인 캡션 회색 — 토큰 없음(마퀴 카드와 동일) */

@@ -182,7 +182,7 @@ function Footer({
       {!hidePhoto && (
         <div className={styles.photo} ref={photoRef}>
           <img className={styles.photoImg} src={photo} alt="" loading="lazy" ref={photoImgRef} style={{ objectPosition: photoPosition }} />
-          <div className={styles.card} ref={cardRef}>
+          <div className={`${styles.card} ${contact ? styles.cardCompact : ''}`} ref={cardRef}>
             <p className={styles.cardHeading}>
               {headingLines.map((line, i) => (
                 <Fragment key={i}>

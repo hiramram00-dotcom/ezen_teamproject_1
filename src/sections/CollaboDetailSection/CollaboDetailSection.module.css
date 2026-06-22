@@ -31,12 +31,12 @@
   z-index: 1;
   display: flex;
   align-items: center;
-  gap: clamp(16px, 2.08vw, 40px); /* 40px @1920 */
+  gap: clamp(10px, 2.08vw, 40px); /* 40px @1920, 모바일에선 더 좁게 */
 }
 
 /* ILKW 워드마크 — 살짝 기울임(skew) + 세로 99% (디자인 그대로) */
 .ilkw {
-  width: clamp(150px, 16.25vw, 312px); /* 312px @1920 */
+  width: clamp(92px, 16.25vw, 312px); /* 312px @1920, 모바일 최소 92px (폭 넘침 방지) */
   height: auto;
   transform: skewX(-7.58deg) scaleY(0.99);
 }
@@ -45,7 +45,7 @@
 .x {
   font-family: var(--font-kr, 'Pretendard', sans-serif);
   font-weight: 400;
-  font-size: clamp(20px, 2.08vw, 40px);
+  font-size: clamp(14px, 2.08vw, 40px);
   line-height: 1;
   color: #fff;
 }
@@ -53,7 +53,7 @@
 /* 브랜드 로고 — 높이 기준(ilkw와 비슷한 높이), 폭은 로고 비율대로 자동
    (kbp=정사각 → 정사각, kakao=가로 워드마크 → 가로로) */
 .brandLogo {
-  height: clamp(48px, 5.16vw, 99px);
+  height: clamp(32px, 5.16vw, 99px);
   width: auto;
   flex-shrink: 0; /* 락업(flex)에서 찌그러지지 않게 */
   /* aspect-ratio는 콜라보 데이터로 인라인 주입 (SVG가 고유비율이 없어 명시 필요) */

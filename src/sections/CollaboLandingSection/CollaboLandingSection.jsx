@@ -32,12 +32,15 @@ const BRANDS = [
 //    콜라보 컬렉션 목록(Figma 1565:270). null로 바꾸면 이동 없이 멈춰만 있음.
 const NEXT_ROUTE = '/collabo/list'
 
-const PASSES = 2 // 쫘라락 — 전체 로고를 몇 바퀴 빠르게 훑고 멈출지 (클수록 더 오래 돎)
-const HOLD_AFTER_MS = 700 // 멈춘 뒤 다음 화면으로 넘어가기까지 대기(ms)
+const LAPS = 1.5 // 룰렛 바퀴 수 (0.5 단위 가능). 1.5 = 한 바퀴 반
+const HOLD_AFTER_MS = 120 // 멈춘 뒤 다음 화면으로 넘어가기까지 대기(ms) — 바로 이어지게 짧게
 
-// PASSES바퀴 빠르게 돈 뒤 마지막에 KAKAO 1칸에서 정착하도록 reel 구성
-const REEL = Array.from({ length: PASSES }).flatMap(() => BRANDS).concat(BRANDS[0])
-const END_INDEX = PASSES * BRANDS.length // 정착(KAKAO) 칸 인덱스
+// LAPS바퀴 빠르게 돈 뒤 마지막 칸이 KAKAO가 되도록 reel 구성(끝=KAKAO 역산으로 시작 인덱스 결정)
+const N = BRANDS.length
+const STEPS = Math.round(LAPS * N) // 총 이동 칸 수
+const START = ((-STEPS % N) + N) % N // 끝이 KAKAO(0)가 되도록 시작 인덱스
+const REEL = Array.from({ length: STEPS + 1 }, (_, i) => BRANDS[(START + i) % N])
+const END_INDEX = STEPS // 정착(KAKAO) 칸 인덱스
 
 function CollaboLandingSection() {
   const lockupRef = useRef(null)

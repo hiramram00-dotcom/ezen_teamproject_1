@@ -64,6 +64,10 @@
   text-transform: uppercase;
   color: #000;
 }
+/* 콜라보 푸터(contact 지정)처럼 헤딩 문구가 길 때 — 폰트 살짝 줄여 깔끔히 2줄로 */
+.cardCompact .cardHeading {
+  font-size: 1.95vw;
+}
 .cardLink {
   position: absolute;
   top: 47.71%;      /* 501/1050 */
@@ -193,6 +197,27 @@
 }
 
 @media (max-width: 767px) {
+  /* 사진+카드 영역 세로 더 길게 */
+  .photo {
+    aspect-ratio: 4 / 5;
+  }
+  /* 카드 가로 더 넓힘(중앙 유지) + 안의 글씨 확대 (home 푸터 모바일과 동일) */
+  .card {
+    left: 13%;
+    width: 74%;
+  }
+  .cardHeading {
+    font-size: 3vw;
+  }
+  .cardCompact .cardHeading {
+    font-size: 2.6vw; /* 콜라보 푸터 긴 헤딩 — 2줄 유지 */
+  }
+  .cardLink {
+    font-size: 3vw;
+  }
+  .cardEmail {
+    font-size: 5.4vw;
+  }
   .body {
     min-height: auto;
     padding: 24px 20px 16px;

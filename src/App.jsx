@@ -13,7 +13,7 @@ import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
 import CollaboLandingSection from './sections/CollaboLandingSection/CollaboLandingSection'
 import CollaboGallerySection from './sections/CollaboGallerySection/CollaboGallerySection'
-import collaboFooterPhoto from './sections/CollaboGallerySection/assets/collabo-footer-photo.webp'
+import collaboFooterPhoto from './sections/CollaboGallerySection/assets/collabo-footer.jpg'
 import CollaboDetailSection from './sections/CollaboDetailSection/CollaboDetailSection'
 import CollaboDetailContentSection from './sections/CollaboDetailSection/CollaboDetailContentSection'
 import kbpCollabo from './sections/CollaboDetailSection/collabos/kbp'
@@ -107,6 +107,7 @@ function App() {
           path="/collabo-detail"
           element={
             <>
+              <Header />
               <CollaboDetailSection {...kbpCollabo.hero} />
               <CollaboDetailContentSection {...kbpCollabo.content} />
               <Footer hidePhoto />
@@ -117,6 +118,7 @@ function App() {
           path="/collabo-detail/kakao"
           element={
             <>
+              <Header />
               <CollaboDetailSection {...kakaoCollabo.hero} />
               <CollaboDetailContentSection {...kakaoCollabo.content} />
               <Footer hidePhoto />

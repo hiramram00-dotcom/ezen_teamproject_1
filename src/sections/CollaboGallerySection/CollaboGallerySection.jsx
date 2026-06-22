@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import styles from './CollaboGallerySection.module.css'
 import ilkwLogo from '../../assets/common/logo/ilkw-black.svg'
-import imgKakao from '../CollaboSection/assets/collabo-kakao.webp'
-import imgKbp from '../CollaboSection/assets/collabo-kittybunnypony.webp'
-import imgWarmgrey from '../CollaboSection/assets/collabo-warmgreytale.webp'
-import imgHankyoreh from '../CollaboSection/assets/collabo-hankyoreh.webp'
-import imgChilsung from '../CollaboSection/assets/collabo-chilsung.webp'
-import imgKanu from '../CollaboSection/assets/collabo-kanu.webp'
+import imgKakao from './assets/collabo-1.jpg'
+import imgKbp from './assets/collabo-2.jpg'
+import imgWarmgrey from './assets/collabo-3.jpg'
+import imgHankyoreh from './assets/collabo-4.png'
+import imgChilsung from './assets/collabo-5.png'
+import imgKanu from './assets/collabo-6.jpg'
 
 /**
  * CollaboGallerySection — 콜라보 컬렉션 목록 (룰렛 다음 화면)
@@ -17,22 +18,35 @@ import imgKanu from '../CollaboSection/assets/collabo-kanu.webp'
 
 // Figma 위→아래 순서. 사진 비율(ar)·폭 비중(w, 리스트폭 1575 기준 %)은 디자인값.
 const COLLABOS = [
-  { brand: 'KAKAO FRIENDS', img: imgKakao, ar: '648 / 553', w: '41.14%',
+  { brand: 'KAKAO FRIENDS', img: imgKakao, ar: '648 / 553', w: '41.14%', to: '/collabo-detail/kakao',
     desc: ['춘식이의 친근한 감성과 함께', '특별한 컬렉션을 선보였습니다.'] },
-  { brand: 'KITTY BUNNY PONY', img: imgKbp, ar: '842 / 640', w: '53.46%',
+  { brand: 'KITTY BUNNY PONY', img: imgKbp, ar: '842 / 640', w: '53.46%', to: '/collabo-detail',
     desc: ['키티버니포니의 감각적인 패턴과 함께', '오래 머물고 싶은 공간을 함께 만들어갔습니다.'] },
-  { brand: '웜그레이테일', img: imgWarmgrey, ar: '550 / 640', w: '34.92%',
+  { brand: '웜그레이테일', img: imgWarmgrey, ar: '550 / 640', w: '34.92%', to: '/collabo-detail/kakao',
     desc: ['웜그레이테일만의 따뜻한 일러스트에', '일광전구의 빛을 더했습니다.'] },
-  { brand: '한겨레', img: imgHankyoreh, ar: '842 / 640', w: '53.46%',
+  { brand: '한겨레', img: imgHankyoreh, ar: '842 / 640', w: '53.46%', to: '/collabo-detail',
     desc: ['빛은 공간을 밝히는 것을 넘어,', '연대의 상징이자 시대의 기록이 되었습니다.'] },
-  { brand: '칠성사이다', img: imgChilsung, ar: '506 / 640', w: '32.13%',
+  { brand: '칠성사이다', img: imgChilsung, ar: '506 / 640', w: '32.13%', to: '/collabo-detail/kakao',
     desc: ['칠성사이다의 청량한 브랜드 감성과 함께', '그린 크리스마스를 선보였습니다.'] },
-  { brand: 'KANU', img: imgKanu, ar: '512 / 640', w: '32.51%',
+  { brand: 'KANU', img: imgKanu, ar: '512 / 640', w: '32.51%', to: '/collabo-detail',
     desc: ['커피 한 잔의 여유와 함께하는 빛.', '일상의 여유를 더욱 따뜻하게 만들었습니다.'] },
 ]
 
 function CollaboGallerySection() {
   const sectionRef = useRef(null)
+  const headRef = useRef(null)
+
+  // 헤더(COLLABO with ILKW.) — 마운트되면 바로 가운데서 blur-in (룰렛 다음 화면)
+  useEffect(() => {
+    const el = headRef.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.classList.add(styles.headIn)
+      return
+    }
+    const id = requestAnimationFrame(() => el.classList.add(styles.headIn))
+    return () => cancelAnimationFrame(id)
+  }, [])
 
   // 스크롤 진입 시 행이 아래에서 페이드업
   useEffect(() => {
@@ -43,13 +57,11 @@ function CollaboGallerySection() {
       rows.forEach((el) => el.classList.add(styles.inView))
       return
     }
+    // 토글: 화면에 들어오면 나타나고, 벗어나면 초기화 → 역(위로)스크롤로 다시 들어올 때도 재생
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add(styles.inView)
-            io.unobserve(e.target)
-          }
+          e.target.classList.toggle(styles.inView, e.isIntersecting)
         })
       },
       { threshold: 0.2 },
@@ -60,14 +72,16 @@ function CollaboGallerySection() {
 
   return (
     <section className={styles.gallery} ref={sectionRef} aria-label="ILKW 콜라보 컬렉션">
-      <header className={styles.head} data-reveal>
-        <p className={styles.title}>
-          <span className={styles.titleCollabo}>COLLABO</span>
-          <span className={styles.titleWith}>with</span>
-          <img className={styles.titleIlkw} src={ilkwLogo} alt="ILKW" />
-        </p>
-        <p className={styles.subtitle}>일광전구와 함께한 협업 컬렉션을 소개합니다.</p>
-      </header>
+      <div className={styles.headWrap}>
+        <header className={styles.head} ref={headRef}>
+          <p className={styles.title}>
+            <span className={styles.titleCollabo}>COLLABO</span>
+            <span className={styles.titleWith}>with</span>
+            <img className={styles.titleIlkw} src={ilkwLogo} alt="ILKW" />
+          </p>
+          <p className={styles.subtitle}>일광전구와 함께한 협업 컬렉션을 소개합니다.</p>
+        </header>
+      </div>
 
       <div className={styles.list}>
         {COLLABOS.map((c, i) => (
@@ -76,9 +90,24 @@ function CollaboGallerySection() {
             className={`${styles.row} ${i % 2 === 1 ? styles.right : ''}`}
             data-reveal
           >
-            <div className={styles.imageBox} style={{ '--img-w': c.w, '--img-ar': c.ar }}>
+            <Link
+              to={c.to}
+              className={styles.imageBox}
+              style={{ '--img-w': c.w, '--img-ar': c.ar }}
+              aria-label={`ILKW × ${c.brand} 자세히 보기`}
+              data-cursor="pointer"
+            >
               <img src={c.img} alt={`ILKW × ${c.brand}`} loading="lazy" />
-            </div>
+              {/* 사진 호버 시 어두워지며 원형 화살표 등장 (홈 마퀴와 동일) */}
+              <span className={styles.imageOverlay}>
+                <span className={styles.goArrow}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <line x1="7" y1="17" x2="17" y2="7" />
+                    <polyline points="8 7 17 7 17 16" />
+                  </svg>
+                </span>
+              </span>
+            </Link>
             <div className={styles.text}>
               <p className={styles.brandLine}>
                 <span className={styles.brandStrong}>ILKW</span>
