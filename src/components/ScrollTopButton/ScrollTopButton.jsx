@@ -1,7 +1,26 @@
+import { useState, useEffect } from 'react'
 import styles from './ScrollTopButton.module.css'
 
-// 서브페이지 우측 하단 고정 "맨 위로" 버튼 (메인은 푸터 버튼이 있어 제외)
+// 전역 우측 하단 고정 "맨 위로" 버튼 (스크롤 내릴 때 표시)
 export default function ScrollTopButton() {
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // 300px 이상 스크롤 시 버튼 표시
+      if (window.scrollY > 300) {
+        setIsVisible(true)
+      } else {
+        setIsVisible(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll() // 초기 로드 시 체크
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   const handleClick = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -9,9 +28,11 @@ export default function ScrollTopButton() {
   return (
     <button
       type="button"
-      className={styles.topButton}
+      className={`${styles.topButton} ${isVisible ? styles.visible : ''}`}
       onClick={handleClick}
       aria-label="맨 위로"
+      tabIndex={isVisible ? 0 : -1}
+      aria-hidden={!isVisible}
     >
       {/* 위로 향하는 꺾쇠 3개 (이어서 쌓음) */}
       <span className={styles.chevrons} aria-hidden="true">

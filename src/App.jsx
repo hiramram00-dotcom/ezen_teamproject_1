@@ -32,10 +32,8 @@ function ScrollToTop() {
   return null
 }
 
-// 서브페이지에서만 "맨 위로" 버튼 표시 (메인 '/'은 푸터 버튼이 있어 제외)
-function SubPageTopButton() {
-  const { pathname } = useLocation()
-  if (pathname === '/') return null
+// 전역 "맨 위로" 버튼 (스크롤에 따라 자동 노출)
+function GlobalTopButton() {
   return <ScrollTopButton />
 }
 
@@ -94,7 +92,7 @@ function App() {
         {/* 작업용 미리보기 — FixSnowman2Section 단독 확인용, 메인 페이지에는 미연결 */}
         <Route path="/fixsnowman2" element={<><Header /><FixSnowman2Section /></>} />
       </Routes>
-      <SubPageTopButton />
+      <GlobalTopButton />
     </>
   )
 }
