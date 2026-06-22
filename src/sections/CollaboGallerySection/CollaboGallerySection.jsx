@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import styles from './CollaboGallerySection.module.css'
+import ScrollHint from '../../components/ScrollHint/ScrollHint'
 import ilkwLogo from '../../assets/common/logo/ilkw-black.svg'
 import imgKakao from './assets/collabo-1.jpg'
 import imgKbp from './assets/collabo-2.jpg'
@@ -48,6 +49,27 @@ function CollaboGallerySection() {
     return () => cancelAnimationFrame(id)
   }, [])
 
+  // 스크롤 내릴수록 스크롤 힌트가 서서히 사라짐 (--hint-fade: 1 → 0, 앞 30vh 동안)
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    let raf = 0
+    const update = () => {
+      raf = 0
+      const p = Math.min(1, window.scrollY / (window.innerHeight * 0.3))
+      el.style.setProperty('--hint-fade', String(1 - p))
+    }
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [])
+
   // 스크롤 진입 시 행이 아래에서 페이드업
   useEffect(() => {
     const root = sectionRef.current
@@ -81,6 +103,10 @@ function CollaboGallerySection() {
           </p>
           <p className={styles.subtitle}>일광전구와 함께한 협업 컬렉션을 소개합니다.</p>
         </header>
+        {/* 첫 화면(100vh) 하단 가운데 스크롤 안내 — 상세 페이지와 동일 위치. 스크롤하면 서서히 사라짐 */}
+        <div className={styles.scrollCue}>
+          <ScrollHint />
+        </div>
       </div>
 
       <div className={styles.list}>

@@ -7,9 +7,12 @@ import styles from './ScrollHint.module.css'
  *  - light: 어두운 배경용(흰색). 기본은 어두운 글씨(크림 배경용).
  *  - label: 표시 텍스트 (기본 'Scroll')
  */
-function ScrollHint({ light = false, label = 'Scroll' }) {
+function ScrollHint({ light = false, inline = false, label = 'Scroll' }) {
   return (
-    <div className={`${styles.hint} ${light ? styles.light : ''}`} aria-hidden="true">
+    <div
+      className={`${styles.hint} ${light ? styles.light : ''} ${inline ? styles.inline : ''}`}
+      aria-hidden="true"
+    >
       <span className={styles.label}>{label}</span>
       <svg
         className={styles.chevron}

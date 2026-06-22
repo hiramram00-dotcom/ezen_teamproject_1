@@ -11,9 +11,19 @@
   gap: 6px;
   color: var(--color-base-3); /* 기본: 어두운 글씨(크림 배경용) */
   pointer-events: none;
+  /* 부모가 --hint-fade(1→0)를 내려주면 스크롤에 따라 서서히 사라짐. 기본 1(항상 보임) */
+  opacity: var(--hint-fade, 1);
 }
 .hint.light {
   color: #fff; /* 어두운 배경용 */
+}
+/* 인라인: 절대배치 대신 흐름 배치(작은 헤더 블록 안에서 제목 아래에 위치) */
+.hint.inline {
+  position: static;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  margin-top: clamp(16px, 3vh, 36px);
 }
 
 .label {

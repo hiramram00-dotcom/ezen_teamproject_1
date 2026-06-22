@@ -12,42 +12,53 @@
   background: var(--color-base-2); /* 크림 */
   color: var(--color-base-3);
   padding: 0 clamp(16px, 1.8vw, 32px) clamp(120px, 12vw, 240px);
-  overflow-x: clip; /* 가로 넘침만 방지(세로 sticky는 동작하도록 hidden 사용 안 함) */
+  /* overflow 지정 안 함 — 세로 sticky가 동작하도록(가로 넘침은 전역 html/body의 overflow-x:clip이 처리) */
 }
 
-/* ----- 헤더 — 룰렛 다음, 가운데서 blur-in 등장.
-   headWrap이 스크롤 런웨이: 헤더는 sticky로 화면에 머물다가 런웨이 끝(=리스트 직전)에서 위로 빠짐.
-   머무는 양 조절: headWrap height에서 100vh를 뺀 만큼이 '머무는' 스크롤 구간. ----- */
+/* ----- 헤더 — 룰렛 다음, 가운데서 등장 → 스크롤하면 위로 붙어(sticky) 머묾 →
+   리스트가 가까워지면(headWrap 끝) 리스트와 함께 위로 빠져나감.
+   headWrap: sticky 고정 범위(런웨이). padding-top으로 타이틀을 첫 화면 가운데쯤에서 시작. ----- */
 .headWrap {
-  height: 135vh;
+  position: relative; /* 스크롤 힌트(.scrollCue) 절대배치 기준 */
+  height: 110vh; /* 타이틀이 위에 붙어있는 구간(축소 → 조금만 스크롤해도 리스트가 곧 보임) */
+  padding-top: calc(50vh - 1.8rem); /* 타이틀 라인이 화면 정중앙(룰렛 끝 위치)에 오도록 */
+}
+/* 첫 화면(100vh) 기준 컨테이너 — 안의 ScrollHint(기본 절대배치 bottom)가
+   상세 히어로와 똑같은 위치(하단 가운데)에 오도록. 스크롤하면 --hint-fade로 사라짐. */
+.scrollCue {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  pointer-events: none;
 }
 .head {
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: clamp(84px, 12vh, 120px); /* 위(고정 헤더 아래)에 붙는 위치 */
+  z-index: 1;
   max-width: 1008px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* 세로 가운데 */
   gap: 10px;
   text-align: center;
-  /* 기본(숨김): 흐리고 투명 — 마운트되면 .headIn으로 선명해짐 */
+  /* 등장 전(숨김): 아래에서 위로 슬라이드(룰렛 릴이 위로 흐르는 느낌) + 투명. 필터 미사용(렉↓) */
   opacity: 0;
-  filter: blur(10px);
+  transform: translateY(56px);
 }
 .head.headIn {
   opacity: 1;
-  filter: blur(0);
+  transform: translateY(0);
   transition:
-    opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 @media (prefers-reduced-motion: reduce) {
   .head {
     opacity: 1;
-    filter: none;
+    transform: none;
   }
 }
 .title {
@@ -91,6 +102,7 @@
   display: flex;
   flex-direction: column;
   gap: clamp(140px, 19vw, 360px); /* 행 간격 확대 */
+  padding-top: clamp(40px, 6vw, 100px); /* 리스트 상단 여백(타이틀이 빠지고 첫 행 위 여유) */
 }
 
 .row {
@@ -137,6 +149,21 @@
 /* 호버 시 사진 살짝 줌 (홈 마퀴와 동일) */
 .imageBox:hover img {
   transform: scale(1.06);
+}
+/* 스크롤 진입 시 사진이 살짝 확대됐다 돌아오는 줌 힌트 → "움직이네? 호버되는구나" 암시.
+   끝에서 scale(1)로 복귀하므로 호버 줌과 충돌 없음. */
+.row.inView .imageBox img {
+  animation: hintZoom 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes hintZoom {
+  0% { transform: scale(1); }
+  42% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .row.inView .imageBox img {
+    animation: none;
+  }
 }
 
 /* 사진 호버 오버레이: 어두워지며 원형 화살표 등장 */
