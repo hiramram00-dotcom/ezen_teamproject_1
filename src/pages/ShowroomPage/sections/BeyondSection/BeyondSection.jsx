@@ -67,16 +67,19 @@ function BeyondSection() {
       <div className={styles.dark}>
         <Parallax className={styles.darkExterior} src={exterior} alt="일광전구 서울 쇼룸 외관" loading="lazy" />
 
-        <RevealLines
-          as="p"
-          className={`${styles.darkText} type-collabo-x`}
-          lines={[
-            '일광전구 서울 쇼룸은 제품을 진열하는 매장을 넘어, 빛이 실제 공간 안에서 어떻게 작동하는지',
-            '보여주는 브랜드 하우스입니다. 벽의 색, 가구의 재질, 테이블의 높이, 창밖에서 들어오는 자연광과',
-            '함께 하나의 분위기를 만들어냅니다. 이곳에서는 조명을 고르는 일이 단순한 구매가 아니라,',
-            '내 공간에 어울리는 빛을 상상하는 경험이 됩니다.',
-          ]}
-        />
+        <div className={styles.darkTextWrap}>
+          <Reveal as="h2" className={`${styles.darkTitle} type-subtitle-1`}>Experience Light</Reveal>
+          <RevealLines
+            as="p"
+            className={`${styles.darkText} type-collabo-x`}
+            lines={[
+              '일광전구 서울 쇼룸은 제품을 진열하는 매장을 넘어, 빛이 실제 공간 안에서 어떻게 작동하는지',
+              '보여주는 브랜드 하우스입니다. 벽의 색, 가구의 재질, 테이블의 높이, 창밖에서 들어오는 자연광과',
+              '함께 하나의 분위기를 만들어냅니다. 이곳에서는 조명을 고르는 일이 단순한 구매가 아니라,',
+              '내 공간에 어울리는 빛을 상상하는 경험이 됩니다.',
+            ]}
+          />
+        </div>
 
         <div className={styles.darkPhotos}>
           {/* 좌측(작은) — 우측보다 늦게 시작 */}
