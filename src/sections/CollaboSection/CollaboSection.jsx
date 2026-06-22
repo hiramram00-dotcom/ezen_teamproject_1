@@ -120,12 +120,10 @@ function CollaboSection() {
       el.classList.add(styles.isVisible)
       return
     }
+    // 토글: 화면에 들어오면 표시, 벗어나면 초기화 → 스크롤로 다시 들어올 때마다 blur-in 재생
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add(styles.isVisible)
-          io.unobserve(el)
-        }
+        el.classList.toggle(styles.isVisible, entry.isIntersecting)
       },
       { threshold: 0.3 },
     )
