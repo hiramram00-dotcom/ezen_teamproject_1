@@ -1,6 +1,6 @@
 .products {
   width: 100%;
-  overflow: hidden;
+  overflow: clip;
   background: var(--color-base-2);
   color: var(--color-base-3);
 }
@@ -8,39 +8,46 @@
 .hero {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100svh;
   overflow: hidden;
   background: #0b1b2d;
 }
 
-.heroImage,
-.mainVisual img,
-.thumbnail img {
+.heroImage {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.heroLogo,
-.heroWordmark,
-.rowLogo {
+.heroIdentity {
   position: absolute;
-  z-index: 3;
-  object-fit: fill;
-}
-
-.heroLogo {
-  top: 2.3148%;
-  left: 1.1979%;
-  width: 5.3614%;
-  height: 2.1296%;
+  z-index: 2;
+  bottom: 6.4%;
+  left: 1.98%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(15px, 1.927vw, 37px);
 }
 
 .heroWordmark {
-  top: 81.8519%;
-  left: 3.2161%;
-  width: 25.6253%;
-  height: 13.5296%;
+  width: clamp(270px, 25.625vw, 492px);
+  height: auto;
+  aspect-ratio: 492 / 146;
+  object-fit: contain;
+  transform: skewX(-7.58deg) scaleY(0.99);
+  transform-origin: left center;
+}
+
+.heroCopy {
+  color: var(--color-base-1);
+  font-family: var(--font-en);
+  font-size: clamp(14px, 0.9375vw, 18px);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.04em;
 }
 
 .catalog {
@@ -48,6 +55,9 @@
 }
 
 .productRow {
+  --product-title-size: clamp(50px, 3.6458vw, 70px);
+  --product-title-line-height: clamp(70px, 5.1041vw, 98px);
+
   position: relative;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -66,46 +76,36 @@
 }
 
 .mainVisual {
+  display: block;
+  width: 100%;
   margin: 0;
+  padding: 0;
   background: #29271f;
 }
 
 .mainImageMotion {
+  position: absolute;
+  inset: 0;
   display: block;
-  width: 100%;
-  height: 100%;
   transform-origin: center;
   will-change: transform;
 }
 
+.mainVisual img,
 .thumbnail img {
-  transform-origin: center;
-  transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: clip-path, transform;
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
 }
 
-.productLink {
-  cursor: pointer;
-}
-
-.thumbnail {
-  transform-origin: center;
-  transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.thumbnail:hover,
-.thumbnail:focus-visible {
-  transform: translateX(-50%) scale(0.955);
-}
-
-.thumbnail:hover img,
-.thumbnail:focus-visible img {
-  transform: scale(1.0472);
-}
-
-.productLink:focus-visible {
-  outline: 3px solid var(--color-base-3);
-  outline-offset: -3px;
+.thumbnail img {
+  transform: scale(1);
+  transition: transform 500ms ease;
 }
 
 .imageLeft .mainVisual {
@@ -132,21 +132,15 @@
   background: var(--color-base-2);
 }
 
-.rowLogo {
-  top: 2.3148%;
-  left: var(--logo-left);
-  width: var(--logo-width);
-  height: 2.1296%;
-}
-
 .productName {
   position: absolute;
+  z-index: 2;
   top: 10.1852%;
-  left: var(--title-x);
+  left: 50%;
   width: 90%;
   transform: translateX(-50%);
   font-family: var(--font-deco);
-  font-size: 3.6458vw;
+  font-size: var(--product-title-size);
   font-style: italic;
   font-weight: 400;
   line-height: 1.4;
@@ -155,11 +149,7 @@
   white-space: nowrap;
 }
 
-.flamingoName {
-  will-change: transform;
-}
-
-.flamingoTitleButton {
+.productTitleButton {
   display: inline-block;
   color: inherit;
   font: inherit;
@@ -169,44 +159,39 @@
   white-space: inherit;
 }
 
-.flamingoTitleButton:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 5px;
-}
-
-.flamingoChar {
+.titleChar {
   display: inline-block;
-  opacity: 1;
 }
 
-.flamingoTitleButton:hover .flamingoChar,
-.flamingoTitleButton:focus-visible .flamingoChar {
-  animation: flamingo-wave 900ms ease-in-out both;
-  animation-delay: calc(var(--char-index) * 60ms);
+.productHovered .titleChar {
+  animation: reference-title-fade 700ms linear both;
+  animation-delay: calc(var(--char-index) * 40ms);
 }
 
-@keyframes flamingo-wave {
-  0%,
-  100% {
+@keyframes reference-title-fade {
+  0% {
     opacity: 1;
-    transform: translateY(0);
   }
 
-  42% {
-    opacity: 0.76;
-    transform: translateY(-0.35vw);
+  42.86% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
   }
 }
 
 .description {
   position: absolute;
-  top: 42.6852%;
-  left: var(--content-x);
+  z-index: 2;
+  top: calc(10.1852% + var(--product-title-line-height) + 15px);
+  left: 50%;
   width: 78%;
   transform: translateX(-50%);
-  font-family: var(--font-kr);
-  font-size: 1.0938vw;
-  font-weight: 300;
+  font-family: var(--font-en);
+  font-size: clamp(14px, 0.9375vw, 18px);
+  font-weight: 400;
   line-height: 1.4;
   letter-spacing: -0.04em;
   text-align: center;
@@ -218,26 +203,93 @@
 
 .thumbnail {
   position: absolute;
+  z-index: 2;
   top: 72.22%;
   left: var(--content-x);
   width: 32.4%;
-  aspect-ratio: 311 / 190;
+  height: 17.5926%;
   margin: 0;
   transform: translateX(-50%);
+  transform-origin: center;
   overflow: hidden;
   background: #ddd6ca;
+  transition: transform 500ms ease;
+  will-change: transform;
+}
+
+.thumbnailInner {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.thumbnailReveal {
+  position: absolute;
+  z-index: 3;
+  top: -1%;
+  left: -1%;
+  width: 102%;
+  height: 102%;
+  background: var(--color-base-2);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.productLink {
+  cursor: pointer;
+}
+
+.thumbnail:hover,
+.thumbnail:focus-visible {
+  transform: translateX(-50%) scale(0.95);
+}
+
+.thumbnail:hover img,
+.thumbnail:focus-visible img {
+  transform: scale(1.2);
+}
+
+.productLink:focus-visible {
+  outline: 3px solid var(--color-base-3);
+  outline-offset: -3px;
 }
 
 @media (max-width: 700px) {
   .hero {
+    height: auto;
     aspect-ratio: 4 / 5;
   }
 
   .heroImage {
-    object-position: center;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 52% center;
+  }
+
+  .heroIdentity {
+    bottom: 4%;
+    left: 5%;
+    gap: 15px;
+  }
+
+  .heroWordmark {
+    width: 55vw;
+  }
+
+  .heroCopy {
+    font-size: clamp(11px, 3vw, 14px);
   }
 
   .productRow {
+    --product-title-size: clamp(34px, 10vw, 52px);
+    --product-title-line-height: clamp(47.6px, 14vw, 72.8px);
+
     display: flex;
     flex-direction: column;
     aspect-ratio: auto;
@@ -247,56 +299,49 @@
   .mainVisual,
   .productInfo {
     width: 100%;
-    aspect-ratio: 8 / 9;
   }
 
   .mainVisual {
     order: 1;
+    aspect-ratio: 8 / 9;
   }
 
   .productInfo {
     order: 2;
-  }
-
-  .heroLogo,
-  .rowLogo {
-    top: 2%;
-    left: 4%;
-    width: 12%;
-    height: 2.7%;
-  }
-
-  .heroWordmark {
-    top: auto;
-    bottom: 4%;
-    left: 4%;
-    width: 48%;
-    height: 13%;
+    height: auto;
+    aspect-ratio: 4 / 3;
   }
 
   .productName {
-    font-size: clamp(29px, 9vw, 42px);
+    top: 10%;
+    left: 50%;
+    font-size: var(--product-title-size);
   }
 
   .description {
+    top: calc(10% + var(--product-title-line-height) + 15px);
+    left: 50%;
     width: 86%;
-    font-size: clamp(12px, 3.4vw, 15px);
+    font-family: var(--font-kr);
+    font-size: clamp(13px, 3.5vw, 16px);
+  }
+
+  .thumbnail {
+    top: 57%;
+    left: 50%;
+    width: 42%;
+    height: auto;
+    aspect-ratio: 311 / 190;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .products *,
-  .products *::before,
-  .products *::after {
-    scroll-behavior: auto !important;
-  }
-
-  .thumbnail {
+  .thumbnail,
+  .thumbnail img {
     transition: none;
   }
 
-  .flamingoTitleButton:hover .flamingoChar,
-  .flamingoTitleButton:focus-visible .flamingoChar {
+  .productHovered .titleChar {
     animation: none;
   }
 }
