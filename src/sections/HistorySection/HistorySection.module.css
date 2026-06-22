@@ -1,21 +1,21 @@
+/* about-history (Figma node 1641:55) — 챕터마다 좌측에 연도(x=570 우측 정렬),
+   우측에 콘텐츠(x=852·width 1000px). 1920px 캔버스 기준 vw 환산. */
 .history {
   position: relative;
   width: 100%;
-  height: 299.74vw;
-  overflow: hidden;
+  padding: 7.29vw 3.54vw 8vw; /* 좌우 거터 68px */
   background: var(--color-base-2);
   color: var(--color-base-3);
+  overflow: visible; /* 연도가 제목·라인 위로 겹쳐 올라가도 잘리지 않음 */
 }
 
 .heading {
-  position: absolute;
-  top: 7.5vw;
-  left: 50%;
-  transform: translateX(-50%);
+  margin-bottom: 6.6vw;
+  text-align: center;
   font-family: var(--font-en);
-  font-size: 6.25vw;
+  font-size: 8.33vw; /* 160px @1920 */
   font-weight: 600;
-  line-height: 1.25;
+  line-height: 1.1;
   letter-spacing: -0.04em;
   white-space: nowrap;
 }
@@ -27,76 +27,278 @@
   font-weight: 400;
 }
 
-.historyItem {
-  position: absolute;
-  width: 52.05vw;
+/* ----- 타임라인 ----- */
+/* 연도 숫자가 제목·라인 위로 겹쳐 올라가도 잘리지 않도록 흐름 컨테이너는 모두 overflow:visible */
+.timeline {
+  position: relative;
+  overflow: visible;
 }
 
-.historyItem img {
-  width: 100%;
-  height: 32.8vw;
-  object-fit: cover;
+/* 헤더 — chapters of Light + 라인. Figma: x=68, width 700px(36.46vw), 텍스트 가운데.
+   기본(모바일/저모션): 일반 흐름. 데스크톱에서만 sticky로 고정(아래 미디어쿼리). */
+.rail {
+  position: relative;
+  z-index: 2; /* 제목·라인은 연도 숫자 위(기준 레이어) — 숫자가 글자/라인 뒤로 통과 */
+  padding-top: 1.2vw;
 }
 
-.historyItem.left {
-  left: 1.98vw;
+.railMotion {
+  will-change: transform;
+  transform: translateZ(0);
 }
 
-.historyItem.right {
-  right: 1.98vw;
+.subtitle {
+  width: 36.46vw; /* 700px @1920 */
+  text-align: center;
+  font-family: var(--font-deco);
+  font-style: italic;
+  font-size: 3.65vw; /* 70px — 살짝 축소 */
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
 }
 
-.historyItem:nth-child(1) {
-  top: 33.63vw;
+.divider {
+  display: block;
+  width: 36.46vw; /* 700px @1920 */
+  height: 1px;
+  margin-top: 1.72vw; /* 33px */
+  background: var(--color-base-3);
 }
 
-.historyItem:nth-child(2) {
-  top: 83.7vw;
+/* ----- 챕터 블록: 좌(연도) | 우(콘텐츠, x=852·1000px) -----
+   연도 col 700px(36.46vw, 헤더와 동일 폭·중심) | gap 84px(4.38vw) | 콘텐츠 1000px(52.08vw) */
+.block {
+  position: relative;
+  display: grid;
+  grid-template-columns: 36.46vw 52.08vw;
+  column-gap: 4.38vw;
+  align-items: start;
+  padding-bottom: 12vw; /* 챕터 간 간격 */
+  overflow: visible; /* 연도가 위로 올라가도 잘리지 않음 */
 }
 
-.historyItem:nth-child(3) {
-  top: 134.3vw;
+/* 첫 블록은 연도가 위로 올라가며 헤더 라인을 침범하므로 상단 여백으로 라인 아래로
+   (rail 다음에 연도-핀 div가 들어가므로 인접선택 대신 first-of-type 사용) */
+.block:first-of-type {
+  margin-top: 5.5vw;
 }
 
-.historyItem:nth-child(4) {
-  top: 184.95vw;
+/* 같은 연도 연속 블록(연도 생략) — 직전 블록과 간격을 좁힘(예: 2026 서울리빙 ↔ 3days) */
+.continued {
+  margin-top: -8vw;
 }
 
-.historyItem:nth-child(5) {
-  top: 235.3vw;
+/* 챕터 연도 — 헤더(chapters of Light·라인)와 동일 중심축에서 가운데 정렬. Playfair italic 160px. */
+.marker {
+  position: relative;
+  z-index: 3;
+  margin-top: -0.46em; /* 콘텐츠 상단보다 살짝 위(Figma 연도 top≈콘텐츠 -74px) */
+  text-align: center;
+  font-family: var(--font-deco);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 7.6vw; /* 146px @1920 — 살짝 축소 */
+  line-height: 1.2;
+  letter-spacing: -0.08em;
 }
 
-.historyItem:nth-child(5) img {
-  height: 45.7vw;
+/* 기본(모바일·저모션 폴백): 각 블록에 전체 연도 노출. 데스크톱 모션에서는 아래에서
+   이 .marker를 숨기고 sticky 연도 스테이지가 prefix/suffix 컬럼으로 연도를 보여준다. */
+.markerFull {
+  display: inline;
+}
+
+.markerSplit {
+  display: none;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+.markerPrefix,
+.markerPrefixGhost,
+.markerSuffix {
+  display: inline-block;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.markerPrefix,
+.markerPrefixGhost {
+  min-width: 0.98em;
+  text-align: right;
+}
+
+.markerPrefixGhost {
+  visibility: hidden;
+}
+
+.markerSuffix {
+  min-width: 0.98em;
+  text-align: left;
+}
+
+.markerPrefixSpacer {
+  display: inline-block;
+  width: 0.98em;
+  pointer-events: none;
+}
+
+/* ----- 데스크톱 sticky marker 기준점(라코스테식) -----
+   chapters of Light(라벨)·라인은 sticky로 고정되고, 각 이벤트의 실제 연도 조각이
+   이 기준점에 가까워졌을 때만 transform으로 현재 자리까지 올라온다. */
+.subtitle,
+.divider {
+  position: relative;
+  z-index: 1; /* 라벨·라인은 연도 위 — 연도 조각이 글자/라인 뒤로 통과(겹쳐 보임) */
+}
+
+/* ----- 오른쪽 콘텐츠 ----- */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 2.08vw; /* 텍스트 묶음 ↔ 이미지 40px */
 }
 
 .copy {
-  padding-top: 2.1vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.42vw; /* 제목 ↔ 설명 8px */
 }
 
-.year {
-  font-family: var(--font-deco);
-  font-size: 4.15vw;
-  font-style: italic;
-  font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-}
-
-.copy h3 {
-  margin-top: 1.2vw;
+.title {
   font-family: var(--font-kr);
-  font-size: 2.08vw;
-  font-weight: 600;
-  line-height: 1.35;
-  letter-spacing: -0.04em;
+  font-size: 2.08vw; /* 40px */
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
 }
 
 .description {
-  margin-top: 0.65vw;
   font-family: var(--font-kr);
-  font-size: 0.83vw;
-  font-weight: 400;
-  line-height: 1.45;
+  font-size: 1.09vw; /* 21px */
+  font-weight: 300;
+  line-height: 1.4;
   letter-spacing: -0.04em;
+}
+
+/* ----- 이미지 ----- */
+.media {
+  width: 100%;
+}
+
+.frame {
+  position: relative;
+  overflow: hidden;
+  background: #eadeca;
+}
+
+.frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.media:not(.mediaRow) .frame {
+  width: 100%;
+}
+
+.mediaRow {
+  display: flex;
+  gap: 0.83vw; /* 16px */
+  align-items: flex-start;
+}
+
+.mediaRow .frame {
+  flex-basis: 0; /* flex-grow(인라인 width 가중치)로 폭 분배 */
+}
+
+/* 데스크톱: chapters of Light + 라인 + 연도 스테이지가 하나의 묶음(.rail)으로 sticky 고정. */
+@media (min-width: 1200px) {
+  .rail {
+    position: sticky;
+    top: 14vh;
+  }
+}
+
+/* 데스크톱(모션 허용): 각 블록의 실제 prefix/suffix 조각이 이벤트 위치에 존재하고,
+   JS는 현재 연도 하단과 이벤트 이미지 하단이 만난 뒤 transform만 보정한다. */
+@media (min-width: 1200px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .markerFull {
+    display: none;
+  }
+
+  .markerSplit {
+    display: inline-flex;
+  }
+}
+
+/* ----- 태블릿·모바일: 한 줄 스택, 연도는 각 블록 위에 전체 노출 ----- */
+@media (max-width: 1199px) {
+  .history {
+    padding: 14vw 6vw 16vw;
+  }
+
+  .heading {
+    margin-bottom: 6vw;
+    font-size: clamp(48px, 12vw, 120px);
+    white-space: normal;
+  }
+
+  .rail {
+    padding-top: 2vw;
+  }
+
+  .subtitle,
+  .divider {
+    width: 100%;
+  }
+
+  .subtitle {
+    font-size: clamp(22px, 5vw, 40px);
+  }
+
+  .block {
+    display: block;
+    padding-bottom: 16vw;
+  }
+
+  /* 모바일: 전체 연도 노출 + 좌측 정렬 */
+  .marker {
+    margin: 4vw 0 3vw;
+    text-align: left;
+    font-size: clamp(64px, 18vw, 150px);
+  }
+
+  .markerFull {
+    display: inline;
+  }
+
+  .markerSplit {
+    display: none;
+  }
+
+  .content {
+    gap: 5vw;
+  }
+
+  .copy {
+    gap: 1.5vw;
+  }
+
+  .title {
+    font-size: clamp(22px, 4.4vw, 34px);
+  }
+
+  .description {
+    font-size: clamp(14px, 2.4vw, 19px);
+  }
+
+  .mediaRow {
+    gap: 2.5vw;
+  }
 }
