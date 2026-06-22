@@ -7,6 +7,7 @@ import StorySection from './sections/StorySection/StorySection'
 import SpaceMiddleSection from './sections/SpaceMiddleSection/SpaceMiddleSection'
 import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection'
 import FixSnowman2Section from './sections/FixSnowman2Section/FixSnowman2Section'
+import FixStorySection from './sections/FixStorySection/FixStorySection'
 import ProductSection from './sections/ProductSection/ProductSection'
 import FlamingoDetailSection from './sections/FlamingoDetailSection/FlamingoDetailSection'
 import SpacesSection from './sections/SpacesSection/SpacesSection'
@@ -23,6 +24,8 @@ import AboutPage from './pages/AboutPage/AboutPage'
 import ShowroomPage from './pages/ShowroomPage/ShowroomPage'
 import Header from './components/Header/Header'
 import LightCursor from './components/LightCursor/LightCursor'
+import ResizeAnchor from './components/ResizeAnchor/ResizeAnchor'
+import ScrollTopButton from './components/ScrollTopButton/ScrollTopButton'
 
 // 라우트 바뀔 때마다 맨 위로 (엉뚱한 스크롤 위치 방지)
 // useLayoutEffect = 페인트 전 / 다음 프레임에 한 번 더 = ScrollTrigger 등이 위치 복원하려는 것까지 눌러줌
@@ -34,6 +37,11 @@ function ScrollToTop() {
     return () => cancelAnimationFrame(id)
   }, [pathname])
   return null
+}
+
+// 전역 "맨 위로" 버튼 (스크롤에 따라 자동 노출)
+function GlobalTopButton() {
+  return <ScrollTopButton />
 }
 
 // 메인(인덱스) 페이지 — 헤더는 인덱스 전용 동작(index)
@@ -50,7 +58,7 @@ function Home() {
       <FixSnowman2Section />
       <SpacesSection />
       {/* 고정된 Dining(ON) 위로 Collabo가 슬라이드업 (한 번만 렌더) */}
-      <div style={{ position: 'relative', zIndex: 2, marginTop: '-100vh' }}>
+      <div className="collaboOverlap">
         <CollaboSection />
       </div>
       <Footer />
@@ -75,6 +83,7 @@ function App() {
     <>
       <LightCursor />
       <ScrollToTop />
+      <ResizeAnchor />
       <Routes>
         <Route path="/" element={<Home />} />
         {/* 서브페이지는 전역 헤더 상시표시(index 없음). About은 자체 헤더 없어 바로 적용 */}
@@ -125,10 +134,13 @@ function App() {
             </>
           }
         />
+        {/* 작업용 미리보기 — FixStorySection 단독 확인용 (이전 섹션 포함) */}
+        <Route path="/fixstory" element={<><Header /><NewIntroSectionNew /><FixStorySection /></>} />
 
         {/* 작업용 미리보기 — FixSnowman2Section 단독 확인용, 메인 페이지에는 미연결 */}
         <Route path="/fixsnowman2" element={<><Header /><FixSnowman2Section /></>} />
       </Routes>
+      <GlobalTopButton />
     </>
   )
 }

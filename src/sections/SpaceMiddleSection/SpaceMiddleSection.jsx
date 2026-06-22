@@ -12,8 +12,74 @@ import imgGif from '../../../img/download.gif';
 import img14 from '../../../img/14.png';
 import img4 from '../../../img/4.png';
 import img6 from '../../../img/6.png';
-import img15 from '../../../img/15.png';
+import img15 from '../../../img/space-15.webp';
 import img8 from '../../../img/8.png';
+
+const DESKTOP_HEIGHT = 3133;
+const MOBILE_HEIGHT = 6500;
+
+const DESKTOP_IMAGES = [
+  { left: 0, top: 0, width: 808, height: 995 },
+  { left: 808, top: 995, width: 331, height: 322 },
+  { left: 317, top: 1317, width: 488, height: 408 },
+  { left: 0, top: 1729, width: 317, height: 260 },
+  { left: 682, top: 1923, width: 456, height: 315 },
+  { left: 383, top: 2190, width: 300, height: 283 },
+  { left: 0, top: 2410, width: 383, height: 281 },
+  { left: 383, top: 2645, width: 796, height: 488 },
+];
+
+const MOBILE_IMAGES = [
+  { left: 60, top: 1830, width: 720, height: 760 },
+  { left: 1080, top: 2350, width: 690, height: 520 },
+  { left: 260, top: 2920, width: 760, height: 620 },
+  { left: 1110, top: 3400, width: 660, height: 520 },
+  { left: 70, top: 3900, width: 800, height: 570 },
+  { left: 1010, top: 4380, width: 720, height: 620 },
+  { left: 70, top: 4970, width: 770, height: 770 },
+  { left: 700, top: 5680, width: 1120, height: 700 },
+];
+
+const DESKTOP_STOPS = [
+  { scroll: 300, x: 404, y: 498, images: [0] },
+  { scroll: 995, x: 974, y: 1156, images: [1] },
+  { scroll: 1340, x: 561, y: 1521, images: [2] },
+  { scroll: 1729, x: 159, y: 1859, images: [3] },
+  { scroll: 1923, x: 910, y: 2081, images: [4] },
+  { scroll: 2190, x: 533, y: 2332, images: [5] },
+  { scroll: 2410, x: 192, y: 2551, images: [6] },
+  { scroll: 2645, x: 781, y: 2889, images: [7] },
+];
+
+const MOBILE_STOPS = MOBILE_IMAGES.map((image, index) => ({
+  scroll: image.top + image.height * 0.42,
+  x: image.left + image.width / 2,
+  y: image.top + image.height / 2,
+  images: [index],
+}));
+
+const withBounds = (stops, images) => stops.map((stop, index) => ({
+  ...stop,
+  bounds: {
+    left: images[index].left,
+    top: images[index].top,
+    right: images[index].left + images[index].width,
+    bottom: images[index].top + images[index].height,
+  },
+}));
+
+const createSmoothPath = (points) => {
+  if (!points.length) return '';
+  let path = `M ${points[0].x} 0 L ${points[0].x} ${points[0].y}`;
+  for (let index = 0; index < points.length - 1; index++) {
+    const current = points[index];
+    const next = points[index + 1];
+    const middleY = (current.y + next.y) / 2;
+    path += ` C ${current.x} ${middleY}, ${next.x} ${middleY}, ${next.x} ${next.y}`;
+  }
+  const last = points[points.length - 1];
+  return `${path} C ${last.x} ${last.y + 120}, 960 ${last.y + 180}, 960 ${MOBILE_HEIGHT}`;
+};
 
 export default function SpaceMiddleSection() {
   const sectionRef = useRef(null);
@@ -22,11 +88,16 @@ export default function SpaceMiddleSection() {
   const highlightWordRef = useRef(null);
   const lightRef = useRef(null);
   const trailCanvasRef = useRef(null);
+  const motionPathRef = useRef(null);
   const imageRefs = useRef([]);
   const heroRef = useRef(null);
   const heroDimRef = useRef(null);
   const [scale, setScale] = useState(1);
   const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth);
+  const isMobile = viewportWidth < 768;
+  const containerHeight = isMobile ? MOBILE_HEIGHT : DESKTOP_HEIGHT;
+  const imageLayout = isMobile ? MOBILE_IMAGES : DESKTOP_IMAGES;
+  const mobilePath = createSmoothPath(MOBILE_STOPS);
 
   useLayoutEffect(() => {
     const handleResize = () => {
@@ -44,7 +115,7 @@ export default function SpaceMiddleSection() {
     const isTablet = viewportWidth >= 768 && viewportWidth < 1200;
     const textRevealOffset = isMobile ? 300 : 650;
     const wordChangeOffset = isMobile ? 900 : 650;
-    const wordChangeEnd = isMobile ? 2350 : isTablet ? 2250 : 3133;
+    const wordChangeEnd = isMobile ? 6050 : isTablet ? 2250 : 3133;
 
     let ctx = gsap.context(() => {
       // Reveal animation for the whole text block (rises + fades in as one
@@ -137,7 +208,11 @@ export default function SpaceMiddleSection() {
     const section = sectionRef.current;
     if (!lastWrapper || !hero || !dim || !section) return;
 
-    const IMAGE8_DESIGN_TOP = 2645;
+    const IMAGE8_DESIGN_TOP = viewportWidth < 768 ? MOBILE_IMAGES[7].top : 2645;
+    const isMobile = viewportWidth < 768;
+    const image8TriggerPosition = isMobile
+      ? IMAGE8_DESIGN_TOP + MOBILE_IMAGES[7].height / 2
+      : IMAGE8_DESIGN_TOP;
     const MAX_DIM = 0.55;
     let fromRect = null;
 
@@ -154,7 +229,8 @@ export default function SpaceMiddleSection() {
 
     const st = ScrollTrigger.create({
       trigger: section,
-      start: () => `top+=${IMAGE8_DESIGN_TOP * scale}px 8%`,
+      start: () =>
+        `top+=${image8TriggerPosition * scale}px ${isMobile ? 'center' : '8%'}`,
       end: () => `+=${window.innerHeight}`,
       pin: true,
       pinSpacing: true,
@@ -173,11 +249,17 @@ export default function SpaceMiddleSection() {
         hero.style.opacity = '0';
         dim.style.opacity = '0';
       },
+      // 아래로 빠져나갈 때(스크롤 점프 포함) 끝상태(풀스크린+딤)를 강제 →
+      // scrub가 중간값에서 멈춰 hero가 유령처럼 떠있는 현상 방지
+      onLeave: () => {
+        hero.style.opacity = '1';
+        setProgress(1);
+      },
       onUpdate: (self) => setProgress(self.progress)
     });
 
     return () => st.kill();
-  }, [scale]);
+  }, [scale, viewportWidth]);
 
   // A small light follows a curved route, pauses at each image, sparkles,
   // and then switches that image on.
@@ -185,34 +267,25 @@ export default function SpaceMiddleSection() {
     const section = sectionRef.current;
     const light = lightRef.current;
     const trailCanvas = trailCanvasRef.current;
-    if (!section || !light || !trailCanvas) return;
+    const motionPath = motionPathRef.current;
+    if (!section || !light || !trailCanvas || !motionPath) return;
 
     const trailContext = trailCanvas.getContext('2d');
     const trailPoints = [];
     trailCanvas.width = 1920;
-    trailCanvas.height = 3133;
+    trailCanvas.height = isMobile ? MOBILE_HEIGHT : DESKTOP_HEIGHT;
 
-    const CONTAINER_HEIGHT = 3133;
+    const CONTAINER_HEIGHT = isMobile ? MOBILE_HEIGHT : DESKTOP_HEIGHT;
     const DESIGN_WIDTH = 1920;
-    const stops = [
-      { scroll: 300, x: 404, y: 498, images: [0], bounds: { left: 0, top: 0, right: 808, bottom: 995 } },
-      { scroll: 995, x: 974, y: 1156, images: [1], bounds: { left: 808, top: 995, right: 1139, bottom: 1317 } },
-      { scroll: 1340, x: 561, y: 1521, images: [2], bounds: { left: 317, top: 1317, right: 805, bottom: 1725 } },
-      { scroll: 1729, x: 159, y: 1859, images: [3], bounds: { left: 0, top: 1729, right: 317, bottom: 1989 } },
-      { scroll: 1923, x: 910, y: 2081, images: [4], bounds: { left: 682, top: 1923, right: 1138, bottom: 2238 } },
-      { scroll: 2190, x: 533, y: 2332, images: [5], bounds: { left: 383, top: 2190, right: 683, bottom: 2473 } },
-      { scroll: 2410, x: 192, y: 2551, images: [6], bounds: { left: 0, top: 2410, right: 383, bottom: 2691 } },
-      { scroll: 2645, x: 781, y: 2889, images: [7], bounds: { left: 383, top: 2645, right: 1179, bottom: 3133 } },
-    ];
+    const stops = isMobile
+      ? withBounds(MOBILE_STOPS, MOBILE_IMAGES)
+      : withBounds(DESKTOP_STOPS, DESKTOP_IMAGES);
 
     const HOLD_BEFORE = 70;
     const HOLD_AFTER = 120;
     const revealed = new Set();
     const revealCalls = new Map();
-    let currentX = stops[0].x;
-    let currentY = 0;
-    let previousX = currentX;
-    let previousY = currentY;
+    let currentPathProgress = 0;
     let flashingStop = -1;
     let flashCall = null;
     let previousScroll = 0;
@@ -226,29 +299,60 @@ export default function SpaceMiddleSection() {
     };
 
     const smooth = value => value * value * value * (value * (value * 6 - 15) + 10);
-    const catmullRom = (p0, p1, p2, p3, t) => {
-      const t2 = t * t;
-      const t3 = t2 * t;
-      return 0.5 * (
-        (2 * p1) +
-        (-p0 + p2) * t +
-        (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
-        (-p0 + 3 * p1 - 3 * p2 + p3) * t3
+    const totalPathLength = motionPath.getTotalLength();
+    const positionLight = (pathProgress) => {
+      const pathLength = totalPathLength * pathProgress;
+      const point = motionPath.getPointAtLength(pathLength);
+      const tangentDistance = 2;
+      const before = motionPath.getPointAtLength(
+        Math.max(0, pathLength - tangentDistance)
       );
-    };
+      const after = motionPath.getPointAtLength(
+        Math.min(totalPathLength, pathLength + tangentDistance)
+      );
+      const rotation =
+        Math.atan2(after.y - before.y, after.x - before.x) * 180 / Math.PI;
 
-    const getPathPosition = scrollY => {
+      gsap.set(light, {
+        x: point.x,
+        y: point.y,
+        xPercent: -50,
+        yPercent: -50,
+        rotation,
+        transformOrigin: '50% 50%',
+      });
+
+      return point;
+    };
+    const stopPathLengths = stops.map(stop => {
+      let closestLength = 0;
+      let closestDistance = Infinity;
+      const samples = 1200;
+      for (let sample = 0; sample <= samples; sample++) {
+        const length = totalPathLength * sample / samples;
+        const point = motionPath.getPointAtLength(length);
+        const distance = Math.hypot(point.x - stop.x, point.y - stop.y);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestLength = length;
+        }
+      }
+      return closestLength;
+    });
+
+    const getPathProgress = scrollY => {
       if (scrollY <= stops[0].scroll - HOLD_BEFORE) {
         const progress = Math.max(0, scrollY / (stops[0].scroll - HOLD_BEFORE));
-        const eased = smooth(progress);
-        return { x: stops[0].x, y: stops[0].y * eased };
+        return stopPathLengths[0] * smooth(progress) / totalPathLength;
       }
 
       for (let index = 0; index < stops.length; index++) {
         const stop = stops[index];
         const arrival = stop.scroll - HOLD_BEFORE;
         const departure = stop.scroll + HOLD_AFTER;
-        if (scrollY <= departure && scrollY >= arrival) return { x: stop.x, y: stop.y };
+        if (scrollY <= departure && scrollY >= arrival) {
+          return stopPathLengths[index] / totalPathLength;
+        }
 
         const next = stops[index + 1];
         if (next && scrollY < next.scroll - HOLD_BEFORE) {
@@ -256,23 +360,14 @@ export default function SpaceMiddleSection() {
           const end = next.scroll - HOLD_BEFORE;
           const progress = Math.max(0, Math.min(1, (scrollY - start) / (end - start)));
           const eased = smooth(progress);
-          const previous = stops[Math.max(0, index - 1)];
-          const afterNext = stops[Math.min(stops.length - 1, index + 2)];
-          return {
-            x: Math.max(
-              24,
-              Math.min(1170, catmullRom(previous.x, stop.x, next.x, afterNext.x, eased))
-            ),
-            y: Math.max(
-              0,
-              Math.min(CONTAINER_HEIGHT, catmullRom(previous.y, stop.y, next.y, afterNext.y, eased))
-            ),
-          };
+          const pathLength =
+            stopPathLengths[index] +
+            (stopPathLengths[index + 1] - stopPathLengths[index]) * eased;
+          return pathLength / totalPathLength;
         }
       }
 
-      const last = stops[stops.length - 1];
-      return { x: last.x, y: last.y };
+      return stopPathLengths[stopPathLengths.length - 1] / totalPathLength;
     };
 
     const sparkleAndReveal = (stop, index) => {
@@ -330,8 +425,12 @@ export default function SpaceMiddleSection() {
       const isTablet = window.innerWidth >= 768 && window.innerWidth < 1200;
       const isMobile = window.innerWidth < 768;
       const viewportRatio = isMobile ? 0.78 : isTablet ? 0.8 : 0.65;
-      const viewportOffset =
-        (window.innerHeight * viewportRatio) / renderedScale;
+      // On mobile, reveal each image while it is still below the sticky
+      // headline. Using screen pixels here made the reveal happen after the
+      // image had already travelled behind and above the text.
+      const viewportOffset = isMobile
+        ? 2450
+        : (window.innerHeight * viewportRatio) / renderedScale;
       return scrollInsideSection + viewportOffset;
     };
 
@@ -366,9 +465,13 @@ export default function SpaceMiddleSection() {
       }
 
       const activeScroll = lightProgress;
-      const target = getPathPosition(activeScroll);
-      currentX += (target.x - currentX) * 0.065;
-      currentY += (target.y - currentY) * 0.065;
+      const targetPathProgress = getPathProgress(activeScroll);
+      currentPathProgress += (targetPathProgress - currentPathProgress) * 0.12;
+
+      const currentPathLength = totalPathLength * currentPathProgress;
+      const currentPoint = positionLight(currentPathProgress);
+      const currentX = currentPoint.x;
+      const currentY = currentPoint.y;
 
       const lastTrailPoint = trailPoints[trailPoints.length - 1];
       if (
@@ -376,6 +479,10 @@ export default function SpaceMiddleSection() {
         Math.hypot(currentX - lastTrailPoint.x, currentY - lastTrailPoint.y) > 3
       ) {
         trailPoints.push({ x: currentX, y: currentY, life: 1 });
+      } else {
+        lastTrailPoint.x = currentX;
+        lastTrailPoint.y = currentY;
+        lastTrailPoint.life = 1;
       }
 
       trailContext.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
@@ -405,13 +512,30 @@ export default function SpaceMiddleSection() {
           trailContext.shadowBlur = 7;
           trailContext.stroke();
         }
+
+        // Finish the curve at the exact light position. The midpoint-based
+        // smoothing above otherwise leaves the visible line trailing behind.
+        const latest = trailPoints[trailPoints.length - 1];
+        const previous = trailPoints[trailPoints.length - 2];
+        trailContext.beginPath();
+        trailContext.moveTo(
+          (previous.x + latest.x) / 2,
+          (previous.y + latest.y) / 2
+        );
+        trailContext.quadraticCurveTo(
+          latest.x,
+          latest.y,
+          currentX,
+          currentY
+        );
+        trailContext.strokeStyle = `rgba(255, 205, 132, ${latest.life * 0.34})`;
+        trailContext.lineWidth = 2.2;
+        trailContext.shadowColor =
+          `rgba(255, 231, 184, ${latest.life * 0.272})`;
+        trailContext.shadowBlur = 7;
+        trailContext.stroke();
         trailContext.shadowBlur = 0;
       }
-
-      const angle = Math.atan2(currentY - previousY, currentX - previousX) * 180 / Math.PI;
-      light.style.left = `${currentX}px`;
-      light.style.top = `${currentY}px`;
-      light.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
 
       const lightIsInsideRevealedImage = stops.some((stop, index) => {
         if (!revealed.has(index) || flashingStop === index) return false;
@@ -430,15 +554,14 @@ export default function SpaceMiddleSection() {
         !lightIsInsideRevealedImage
           ? '1'
           : '0';
-      previousX = currentX;
-      previousY = currentY;
 
       stops.forEach((stop, index) => {
-        const distance = Math.hypot(currentX - stop.x, currentY - stop.y);
+        const distanceFromStop =
+          Math.abs(currentPathLength - stopPathLengths[index]);
         if (
           activeScroll >= stop.scroll - HOLD_BEFORE &&
           activeScroll <= stop.scroll + HOLD_AFTER &&
-          distance < 8
+          distanceFromStop < 8
         ) {
           sparkleAndReveal(stop, index);
         }
@@ -465,6 +588,8 @@ export default function SpaceMiddleSection() {
       previousScroll = getTargetScroll();
       previousTargetScroll = previousScroll;
       lightProgress = Math.max(0, Math.min(CONTAINER_HEIGHT, previousScroll));
+      currentPathProgress = getPathProgress(lightProgress);
+      positionLight(currentPathProgress);
     };
     window.addEventListener('resize', handleResize);
 
@@ -475,55 +600,90 @@ export default function SpaceMiddleSection() {
       revealCalls.forEach(call => call.kill());
       window.removeEventListener('resize', handleResize);
     };
-  }, [scale]);
+  }, [scale, isMobile]);
 
   return (
     <section className={styles.section} ref={sectionRef}>
 
-      <div ref={containerRef} className={styles.container} style={{ zoom: scale, margin: scale < 1 ? '0' : '0 auto' }}>
+      <div
+        ref={containerRef}
+        className={styles.container}
+        style={{
+          zoom: scale,
+          height: containerHeight,
+          margin: scale < 1 ? '0' : '0 auto',
+        }}
+      >
 
         {/* Small travelling light with a short, faint tail */}
-        <canvas ref={trailCanvasRef} className={styles.lightTrailCanvas} aria-hidden="true" />
+        <svg
+          className={styles.motionPathSvg}
+          style={{ height: containerHeight }}
+          viewBox={`0 0 1920 ${containerHeight}`}
+          aria-hidden="true"
+        >
+          <path
+            ref={motionPathRef}
+            d={isMobile ? mobilePath : `
+              M 404 0
+              C 390 210, 360 390, 404 498
+              C 445 650, 1110 760, 974 1156
+              C 920 1320, 690 1340, 561 1521
+              C 430 1690, 80 1690, 159 1859
+              C 245 2025, 1060 1870, 910 2081
+              C 790 2240, 630 2170, 533 2332
+              C 450 2470, 120 2390, 192 2551
+              C 260 2705, 910 2670, 781 2889
+              C 720 2990, 680 3060, 760 3133
+            `}
+          />
+        </svg>
+        <canvas
+          ref={trailCanvasRef}
+          className={styles.lightTrailCanvas}
+          style={{ height: containerHeight }}
+          aria-hidden="true"
+        />
         <div ref={lightRef} className={styles.travelLight} aria-hidden="true">
           <span className={styles.lightTail} />
           <span className={styles.lightCore} />
         </div>
 
         {/* Images */}
-        <div ref={el => imageRefs.current[0] = el} className={styles.imgWrapper} style={{ left: 0, top: 0, width: 808, height: 995 }}>
+        <div ref={el => imageRefs.current[0] = el} className={styles.imgWrapper} style={imageLayout[0]}>
           <img src={img1} alt="Space 1" className={styles.image} />
         </div>
 
-        <div ref={el => imageRefs.current[1] = el} className={styles.imgWrapper} style={{ left: 808, top: 995, width: 331, height: 322 }}>
+        <div ref={el => imageRefs.current[1] = el} className={styles.imgWrapper} style={imageLayout[1]}>
           <img src={img2} alt="Space 2" className={styles.image} />
         </div>
 
-        <div ref={el => imageRefs.current[2] = el} className={styles.imgWrapper} style={{ left: 317, top: 1317, width: 488, height: 408 }}>
+        <div ref={el => imageRefs.current[2] = el} className={styles.imgWrapper} style={imageLayout[2]}>
           <img src={imgGif} alt="Space GIF" className={styles.image} />
         </div>
 
-        <div ref={el => imageRefs.current[3] = el} className={styles.imgWrapper} style={{ left: 0, top: 1729, width: 317, height: 260 }}>
+        <div ref={el => imageRefs.current[3] = el} className={styles.imgWrapper} style={imageLayout[3]}>
           <img src={img14} alt="Space 14" className={styles.image} />
         </div>
 
-        <div ref={el => imageRefs.current[4] = el} className={styles.imgWrapper} style={{ left: 682, top: 1923, width: 456, height: 315 }}>
+        <div ref={el => imageRefs.current[4] = el} className={styles.imgWrapper} style={imageLayout[4]}>
           <img src={img4} alt="Space 4" className={styles.image} />
         </div>
 
-        <div ref={el => imageRefs.current[5] = el} className={styles.imgWrapper} style={{ left: 383, top: 2190, width: 300, height: 283 }}>
+        <div ref={el => imageRefs.current[5] = el} className={styles.imgWrapper} style={imageLayout[5]}>
           <img src={img6} alt="Space 6" className={styles.image} />
         </div>
 
-        <div ref={el => imageRefs.current[6] = el} className={styles.imgWrapper} style={{ left: 0, top: 2410, width: 383, height: 281 }}>
+        <div ref={el => imageRefs.current[6] = el} className={styles.imgWrapper} style={imageLayout[6]}>
           <img src={img15} alt="Space 15" className={styles.image} />
         </div>
 
-        <div ref={el => imageRefs.current[7] = el} className={styles.imgWrapper} style={{ left: 383, top: 2645, width: 796, height: 488 }}>
+        <div ref={el => imageRefs.current[7] = el} className={styles.imgWrapper} style={imageLayout[7]}>
           <img src={img8} alt="Space 8" className={styles.imageReduced} />
         </div>
 
         {/* Central Text Block Wrapper for Sticky */}
-        <div style={{ position: 'absolute', left: 1192, top: 0, bottom: 0, zIndex: 20 }}>
+        <div className={styles.textStickyTrack}>
           <div
             ref={textRef}
             className={styles.textBlock}

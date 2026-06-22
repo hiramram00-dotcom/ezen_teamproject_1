@@ -1,12 +1,9 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './HeroSection.module.css'
 
-import iLetter from '../../assets/common/logo/ilkw-i.svg'
-import lLetter from '../../assets/common/logo/ilkw-l.svg'
-import kLetter from '../../assets/common/logo/ilkw-k.svg'
-import wLetter from '../../assets/common/logo/ilkw-w.svg'
+import ilkwLogo from '../../assets/common/logo/ilkw.svg' // 합쳐진 완성형(커닝 정확)
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -15,6 +12,13 @@ const SWEEP_AT = 0.4 // 혜성 빛 시작
 const SWEEP_DUR = 1.2 // 혜성이 지나가며 서브카피 등장
 const SPLIT_GAP = 0.3 // 혜성 끝 → 분할 시작 사이 텀 (2배)
 const SPLIT_DUR = 0.85 // 화면 위/아래로 갈라지는 시간 (텀 늘린 만큼 줄임)
+
+// ===== 영상 소스 — 모바일(≤767px)은 세로 버전으로 교체 =====
+const VIDEO_MOBILE_Q = '(max-width: 767px)'
+const VIDEO_WIDE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/hero-video2_ojabtt.mp4'
+const VIDEO_MOBILE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.mp4'
+const pickVideoSrc = () =>
+  window.matchMedia(VIDEO_MOBILE_Q).matches ? VIDEO_MOBILE : VIDEO_WIDE
 
 const prefersReduced = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -31,6 +35,13 @@ const introWasPlayed = () => {
 const markIntroPlayed = () => {
   try { sessionStorage.setItem(INTRO_KEY, '1') } catch { /* 스토리지 차단 무시 */ }
 }
+// 새로고침(F5/Cmd-R) 여부 — reload일 땐 같은 세션이라도 인트로를 새 탭처럼 다시 재생
+const isReload = () => {
+  try {
+    const nav = performance.getEntriesByType('navigation')[0]
+    return nav ? nav.type === 'reload' : false
+  } catch { return false }
+}
 
 function HeroSection() {
   const heroRef = useRef(null)
@@ -39,6 +50,15 @@ function HeroSection() {
   const panelBottomRef = useRef(null)
   const filamentRef = useRef(null)
   const logoRef = useRef(null)
+
+  // 모바일(≤767px)이면 세로 영상으로 교체 (리사이즈/회전 시 자동 갱신)
+  const [videoSrc, setVideoSrc] = useState(pickVideoSrc)
+  useEffect(() => {
+    const mq = window.matchMedia(VIDEO_MOBILE_Q)
+    const onChange = () => setVideoSrc(pickVideoSrc())
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
 
   useEffect(() => {
     const hero = heroRef.current
@@ -53,8 +73,9 @@ function HeroSection() {
       document.body.dataset.heroRevealed = 'true' // 헤더 등장 신호
     }
 
-    // 스킵(reduce-motion / 뒤로·새로고침): 인트로 없이 최종 상태(영상 + 로고)
-    if (prefersReduced() || introWasPlayed()) {
+    // 스킵(reduce-motion / 같은 세션 내 재방문): 인트로 없이 최종 상태(영상 + 로고)
+    // ※ 새로고침(F5)이면 introWasPlayed여도 스킵하지 않고 인트로를 새 탭처럼 풀 재생
+    if (prefersReduced() || (introWasPlayed() && !isReload())) {
       gsap.set(panelTop, { yPercent: -100 })
       gsap.set(panelBottom, { yPercent: 100 })
       gsap.set(filament, { autoAlpha: 0 })
@@ -62,6 +83,9 @@ function HeroSection() {
       playVideo()
       return
     }
+
+    // 새로고침 시 브라우저가 직전 스크롤 위치를 복원해 hero를 지나치지 않도록 맨 위로
+    window.scrollTo(0, 0)
 
     // 인트로 동안 스크롤 잠금
     const sbw = window.innerWidth - document.documentElement.clientWidth
@@ -146,7 +170,7 @@ function HeroSection() {
           )
 
           gsap.set(targetVideo, { opacity: targetAlpha })
-          if (logo) gsap.set(logo, { autoAlpha: 1 - p })
+          if (logo) gsap.set(logo, { autoAlpha: p > 0.01 ? 0 : 1 })
           if (p <= 0) {
             resetHeroVideo()
             return
@@ -204,7 +228,7 @@ function HeroSection() {
       <video
         ref={videoRef}
         className={styles.video}
-        src="https://res.cloudinary.com/dg9hg29hc/video/upload/0616_1_xt8vzh.mp4"
+        src={videoSrc}
         muted
         loop
         playsInline
@@ -218,7 +242,7 @@ function HeroSection() {
       </div>
       {/* 검정 패널 — 갈라지며 아래로 (한글 카피 포함) */}
       <div className={styles.panelBottom} ref={panelBottomRef}>
-        <p className={styles.copyKr}>빛이 머문 자리에, 온기가 남습니다</p>
+        <p className={styles.copyKr}>우리는 세상을 이롭게 하는 빛을 만듭니다</p>
       </div>
 
       {/* 혜성 빛 — 분할선(가운데)에서 가로로 지나감 */}
@@ -226,10 +250,7 @@ function HeroSection() {
 
       {/* 메인 로고 — 2배 크기, 등장 후 유지 */}
       <div className={styles.logo} ref={logoRef} aria-label="ILKW">
-        <img className={styles.letter} src={iLetter} alt="" aria-hidden="true" />
-        <img className={styles.letter} src={lLetter} alt="" aria-hidden="true" />
-        <img className={styles.letter} src={kLetter} alt="" aria-hidden="true" />
-        <img className={styles.letter} src={wLetter} alt="" aria-hidden="true" />
+        <img className={styles.letter} src={ilkwLogo} alt="" aria-hidden="true" />
       </div>
     </section>
   )

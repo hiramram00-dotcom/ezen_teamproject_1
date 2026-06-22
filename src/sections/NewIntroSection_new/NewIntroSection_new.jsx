@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import styles from './NewIntroSection_new.module.css'
 
 import ilkwLogoBlack from '../../assets/common/logo/ilkw-black.svg'
@@ -6,7 +6,10 @@ import lamp from './assets/lamp.webp'
 import story2 from './assets/story-2.webp'
 import story3 from './assets/story-3.webp'
 
-const HERO_VIDEO_SRC = 'https://res.cloudinary.com/dg9hg29hc/video/upload/0616_1_xt8vzh.mp4'
+const VIDEO_MOBILE_Q = '(max-width: 767px)'
+const VIDEO_WIDE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/hero-video2_ojabtt.mp4'
+const VIDEO_MOBILE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.mp4'
+const pickVideoSrc = () => typeof window !== 'undefined' && window.matchMedia(VIDEO_MOBILE_Q).matches ? VIDEO_MOBILE : VIDEO_WIDE
 
 /**
  * NewIntroSection — 브랜드 철학 인용 → 브랜드 스토리텔링 (핀 고정)
@@ -21,9 +24,9 @@ const HERO_VIDEO_SRC = 'https://res.cloudinary.com/dg9hg29hc/video/upload/0616_1
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
 const lerp = (a, b, t) => a + (b - a) * t
 const smooth = (t) => t * t * (3 - 2 * t) // smoothstep
-const TEXT_REVEAL_START = 0.72
-const TEXT_REVEAL_END = 1
-const HANDOFF_TEXT_REVEAL_MAX = 0.08
+const TEXT_REVEAL_START = 0.34
+const TEXT_REVEAL_END = 0.82
+const HANDOFF_TEXT_REVEAL_MAX = 0.27
 const CREAM = [255, 247, 234] // #FFF7EA
 const BLACK = [0, 0, 0]
 const mix = (a, b, t) =>
@@ -38,6 +41,7 @@ const GROW_START = 0.6 // 단어 채우기 완료 뒤 정지 구간을 두고 �
 const GROW_END = 0.7 // 램프 확장 완료
 const STORY_AT = 0.72 // 양옆/가운데 라벨 등장
 const SLIDE_TRIGGERS = [0.84, 0.93] // 각 임계값을 넘을 때마다 다음 슬라이드로 자동 교체
+const END_SCROLL_HOLD = 1 // 마지막 4분할 이미지가 한 화면 더 머무는 구간
 
 function SlicedImage({ src, alt }) {
   return (
@@ -57,6 +61,15 @@ function SlicedImage({ src, alt }) {
 }
 
 function NewIntroSectionNew() {
+  const [videoSrc, setVideoSrc] = useState(pickVideoSrc)
+
+  useEffect(() => {
+    const mq = window.matchMedia(VIDEO_MOBILE_Q)
+    const onChange = () => setVideoSrc(pickVideoSrc())
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
   const sectionRef = useRef(null)
   const stageRef = useRef(null)
   const bgRef = useRef(null)
@@ -113,12 +126,36 @@ function NewIntroSectionNew() {
         sw >= 1200
           ? { left: sw * 0.1854, top: sh * 0.1491, width: sw * 0.6286, height: sh * 0.6676 }
           : sw >= 768
-            ? { left: sw * 0.08, top: sh * 0.22, width: sw * 0.84, height: sh * 0.56 }
-            : { left: sw * 0.06, top: sh * 0.29, width: sw * 0.88, height: sh * 0.42 }
+            ? { left: 0, top: 0, width: sw, height: sh }
+            : { left: 0, top: 0, width: sw, height: sh }
       metrics = {
         start: { left: w.left - s.left, top: w.top - s.top, width: w.width, height: w.height },
         end,
       }
+    }
+
+    const syncLabelsToFrame = (rect) => {
+      const left = rect.left
+      const width = rect.width
+      const centerY = rect.top + rect.height / 2
+
+      sideLabels.style.setProperty('--labels-top', `${centerY}px`)
+      centers.forEach((el) => el.style.setProperty('--labels-top', `${centerY}px`))
+
+      const stageWidth = stage.offsetWidth
+      const positions =
+        stageWidth >= 1200
+          ? [0.0445, 0.284, 0.714, 0.955]
+          : stageWidth >= 768
+            ? [0.125, 0.375, 0.625, 0.875]
+            : [0.125, 0.375, 0.625, 0.875]
+
+      sideLabels.style.setProperty('--lbl1-left', `${left + width * positions[0]}px`)
+      centers.forEach((el) => {
+        el.style.setProperty('--lbl2-left', `${left + width * positions[1]}px`)
+        el.style.setProperty('--lbl3-left', `${left + width * positions[2]}px`)
+      })
+      sideLabels.style.setProperty('--lbl4-left', `${left + width * positions[3]}px`)
     }
 
     const apply = () => {
@@ -126,14 +163,18 @@ function NewIntroSectionNew() {
       if (!metrics) return
       const rectTop = section.getBoundingClientRect().top
       const dist = section.offsetHeight - stage.offsetHeight
-      const p = clamp01(-rectTop / dist)
+      const animationDist = Math.max(1, dist - window.innerHeight * END_SCROLL_HOLD)
+      const p = clamp01(-rectTop / animationDist)
       const handoffProgress = clamp01((window.innerHeight - rectTop) / window.innerHeight)
       const handoffTextReveal =
         smooth(clamp01((handoffProgress - TEXT_REVEAL_START) / (TEXT_REVEAL_END - TEXT_REVEAL_START))) *
         HANDOFF_TEXT_REVEAL_MAX
-      const pinnedTextReveal = clamp01(p / TEXT_REVEAL_SCROLL_RANGE)
+      const pinnedTextReveal = clamp01(
+        HANDOFF_TEXT_REVEAL_MAX + (p / TEXT_REVEAL_SCROLL_RANGE) * (1 - HANDOFF_TEXT_REVEAL_MAX)
+      )
       const textReveal = Math.max(handoffTextReveal, pinnedTextReveal)
       const { end } = metrics
+      syncLabelsToFrame(end)
 
       quote.style.position = 'absolute'
       quote.style.top = '50%'
@@ -263,7 +304,7 @@ function NewIntroSectionNew() {
             <video
               data-intro-hero-video
               className={`${styles.word} ${styles.w1} ${styles.introHeroVideo}`}
-              src={HERO_VIDEO_SRC}
+              src={videoSrc}
               muted
               loop
               autoPlay

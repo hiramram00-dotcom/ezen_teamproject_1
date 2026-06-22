@@ -160,7 +160,7 @@
 }
 
 .divider {
-  height: 2px;
+  height: 1.5px;
   width: 100%;
   background: var(--color-footer); /* #252525 */
 }
@@ -230,14 +230,14 @@
     gap: 12px 20px;
   }
   .nav :global(.type-body-3) {
-    font-size: 16px;
+    font-size: 14px;
   }
   .legal {
     flex-direction: column;
     gap: 6px;
   }
   .legalText {
-    font-size: 14px;
+    font-size: 9px;
   }
   .legalText {
     white-space: normal;

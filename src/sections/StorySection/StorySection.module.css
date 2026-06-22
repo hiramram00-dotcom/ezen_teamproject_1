@@ -99,6 +99,13 @@
   background-color: transparent;
 }
 
+.isHandoffActive .imageCard:first-child,
+.isHandoffActive .footer {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: none !important;
+}
+
 .imageRevealMask {
   position: absolute;
   top: 0;
@@ -318,8 +325,9 @@
 
 @media (max-width: 767px) {
   .storySection {
-    padding: clamp(30px, 5vh, 44px) 12px;
-    gap: clamp(16px, 3vh, 24px);
+    justify-content: center;
+    padding: clamp(36px, 6vh, 54px) 10px clamp(44px, 7vh, 64px);
+    gap: clamp(14px, 2.6vh, 22px);
   }
 
   .titleRegular,
@@ -345,16 +353,45 @@
 
   .footerTextLeft,
   .footerTextRight {
-    font-size: clamp(28px, 8vw, 42px);
+    font-size: clamp(24px, 7.2vw, 34px);
+    line-height: 1;
+    white-space: nowrap;
   }
 
   .footer {
-    gap: 10px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(72px, 24vw, 116px) minmax(0, 1fr);
+    gap: 12px;
     margin-top: 0;
   }
 
+  .footerTextLeft {
+    justify-self: end;
+    text-align: right;
+  }
+
+  .footerTextRight {
+    justify-self: start;
+    text-align: left;
+  }
+
   .line {
-    width: clamp(46px, 16vw, 92px);
+    width: 100%;
+    justify-self: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .footerTextLeft,
+  .footerTextRight {
+    font-size: clamp(22px, 6.7vw, 27px);
+  }
+}
+
+@media (min-width: 381px) and (max-width: 767px) {
+  .footer {
+    grid-template-columns: minmax(0, 1fr) clamp(58px, 17vw, 82px) minmax(0, 1fr);
+    gap: 18px;
   }
 }
 

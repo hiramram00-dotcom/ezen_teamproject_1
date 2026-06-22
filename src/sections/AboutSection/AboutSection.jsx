@@ -135,6 +135,8 @@ function AboutIntroParticles({ onComplete }) {
       const progress = Math.min(elapsed / INTRO_DURATION, 1)
       const gather = easeInOutCubic(Math.min(Math.max((progress - INTRO_HOLD) / 0.34, 0), 1))
       const write = easeInOutCubic(Math.min(Math.max((progress - INTRO_HOLD - 0.24) / 0.36, 0), 1))
+      const particleFade =
+        1 - easeInOutCubic(Math.min(Math.max((write - 0.72) / 0.28, 0), 1))
       const width = canvas.width / renderRatio
       const height = canvas.height / renderRatio
       const centerX = width / 2
@@ -171,7 +173,7 @@ function AboutIntroParticles({ onComplete }) {
 
         const velocity = Math.hypot(particle.x - particle.px, particle.y - particle.py)
         const ringGlow = 1 - gather
-        const lineFade = 1 - write * 0.72
+        const lineFade = particleFade
         const alpha =
           Math.min(0.94, 0.24 + velocity / 18 + ringGlow * 0.25 + gather * 0.3) * lineFade
         const weight =
@@ -189,7 +191,7 @@ function AboutIntroParticles({ onComplete }) {
         }
 
         if (gather > 0.52) {
-          const pointAlpha = Math.min(0.96, (gather - 0.52) * 2.4)
+          const pointAlpha = Math.min(0.96, (gather - 0.52) * 2.4) * particleFade
           context.beginPath()
           context.fillStyle = `rgba(255, 252, 246, ${pointAlpha})`
           context.arc(particle.x, particle.y, Math.max(0.65, particle.size * 0.72), 0, Math.PI * 2)
@@ -236,12 +238,15 @@ function AboutIntroParticles({ onComplete }) {
 }
 
 function AboutSection() {
-  const legacyLightRef = useRef(null)
-  const storyLightRef = useRef(null)
+  const legacyRef = useRef(null)
+  const storyRef = useRef(null)
   const aboutRef = useRef(null)
-  const legacyScrollStartRef = useRef(0)
+  const legacyHoldTimerRef = useRef(null)
+  const legacyRevealedRef = useRef(false)
+  const storyRevealedRef = useRef(false)
   const [yearRevealed, setYearRevealed] = useState(false)
   const [legacyRevealed, setLegacyRevealed] = useState(false)
+  const [legacyHolding, setLegacyHolding] = useState(false)
   const [storyRevealed, setStoryRevealed] = useState(false)
   const [storyPhase, setStoryPhase] = useState('before')
 
@@ -252,35 +257,29 @@ function AboutSection() {
   useEffect(() => {
     if (!yearRevealed) return
 
-    legacyScrollStartRef.current = window.scrollY
     let scrollFrame = null
 
-    const updateLegacyLight = () => {
-      const light = legacyLightRef.current
-      if (!light) return
+    const updateLegacyReveal = () => {
+      const legacy = legacyRef.current
+      if (!legacy) return
 
-      const distance = window.innerWidth * 0.42
-      const progress = Math.min(
-        Math.max((window.scrollY - legacyScrollStartRef.current) / distance, 0),
-        1,
-      )
-      const curveX =
-        Math.sin(progress * Math.PI * 2.4) * (1 - progress) * 5.5 + progress * 18
+      const legacyTop = legacy.getBoundingClientRect().top
 
-      light.style.opacity = progress > 0 && progress < 0.98 ? '0.85' : '0'
-      light.style.transform = `translate(calc(-50% + ${curveX}vw), calc(-50% + ${
-        progress * 41
-      }vw)) scale(${0.65 + progress * 0.7})`
-
-      if (progress >= 0.98) setLegacyRevealed(true)
+      if (legacyTop <= window.innerHeight * 0.72 && !legacyRevealedRef.current) {
+        legacyRevealedRef.current = true
+        setLegacyRevealed(true)
+        setLegacyHolding(true)
+        clearTimeout(legacyHoldTimerRef.current)
+        legacyHoldTimerRef.current = setTimeout(() => setLegacyHolding(false), 1600)
+      }
       scrollFrame = null
     }
 
     const onScroll = () => {
-      if (!scrollFrame) scrollFrame = requestAnimationFrame(updateLegacyLight)
+      if (!scrollFrame) scrollFrame = requestAnimationFrame(updateLegacyReveal)
     }
 
-    updateLegacyLight()
+    updateLegacyReveal()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
 
@@ -288,37 +287,31 @@ function AboutSection() {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
       if (scrollFrame) cancelAnimationFrame(scrollFrame)
+      clearTimeout(legacyHoldTimerRef.current)
     }
   }, [yearRevealed])
 
   useEffect(() => {
-    if (!legacyRevealed) return
-
     let scrollFrame = null
 
-    const updateStoryLight = () => {
-      const light = storyLightRef.current
-      if (!light) return
+    const updateStoryReveal = () => {
+      const story = storyRef.current
+      if (!story) return
 
-      const start = window.innerWidth * 0.62
-      const distance = window.innerWidth * 0.82
-      const progress = Math.min(Math.max((window.scrollY - start) / distance, 0), 1)
-      const curveX = Math.sin(progress * Math.PI * 2.1) * (1 - progress) * 8
+      const storyTop = story.getBoundingClientRect().top
 
-      light.style.opacity = progress > 0 && progress < 0.98 ? '0.82' : '0'
-      light.style.transform = `translate(calc(-50% + ${curveX}vw), calc(-50% + ${
-        progress * 105
-      }vw)) scale(${0.62 + progress * 0.65})`
-
-      if (progress >= 0.98) setStoryRevealed(true)
+      if (storyTop <= window.innerHeight * 0.72 && !storyRevealedRef.current) {
+        storyRevealedRef.current = true
+        setStoryRevealed(true)
+      }
       scrollFrame = null
     }
 
     const onScroll = () => {
-      if (!scrollFrame) scrollFrame = requestAnimationFrame(updateStoryLight)
+      if (!scrollFrame) scrollFrame = requestAnimationFrame(updateStoryReveal)
     }
 
-    updateStoryLight()
+    updateStoryReveal()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
 
@@ -327,7 +320,7 @@ function AboutSection() {
       window.removeEventListener('resize', onScroll)
       if (scrollFrame) cancelAnimationFrame(scrollFrame)
     }
-  }, [legacyRevealed])
+  }, [])
 
   useEffect(() => {
     let scrollFrame = null
@@ -384,18 +377,11 @@ function AboutSection() {
       <AboutIntroParticles onComplete={handleIntroComplete} />
 
       <div
-        ref={legacyLightRef}
-        className={`${styles.legacyTravelLight} ${styles.legacyLightMoving} ${
-          legacyRevealed ? styles.legacyLightArrived : ''
+        ref={legacyRef}
+        className={`${styles.legacy} ${legacyRevealed ? styles.legacyRevealed : ''} ${
+          legacyHolding ? styles.legacyHolding : ''
         }`}
-        aria-hidden="true"
       >
-        <span className={styles.glowDot} />
-      </div>
-
-      <div className={`${styles.legacy} ${legacyRevealed ? styles.legacyRevealed : ''}`}>
-        <span className={styles.arrivalFlash} aria-hidden="true" />
-
         <div className={styles.legacyCopy}>
           <h2>A Legacy of Light</h2>
           <p>
@@ -412,30 +398,19 @@ function AboutSection() {
       </div>
 
       <div
-        ref={storyLightRef}
-        className={`${styles.storyTravelLight} ${storyRevealed ? styles.storyLightArrived : ''}`}
-        aria-hidden="true"
-      >
-        <span className={styles.glowDot} />
-      </div>
-
-      <div
+        ref={storyRef}
         className={`${styles.story} ${storyRevealed ? styles.storyRevealed : ''} ${
           storyPhase === 'first' || storyPhase === 'second' ? styles.storyPinned : ''
         } ${storyPhase === 'second' ? styles.storyPhaseTwo : ''} ${
           storyPhase === 'after' ? styles.storyPassed : ''
         }`}
       >
-        <span className={styles.storyArrivalFlash} aria-hidden="true" />
-
         <p className={styles.storyLead}>
           From the days
           <br />
           when incandescent bulbs lit
           <br />
-          everyday life to the present
-          <br />
-          day,
+          everyday life to the present day,
         </p>
 
         <img
@@ -444,14 +419,15 @@ function AboutSection() {
           alt="일광전구의 빛으로 채워진 거실"
         />
 
-        <p className={styles.storyClosing}>
-          <span className={`${styles.storyClosingLine} ${styles.storyClosingLineFirst}`}>
-            for over 60 years,
-          </span>
-          <span className={styles.storyClosingLine}>
+        <p className={`${styles.storyClosing} ${styles.storyClosingYears}`}>
+          for over 60 years,
+        </p>
+
+        <p className={`${styles.storyClosing} ${styles.storyClosingStatement}`}>
+          <span>
             <strong>ILKWANG</strong> has brought light
           </span>
-          <span className={styles.storyClosingLine}>into people’s lives.</span>
+          <span>into people’s lives.</span>
         </p>
 
         <div className={styles.storySecond}>
@@ -465,13 +441,15 @@ function AboutSection() {
 
           <img className={styles.storyImage} src={cafeImage} alt="" />
 
-          <p className={styles.storyClosing}>
-            <span className={`${styles.storyClosingLine} ${styles.storyClosingLineFirst}`}>
-              Beyond a single
-            </span>
-            <span className={styles.storyClosingLine}>source of light,</span>
-            <span className={styles.storyClosingLine}>we continue to understand people</span>
-            <span className={styles.storyClosingLine}>and the spaces they inhabit.</span>
+          <p className={`${styles.storyClosing} ${styles.storyClosingYears}`}>
+            Beyond a single
+            <br />
+            source of light,
+          </p>
+
+          <p className={`${styles.storyClosing} ${styles.storyClosingStatement}`}>
+            <span>we continue to understand people</span>
+            <span>and the spaces they inhabit.</span>
           </p>
         </div>
       </div>
