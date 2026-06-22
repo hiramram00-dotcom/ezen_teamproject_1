@@ -4,10 +4,19 @@
   color: var(--color-base-3);
 }
 
-.intro {
-  /* 줄바꿈은 마크업의 <br>로 고정 — 줄이 또 접히지 않게 가로 제약 없음 */
+.introWrap {
   margin: 0 var(--layout-gutter) 66px;
   padding-top: clamp(72px, 11vw, 200px);
+}
+
+.heroTitle {
+  margin-bottom: clamp(24px, 2vw, 32px);
+}
+
+.intro {
+  /* 줄바꿈은 마크업의 <br>로 고정 — 줄이 또 접히지 않게 가로 제약 없음 */
+  font-size: 18px;
+  font-weight: 400;
 }
 
 /* ---------- 비주얼 + 라벨 오버레이 ---------- */
