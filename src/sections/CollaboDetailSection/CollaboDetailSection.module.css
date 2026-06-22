@@ -1,0 +1,88 @@
+/* =========================================================
+   CollaboDetailSection — ILKW × KBP 콜라보 상세 첫 화면
+   Figma node 1565:312 (1920×1080)
+   풀스크린 배경 사진 + 우하단 ILKW × kbp 락업
+   ========================================================= */
+
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
+
+/* 배경 사진 — 세로 원본을 가로 화면에 cover, 디자인 크롭(하단~중앙)에 맞춰 위치 */
+.bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 70%;
+}
+
+/* 로고 락업 — 화면 정중앙. px(@1920)를 vw로 환산, clamp로 화면 크기 보정 */
+.lockup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2.08vw, 40px); /* 40px @1920, 모바일에선 더 좁게 */
+}
+
+/* ILKW 워드마크 — 살짝 기울임(skew) + 세로 99% (디자인 그대로) */
+.ilkw {
+  width: clamp(92px, 16.25vw, 312px); /* 312px @1920, 모바일 최소 92px (폭 넘침 방지) */
+  height: auto;
+  transform: skewX(-7.58deg) scaleY(0.99);
+}
+
+/* "x" — Pretendard Regular 40px @1920 */
+.x {
+  font-family: var(--font-kr, 'Pretendard', sans-serif);
+  font-weight: 400;
+  font-size: clamp(14px, 2.08vw, 40px);
+  line-height: 1;
+  color: #fff;
+}
+
+/* 브랜드 로고 — 높이 기준(ilkw와 비슷한 높이), 폭은 로고 비율대로 자동
+   (kbp=정사각 → 정사각, kakao=가로 워드마크 → 가로로) */
+.brandLogo {
+  height: clamp(32px, 5.16vw, 99px);
+  width: auto;
+  flex-shrink: 0; /* 락업(flex)에서 찌그러지지 않게 */
+  /* aspect-ratio는 콜라보 데이터로 인라인 주입 (SVG가 고유비율이 없어 명시 필요) */
+}
+
+/* ----- 로고 등장: blur-in (흐림→선명) 스태거 — 홈 콜라보 섹션과 동일 톤 -----
+   .ilkw가 transform(skew)을 쓰므로 여기선 opacity+filter만 사용(스케일 제외). */
+.fxBlurIn {
+  opacity: 0;
+  filter: blur(8px);
+  transition: none; /* 화면 벗어나면 즉시 초기화 */
+}
+.isVisible .fxBlurIn {
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    opacity 2s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* 순서대로(ILKW → x → kbp) 시차 등장 */
+.isVisible .fxBlurIn:nth-child(1) { transition-delay: 0.08s; }
+.isVisible .fxBlurIn:nth-child(2) { transition-delay: 0.32s; }
+.isVisible .fxBlurIn:nth-child(3) { transition-delay: 0.56s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fxBlurIn,
+  .isVisible .fxBlurIn {
+    opacity: 1;
+    filter: none;
+    transition: none;
+  }
+}

@@ -1,0 +1,59 @@
+/* ScrollHint — 하단 중앙 스크롤 안내 (라벨 + 통통 튀는 화살표) */
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(18px, 3.5vh, 40px);
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-base-3); /* 기본: 어두운 글씨(크림 배경용) */
+  pointer-events: none;
+  /* 부모가 --hint-fade(1→0)를 내려주면 스크롤에 따라 서서히 사라짐. 기본 1(항상 보임) */
+  opacity: var(--hint-fade, 1);
+}
+.hint.light {
+  color: #fff; /* 어두운 배경용 */
+}
+/* 인라인: 절대배치 대신 흐름 배치(작은 헤더 블록 안에서 제목 아래에 위치) */
+.hint.inline {
+  position: static;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  margin-top: clamp(16px, 3vh, 36px);
+}
+
+.label {
+  font-family: var(--font-en);
+  font-weight: 500;
+  font-size: clamp(10px, 0.7vw, 12px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.chevron {
+  width: clamp(18px, 1.4vw, 24px);
+  height: clamp(18px, 1.4vw, 24px);
+  animation: scrollBounce 1.8s ease-in-out infinite;
+}
+
+@keyframes scrollBounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(7px);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    animation: none;
+  }
+}
