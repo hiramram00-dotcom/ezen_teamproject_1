@@ -206,6 +206,14 @@ function HeroSection() {
           if (logo) gsap.set(logo, { clearProps: 'opacity,visibility' })
           resetHeroVideo()
         },
+        // 방어: 새로고침/refresh 시 핸드오프 구간 밖(progress 0)이면 영상 깨끗이 리셋
+        // → 새로고침으로 영상이 fixed·반투명 중간상태로 박히는 현상 방지
+        onRefresh: (self) => {
+          if (self.progress <= 0) {
+            resetHeroVideo()
+            if (logo) gsap.set(logo, { autoAlpha: 1 })
+          }
+        },
       })
     }
 

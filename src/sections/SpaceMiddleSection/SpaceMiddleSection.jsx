@@ -255,6 +255,14 @@ export default function SpaceMiddleSection() {
         hero.style.opacity = '1';
         setProgress(1);
       },
+      // 방어: 새로고침/refresh 시 핀 구간 밖(progress 0)이면 hero/dim 강제 숨김
+      // → 중간상태로 박히는(반투명/유령) 현상 방지
+      onRefresh: (self) => {
+        if (self.progress <= 0) {
+          hero.style.opacity = '0';
+          dim.style.opacity = '0';
+        }
+      },
       onUpdate: (self) => setProgress(self.progress)
     });
 
