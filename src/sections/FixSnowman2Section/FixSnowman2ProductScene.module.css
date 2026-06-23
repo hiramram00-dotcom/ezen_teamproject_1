@@ -222,7 +222,7 @@
   .buyLink {
     height: 42px;
     margin-top: 26px;
-    font-size: 14px;
+    font-size: var(--fs-sub-3);
   }
 }
 
@@ -260,7 +260,7 @@
   .buyLink {
     height: 42px;
     margin-top: 26px;
-    font-size: 14px;
+    font-size: var(--fs-sub-3);
   }
 }
 

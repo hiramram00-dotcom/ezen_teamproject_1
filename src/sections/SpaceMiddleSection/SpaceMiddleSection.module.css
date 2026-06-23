@@ -147,7 +147,7 @@
   align-items: baseline;
   font-family: 'Instrument Sans', sans-serif;
   font-weight: 500;
-  font-size: 71px;
+  font-size: var(--fs-title-4);
   line-height: 1.11;
   letter-spacing: -1.42px;
   margin: 0;
@@ -183,7 +183,7 @@
   font-family: 'Playfair Display', serif;
   font-weight: 400;
   font-style: italic;
-  font-size: 67px;
+  font-size: var(--fs-title-4);
   line-height: 1.11;
   letter-spacing: -1.34px;
   color: #f49307;
