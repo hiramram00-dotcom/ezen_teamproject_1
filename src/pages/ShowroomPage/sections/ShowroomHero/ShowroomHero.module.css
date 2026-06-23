@@ -11,6 +11,15 @@
 
 .heroTitle {
   margin-bottom: clamp(24px, 2vw, 32px);
+  font-size: 70px;
+  line-height: 1.1;
+}
+
+/* "Light"만 Playfair Display 이탤릭으로 장식 */
+.titleLight {
+  font-family: var(--font-deco); /* Playfair Display */
+  font-style: italic;
+  font-weight: 400;
 }
 
 .intro {
