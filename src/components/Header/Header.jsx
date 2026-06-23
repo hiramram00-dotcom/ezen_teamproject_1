@@ -17,11 +17,13 @@ function Header() {
   useEffect(() => {
     if (!menuOpen) return
     document.body.style.overflow = 'hidden'
+    document.body.dataset.menuOpen = 'true' // Top 버튼 등 전역 요소가 메뉴 열림 감지
     const onKey = (e) => e.key === 'Escape' && setMenuOpen(false)
     window.addEventListener('keydown', onKey)
     return () => {
       window.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
+      delete document.body.dataset.menuOpen
     }
   }, [menuOpen])
 
