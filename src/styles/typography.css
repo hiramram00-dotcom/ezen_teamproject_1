@@ -17,6 +17,7 @@
    → 패밀리/weight/색은 각 요소에서 지정.
    사용: <h2 className="fs-title-2"> 또는 className={`${styles.x} fs-body-1`}
    ========================================================= */
+.fs-display-1 { font-size: var(--fs-display-1); } /* 180 */
 .fs-title-1 { font-size: var(--fs-title-1); }  /* 120 */
 .fs-title-2 { font-size: var(--fs-title-2); }  /*  96 */
 .fs-title-3 { font-size: var(--fs-title-3); }  /*  86 */
