@@ -73,26 +73,9 @@ function ProductSection({ onOpenProduct }) {
       )
 
       rows.forEach((row) => {
-        const mainMotion = row.querySelector('[data-main-motion]')
         const titleChars = row.querySelectorAll('[data-title-char]')
         const thumbnailInner = row.querySelector('[data-thumbnail-inner]')
         const thumbnailReveal = row.querySelector('[data-thumbnail-reveal]')
-
-        gsap.fromTo(
-          mainMotion,
-          { scale: 1.15 },
-          {
-            scale: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: row,
-              start: 'top bottom',
-              end: 'center center',
-              scrub: 1.2,
-              invalidateOnRefresh: true,
-            },
-          },
-        )
 
         const revealTimeline = gsap.timeline({
           scrollTrigger: {
@@ -191,13 +174,13 @@ function ProductSection({ onOpenProduct }) {
                   onClick={() => openProduct(product.detail)}
                   aria-label={`${product.name} 상세 페이지 열기`}
                 >
-                  <span data-main-motion className={styles.mainImageMotion}>
+                  <span className={styles.mainImageMotion}>
                     <img src={product.mainImage} alt={`${product.name} 조명이 놓인 공간`} loading="lazy" decoding="async" />
                   </span>
                 </button>
               ) : (
                 <figure className={styles.mainVisual} data-cursor="pointer">
-                  <span data-main-motion className={styles.mainImageMotion}>
+                  <span className={styles.mainImageMotion}>
                     <img src={product.mainImage} alt={`${product.name} 조명이 놓인 공간`} loading="lazy" decoding="async" />
                   </span>
                 </figure>
