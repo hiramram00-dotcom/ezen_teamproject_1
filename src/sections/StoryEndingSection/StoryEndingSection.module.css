@@ -29,7 +29,7 @@
   justify-content: center;
   color: var(--color-base-1);
   font-family: var(--font-kr);
-  font-size: 40px;
+  font-size: var(--fs-body-1);
   line-height: 1.4;
   letter-spacing: -1.2px;
   text-align: center;
@@ -49,7 +49,7 @@
   .textBlock1,
   .textBlock2 {
     padding: 0 48px;
-    font-size: 30px;
+    font-size: var(--fs-body-2);
     line-height: 1.45;
     letter-spacing: -0.9px;
   }
@@ -59,7 +59,7 @@
   .textBlock1,
   .textBlock2 {
     padding: 0 24px;
-    font-size: 17px;
+    font-size: var(--fs-sub-3);
     line-height: 1.5;
     letter-spacing: -0.5px;
   }

@@ -12,11 +12,12 @@ function ShowroomHero() {
     <section className={styles.hero}>
       <div className={styles.introWrap}>
         <Reveal as="h2" className={`${styles.heroTitle} type-subtitle-1`}>
-          A House of Light
+          A House of <span className={styles.titleLight}>Light</span>
         </Reveal>
         <RevealLines
           as="p"
           className={`${styles.intro} type-body-3`}
+          collapseToFlow
           lines={[
             '회현동의 오래된 2층 목조 가정집을 개조한 일광전구 서울 쇼룸은 IK의 다양한 디자인 조명을 실제 생활 공간에',
             '가까운 분위기 속에서 경험할 수 있는 공간입니다. 조명에 어울리는 가구와 오브제를 함께 배치해, 제품의',

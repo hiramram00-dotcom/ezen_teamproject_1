@@ -386,7 +386,7 @@ export default function StorySection() {
           <div className={styles.imageCard}>
             <div className={styles.imageRevealMask}>
               <video
-                src="https://res.cloudinary.com/dht6hmacp/video/upload/v1781753639/mid2_vm7bbx.mp4"
+                src="https://res.cloudinary.com/dht6hmacp/video/upload/f_auto,q_auto/v1781753639/mid2_vm7bbx.mp4"
                 className={styles.imgScene}
                 autoPlay
                 loop
@@ -406,9 +406,9 @@ export default function StorySection() {
         </div>
 
         <div className={styles.footer}>
-          <span className={`type-italic-3 ${styles.footerTextLeft}`}>Better Life</span>
+          <span className={`fs-title-3 ${styles.footerTextLeft}`} style={{ fontFamily: 'var(--font-deco)', fontStyle: 'italic', fontWeight: 400 }}>Better Life</span>
           <div className={styles.line} />
-          <span className={`type-italic-3 ${styles.footerTextRight}`}>Better Light</span>
+          <span className={`fs-title-3 ${styles.footerTextRight}`} style={{ fontFamily: 'var(--font-deco)', fontStyle: 'italic', fontWeight: 400 }}>Better Light</span>
         </div>
       </section>
     </div>

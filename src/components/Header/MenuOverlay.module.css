@@ -33,7 +33,7 @@
 .item {
   font-family: var(--font-en, sans-serif);
   font-weight: 600;
-  font-size: clamp(40px, 6vw, 110px);
+  font-size: clamp(40px, 6vw, var(--fs-title-1));
   line-height: 1.18;
   letter-spacing: -0.01em;
   color: #111;

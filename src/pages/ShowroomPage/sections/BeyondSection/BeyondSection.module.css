@@ -103,3 +103,56 @@
   width: 46%;
   height: auto;
 }
+
+/* ===================== 태블릿 (768~1199px) ===================== */
+@media (max-width: 1199px) {
+  /* 좌측 텍스트 칼럼이 너무 좁지 않게 살짝 넓힘 */
+  .galleryText {
+    flex-basis: 38%;
+  }
+}
+
+/* ===================== 모바일 (≤767px) ===================== */
+@media (max-width: 767px) {
+  /* 갤러리: 좌(텍스트)+우(이미지) 가로 → 세로 스택, sticky 해제 */
+  .gallery {
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .galleryText {
+    position: static;
+    top: auto;
+    flex: none;
+    width: 100%;
+  }
+
+  .galleryImages {
+    width: 100%;
+  }
+
+  /* 큰 이미지 높이 축소 */
+  .galleryImages .galleryFirstImage {
+    height: clamp(220px, 56vw, 360px);
+  }
+
+  .galleryImages .galleryThirdImage {
+    height: clamp(240px, 60vw, 380px);
+  }
+
+  /* 검정 블록 하단 두 사진 — 왼쪽 여백 크게 남던 것 균형 조정 */
+  .darkPhotos {
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .darkPhotoSm {
+    flex-basis: 44%;
+    width: 44%;
+  }
+
+  .darkPhotoLg {
+    flex-basis: 52%;
+    width: 52%;
+  }
+}

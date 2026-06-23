@@ -8,65 +8,19 @@
 .panel {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: min(56.25vw, 100svh);
+  container-type: size;
   overflow: hidden;
   background: var(--color-base-2);
 }
 
 .intro {
+  min-height: min(56.25vw, 1000px);
   margin-top: 0.2083vw;
 }
 
 .posters {
   margin-top: -0.0521vw;
-}
-
-.header {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-}
-
-.headerLogo {
-  position: absolute;
-  top: 2.3148%;
-  left: 1.1979%;
-  width: 5.3614%;
-  height: 2.1296%;
-}
-
-.headerMenu {
-  position: absolute;
-  top: 1.5741%;
-  right: 1.9792%;
-  font-family: var(--font-en);
-  font-size: 0.9375vw;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  text-decoration: none;
-  text-transform: capitalize;
-  pointer-events: auto;
-}
-
-.headerLight {
-  color: var(--color-base-1);
-}
-
-.headerDark {
-  color: var(--color-base-3);
-}
-
-.collaboration .headerLogo {
-  top: 1.043%;
-  left: 2.083%;
-  width: 5.59%;
-  height: 0.774%;
-}
-
-.collaboration .headerMenu {
-  top: 1.155%;
-  right: 1.979%;
 }
 
 .heroBackground {
@@ -77,47 +31,58 @@
 
 .heroTitle {
   position: absolute;
-  left: 1.56%;
-  bottom: 7.6%;
+  top: 84.4444%;
+  left: min(1.5625vw, 30px);
   z-index: 2;
   font-family: var(--font-en);
-  font-size: 6.25vw;
+  font-size: min(6.25vw, 11.1111cqh, 120px);
   font-weight: 600;
-  line-height: 1;
+  line-height: normal;
   letter-spacing: -0.02em;
   color: var(--color-base-1);
 }
 
 .introVisual {
   position: absolute;
-  top: 7.87%;
-  left: 24.48%;
-  width: 51.04%;
-  aspect-ratio: 1500 / 900;
+  top: 4.4444%;
+  left: 24.4792%;
+  width: 52.9167%;
+  height: 54.4444%;
   overflow: hidden;
 }
 
 .introVisual img {
   position: absolute;
-  top: -21%;
-  left: 0;
+  inset: 0;
   width: 100%;
-  height: 133.33%;
+  height: 100%;
   max-width: none;
+  object-fit: cover;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.introCopy {
+  position: absolute;
+  top: calc(58.8889% + min(2.5vw, 48px));
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: min(1.875vw, 36px);
+  width: min(36.5625vw, 702px);
+  transform: translateX(-50%);
 }
 
 .introTitle {
-  position: absolute;
-  top: 62.31%;
-  left: 50%;
-  transform: translateX(-50%);
   font-family: var(--font-en);
-  font-size: 4.1667vw;
+  font-size: min(4.1667vw, 80px);
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.03em;
   text-align: center;
   white-space: nowrap;
+  will-change: transform, opacity;
 }
 
 .introTitle span,
@@ -132,17 +97,14 @@
 }
 
 .introDescription {
-  position: absolute;
-  top: 84.07%;
-  left: 50%;
-  width: 37.29%;
-  transform: translateX(-50%);
+  width: 100%;
   font-family: var(--font-kr);
-  font-size: 1.0938vw;
+  font-size: min(1.0938vw, 21px);
   font-weight: 300;
   line-height: 1.4;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.05em;
   text-align: center;
+  will-change: transform, opacity;
 }
 
 .storyVisual {
@@ -150,39 +112,46 @@
   top: 0;
   right: 0;
   width: 50%;
-  height: 104.26%;
+  height: 100%;
+  margin: 0;
   overflow: hidden;
 }
 
 .storyVisual img {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
+  height: 100%;
   max-width: none;
+  object-fit: cover;
+  will-change: transform;
 }
 
 .storyCopy {
   position: absolute;
-  left: 1.98%;
-  bottom: 1.5%;
-  width: 30.21%;
+  bottom: min(1.3542vw, 26px);
+  left: min(1.9792vw, 38px);
+  width: min(29.4792vw, 566px);
 }
 
 .storyCopy h2 {
-  margin-bottom: 1.5vw;
+  margin-bottom: min(0.1042vw, 2px);
   font-family: var(--font-deco);
-  font-size: 1.4583vw;
+  font-size: min(1.4583vw, 28px);
   font-style: italic;
   font-weight: 500;
   line-height: 1.4;
   letter-spacing: -0.05em;
+  will-change: transform, opacity;
 }
 
 .storyCopy p {
   font-family: var(--font-kr);
-  font-size: 1.0938vw;
+  font-size: min(1.0938vw, 21px);
   font-weight: 300;
   line-height: 1.4;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.05em;
+  will-change: transform, opacity;
 }
 
 .posterGrid {
@@ -289,13 +258,22 @@
   white-space: nowrap;
 }
 
-.creamPoster img {
+.creamProductImage {
   position: absolute;
   top: 20%;
   left: 38.7%;
   width: 49.56%;
   height: 61.04%;
   border-radius: 1.0417vw;
+}
+
+.creamLogo {
+  position: absolute;
+  left: 14.9%;
+  bottom: 5.8%;
+  width: 32.3%;
+  height: 7.8%;
+  object-fit: contain;
 }
 
 .creamPoster span {
@@ -319,7 +297,7 @@
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-deco);
-  font-size: 6.25vw;
+  font-size: min(6.25vw, 120px);
   font-style: italic;
   font-weight: 400;
   line-height: 1.3;
@@ -329,12 +307,12 @@
 
 .collaborationDescription {
   position: absolute;
-  top: 19.36%;
+  top: 11.261%;
   left: 50%;
-  width: 35.78%;
+  width: min(35.7813vw, 687px);
   transform: translateX(-50%);
   font-family: var(--font-kr);
-  font-size: 1.25vw;
+  font-size: min(1.0938vw, 21px);
   font-weight: 300;
   line-height: 1.4;
   letter-spacing: -0.04em;
@@ -348,7 +326,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: 100%;
-  gap: 1.0417vw;
+  gap: min(1.0417vw, 20px);
   width: 100%;
   height: 31.96%;
 }
@@ -371,7 +349,7 @@
 .otherProducts {
   position: relative;
   width: 100%;
-  height: 56.25vw;
+  height: 67.2917vw;
   margin-top: 0.1563vw;
   overflow-x: auto;
   overflow-y: hidden;
@@ -394,29 +372,29 @@
 .otherTrack {
   position: relative;
   width: 253.4896vw;
-  height: 56.25vw;
+  height: 67.2917vw;
   background: var(--color-base-2);
 }
 
 .otherIntro {
   position: absolute;
-  top: 18.52%;
+  top: 10.4167vw;
   left: 1.875vw;
 }
 
 .otherIntro h2 {
-  font-family: var(--font-deco);
-  font-size: 6.7708vw;
-  font-style: italic;
+  font-family: var(--font-en);
+  font-size: min(6.7708vw, 130px);
+  font-style: normal;
   font-weight: 400;
   line-height: 1.2;
   letter-spacing: -0.08em;
 }
 
 .otherIntro p {
-  margin-top: 1vw;
+  margin-top: min(0.5208vw, 10px);
   font-family: var(--font-deco);
-  font-size: 2.6042vw;
+  font-size: min(2.6042vw, 50px);
   font-style: italic;
   font-weight: 400;
   line-height: 1.3;
@@ -441,9 +419,9 @@
   position: absolute;
   z-index: 2;
   font-family: var(--font-en);
-  font-size: 4.6875vw;
+  font-size: min(3.6458vw, 70px);
   font-weight: 400;
-  line-height: 1.05;
+  line-height: normal;
   letter-spacing: -0.02em;
 }
 
@@ -557,9 +535,6 @@
     font-size: 9px;
   }
 
-  .headerMenu {
-    font-size: 8px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
