@@ -101,7 +101,7 @@
   margin: 0;
   font-family: var(--font-en);
   font-weight: 500;
-  font-size: 2.1875vw; /* 42px @1920 */
+  font-size: var(--fs-body-1); /* 42px @1920 */
   line-height: 1.1;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -109,7 +109,7 @@
 }
 /* 콜라보 푸터(contact 지정)처럼 헤딩 문구가 길 때 — 폰트 살짝 줄여 깔끔히 2줄로 */
 .cardCompact .cardHeading {
-  font-size: 1.95vw;
+  font-size: var(--fs-body-1);
 }
 .cardLink {
   position: absolute;
@@ -120,7 +120,7 @@
   font-family: var(--font-deco);
   font-style: italic;
   font-weight: 400;
-  font-size: 2.0833vw; /* 40px @1920 */
+  font-size: var(--fs-body-1); /* 40px @1920 */
   line-height: 1.2;
   color: #000;
   transition: opacity 0.2s ease;
@@ -141,7 +141,7 @@
   white-space: nowrap;
   font-family: var(--font-en);
   font-weight: 600;
-  font-size: 3.125vw; /* 60px @1920 */
+  font-size: var(--fs-title-4); /* 60px @1920 */
   line-height: 1.2;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -250,16 +250,16 @@
     width: 74%;
   }
   .cardHeading {
-    font-size: 3vw;
+    font-size: var(--fs-title-4);
   }
   .cardCompact .cardHeading {
-    font-size: 2.6vw; /* 콜라보 푸터 긴 헤딩 — 2줄 유지 */
+    font-size: var(--fs-body-1); /* 콜라보 푸터 긴 헤딩 — 2줄 유지 */
   }
   .cardLink {
-    font-size: 3vw;
+    font-size: var(--fs-title-4);
   }
   .cardEmail {
-    font-size: 5.4vw;
+    font-size: var(--fs-title-2);
   }
   .body {
     min-height: auto;
@@ -273,14 +273,14 @@
     gap: 12px 20px;
   }
   .nav :global(.type-body-3) {
-    font-size: 14px;
+    font-size: var(--fs-sub-3);
   }
   .legal {
     flex-direction: column;
     gap: 6px;
   }
   .legalText {
-    font-size: 9px;
+    font-size: var(--fs-sub-3);
   }
   .legalText {
     white-space: normal;

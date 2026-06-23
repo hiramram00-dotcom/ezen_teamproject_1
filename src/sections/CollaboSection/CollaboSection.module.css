@@ -264,7 +264,7 @@
   }
   .introMobile .desc {
     margin-top: 8px;
-    font-size: 14px;
+    font-size: var(--fs-sub-3);
   }
 
   /* 세로 리스트 */
@@ -301,7 +301,7 @@
     font-size: var(--fs-sub-3);
   }
   .mCard .cardDesc {
-    font-size: 13px;
+    font-size: var(--fs-sub-3);
   }
 
   /* 더보기/닫기 — 작은 텍스트 + 화살표(아래=더보기, 위=닫기) 토글 */
@@ -315,7 +315,7 @@
     border: none;
     background: transparent;
     font-family: var(--font-en);
-    font-size: 13px;
+    font-size: var(--fs-sub-3);
     letter-spacing: -0.02em;
     color: var(--color-base-3);
     cursor: pointer;
