@@ -16,11 +16,11 @@ const SPLIT_DUR = 0.85 // 화면 위/아래로 갈라지는 시간 (텀 늘린 �
 // ===== 영상 소스 — 모바일(≤767px)은 세로 버전으로 교체 =====
 const VIDEO_MOBILE_Q = '(max-width: 767px)'
 // f_auto,q_auto = 브라우저 맞는 가벼운 포맷 + 화질 자동 최적화 (원본 13.9MB → 대폭 감소, 로딩 렉 해결)
-const VIDEO_WIDE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto:eco,w_1280/hero-video2_ojabtt.mp4'
-const VIDEO_MOBILE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto:eco,w_720/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.mp4'
+const VIDEO_WIDE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto,w_1920/hero-video2_ojabtt.mp4'
+const VIDEO_MOBILE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto,w_720/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.mp4'
 // poster = 영상 첫 프레임(so_0)을 가벼운 JPG로 추출 → 영상 디코딩 전에 즉시 표시(LCP 단축).
 // 연출 변화 없음(첫 프레임과 동일 그림). 영상 재생 시작되면 자동으로 사라짐.
-const VIDEO_WIDE_POSTER = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto,w_1280,so_0/hero-video2_ojabtt.jpg'
+const VIDEO_WIDE_POSTER = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto,w_1920,so_0/hero-video2_ojabtt.jpg'
 const VIDEO_MOBILE_POSTER = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto,w_720,so_0/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.jpg'
 const pickVideoSrc = () =>
   window.matchMedia(VIDEO_MOBILE_Q).matches ? VIDEO_MOBILE : VIDEO_WIDE
