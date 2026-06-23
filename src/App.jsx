@@ -16,7 +16,6 @@ import Header from './components/Header/Header'
 import LightCursor from './components/LightCursor/LightCursor'
 import ResizeAnchor from './components/ResizeAnchor/ResizeAnchor'
 import ScrollTopButton from './components/ScrollTopButton/ScrollTopButton'
-import collaboFooterPhoto from './sections/CollaboGallerySection/assets/collabo-footer.jpg'
 import kbpCollabo from './sections/CollaboDetailSection/collabos/kbp'
 import kakaoCollabo from './sections/CollaboDetailSection/collabos/kakao'
 
@@ -116,7 +115,15 @@ function App() {
         {/* 서브페이지는 전역 헤더 상시표시(index 없음). About은 자체 헤더 없어 바로 적용 */}
         <Route path="/about" element={<><Header /><AboutPage /></>} />
         <Route path="/product" element={<><Header /><ProductRoute /></>} />
-        <Route path="/product/flamingo" element={<FlamingoDetailSection />} />
+        <Route
+          path="/product/flamingo"
+          element={
+            <>
+              <FlamingoDetailSection />
+              <Footer hidePhoto />
+            </>
+          }
+        />
         <Route path="/showroom" element={<><Header /><ShowroomPage /></>} />
         {/* 메뉴 COLLABO → 콜라보 랜딩(ILKW × 브랜드 룰렛). Figma 1565:194 */}
         <Route path="/collabo" element={<><Header /><CollaboLandingSection /></>} />
@@ -127,14 +134,8 @@ function App() {
             <>
               <Header />
               <CollaboGallerySection />
-              <Footer
-                photo={collaboFooterPhoto}
-                photoPosition="center 15%"
-                headingLines={['IF YOU HAVE AN IDEA FOR A COLLABORATION,', "WE'D LOVE TO HEAR FROM YOU."]}
-                contact={{ lines: ['Please', 'Contact us'], href: 'mailto:info@ilkwdesign.com' }}
-                email="INFO@ILKWDESIGN.COM"
-                emailHref="mailto:info@ilkwdesign.com"
-              />
+              {/* 푸터 위 사진+카드 섹션 제거 → 크림 푸터 본문만 */}
+              <Footer hidePhoto />
             </>
           }
         />

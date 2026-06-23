@@ -72,6 +72,7 @@ function BeyondSection() {
           <RevealLines
             as="p"
             className={`${styles.darkText} type-collabo-x`}
+            collapseToFlow
             lines={[
               '일광전구 서울 쇼룸은 제품을 진열하는 매장을 넘어, 빛이 실제 공간 안에서 어떻게 작동하는지',
               '보여주는 브랜드 하우스입니다. 벽의 색, 가구의 재질, 테이블의 높이, 창밖에서 들어오는 자연광과',

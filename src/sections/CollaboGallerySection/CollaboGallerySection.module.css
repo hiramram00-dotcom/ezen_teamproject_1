@@ -146,24 +146,10 @@
   object-fit: cover;
   transition: transform 0.45s ease;
 }
-/* 호버 시 사진 살짝 줌 (홈 마퀴와 동일) */
-.imageBox:hover img {
+/* 행(.row)에 마우스 들어오면 사진 살짝 줌. transition으로 커지고/떼면 부드럽게 복귀.
+   (스크롤 진입 줌 힌트 애니메이션은 호버 transform과 충돌해 튀는 현상이 있어 제거) */
+.row:hover .imageBox img {
   transform: scale(1.06);
-}
-/* 스크롤 진입 시 사진이 살짝 확대됐다 돌아오는 줌 힌트 → "움직이네? 호버되는구나" 암시.
-   끝에서 scale(1)로 복귀하므로 호버 줌과 충돌 없음. */
-.row.inView .imageBox img {
-  animation: hintZoom 1.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
-@keyframes hintZoom {
-  0% { transform: scale(1); }
-  42% { transform: scale(1.06); }
-  100% { transform: scale(1); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .row.inView .imageBox img {
-    animation: none;
-  }
 }
 
 /* 사진 호버 오버레이: 어두워지며 원형 화살표 등장 */
@@ -177,7 +163,7 @@
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-.imageBox:hover .imageOverlay {
+.row:hover .imageOverlay {
   opacity: 1;
 }
 
@@ -230,7 +216,7 @@
   transform: scale(0.82); /* 호버 전 살짝 작게 → 등장 시 커짐 */
   transition: transform 0.3s ease, background 0.25s ease, color 0.25s ease;
 }
-.imageBox:hover .goArrow {
+.row:hover .goArrow {
   transform: scale(1);
 }
 .goArrow:hover {

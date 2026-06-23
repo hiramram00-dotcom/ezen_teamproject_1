@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import styles from './MenuOverlay.module.css'
-import menu1 from '../../assets/header/menu-1.png'
-import menu2 from '../../assets/header/menu-2.jpg'
-import menu3 from '../../assets/header/menu-3.png'
-import menu4 from '../../assets/header/menu-4.jpg'
+import menu1 from '../../assets/header/menu-1.webp'
+import menu2 from '../../assets/header/menu-2.webp'
+import menu3 from '../../assets/header/menu-3.webp'
+import menu4 from '../../assets/header/menu-4.webp'
 
 // 각 메뉴 항목 → 해당 페이지 대표 이미지 (hover 시 프리뷰로 펼쳐짐)
 const ITEMS = [
