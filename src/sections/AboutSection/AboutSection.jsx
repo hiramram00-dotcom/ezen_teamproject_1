@@ -15,7 +15,6 @@ const INTRO_FRAME_INTERVAL = 1000 / 45
 const INTRO_MAX_PIXEL_RATIO = 1.5
 const INTRO_CENTER_Y_RATIO = 0.46
 const INTRO_SINCE_OFFSET_RATIO = 0.008
-const INTRO_SINCE_SIZE_RATIO = 70 / 1920
 const INTRO_SCROLL_DISTANCE_RATIO = 0.5
 const INTRO_MAX_PROGRESS_STEP = 0.018
 const ABOUT_STORY_VIDEO =
@@ -23,6 +22,11 @@ const ABOUT_STORY_VIDEO =
 
 function easeInOutCubic(value) {
   return value < 0.5 ? 4 * value ** 3 : 1 - (-2 * value + 2) ** 3 / 2
+}
+
+function getFontSizeToken(tokenName, fallback) {
+  const tokenValue = getComputedStyle(document.documentElement).getPropertyValue(tokenName)
+  return Number.parseFloat(tokenValue) || fallback
 }
 
 function StoryTypedLines({ lines, progress, startIndex = 0, totalWords, strongFirst = false }) {
@@ -60,8 +64,8 @@ function sampleIntroTextPoints(width, height, particleCount) {
   const maskContext = mask.getContext('2d', { willReadFrequently: true })
   const centerX = width / 2
   const centerY = height * INTRO_CENTER_Y_RATIO
-  const sinceSize = width * INTRO_SINCE_SIZE_RATIO
-  const yearSize = width * 0.094
+  const sinceSize = getFontSizeToken('--fs-title-4', 70)
+  const yearSize = getFontSizeToken('--fs-display-1', 180)
   const textCenterY = centerY - width * 0.01
   const textLeft = width * 0.409
   const maskWidth = Math.ceil(width * 0.3)
@@ -252,8 +256,8 @@ function AboutIntroParticles({ onComplete }) {
 
       if (write > 0.78) {
         const solidTextOpacity = (write - 0.78) / 0.22
-        const sinceSize = width * INTRO_SINCE_SIZE_RATIO
-        const yearSize = width * 0.094
+        const sinceSize = getFontSizeToken('--fs-title-4', 70)
+        const yearSize = getFontSizeToken('--fs-display-1', 180)
         const textCenterY = centerY - width * 0.01
         const textLeft = width * 0.409
 
@@ -1193,11 +1197,11 @@ function AboutSection() {
         className={`${styles.legacy} ${legacyRevealed ? styles.legacyRevealed : ''}`}
       >
         <div className={styles.legacyCopy}>
-          <h2>
+          <h2 className="fs-title-2">
             <span>A Legacy of </span>
             <em>Light</em>
           </h2>
-          <p>
+          <p className="fs-sub-1">
             백열전구가 일상을 밝히던 시절부터 오늘에 이르기까지,
             <br />
             일광전구는 60년 동안 사람들의 일상에 빛을 더해왔습니다.
@@ -1237,7 +1241,7 @@ function AboutSection() {
           '--story-media-scale':
             1.06 - Math.min(Math.max((storyProgress - 0.52) / 0.18, 0), 1) * 0.06,
         }}
-        className={`${styles.story} ${
+        className={`${styles.story} fs-title-3 ${
           storyPhase === 'first' || storyPhase === 'second' ? styles.storyRevealed : ''
         } ${
           storyPhase === 'first' || storyPhase === 'second' ? styles.storyPinned : ''
@@ -1319,7 +1323,7 @@ function AboutSection() {
         ref={endingRef}
         className={`${styles.ending} ${endingRevealed ? styles.endingRevealed : ''}`}
       >
-        <p className={styles.tagline}>
+        <p className={`${styles.tagline} fs-title-4`}>
           Better <em>Life,</em> Better <em>Light,</em>
         </p>
       </div>
