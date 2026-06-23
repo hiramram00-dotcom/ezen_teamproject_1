@@ -80,7 +80,7 @@
   will-change: transform, opacity;
   font-family: var(--font-en);
   font-weight: 400;
-  font-size: clamp(72px, 6.25vw, 120px); /* 120px @1920 */
+  font-size: clamp(72px, 6.25vw, var(--fs-title-1)); /* 120px @1920 */
   line-height: 1;
   letter-spacing: -0.02em;
   color: #fff;
@@ -114,7 +114,7 @@
   will-change: transform, opacity;
   font-family: var(--font-kr);
   font-weight: 400;
-  font-size: clamp(18px, 1.25vw, 24px); /* 24px @1920 */
+  font-size: clamp(18px, 1.25vw, var(--fs-body-2)); /* 24px @1920 */
   line-height: 1.4;
   letter-spacing: -0.02em;
   color: #fff;
@@ -125,7 +125,7 @@
     left: 5.5%;
     top: 65%;
     width: 89%;
-    font-size: clamp(54px, 7.5vw, 82px);
+    font-size: clamp(54px, 7.5vw, var(--fs-title-3));
     white-space: nowrap;
   }
 
@@ -133,7 +133,7 @@
     left: 5.5%;
     top: 79%;
     width: 74%;
-    font-size: clamp(16px, 2vw, 20px);
+    font-size: clamp(16px, 2vw, var(--fs-sub-2));
   }
 
   .dim {
@@ -154,7 +154,7 @@
     left: 5%;
     top: 60%;
     width: 90%;
-    font-size: clamp(38px, 11vw, 52px);
+    font-size: clamp(38px, 11vw, var(--fs-body-1));
     line-height: 1.08;
     white-space: normal;
   }
@@ -163,7 +163,7 @@
     left: 5%;
     top: 77%;
     width: 90%;
-    font-size: clamp(13px, 3.7vw, 15px);
+    font-size: clamp(13px, 3.7vw, var(--fs-sub-3));
     line-height: 1.55;
   }
 

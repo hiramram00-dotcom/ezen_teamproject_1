@@ -282,11 +282,11 @@ function CollaboSection() {
       <section id="collabo" className={styles.collaboMobile}>
         <div className={styles.introMobile} ref={introMobileRef}>
           <h2 className={`${styles.title} ${styles.fxBlurIn}`}>
-            <span className="type-title-1">COLLABO</span>{' '}
-            <span className="type-italic-1">with</span>{' '}
-            <span className="type-title-1">ILKW.</span>
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 600 }}>COLLABO</span>{' '}
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-deco)', fontStyle: 'italic', fontWeight: 400 }}>with</span>{' '}
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 600 }}>ILKW.</span>
           </h2>
-          <p className={`${styles.desc} ${styles.fxBlurIn} type-body-3`}>
+          <p className={`${styles.desc} ${styles.fxBlurIn} fs-body-2`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
             다양한 브랜드와 함께 새로운 빛의 경험을 만들어갑니다.
           </p>
         </div>
@@ -312,10 +312,10 @@ function CollaboSection() {
                 <img src={card.img} alt={`ILKW x ${card.brand}`} loading="lazy" />
               </div>
               <div className={styles.cardText}>
-                <p className={`${styles.cardTitle} type-body-semibold-2`}>
+                <p className={`${styles.cardTitle} fs-body-2`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 600 }}>
                   ILKW <span className={styles.cardX}>x</span> {card.brand}
                 </p>
-                <p className={`${styles.cardDesc} type-body-4`}>
+                <p className={`${styles.cardDesc} fs-sub-1`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
                   {card.desc[0]}
                   <br />
                   {card.desc[1]}
@@ -360,11 +360,11 @@ function CollaboSection() {
       <div className={styles.sticky}>
         <div ref={titleRef} className={styles.intro}>
           <h2 className={`${styles.title} ${styles.fxBlurIn}`}>
-            <span className="type-title-1">COLLABO</span>{' '}
-            <span className="type-italic-1">with</span>{' '}
-            <span className="type-title-1">ILKW.</span>
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 600 }}>COLLABO</span>{' '}
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-deco)', fontStyle: 'italic', fontWeight: 400 }}>with</span>{' '}
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 600 }}>ILKW.</span>
           </h2>
-          <p className={`${styles.desc} ${styles.fxBlurIn} type-body-3`}>
+          <p className={`${styles.desc} ${styles.fxBlurIn} fs-body-2`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
             다양한 브랜드와 함께 새로운 빛의 경험을 만들어갑니다.
           </p>
         </div>
@@ -409,10 +409,10 @@ function CollaboSection() {
                     </div>
                   </div>
                   <div className={styles.cardText}>
-                    <p className={`${styles.cardTitle} type-body-semibold-2`}>
+                    <p className={`${styles.cardTitle} fs-body-2`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 600 }}>
                       ILKW <span className={styles.cardX}>x</span> {card.brand}
                     </p>
-                    <p className={`${styles.cardDesc} type-body-4`}>
+                    <p className={`${styles.cardDesc} fs-sub-1`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
                       {card.desc[0]}
                       <br />
                       {card.desc[1]}

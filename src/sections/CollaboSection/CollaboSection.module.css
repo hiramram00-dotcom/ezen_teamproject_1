@@ -70,11 +70,11 @@
 /* 전역 type-title-1/italic-1 은 1920 기준 고정 120px → 화면 폭에 비례해 줄어들게 오버라이드 */
 .intro :global(.type-title-1),
 .intro :global(.type-italic-1) {
-  font-size: clamp(56px, 6.25vw, 120px);
+  font-size: clamp(56px, 6.25vw, var(--fs-title-1));
 }
 .desc {
   color: var(--color-base-3);
-  font-size: clamp(15px, 1.25vw, 24px); /* type-body-3 고정 24px 오버라이드 */
+  font-size: clamp(15px, 1.25vw, var(--fs-body-2)); /* type-body-3 고정 24px 오버라이드 */
 }
 
 /* ----- 글씨 등장: blur-in (흐림→선명) 스태거 ----- */
@@ -260,7 +260,7 @@
   }
   .introMobile :global(.type-title-1),
   .introMobile :global(.type-italic-1) {
-    font-size: 28px;
+    font-size: var(--fs-body-2);
   }
   .introMobile .desc {
     margin-top: 8px;
@@ -298,7 +298,7 @@
     gap: 6px;
   }
   .mCard .cardTitle {
-    font-size: 15px;
+    font-size: var(--fs-sub-3);
   }
   .mCard .cardDesc {
     font-size: 13px;

@@ -131,7 +131,7 @@ function FixSnowman2Video() {
           />
           <div ref={overlayRef} className={styles.overlay}>
             <p className={styles.overlayTitle}>SNOWMAN</p>
-            <p className={`${styles.overlayDesc} type-body-4`}>
+            <p className={`${styles.overlayDesc} fs-sub-1`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
               More than a light,
               <br />a presence.
             </p>

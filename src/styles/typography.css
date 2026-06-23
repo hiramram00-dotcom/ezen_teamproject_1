@@ -12,21 +12,21 @@
    ========================================================= */
 
 /* =========================================================
-   ★ 확정 폰트 크기 유틸 (2026-06-23 팀 결정) — 웹 고정 9단계
-   토큰 var(--fs-*, tokens.css) 기반. font-size만 적용
-   → 패밀리/weight/색은 각 요소에서 지정.
+   ★ 확정 폰트 크기 유틸 (2026-06-23 팀 결정) — 웹 고정
+   토큰 var(--fs-*, tokens.css) 기반. 크기 + 행간(1.3) + 자간(-0.02em) 일괄 적용.
+   → 굵기(weight)·패밀리·색만 각 요소에서 직접 지정.
    사용: <h2 className="fs-title-2"> 또는 className={`${styles.x} fs-body-1`}
    ========================================================= */
-.fs-display-1 { font-size: var(--fs-display-1); } /* 180 */
-.fs-title-1 { font-size: var(--fs-title-1); }  /* 120 */
-.fs-title-2 { font-size: var(--fs-title-2); }  /*  96 */
-.fs-title-3 { font-size: var(--fs-title-3); }  /*  86 */
-.fs-title-4 { font-size: var(--fs-title-4); }  /*  70 */
-.fs-body-1  { font-size: var(--fs-body-1);  }  /*  40 */
-.fs-body-2  { font-size: var(--fs-body-2);  }  /*  24 */
-.fs-sub-1   { font-size: var(--fs-sub-1);   }  /*  21 */
-.fs-sub-2   { font-size: var(--fs-sub-2);   }  /*  19 */
-.fs-sub-3   { font-size: var(--fs-sub-3);   }  /*  16 */
+.fs-display-1 { font-size: var(--fs-display-1); line-height: 1.3; letter-spacing: -0.02em; } /* 180 */
+.fs-title-1   { font-size: var(--fs-title-1);   line-height: 1.3; letter-spacing: -0.02em; } /* 120 */
+.fs-title-2   { font-size: var(--fs-title-2);   line-height: 1.3; letter-spacing: -0.02em; } /*  96 */
+.fs-title-3   { font-size: var(--fs-title-3);   line-height: 1.3; letter-spacing: -0.02em; } /*  86 */
+.fs-title-4   { font-size: var(--fs-title-4);   line-height: 1.3; letter-spacing: -0.02em; } /*  70 */
+.fs-body-1    { font-size: var(--fs-body-1);    line-height: 1.3; letter-spacing: -0.02em; } /*  40 */
+.fs-body-2    { font-size: var(--fs-body-2);    line-height: 1.3; letter-spacing: -0.02em; } /*  24 */
+.fs-sub-1     { font-size: var(--fs-sub-1);     line-height: 1.3; letter-spacing: -0.02em; } /*  21 */
+.fs-sub-2     { font-size: var(--fs-sub-2);     line-height: 1.3; letter-spacing: -0.02em; } /*  19 */
+.fs-sub-3     { font-size: var(--fs-sub-3);     line-height: 1.3; letter-spacing: -0.02em; } /*  16 */
 
 /* ----- Title : Instrument Sans ----- */
 .type-title-1        { font-family: var(--font-en); font-weight: 600; font-size: clamp(52px, 8.33vw, 120px); line-height: 1.3; letter-spacing: -0.02em; }
