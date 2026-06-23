@@ -20,6 +20,7 @@ function PinScene() {
   const imageRef = useRef(null)
   const scrimRef = useRef(null)
   const cardRef = useRef(null)
+  const cardGroupRef = useRef(null)
 
   useEffect(() => {
     const scene = sceneRef.current
@@ -27,12 +28,35 @@ function PinScene() {
     const scrim = scrimRef.current
     const card = cardRef.current
     if (!scene || !image || !scrim || !card) return
+
+    const cardGroup = cardGroupRef.current
+
+    // 카드(라벨 포함)가 배경 이미지보다 크면 비율 그대로 균일 축소하여 이미지 안에 맞춤.
+    // 카드는 이미지 정중앙 정렬이므로 center 기준 스케일하면 중심은 그대로 유지된다.
+    const fitCard = () => {
+      if (!cardGroup) return
+      cardGroup.style.transform = '' // 자연 크기로 되돌려 측정
+      const labels = cardGroup.firstElementChild // 절대배치된 라벨 묶음
+      const labelsBlock = labels
+        ? labels.offsetHeight + parseFloat(getComputedStyle(labels).marginBottom || '0')
+        : 0
+      const cardH = cardGroup.offsetHeight
+      const imgH = image.parentElement.offsetHeight // .visual 높이 = 이미지 표시 높이
+      // 중심 정렬 기준: 카드 절반 + 라벨 전체가 이미지 절반 안에 들어와야 함 → 분모 (cardH + 2*labels).
+      // 32px 여백만 두고, 실제로 넘칠 때만 축소(평소엔 scale 1).
+      const denom = cardH + 2 * labelsBlock
+      const s = denom > 0 ? Math.min(1, (imgH - 32) / denom) : 1
+      cardGroup.style.transform = s < 1 ? `scale(${s})` : ''
+    }
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       image.style.transform = 'scale(1)'
       scrim.style.opacity = '0.42'
       card.style.transform = 'translateY(0)'
       card.style.visibility = 'visible'
-      return
+      fitCard()
+      window.addEventListener('resize', fitCard)
+      return () => window.removeEventListener('resize', fitCard)
     }
 
     let ticking = false
@@ -64,11 +88,22 @@ function PinScene() {
     }
 
     apply()
+    fitCard()
+    // 한글 웹폰트가 늦게 로드되면 카드 높이가 달라지므로 로드 후 재계산.
+    let cancelled = false
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        if (!cancelled) fitCard()
+      })
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
+    window.addEventListener('resize', fitCard)
     return () => {
+      cancelled = true
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
+      window.removeEventListener('resize', fitCard)
     }
   }, [])
 
@@ -81,8 +116,10 @@ function PinScene() {
           </div>
           <div ref={scrimRef} className={styles.scrim} aria-hidden="true" />
 
-          {/* 카드 + 라벨 — 고정 구간 후반에 이미지 위로 올라옴 */}
+          {/* 카드 + 라벨 — 고정 구간 후반에 이미지 위로 올라옴.
+              라벨은 cardGroup 안에서 카드 위에 절대배치하여, 카드만 이미지 정중앙에 정렬됨. */}
           <div ref={cardRef} className={styles.cardLayer}>
+            <div ref={cardGroupRef} className={styles.cardGroup}>
             <div className={styles.labels}>
               <span className={`${styles.label} type-subtitle-1`}>Our Showroom</span>
               <span className={`${styles.label} ${styles.labelVisit} type-subtitle-1`}>
@@ -173,6 +210,7 @@ function PinScene() {
                   <p className={`${styles.colText} type-body-4`}>02-318-1079</p>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </div>
