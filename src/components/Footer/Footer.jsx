@@ -231,7 +231,8 @@ function Footer({
               key={item.label}
               href={item.target === 'top' ? '#' : `#${item.target}`}
               onClick={(e) => handleNavClick(e, item.target)}
-              className={`${styles.navLink} type-body-3`}
+              className={`${styles.navLink} fs-body-2`}
+              style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}
               data-cursor="pointer"
             >
               {item.label}
