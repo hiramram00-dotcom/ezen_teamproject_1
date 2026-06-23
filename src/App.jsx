@@ -14,6 +14,7 @@ import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
 import CollaboLandingSection from './sections/CollaboLandingSection/CollaboLandingSection'
 import CollaboGallerySection from './sections/CollaboGallerySection/CollaboGallerySection'
+import CollaboContactSection from './sections/CollaboContactSection/CollaboContactSection'
 import CollaboDetailSection from './sections/CollaboDetailSection/CollaboDetailSection'
 import CollaboDetailContentSection from './sections/CollaboDetailSection/CollaboDetailContentSection'
 import kbpCollabo from './sections/CollaboDetailSection/collabos/kbp'
@@ -99,6 +100,7 @@ function App() {
             <>
               <Header />
               <CollaboGallerySection />
+              <CollaboContactSection />
               {/* 푸터 위 사진+카드 섹션 제거 → 크림 푸터 본문만 */}
               <Footer hidePhoto />
             </>
