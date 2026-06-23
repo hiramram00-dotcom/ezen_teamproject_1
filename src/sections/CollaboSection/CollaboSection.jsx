@@ -397,7 +397,7 @@ function CollaboSection() {
                     animationDelay: FLOAT_DELAY[base],
                   }}
                 >
-                  <div className={styles.cardImage} style={{ '--img-h': `${card.imgH}px` }}>
+                  <div className={styles.cardImage} style={{ aspectRatio: `379 / ${card.imgH}` }}>
                     <img src={card.img} alt={`ILKW x ${card.brand}`} loading="lazy" draggable="false" />
                     <div className={styles.cardOverlay}>
                       <span className={styles.cardArrow} aria-hidden="true">

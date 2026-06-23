@@ -9,11 +9,11 @@
   width: 100%;
   height: 160vh; /* 핀 구간: 타이틀 상승까지만 (끝부분 죽은 스크롤 제거) */
   /* border-box라 패딩이 높이에 포함 → 스크롤 양 유지하면서 푸터 사진 전 크림 여백 확보 */
-  padding-bottom: 170px;
+  padding-bottom: clamp(90px, 8.85vw, 170px); /* 170px @1920 */
   background: var(--color-base-2); /* 크림 */
   color: var(--color-base-3); /* 검정 */
-  /* 카드 크기 배율(폭·이미지높이·간격이 함께 스케일). 미디어쿼리에서 이 값만 조절 */
-  --card-scale: 1;
+  /* 카드 사이 간격(130px @1920) — clamp로 화면 폭에 비례, margin-right와 구분선(::after) 위치가 공유 */
+  --card-gap: clamp(70px, 6.77vw, 130px);
 }
 
 .sticky {
@@ -26,14 +26,14 @@
 /* ----- 상단 헤더 ----- */
 .header {
   position: absolute;
-  top: 28px;
+  top: clamp(18px, 1.46vw, 28px);
   left: 0;
   right: 0;
   z-index: 3;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 38px;
+  padding: 0 clamp(20px, 1.98vw, 38px);
 }
 
 .logo {
@@ -42,8 +42,8 @@
   line-height: 0;
 }
 .logo img {
-  width: 102.939px;
-  height: 23px;
+  width: clamp(60px, 5.36vw, 102.939px);
+  height: clamp(14px, 1.2vw, 23px);
 }
 .menu {
   flex-shrink: 0;
@@ -55,20 +55,26 @@
 /* ----- 타이틀 (시작: 센터 → JS가 위로 상승. 기본은 최종 위치) ----- */
 .intro {
   position: absolute;
-  left: 38px;
-  top: 127px;
+  left: clamp(20px, 1.98vw, 38px);
+  top: clamp(56px, 6.62vw, 127px);
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-width: calc(100% - 76px);
+  gap: clamp(6px, 0.52vw, 10px);
+  max-width: calc(100% - 2 * clamp(20px, 1.98vw, 38px));
   will-change: transform;
 }
 .title {
   font-weight: 400; /* 굵기는 각 span의 type-* 가 결정 */
 }
+/* 전역 type-title-1/italic-1 은 1920 기준 고정 120px → 화면 폭에 비례해 줄어들게 오버라이드 */
+.intro :global(.type-title-1),
+.intro :global(.type-italic-1) {
+  font-size: clamp(56px, 6.25vw, 120px);
+}
 .desc {
   color: var(--color-base-3);
+  font-size: clamp(15px, 1.25vw, 24px); /* type-body-3 고정 24px 오버라이드 */
 }
 
 /* ----- 글씨 등장: blur-in (흐림→선명) 스태거 ----- */
@@ -98,7 +104,7 @@
    카드가 둥둥 떠올라도 윗부분이 잘리지 않게 한다. */
 .galleryViewport {
   position: absolute;
-  top: 416px;
+  top: clamp(150px, 21.67vw, 416px);
   left: 0;
   width: 100vw;
   overflow: hidden;
@@ -112,19 +118,19 @@
   display: flex;
   align-items: flex-start;
   width: max-content;
-  padding-top: 157px; /* 둥둥 떠오를 상단 여유 */
+  padding-top: clamp(50px, 8.18vw, 157px); /* 둥둥 떠오를 상단 여유 */
   opacity: 1; /* JS가 0에서 페이드인 */
   will-change: transform, opacity;
 }
 
 .card {
   position: relative; /* ::after 구분선 기준 */
-  flex: 0 0 calc(379px * var(--card-scale));
-  width: calc(379px * var(--card-scale));
-  margin-right: calc(130px * var(--card-scale)); /* 카드 사이 간격(끝에도 붙어 마퀴 이음새 균일) */
+  flex: 0 0 clamp(220px, 19.74vw, 379px);
+  width: clamp(220px, 19.74vw, 379px);
+  margin-right: var(--card-gap); /* 카드 사이 간격(끝에도 붙어 마퀴 이음새 균일) */
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: clamp(12px, 1.04vw, 20px);
   cursor: grab; /* 카드 위에서만 드래그 가능 표시 */
   /* 은은한 둥둥(위아래) — duration/delay 는 인라인(카드별 시간차) */
   animation-name: floatY;
@@ -132,13 +138,13 @@
   animation-iteration-count: infinite;
   will-change: transform;
 }
-/* 카드 사이 간격(68px)의 정가운데에 연한 회색 세로 구분선 */
+/* 카드 사이 간격의 정가운데에 연한 회색 세로 구분선 */
 .card::after {
   content: '';
   position: absolute;
   top: 0;
   bottom: 0;
-  right: calc(-65px * var(--card-scale)); /* 간격 130px의 절반 → 카드와 카드 정중앙 */
+  right: calc(var(--card-gap) / -2); /* 간격의 절반 → 카드와 카드 정중앙 */
   width: 1px;
   background: rgba(0, 0, 0, 0.12);
   pointer-events: none;
@@ -163,7 +169,7 @@
 .cardImage {
   position: relative;
   width: 100%;
-  height: calc(var(--img-h, 250px) * var(--card-scale)); /* 높이는 카드별 인라인(--img-h) × 배율 */
+  /* 높이는 카드별 aspect-ratio(인라인, 379px 기준 imgH 비율)로 폭과 함께 자동 스케일 */
   border-radius: 20px;
   overflow: hidden;
 }
@@ -200,8 +206,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
+  width: clamp(40px, 3.33vw, 64px);
+  height: clamp(40px, 3.33vw, 64px);
   border-radius: 50%;
   border: 1.5px solid var(--color-base-1);
   color: var(--color-base-1);
@@ -216,14 +222,14 @@
   color: var(--color-base-3);
 }
 .cardArrow svg {
-  width: 22px;
-  height: 22px;
+  width: clamp(14px, 1.15vw, 22px);
+  height: clamp(14px, 1.15vw, 22px);
 }
 
 .cardText {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: clamp(5px, 0.42vw, 8px);
 }
 .cardTitle {
   color: var(--color-base-3);
@@ -235,17 +241,6 @@
 /* 캡션 회색: 디자인 #555 — 현재 토큰에 없는 값(팀에서 토큰화 검토 필요) */
 .cardDesc {
   color: #555;
-}
-
-/* ----- 반응형 (브레이크포인트 px는 팀 [TBD], 임시값) ----- */
-@media (max-width: 1280px) {
-  .collabo {
-    --card-scale: 0.85; /* 카드 조금 축소 */
-  }
-  .intro :global(.type-title-1),
-  .intro :global(.type-italic-1) {
-    font-size: 76px;
-  }
 }
 
 /* ----- 모바일(≤767px): 마퀴 대신 세로 리스트 (가로 스크롤 없음) ----- */
