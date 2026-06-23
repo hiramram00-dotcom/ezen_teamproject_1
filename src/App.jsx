@@ -89,7 +89,15 @@ function App() {
         {/* 서브페이지는 전역 헤더 상시표시(index 없음). About은 자체 헤더 없어 바로 적용 */}
         <Route path="/about" element={<><Header /><AboutPage /></>} />
         <Route path="/product" element={<><Header /><ProductRoute /></>} />
-        <Route path="/product/flamingo" element={<FlamingoDetailSection />} />
+        <Route
+          path="/product/flamingo"
+          element={
+            <>
+              <FlamingoDetailSection />
+              <Footer hidePhoto />
+            </>
+          }
+        />
         <Route path="/showroom" element={<><Header /><ShowroomPage /></>} />
         {/* 메뉴 COLLABO → 콜라보 랜딩(ILKW × 브랜드 룰렛). Figma 1565:194 */}
         <Route path="/collabo" element={<><Header /><CollaboLandingSection /></>} />
