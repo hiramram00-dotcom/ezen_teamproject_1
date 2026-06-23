@@ -1,7 +1,7 @@
 .about {
   position: relative;
   width: 100%;
-  height: 384.3vw;
+  height: 316.3vw;
   min-height: 100svh;
   overflow: hidden;
   background: var(--color-base-3);
@@ -295,7 +295,7 @@
 }
 
 .storyPassed {
-  top: 192vw;
+  top: 226vw;
 }
 
 .storyLead {
@@ -305,17 +305,18 @@
   width: 58vw;
 }
 
-.storyImage {
+.storyMedia {
   position: absolute;
   top: 31vh;
   left: 17vw;
   width: 41vw;
   height: 44vh;
   object-fit: cover;
-  clip-path: inset(0 0 100% 0);
-  filter: brightness(0.28) saturate(0.3);
-  transform: scale(1.08);
+  clip-path: inset(var(--story-media-mask, 50%) 0);
+  filter: brightness(var(--story-media-brightness, 0.18)) saturate(0.78);
+  transform: scale(var(--story-media-scale, 1.06));
   transform-origin: center;
+  will-change: clip-path, filter, transform;
 }
 
 .storyLead,
@@ -325,35 +326,11 @@
   transform: translateY(2vw);
 }
 
-.storyLead,
-.storyClosing {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.31) 0%,
-    rgba(255, 255, 255, 0.31) 48%,
-    rgba(255, 255, 255, 0.11) 52%,
-    rgba(255, 255, 255, 0.11) 100%
-  );
-  background-position: 100% 0;
-  background-size: 220% 100%;
-  background-clip: text;
-  color: transparent;
-}
-
-.storyRevealed .storyLead {
-  animation:
-    storyCopyReveal 1.25s ease-out forwards,
-    storyTextFill 2.6s 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.storyRevealed .storyImage {
-  animation: storyImageTurnOn 2s 850ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
+.storyRevealed .storyLead,
 .storyRevealed .storyClosing {
-  animation:
-    storyCopyReveal 1.35s 450ms ease-out forwards,
-    storyTextFill 2.6s 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 1;
+  filter: none;
+  transform: none;
 }
 
 .storyClosing {
@@ -373,7 +350,7 @@
   left: 39vw;
 }
 
-.storyClosingStatement span {
+.storyClosingStatement > .storyTypedLine {
   display: block;
 }
 
@@ -382,41 +359,54 @@
   font-weight: 700;
 }
 
+.storyTypedLine {
+  display: block;
+}
+
+.storyTypedWord {
+  display: inline;
+  color: rgba(255, 255, 255, 0.31);
+  opacity: 0;
+  filter: blur(0.12em);
+  transition:
+    color 220ms ease,
+    opacity 220ms ease,
+    filter 260ms ease;
+}
+
+.storyTypedWordVisible {
+  color: rgba(255, 255, 255, 0.31);
+  opacity: 1;
+  filter: blur(0);
+}
+
 .storySecond {
   position: absolute;
   inset: 0;
   opacity: 0;
   pointer-events: none;
-  transition:
-    opacity 900ms ease,
-    transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
-  transform: translateY(1.5vw);
+  transition: none;
+  transform: none;
 }
 
 .story > .storyLead,
-.story > .storyImage,
+.story > .storyMedia,
 .story > .storyClosing {
-  transition:
-    opacity 800ms ease,
-    filter 900ms ease,
-    transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: none;
 }
 
 .storyPhaseTwo > .storyLead,
-.storyPhaseTwo > .storyImage,
 .storyPhaseTwo > .storyClosing,
 .storyPassed > .storyLead,
-.storyPassed > .storyImage,
 .storyPassed > .storyClosing {
   pointer-events: none;
 }
 
 .storyPhaseTwo > .storyLead,
-.storyPhaseTwo > .storyImage,
 .storyPhaseTwo > .storyClosing {
   opacity: 0 !important;
-  filter: blur(0.45vw);
-  transform: translateY(-1.4vw) scale(0.985);
+  filter: none;
+  transform: none;
 }
 
 .story:not(.storyPhaseTwo) .storySecond {
@@ -432,18 +422,7 @@
 .storySecond .storyClosing {
   opacity: 1;
   filter: none;
-  background-position: 0 0;
   transform: none;
-}
-
-.storySecond .storyImage {
-  top: 31vh;
-  left: 17vw;
-  width: 41vw;
-  height: 44vh;
-  clip-path: inset(0);
-  filter: brightness(0.85) saturate(0.78);
-  transform: scale(1);
 }
 
 .storySecond .storyClosingYears {
@@ -456,39 +435,9 @@
   left: 39vw;
 }
 
-.videoPlaceholder {
-  position: absolute;
-  top: 260vw;
-  left: 0.2vw;
-  width: 99.8vw;
-  height: 56.3vw;
-  overflow: hidden;
-}
-
-.videoPlaceholder video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(0.12) saturate(0.35);
-  opacity: 0.18;
-  transform: scale(1.04);
-  transition:
-    filter 1.4s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 1.1s ease,
-    transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.videoPlaceholderRevealed video {
-  filter: brightness(1) saturate(1);
-  opacity: 1;
-  transform: scale(1);
-}
-
 .ending {
   position: absolute;
-  top: 328vw;
+  top: 260vw;
   left: 0;
   display: flex;
   align-items: center;
@@ -552,7 +501,7 @@
 
   .legacyGallery img,
   .legacyGallery video,
-  .storyImage {
+  .storyMedia {
     clip-path: inset(0);
     filter: none;
     transform: none;
@@ -567,7 +516,6 @@
     animation: none;
   }
 
-  .videoPlaceholder video,
   .tagline {
     filter: none;
     opacity: 1;
