@@ -273,7 +273,7 @@ function FixSnowman2Intro() {
           <p
             ref={snowmanWordRef}
             className={`${styles.snowmanLine} fs-title-2`}
-            style={{ fontFamily: 'var(--font-en)', fontWeight: 600 }}
+            style={{ fontFamily: 'var(--font-en)' }} /* font-weight는 스크롤 애니(--snowman-weight 700→500)가 제어하므로 인라인 지정 금지 */
           >
             <span className={styles.textInnerRight}>SNOWMAN</span>
           </p>
