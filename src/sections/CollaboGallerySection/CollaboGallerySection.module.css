@@ -1,283 +1,222 @@
 /* =========================================================
-   CollaboGallerySection — 콜라보 컬렉션 목록 (룰렛 다음 화면)
-   Figma node 1565:270 (1920 기준)
-   "COLLABO with ILKW." 헤더 + 6개 콜라보 좌우 지그재그 리스트
-   px(@1920)는 vw 환산 + clamp로 화면 크기 보정
+   CollaboGallerySection — 콜라보 컬렉션 (룰렛 다음 화면)
+   Figma node 1837:2(레이아웃) · 1853:2(호버 로고 락업)
+   "COLLABO with ILKW." 헤더 + 6개 세로 패널
+   인터랙션: 패널 호버 시 확대 + 나머지 어두워지며 축소 (expanding gallery),
+   호버한 패널 정중앙에 ILKW로고 × 브랜드로고 표시
    ========================================================= */
 
 .gallery {
   position: relative;
   width: 100%;
-  min-height: 100vh;
-  background: var(--color-base-2); /* 크림 */
+  height: 220vh; /* 핀 구간: 타이틀 중앙→상단 이동 + 패널 등장에 쓸 스크롤 여유 (늘릴수록 패널이 천천히 떠오름) */
+  background: var(--color-base-2); /* 크림 #FFF7EA */
   color: var(--color-base-3);
-  padding: 0 clamp(16px, 1.8vw, 32px) clamp(120px, 12vw, 240px);
-  /* overflow 지정 안 함 — 세로 sticky가 동작하도록(가로 넘침은 전역 html/body의 overflow-x:clip이 처리) */
 }
 
-/* ----- 헤더 — 룰렛 다음, 가운데서 등장 → 스크롤하면 위로 붙어(sticky) 머묾 →
-   리스트가 가까워지면(headWrap 끝) 리스트와 함께 위로 빠져나감.
-   headWrap: sticky 고정 범위(런웨이). padding-top으로 타이틀을 첫 화면 가운데쯤에서 시작. ----- */
-.headWrap {
-  position: relative; /* 스크롤 힌트(.scrollCue) 절대배치 기준 */
-  height: 110vh; /* 타이틀이 위에 붙어있는 구간(축소 → 조금만 스크롤해도 리스트가 곧 보임) */
-  padding-top: calc(50vh - 1.8rem); /* 타이틀 라인이 화면 정중앙(룰렛 끝 위치)에 오도록 */
-}
-/* 첫 화면(100vh) 기준 컨테이너 — 안의 ScrollHint(기본 절대배치 bottom)가
-   상세 히어로와 똑같은 위치(하단 가운데)에 오도록. 스크롤하면 --hint-fade로 사라짐. */
-.scrollCue {
-  position: absolute;
-  left: 0;
-  right: 0;
+/* 핀 고정 영역 — 스크롤 진행도(JS)에 따라 .head/.panels 의 위치·투명도를 갱신한다 */
+.stickyInner {
+  position: sticky;
   top: 0;
   height: 100vh;
-  pointer-events: none;
+  overflow: hidden;
+  /* 양옆 200px (좁아지면 축소), 상단은 고정 헤더 아래 여백 */
+  padding: clamp(96px, 13vh, 168px) clamp(20px, 14vw, 200px) clamp(80px, 10vw, 160px);
+  display: flex;
+  flex-direction: column;
 }
+
+/* ----- 헤더 (Figma 1825:5) ----- */
 .head {
-  position: sticky;
-  top: clamp(84px, 12vh, 120px); /* 위(고정 헤더 아래)에 붙는 위치 */
-  z-index: 1;
-  max-width: 1008px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
   text-align: center;
-  /* 등장 전(숨김): 아래에서 위로 슬라이드(룰렛 릴이 위로 흐르는 느낌) + 투명. 필터 미사용(렉↓) */
+  /* 등장 전(숨김): 흐리고 투명. 위치(translateY)는 스크롤 진행도에 맞춰 JS가 매 프레임 갱신
+     (화면 중앙에서 시작 → 스크롤하면 위로 이동) */
   opacity: 0;
-  transform: translateY(56px);
+  filter: blur(8px);
+  will-change: transform;
 }
 .head.headIn {
   opacity: 1;
-  transform: translateY(0);
+  filter: blur(0);
   transition:
     opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+    filter 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
-@media (prefers-reduced-motion: reduce) {
-  .head {
-    opacity: 1;
-    transform: none;
-  }
+@media (prefers-reduced-motion: reduce), (max-width: 767px) {
+  .head { opacity: 1; filter: none; }
 }
+
 .title {
   display: flex;
   align-items: center;
-  gap: clamp(10px, 1.04vw, 20px); /* 20px @1920 */
+  gap: clamp(10px, 1.04vw, 20px);
 }
+/* font-family/weight/line-height/letter-spacing 는 type-title-5(JSX에서 적용) 가 담당.
+   여기선 색상 + 반응형 클램프(화면 크기별 크기 보정)만 오버라이드 */
 .titleCollabo {
-  font-family: var(--font-en);
-  font-weight: 600;
-  font-size: clamp(28px, 2.5vw, 48px); /* 48px @1920 */
-  letter-spacing: -0.02em;
   color: var(--color-base-3);
 }
+.titleCollabo:global(.type-title-5) {
+  font-size: clamp(28px, 2.6042vw, 50px);
+}
+/* font-family/style/weight/line-height/letter-spacing 는 type-italic-6(JSX) 가 담당 */
 .titleWith {
-  font-family: var(--font-deco);
-  font-style: italic;
-  font-weight: 400;
-  font-size: clamp(28px, 2.5vw, 48px);
   color: var(--color-base-3);
 }
-/* ILKW 워드마크 — 살짝 기울임(skew) (콜라보 패밀리 공통, 검정) */
+.titleWith:global(.type-italic-6) {
+  font-size: clamp(28px, 2.6042vw, 50px);
+}
 .titleIlkw {
-  height: clamp(30px, 2.76vw, 53px); /* 53px @1920 */
+  height: clamp(30px, 2.76vw, 53px);
   width: auto;
   transform: skewX(-7.58deg) scaleY(0.99);
 }
+/* font-family/weight/line-height/letter-spacing 는 type-body-4(JSX) 가 담당 */
 .subtitle {
-  font-family: var(--font-kr);
-  font-weight: 300;
-  font-size: clamp(15px, 1.09vw, 21px); /* 21px @1920 (Body-4) */
-  line-height: 1.4;
-  letter-spacing: -0.04em;
   color: var(--color-base-3);
 }
-
-/* ----- 지그재그 리스트 ----- */
-.list {
-  max-width: 1900px; /* 좌우 여백 더 축소(리스트 폭 넓힘) */
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(140px, 19vw, 360px); /* 행 간격 확대 */
-  padding-top: clamp(40px, 6vw, 100px); /* 리스트 상단 여백(타이틀이 빠지고 첫 행 위 여유) */
+.subtitle:global(.type-body-4) {
+  font-size: clamp(15px, 1.09vw, 21px);
 }
 
-.row {
+/* 첫 화면 하단 가운데 스크롤 안내 — ScrollHint 자체가 absolute(bottom)라
+   .stickyInner(=100vh) 기준으로 맨 아래 가운데에 위치. 스크롤하면 --hint-fade로 사라짐. */
+.scrollCue {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ----- expanding gallery: 6개 세로 패널 ----- */
+.panels {
+  position: relative;
   display: flex;
-  align-items: flex-end; /* 텍스트 바닥을 사진 바닥에 정렬 */
-  gap: clamp(20px, 2.08vw, 40px); /* 40px @1920 */
+  gap: 2px;
   width: 100%;
-  /* 진입 페이드업 */
-  opacity: 0;
-  transform: translateY(48px);
-  transition:
-    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.row.inView {
-  opacity: 1;
-  transform: none;
-}
-/* 짝수 번째(2·4·6) — 사진 오른쪽 / 텍스트 왼쪽(우측 정렬) */
-.row.right {
-  flex-direction: row-reverse;
+  height: clamp(440px, 74vh, 840px);
+  margin-top: clamp(72px, 14vh, 100px); /* 타이틀과 간격 넉넉하게 */
+  /* 등장(위치·투명도)은 스크롤 진행도에 맞춰 JS가 매 프레임 갱신 */
+  will-change: transform, opacity;
 }
 
-.imageBox {
-  position: relative; /* 오버레이 기준 */
-  display: block;
-  flex: 0 0 auto;
-  width: var(--img-w);
-  aspect-ratio: var(--img-ar);
+.panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
   overflow: hidden;
-  transition: transform 0.15s ease;
+  cursor: pointer;
+  transition:
+    flex-grow 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.45s ease;
 }
-/* 누르는 느낌(클릭/탭 피드백) — 살짝 눌림 */
-.imageBox:active {
-  transform: scale(0.97);
-}
-.imageBox img {
+.panelImg {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.45s ease;
-}
-/* 행(.row)에 마우스 들어오면 사진 살짝 줌. transition으로 커지고/떼면 부드럽게 복귀.
-   (스크롤 진입 줌 힌트 애니메이션은 호버 transform과 충돌해 튀는 현상이 있어 제거) */
-.row:hover .imageBox img {
-  transform: scale(1.06);
+  object-position: var(--obj-pos, center); /* 3·4번째는 좁을 때 왼쪽 보이게(인라인) */
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), object-position 0.5s ease;
 }
 
-/* 사진 호버 오버레이: 어두워지며 원형 화살표 등장 */
-.imageOverlay {
+/* 한 패널에 호버 → 나머지(형제) 어두워지고 작아짐 */
+.panels:hover .panel {
+  flex-grow: 0.62;
+  filter: brightness(0.42);
+}
+/* 호버한 패널 → 커지고 밝게 + 살짝 줌. 호버 시 사진은 정가운데(object-position) */
+.panels .panel:hover {
+  flex-grow: 3.6;
+  filter: brightness(1);
+}
+.panels .panel:hover .panelImg {
+  transform: scale(1.03);
+  object-position: center;
+}
+
+/* 호버 시 정중앙에 ILKW 로고 × 브랜드 로고 락업 (Figma 1853:2) */
+.panelLockup {
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.3);
+  gap: clamp(8px, 1vw, 14px);
+  background: rgba(255, 247, 234, 0.5); /* 크림 스크림 — 검정 로고 가독성 확보 */
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
 }
-.row:hover .imageOverlay {
+.panels .panel:hover .panelLockup {
   opacity: 1;
 }
-
-.text {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: clamp(4px, 0.42vw, 8px);
-  padding-bottom: clamp(6px, 0.8vw, 16px);
+.lockIlkw {
+  height: clamp(20px, 2.1vw, 30px); /* 일광전구 로고 — 더 작게 */
+  width: auto;
+  transform: skewX(-7.58deg) scaleY(0.99);
 }
-.row.right .text {
-  align-items: flex-end;
-  text-align: right;
-}
-
-/* "ILKW x {브랜드}" 한 줄 */
-.brandLine {
-  display: flex;
-  align-items: baseline;
-  gap: clamp(6px, 0.63vw, 12px);
-  white-space: nowrap;
-}
-.brandStrong {
-  font-family: var(--font-kr);
-  font-weight: 600;
-  font-size: clamp(22px, 2.08vw, 40px); /* 40px @1920 */
-  letter-spacing: -0.03em;
-  color: var(--color-base-3);
-}
-.brandX {
-  font-family: var(--font-kr);
+.lockX {
+  font-family: 'Inter', var(--font-en);
   font-weight: 400;
-  font-size: clamp(20px, 1.875vw, 36px); /* 36px @1920 */
-  letter-spacing: -0.04em;
-  color: var(--color-base-3);
+  font-size: clamp(16px, 1.6vw, 28px);
+  line-height: 1;
+  color: #000;
 }
-/* 바로가기 — 홈 마퀴 호버 화살표(원형 ↗)와 동일. 어두운 오버레이 위 흰색.
-   --arrow-size: 브레이크포인트별로 단계적으로 작아짐(아래 미디어쿼리) */
-.goArrow {
-  --arrow-size: 60px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--arrow-size);
-  height: var(--arrow-size);
-  border-radius: 50%;
-  border: 1.5px solid var(--color-base-1);
-  color: var(--color-base-1);
-  transform: scale(0.82); /* 호버 전 살짝 작게 → 등장 시 커짐 */
-  transition: transform 0.3s ease, background 0.25s ease, color 0.25s ease;
-}
-.row:hover .goArrow {
-  transform: scale(1);
-}
-.goArrow:hover {
-  background: var(--color-base-1);
-  color: var(--color-base-3);
-}
-/* 사진 아무데나 누르면(active) 화살표 원이 채워짐 */
-.imageBox:active .goArrow {
-  background: var(--color-base-1);
-  color: var(--color-base-3);
-}
-.goArrow svg {
-  width: 44%;
-  height: 44%;
-}
-/* 화살표 버튼 — 화면 작아질수록 단계적으로 축소 */
-@media (max-width: 1440px) { .goArrow { --arrow-size: 52px; } }
-@media (max-width: 1280px) { .goArrow { --arrow-size: 46px; } }
-@media (max-width: 1024px) { .goArrow { --arrow-size: 42px; } }
-@media (max-width: 767px)  { .goArrow { --arrow-size: 38px; } }
-@media (max-width: 480px)  { .goArrow { --arrow-size: 32px; } }
-
-/* 터치 기기(호버 없음): 화살표/오버레이 제거. 탭하면 .imageBox:active 눌림 모션만 남음 */
-@media (hover: none) {
-  .imageOverlay {
-    display: none;
-  }
-}
-.desc {
-  font-family: var(--font-kr);
-  font-weight: 400;
-  font-size: clamp(15px, 1.46vw, 21px); /* 최대 21px, 좁아지면 축소 */
-  line-height: 1.4;
-  letter-spacing: -0.03em;
-  color: #555; /* 디자인 캡션 회색 — 토큰 없음(마퀴 카드와 동일) */
+.lockBrand {
+  height: clamp(32px, 3.4vw, 54px); /* 콜라보 브랜드 로고 — 더 크게 */
+  width: auto;
 }
 
-/* ----- 반응형: 타블렛 이하에서 세로 스택 ----- */
+/* ----- 모바일/터치: 호버 확대 불가 → 세로 스택 + 로고 락업 상시 표시 ----- */
 @media (max-width: 767px) {
-  .row,
-  .row.right {
+  /* 모바일은 핀 모션 없이 일반 흐름으로 — JS도 isMobile이면 동작하지 않음 */
+  .gallery {
+    height: auto;
+  }
+  .stickyInner {
+    position: static;
+    height: auto;
+    overflow: visible;
+    padding-left: clamp(16px, 5vw, 32px);
+    padding-right: clamp(16px, 5vw, 32px);
+  }
+  .scrollCue {
+    display: none; /* 핀 모션이 없는 모바일에서는 스크롤 힌트도 불필요 */
+  }
+  .panels {
     flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
+    height: auto;
+    gap: 8px;
   }
-  .row.right .text {
-    align-items: flex-start;
-    text-align: left;
-  }
-  .imageBox {
+  .panel {
+    flex: none;
     width: 100%;
+    height: 56vw;
   }
-  .brandLine {
-    white-space: normal;
+  .panelImg {
+    object-position: center !important;
+  }
+  .panelLockup {
+    opacity: 1;
+  }
+}
+@media (hover: none) {
+  .panels:hover .panel {
+    flex-grow: 1;
+    filter: none;
+  }
+  .panels .panel:hover {
+    flex-grow: 1;
   }
 }
 
+/* 모션 최소화: 핀 스크롤 여유 제거 → 일반 풀스크린 섹션처럼 보임 (JS도 동작 안 함) */
 @media (prefers-reduced-motion: reduce) {
-  .row {
-    opacity: 1;
-    transform: none;
-    transition: none;
+  .gallery {
+    height: 100vh;
   }
 }

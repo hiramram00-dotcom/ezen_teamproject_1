@@ -29,6 +29,7 @@ const ProductSection = lazy(() => import('./sections/ProductSection/ProductSecti
 const FlamingoDetailSection = lazy(() => import('./sections/FlamingoDetailSection/FlamingoDetailSection'))
 const CollaboLandingSection = lazy(() => import('./sections/CollaboLandingSection/CollaboLandingSection'))
 const CollaboGallerySection = lazy(() => import('./sections/CollaboGallerySection/CollaboGallerySection'))
+const CollaboContactSection = lazy(() => import('./sections/CollaboContactSection/CollaboContactSection'))
 const CollaboDetailSection = lazy(() => import('./sections/CollaboDetailSection/CollaboDetailSection'))
 const CollaboDetailContentSection = lazy(() => import('./sections/CollaboDetailSection/CollaboDetailContentSection'))
 const FixStorySection = lazy(() => import('./sections/FixStorySection/FixStorySection'))
@@ -134,6 +135,7 @@ function App() {
             <>
               <Header />
               <CollaboGallerySection />
+              <CollaboContactSection />
               {/* 푸터 위 사진+카드 섹션 제거 → 크림 푸터 본문만 */}
               <Footer hidePhoto />
             </>

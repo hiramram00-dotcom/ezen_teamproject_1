@@ -54,7 +54,7 @@ function CollaboDetailSection({ bg, brandLogo, brandAlt = 'brand', logoAspect = 
 
       <div className={styles.lockup} ref={lockupRef}>
         <img className={`${styles.ilkw} ${styles.fxBlurIn}`} src={ilkwWordmark} alt="ILKW" />
-        <span className={`${styles.x} ${styles.fxBlurIn}`} aria-hidden="true">x</span>
+        <span className={`${styles.x} ${styles.fxBlurIn} type-body-1`} aria-hidden="true">x</span>
         <img
           className={`${styles.brandLogo} ${styles.fxBlurIn}`}
           src={brandLogo}

@@ -142,7 +142,7 @@ function CollaboDetailContentSection({
           <span className={styles.itWord}>meets</span>{' '}
           <span className={styles.enWord}>{titleWord}</span>
         </p>
-        <p className={styles.subtitle}>{subtitle}</p>
+        <p className={`${styles.subtitle} type-body-4`}>{subtitle}</p>
       </div>
 
       {/* 흩뿌린 사진들 — 각자 스크롤 진입 시 아래에서 위로 (위치/사이즈는 데이터) */}
@@ -161,7 +161,7 @@ function CollaboDetailContentSection({
 
       {/* 본문 카피 — sticky 범위 래퍼 안에서 고정 */}
       <div className={styles.stickyRange} style={rangeStyle}>
-        <p className={styles.body} ref={bodyRef}>
+        <p className={`${styles.body} type-body-4`} ref={bodyRef}>
           {bodyLines.map((line, i) => (
             <span key={i}>
               {i > 0 && <br />}

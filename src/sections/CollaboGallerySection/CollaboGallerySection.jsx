@@ -1,161 +1,172 @@
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import styles from './CollaboGallerySection.module.css'
 import ScrollHint from '../../components/ScrollHint/ScrollHint'
 import ilkwLogo from '../../assets/common/logo/ilkw-black.svg'
-import imgKakao from './assets/collabo-1.webp'
-import imgKbp from './assets/collabo-2.webp'
-import imgWarmgrey from './assets/collabo-3.webp'
-import imgHankyoreh from './assets/collabo-4.webp'
-import imgChilsung from './assets/collabo-5.webp'
-import imgKanu from './assets/collabo-6.webp'
+import img1 from './assets/collabo-list-1.webp'
+import img2 from './assets/collabo-list-2.webp'
+import img3 from './assets/collabo-list-3.webp'
+import img4 from './assets/collabo-list-4.webp'
+import img5 from './assets/collabo-list-5.webp'
+import img6 from './assets/collabo-list-6.webp'
+// 브랜드 로고 SVG — 룰렛(CollaboLandingSection)에서 쓴 것 재활용
+import logoKakao from '../CollaboDetailSection/assets/kakao-logo.svg'
+import logoKbp from '../CollaboDetailSection/assets/kittybunnypony-logo.svg'
+import logoWarmgrey from '../CollaboDetailSection/assets/warmgrey-logo.svg'
+import logoHankyoreh from '../CollaboDetailSection/assets/hangyeore-logo.svg'
+import logoChilsung from '../CollaboDetailSection/assets/chilsung-logo.svg'
+import logoKanu from '../CollaboDetailSection/assets/kanu-logo.svg'
 
 /**
- * CollaboGallerySection — 콜라보 컬렉션 목록 (룰렛 다음 화면)
- * Figma: 1차프로젝트-3조 / node 1565:270 (1920×…)
- * "COLLABO with ILKW." 헤더 + 6개 콜라보가 좌우 지그재그로 배치된 긴 스크롤 리스트.
- * 각 행: 사진 + "ILKW × {브랜드}" + 2줄 설명(#555). 스크롤 진입 시 페이드업.
+ * CollaboGallerySection — 콜라보 컬렉션 (룰렛 다음 화면)
+ * Figma: 1차프로젝트-3조 / node 1837:2 (레이아웃) · 1853:2 (호버 로고 락업)
+ * "COLLABO with ILKW." 헤더 + 6개 세로 패널 가로 배치.
+ * 인터랙션(expanding gallery): 한 패널에 호버하면 그 패널이 커지고 나머지는 어두워지며 작아짐.
+ *  호버한 패널 정중앙에 "ILKW 로고 × 브랜드 로고" 락업 표시. 클릭 시 상세로 이동.
+ *  ※ 사진(collabo-list-1~6)·브랜드 매핑은 임시 — 필요 시 교체.
+ *  objPos: 호버 전(좁은 패널) 사진에서 보일 가로 위치. 3·4번째는 왼쪽 부분이 보이게.
  */
-
-// Figma 위→아래 순서. 사진 비율(ar)·폭 비중(w, 리스트폭 1575 기준 %)은 디자인값.
+// 순서: 카카오 · 웜그레이 · 키티버니 · 칠성 · 카누 · 한겨레 (사진 collabo-list-1~6 순)
+// logoScale: 락업 브랜드 로고 개별 확대 배율(작게 보이는 로고 보정). 칠성 로고는 키움.
 const COLLABOS = [
-  { brand: 'KAKAO FRIENDS', img: imgKakao, ar: '648 / 553', w: '41.14%', to: '/collabo-detail/kakao',
-    desc: ['춘식이의 친근한 감성과 함께', '특별한 컬렉션을 선보였습니다.'] },
-  { brand: 'KITTY BUNNY PONY', img: imgKbp, ar: '842 / 640', w: '53.46%', to: '/collabo-detail',
-    desc: ['키티버니포니의 감각적인 패턴과 함께', '오래 머물고 싶은 공간을 함께 만들어갔습니다.'] },
-  { brand: '웜그레이테일', img: imgWarmgrey, ar: '550 / 640', w: '34.92%', to: '/collabo-detail/kakao',
-    desc: ['웜그레이테일만의 따뜻한 일러스트에', '일광전구의 빛을 더했습니다.'] },
-  { brand: '한겨레', img: imgHankyoreh, ar: '842 / 640', w: '53.46%', to: '/collabo-detail',
-    desc: ['빛은 공간을 밝히는 것을 넘어,', '연대의 상징이자 시대의 기록이 되었습니다.'] },
-  { brand: '칠성사이다', img: imgChilsung, ar: '506 / 640', w: '32.13%', to: '/collabo-detail/kakao',
-    desc: ['칠성사이다의 청량한 브랜드 감성과 함께', '그린 크리스마스를 선보였습니다.'] },
-  { brand: 'KANU', img: imgKanu, ar: '512 / 640', w: '32.51%', to: '/collabo-detail',
-    desc: ['커피 한 잔의 여유와 함께하는 빛.', '일상의 여유를 더욱 따뜻하게 만들었습니다.'] },
+  { brand: 'KAKAO FRIENDS', img: img1, logo: logoKakao, to: '/collabo-detail/kakao' },
+  { brand: '웜그레이테일', img: img2, logo: logoWarmgrey, to: '/collabo-detail' },
+  { brand: 'KITTY BUNNY PONY', img: img3, logo: logoKbp, objPos: '37% center', to: '/collabo-detail' },
+  { brand: '칠성사이다', img: img4, logo: logoChilsung, objPos: '30% center', logoScale: 1.4, to: '/collabo-detail/kakao' },
+  { brand: 'KANU', img: img5, logo: logoKanu, to: '/collabo-detail' },
+  { brand: '한겨레', img: img6, logo: logoHankyoreh, to: '/collabo-detail/kakao' },
 ]
 
+const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
+const clamp01 = (v) => Math.min(1, Math.max(0, v))
+const PANEL_RISE = 1000 // 패널이 더 아래에서 떠오르도록 시작 오프셋(px)
+
 function CollaboGallerySection() {
-  const sectionRef = useRef(null)
+  const wrapRef = useRef(null)
   const headRef = useRef(null)
+  const panelsRef = useRef(null)
 
-  // 헤더(COLLABO with ILKW.) — 마운트되면 바로 가운데서 blur-in (룰렛 다음 화면)
-  useEffect(() => {
-    const el = headRef.current
-    if (!el) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      el.classList.add(styles.headIn)
+  // 타이틀(화면 중앙→스크롤하면 위로) + 패널(아래에서 떠오름) — 핀 고정 스크롤 모션
+  // (홈 화면 CollaboSection의 핀 패턴과 동일한 방식)
+  useLayoutEffect(() => {
+    const wrap = wrapRef.current
+    const head = headRef.current
+    const panels = panelsRef.current
+    if (!wrap || !head || !panels) return
+
+    const isMobile = window.matchMedia('(max-width: 767px)').matches
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (isMobile || reduce) {
+      head.classList.add(styles.headIn)
       return
     }
-    const id = requestAnimationFrame(() => el.classList.add(styles.headIn))
-    return () => cancelAnimationFrame(id)
-  }, [])
 
-  // 스크롤에 따라: ① 스크롤 힌트 페이드아웃 ② 배경 크림 → #fff (타이틀→리스트로 내려갈수록)
-  useEffect(() => {
-    const el = sectionRef.current
-    if (!el) return
-    const clamp01 = (v) => Math.min(1, Math.max(0, v))
+    const riseOf = () => Math.max(0, window.innerHeight / 2 - (head.offsetTop + head.offsetHeight / 2))
+
+    // 초기(스크롤 0) 상태를 동기적으로 먼저 잡아둔다: 타이틀은 화면 중앙에 위치한 채
+    // 곧바로 블러인 — 룰렛에서 넘어오자마자(스크롤 전) 타이틀이 비어 보이지 않도록.
+    head.style.transform = `translateY(${riseOf()}px)`
+    panels.style.transform = `translateY(${PANEL_RISE}px)`
+    panels.style.opacity = '0'
+    const revealId = requestAnimationFrame(() => head.classList.add(styles.headIn))
+
     let raf = 0
-    const update = () => {
-      raf = 0
-      const vh = window.innerHeight
-      const y = window.scrollY
-      // ① 힌트 페이드 (앞 30vh)
-      el.style.setProperty('--hint-fade', String(1 - Math.min(1, y / (vh * 0.3))))
-      // ② 배경: 크림(#FFF7EA=255,247,234) → 흰색(255,255,255). 0.15vh~0.8vh 구간 전환
-      const bp = clamp01((y - vh * 0.15) / (vh * 0.65))
-      el.style.backgroundColor = `rgb(255, ${Math.round(247 + 8 * bp)}, ${Math.round(234 + 21 * bp)})`
-    }
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update)
-    }
-    update()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      if (raf) cancelAnimationFrame(raf)
-    }
-  }, [])
+    let isVisible = false
 
-  // 스크롤 진입 시 행이 아래에서 페이드업
-  useEffect(() => {
-    const root = sectionRef.current
-    if (!root) return
-    const rows = root.querySelectorAll('[data-reveal]')
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      rows.forEach((el) => el.classList.add(styles.inView))
-      return
+    const frame = () => {
+      raf = 0
+      if (!isVisible) return
+
+      const rect = wrap.getBoundingClientRect()
+      const vh = window.innerHeight
+      const total = wrap.offsetHeight - vh
+      const scrolled = Math.min(total, Math.max(0, -rect.top))
+      const aP = ease(clamp01(scrolled / Math.max(1, total * 0.85)))
+
+      // 타이틀: 화면 중앙에서 시작 → 스크롤하면 원래(상단) 위치로 상승 (등장은 위에서 이미 처리)
+      head.style.transform = `translateY(${(1 - aP) * riseOf()}px)`
+
+      // 패널: 아래에서 떠오르며 페이드인
+      panels.style.transform = `translateY(${(1 - aP) * PANEL_RISE}px)`
+      panels.style.opacity = String(clamp01(aP / 0.85))
+
+      // 스크롤 힌트: 처음 30vh 만큼 스크롤하는 동안 서서히 사라짐
+      wrap.style.setProperty('--hint-fade', String(1 - clamp01(scrolled / (vh * 0.3))))
+
+      raf = requestAnimationFrame(frame)
     }
-    // 토글: 화면에 들어오면 나타나고 벗어나면 초기화 → 역(위로)스크롤로 다시 들어올 때도 재생.
-    // 깜빡임 방지: threshold 0(진입/이탈 경계가 서로 멀어 들락날락 안 함) + 하단 rootMargin 버퍼로
-    // 살짝 안쪽에서 나타나게 함(경계에서 미세 토글 방지).
+
     const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          e.target.classList.toggle(styles.inView, e.isIntersecting)
-        })
+      ([entry]) => {
+        isVisible = entry.isIntersecting
+        if (isVisible && !raf) raf = requestAnimationFrame(frame)
+        else if (!isVisible && raf) {
+          cancelAnimationFrame(raf)
+          raf = 0
+        }
       },
-      { threshold: 0, rootMargin: '0px 0px -12% 0px' },
+      { threshold: 0 },
     )
-    rows.forEach((el) => io.observe(el))
-    return () => io.disconnect()
+    io.observe(wrap)
+
+    return () => {
+      cancelAnimationFrame(revealId)
+      cancelAnimationFrame(raf)
+      io.disconnect()
+    }
   }, [])
 
   return (
-    <section className={styles.gallery} ref={sectionRef} aria-label="ILKW 콜라보 컬렉션">
-      <div className={styles.headWrap}>
+    <section className={styles.gallery} ref={wrapRef} aria-label="ILKW 콜라보 컬렉션">
+      <div className={styles.stickyInner}>
         <header className={styles.head} ref={headRef}>
           <p className={styles.title}>
-            <span className={styles.titleCollabo}>COLLABO</span>
-            <span className={styles.titleWith}>with</span>
+            <span className={`${styles.titleCollabo} type-title-5`}>COLLABO</span>
+            <span className={`${styles.titleWith} type-italic-6`}>with</span>
             <img className={styles.titleIlkw} src={ilkwLogo} alt="ILKW" />
           </p>
-          <p className={styles.subtitle}>일광전구와 함께한 협업 컬렉션을 소개합니다.</p>
+          <p className={`${styles.subtitle} type-body-4`}>일광전구와 함께한 협업 컬렉션을 소개합니다.</p>
         </header>
-        {/* 첫 화면(100vh) 하단 가운데 스크롤 안내 — 상세 페이지와 동일 위치. 스크롤하면 서서히 사라짐 */}
+
+        {/* 첫 화면 하단 가운데 스크롤 안내 — 스크롤하면 서서히 사라짐(--hint-fade) */}
         <div className={styles.scrollCue}>
           <ScrollHint />
         </div>
-      </div>
 
-      <div className={styles.list}>
-        {COLLABOS.map((c, i) => (
-          <article
-            key={c.brand}
-            className={`${styles.row} ${i % 2 === 1 ? styles.right : ''}`}
-            data-reveal
-          >
+        {/* expanding gallery — 6개 세로 패널 */}
+        <div className={styles.panels} ref={panelsRef}>
+          {COLLABOS.map((c) => (
             <Link
+              key={c.brand}
               to={c.to}
-              className={styles.imageBox}
-              style={{ '--img-w': c.w, '--img-ar': c.ar }}
+              className={styles.panel}
               aria-label={`ILKW × ${c.brand} 자세히 보기`}
               data-cursor="pointer"
             >
-              <img src={c.img} alt={`ILKW × ${c.brand}`} loading="lazy" />
-              {/* 사진 호버 시 어두워지며 원형 화살표 등장 (홈 마퀴와 동일) */}
-              <span className={styles.imageOverlay}>
-                <span className={styles.goArrow}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <line x1="7" y1="17" x2="17" y2="7" />
-                    <polyline points="8 7 17 7 17 16" />
-                  </svg>
-                </span>
+              <img
+                className={styles.panelImg}
+                src={c.img}
+                alt={`ILKW × ${c.brand}`}
+                style={{ '--obj-pos': c.objPos || 'center' }}
+              />
+              {/* 호버 시 정중앙에 ILKW 로고 × 브랜드 로고 (Figma 1853:2) */}
+              <span className={styles.panelLockup}>
+                <img className={styles.lockIlkw} src={ilkwLogo} alt="" />
+                <span className={styles.lockX} aria-hidden="true">x</span>
+                <img
+                  className={styles.lockBrand}
+                  src={c.logo}
+                  alt=""
+                  style={
+                    c.logoScale
+                      ? { transform: `scale(${c.logoScale})`, marginTop: 'clamp(4px, 0.4vw, 8px)' }
+                      : undefined
+                  }
+                />
               </span>
             </Link>
-            <div className={styles.text}>
-              <p className={styles.brandLine}>
-                <span className={styles.brandStrong}>ILKW</span>
-                <span className={styles.brandX} aria-hidden="true">x</span>
-                <span className={styles.brandStrong}>{c.brand}</span>
-              </p>
-              <p className={styles.desc}>
-                {c.desc[0]}
-                <br />
-                {c.desc[1]}
-              </p>
-            </div>
-          </article>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   )
