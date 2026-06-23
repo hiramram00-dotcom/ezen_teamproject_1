@@ -74,7 +74,7 @@
   position: absolute;
   z-index: 4;
   left: 4.64%; /* 89/1920 */
-  top: 66.85%; /* 722/1080 */
+  top: 72%; /* 전체 블록 아래로 (원래 66.85% = 722/1080) */
   margin: 0;
   opacity: 0;
   will-change: transform, opacity;
@@ -107,7 +107,7 @@
   position: absolute;
   z-index: 4;
   left: 4.64%;
-  top: 83.98%; /* 907/1080 */
+  top: 84%; /* 헤드라인 따라 같이 아래로 (빈틈 ~15px 유지). 원래 83.98% */
   width: 44.79%; /* 860/1920 */
   margin: 0;
   opacity: 0;

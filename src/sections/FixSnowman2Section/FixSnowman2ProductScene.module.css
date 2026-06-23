@@ -137,7 +137,7 @@
 }
 
 .detail h3 {
-  margin: 0 0 26px;
+  margin: 0 0 12px;
   font-family: var(--font-en);
   font-size: clamp(28px, 2.1vw, var(--fs-body-1));
   font-weight: 500;

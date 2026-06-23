@@ -60,7 +60,7 @@
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: clamp(6px, 0.52vw, 10px);
+  gap: 4px; /* 제목↔설명 간격 (행간 때문에 떠 보여서 축소) */
   max-width: calc(100% - 2 * clamp(20px, 1.98vw, 38px));
   will-change: transform;
 }
