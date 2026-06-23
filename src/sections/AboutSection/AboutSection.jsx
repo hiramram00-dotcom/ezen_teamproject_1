@@ -6,8 +6,6 @@ import bulbImage from './assets/about-bulb.webp'
 import bulbVideo from './assets/about-bulb.webm'
 import tableLampImage from './assets/about-table-lamp.webp'
 import tableLampVideo from './assets/about-table-lamp.webm'
-import livingRoomImage from './assets/about-living-room.webp'
-import cafeImage from '../../assets/spaces/cafe-studio.jpg'
 
 const INTRO_PARTICLE_COUNT = 900
 const INTRO_PARTICLE_COUNT_MOBILE = 520
@@ -20,13 +18,41 @@ const INTRO_SINCE_OFFSET_RATIO = 0.008
 const INTRO_SINCE_SIZE_RATIO = 70 / 1920
 const INTRO_SCROLL_DISTANCE_RATIO = 0.5
 const INTRO_MAX_PROGRESS_STEP = 0.018
-const ABOUT_VIDEO_PLAYLIST = [
-  'https://res.cloudinary.com/dg9hg29hc/video/upload/ADORABLE_ANYWHERE_DUMBO13_-_YouTube_-_Chrome_2026-06-22_11-23-20_zhldeh.mp4',
-  'https://res.cloudinary.com/dg9hg29hc/video/upload/ADORABLE_ANYWHERE_DUMBO13_-_YouTube_-_Chrome_2026-06-22_11-25-33_nhgokf.mp4',
-]
+const ABOUT_STORY_VIDEO =
+  'https://res.cloudinary.com/dg9hg29hc/video/upload/ADORABLE_ANYWHERE_DUMBO13_-_YouTube_-_Chrome_2026-06-22_11-23-20_zhldeh.mp4'
 
 function easeInOutCubic(value) {
   return value < 0.5 ? 4 * value ** 3 : 1 - (-2 * value + 2) ** 3 / 2
+}
+
+function StoryTypedLines({ lines, progress, startIndex = 0, totalWords, strongFirst = false }) {
+  let wordIndex = startIndex
+
+  return lines.map((line, lineIndex) => {
+    const words = line.split(' ')
+
+    return (
+      <span className={styles.storyTypedLine} key={`${line}-${lineIndex}`}>
+        {words.map((word, index) => {
+          const currentIndex = wordIndex
+          const visible = progress * totalWords >= currentIndex + 1
+          wordIndex += 1
+
+          return (
+            <span
+              className={`${styles.storyTypedWord} ${
+                visible ? styles.storyTypedWordVisible : ''
+              }`}
+              key={`${word}-${currentIndex}`}
+            >
+              {strongFirst && currentIndex === startIndex ? <strong>{word}</strong> : word}
+              {index < words.length - 1 ? '\u00a0' : ''}
+            </span>
+          )
+        })}
+      </span>
+    )
+  })
 }
 
 function sampleIntroTextPoints(width, height, particleCount) {
@@ -1030,17 +1056,15 @@ function AboutSvgStoryLight({
 function AboutSection() {
   const aboutRef = useRef(null)
   const legacyRef = useRef(null)
-  const videoRef = useRef(null)
   const endingRef = useRef(null)
   const previousStoryPhaseRef = useRef('before')
   const introHasLeftRef = useRef(false)
   const [introCycle, setIntroCycle] = useState(0)
   const [legacyRevealed, setLegacyRevealed] = useState(false)
   const [storyPhase, setStoryPhase] = useState('before')
+  const [storyProgress, setStoryProgress] = useState(0)
   const [storyCycle, setStoryCycle] = useState(0)
-  const [videoRevealed, setVideoRevealed] = useState(false)
   const [endingRevealed, setEndingRevealed] = useState(false)
-  const [aboutVideoIndex, setAboutVideoIndex] = useState(0)
 
   const handleIntroComplete = useCallback(() => {}, [])
 
@@ -1082,10 +1106,7 @@ function AboutSection() {
   }, [])
 
   useEffect(() => {
-    const targets = [
-      [videoRef.current, setVideoRevealed],
-      [endingRef.current, setEndingRevealed],
-    ].filter(([element]) => element)
+    const targets = [[endingRef.current, setEndingRevealed]].filter(([element]) => element)
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -1110,13 +1131,14 @@ function AboutSection() {
       if (!about) return
 
       const aboutTop = about.getBoundingClientRect().top + window.scrollY
-      const start = aboutTop + window.innerWidth * 1.36
-      const distance = window.innerWidth * 0.56
+      const start = aboutTop + window.innerWidth * 1.18
+      const distance = window.innerWidth * 1.48
       const progress = (window.scrollY - start) / distance
+      const clampedProgress = Math.min(Math.max(progress, 0), 1)
 
       let nextPhase = 'after'
       if (progress < 0) nextPhase = 'before'
-      else if (progress < 0.5) nextPhase = 'first'
+      else if (progress < 0.7) nextPhase = 'first'
       else if (progress < 1) nextPhase = 'second'
 
       if (
@@ -1128,6 +1150,7 @@ function AboutSection() {
 
       previousStoryPhaseRef.current = nextPhase
       setStoryPhase(nextPhase)
+      setStoryProgress(clampedProgress)
 
       scrollFrame = null
     }
@@ -1205,6 +1228,15 @@ function AboutSection() {
 
       <div
         key={storyCycle}
+        style={{
+          '--story-media-mask': `${
+            (1 - Math.min(Math.max((storyProgress - 0.52) / 0.18, 0), 1)) * 50
+          }%`,
+          '--story-media-brightness':
+            0.18 + Math.min(Math.max((storyProgress - 0.52) / 0.18, 0), 1) * 0.72,
+          '--story-media-scale':
+            1.06 - Math.min(Math.max((storyProgress - 0.52) / 0.18, 0), 1) * 0.06,
+        }}
         className={`${styles.story} ${
           storyPhase === 'first' || storyPhase === 'second' ? styles.storyRevealed : ''
         } ${
@@ -1214,71 +1246,73 @@ function AboutSection() {
         }`}
       >
         <p className={styles.storyLead}>
-          From the days
-          <br />
-          when incandescent bulbs lit
-          <br />
-          everyday life to the present day,
+          <StoryTypedLines
+            lines={[
+              'From the days',
+              'when incandescent bulbs lit',
+              'everyday life to the present day,',
+            ]}
+            progress={Math.min(storyProgress / 0.48, 1)}
+            totalWords={24}
+          />
         </p>
 
-        <img
-          className={styles.storyImage}
-          src={livingRoomImage}
-          alt="일광전구의 빛으로 채워진 거실"
+        <video
+          className={styles.storyMedia}
+          src={ABOUT_STORY_VIDEO}
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-label="ILKW 브랜드 영상"
         />
 
         <p className={`${styles.storyClosing} ${styles.storyClosingYears}`}>
-          for over 60 years,
+          <StoryTypedLines
+            lines={['for over 60 years,']}
+            progress={Math.min(storyProgress / 0.48, 1)}
+            startIndex={13}
+            totalWords={24}
+          />
         </p>
 
         <p className={`${styles.storyClosing} ${styles.storyClosingStatement}`}>
-          <span>
-            <strong>ILKWANG</strong> has brought light
-          </span>
-          <span>into people’s lives.</span>
+          <StoryTypedLines
+            lines={['ILKWANG has brought light', 'into people’s lives.']}
+            progress={Math.min(storyProgress / 0.48, 1)}
+            startIndex={17}
+            totalWords={24}
+            strongFirst
+          />
         </p>
 
         <div className={styles.storySecond}>
           <p className={styles.storyLead}>
-            Decades of technology
-            <br />
-            and a philosophy
-            <br />
-            shaped over time.
+            <StoryTypedLines
+              lines={['Decades of technology', 'and a philosophy', 'shaped over time.']}
+              progress={Math.min(Math.max((storyProgress - 0.7) / 0.29, 0), 1)}
+              totalWords={25}
+            />
           </p>
 
-          <img className={styles.storyImage} src={cafeImage} alt="" />
-
           <p className={`${styles.storyClosing} ${styles.storyClosingYears}`}>
-            Beyond a single
-            <br />
-            source of light,
+            <StoryTypedLines
+              lines={['Beyond a single', 'source of light,']}
+              progress={Math.min(Math.max((storyProgress - 0.7) / 0.29, 0), 1)}
+              startIndex={9}
+              totalWords={25}
+            />
           </p>
 
           <p className={`${styles.storyClosing} ${styles.storyClosingStatement}`}>
-            <span>we continue to understand people</span>
-            <span>and the spaces they inhabit.</span>
+            <StoryTypedLines
+              lines={['we continue to understand people', 'and the spaces they inhabit.']}
+              progress={Math.min(Math.max((storyProgress - 0.7) / 0.29, 0), 1)}
+              startIndex={15}
+              totalWords={25}
+            />
           </p>
         </div>
-      </div>
-
-      <div
-        ref={videoRef}
-        className={`${styles.videoPlaceholder} ${
-          videoRevealed ? styles.videoPlaceholderRevealed : ''
-        }`}
-      >
-        <video
-          key={ABOUT_VIDEO_PLAYLIST[aboutVideoIndex]}
-          src={ABOUT_VIDEO_PLAYLIST[aboutVideoIndex]}
-          autoPlay
-          muted
-          playsInline
-          onEnded={() => {
-            setAboutVideoIndex((currentIndex) => (currentIndex + 1) % ABOUT_VIDEO_PLAYLIST.length)
-          }}
-          aria-label={`ILKW 브랜드 영상 ${aboutVideoIndex + 1}`}
-        />
       </div>
 
       <div
