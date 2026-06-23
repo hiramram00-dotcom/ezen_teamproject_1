@@ -17,6 +17,9 @@ const INTRO_FRAME_INTERVAL = 1000 / 45
 const INTRO_MAX_PIXEL_RATIO = 1.5
 const INTRO_CENTER_Y_RATIO = 0.46
 const INTRO_SINCE_OFFSET_RATIO = 0.008
+const INTRO_SINCE_SIZE_RATIO = 70 / 1920
+const INTRO_SCROLL_DISTANCE_RATIO = 0.5
+const INTRO_MAX_PROGRESS_STEP = 0.018
 const ABOUT_VIDEO_PLAYLIST = [
   'https://res.cloudinary.com/dg9hg29hc/video/upload/ADORABLE_ANYWHERE_DUMBO13_-_YouTube_-_Chrome_2026-06-22_11-23-20_zhldeh.mp4',
   'https://res.cloudinary.com/dg9hg29hc/video/upload/ADORABLE_ANYWHERE_DUMBO13_-_YouTube_-_Chrome_2026-06-22_11-25-33_nhgokf.mp4',
@@ -31,9 +34,10 @@ function sampleIntroTextPoints(width, height, particleCount) {
   const maskContext = mask.getContext('2d', { willReadFrequently: true })
   const centerX = width / 2
   const centerY = height * INTRO_CENTER_Y_RATIO
-  const sinceSize = width * 0.058
+  const sinceSize = width * INTRO_SINCE_SIZE_RATIO
   const yearSize = width * 0.094
   const textCenterY = centerY - width * 0.01
+  const textLeft = width * 0.409
   const maskWidth = Math.ceil(width * 0.3)
   const maskHeight = Math.ceil(width * 0.2)
   const maskLeft = centerX - maskWidth / 2
@@ -43,16 +47,16 @@ function sampleIntroTextPoints(width, height, particleCount) {
   mask.width = maskWidth
   mask.height = maskHeight
   maskContext.fillStyle = '#fff'
-  maskContext.textAlign = 'center'
+  maskContext.textAlign = 'left'
   maskContext.textBaseline = 'middle'
   maskContext.font = `italic 400 ${sinceSize}px "Playfair Display", "Times New Roman", serif`
   maskContext.fillText(
     'Since',
-    maskWidth / 2 + width * INTRO_SINCE_OFFSET_RATIO,
+    textLeft - maskLeft + width * INTRO_SINCE_OFFSET_RATIO,
     maskHeight / 2 - yearSize * 0.42,
   )
   maskContext.font = `600 ${yearSize}px Arial, sans-serif`
-  maskContext.fillText('1962', maskWidth / 2, maskHeight / 2 + sinceSize * 0.62)
+  maskContext.fillText('1962', textLeft - maskLeft, maskHeight / 2 + sinceSize * 0.62)
 
   const pixels = maskContext.getImageData(0, 0, maskWidth, maskHeight).data
   const points = []
@@ -87,11 +91,12 @@ function AboutIntroParticles({ onComplete }) {
     const canvas = canvasRef.current
     const context = canvas.getContext('2d')
     let animationFrame = null
-    let startTime = null
     let lastFrameTime = 0
     let particles = []
     let completed = false
     let renderRatio = 1
+    let displayedProgress = 0
+    let targetProgress = 0
 
     const buildParticles = () => {
       renderRatio = Math.min(window.devicePixelRatio || 1, INTRO_MAX_PIXEL_RATIO)
@@ -142,9 +147,17 @@ function AboutIntroParticles({ onComplete }) {
       }
 
       lastFrameTime = now
-      if (!startTime) startTime = now
-      const elapsed = now - startTime
-      const progress = Math.min(elapsed / INTRO_DURATION, 1)
+      const scrollDistance = Math.max(
+        window.innerWidth * INTRO_SCROLL_DISTANCE_RATIO,
+        window.innerHeight * 0.72,
+      )
+      displayedProgress += Math.min(
+        Math.max(targetProgress - displayedProgress, 0),
+        INTRO_MAX_PROGRESS_STEP,
+      )
+
+      const progress = displayedProgress
+      const elapsed = progress * INTRO_DURATION
       const gather = easeInOutCubic(Math.min(Math.max((progress - INTRO_HOLD) / 0.34, 0), 1))
       const write = easeInOutCubic(Math.min(Math.max((progress - INTRO_HOLD - 0.24) / 0.36, 0), 1))
       const particleFade =
@@ -213,39 +226,51 @@ function AboutIntroParticles({ onComplete }) {
 
       if (write > 0.78) {
         const solidTextOpacity = (write - 0.78) / 0.22
-        const sinceSize = width * 0.058
+        const sinceSize = width * INTRO_SINCE_SIZE_RATIO
         const yearSize = width * 0.094
         const textCenterY = centerY - width * 0.01
+        const textLeft = width * 0.409
 
         context.save()
-        context.textAlign = 'center'
+        context.textAlign = 'left'
         context.textBaseline = 'middle'
         context.fillStyle = `rgba(255, 255, 255, ${solidTextOpacity})`
         context.font = `italic 400 ${sinceSize}px "Playfair Display", "Times New Roman", serif`
         context.fillText(
           'Since',
-          centerX + width * INTRO_SINCE_OFFSET_RATIO,
+          textLeft + width * INTRO_SINCE_OFFSET_RATIO,
           textCenterY - yearSize * 0.42,
         )
         context.font = `600 ${yearSize}px Arial, sans-serif`
-        context.fillText('1962', centerX, textCenterY + sinceSize * 0.62)
+        context.fillText('1962', textLeft, textCenterY + sinceSize * 0.62)
         context.restore()
       }
 
-      if (progress < 1) {
-        animationFrame = requestAnimationFrame(draw)
-      } else if (!completed) {
+      if (progress >= 1 && !completed) {
         completed = true
         onComplete()
       }
+      animationFrame = requestAnimationFrame(draw)
+    }
+
+    const handleWheel = (event) => {
+      if (completed || event.deltaY <= 0) return
+      event.preventDefault()
+      const scrollDistance = Math.max(
+        window.innerWidth * INTRO_SCROLL_DISTANCE_RATIO,
+        window.innerHeight * 0.72,
+      )
+      targetProgress = Math.min(targetProgress + event.deltaY / scrollDistance, 1)
     }
 
     buildParticles()
     animationFrame = requestAnimationFrame(draw)
     window.addEventListener('resize', buildParticles)
+    window.addEventListener('wheel', handleWheel, { passive: false })
 
     return () => {
       window.removeEventListener('resize', buildParticles)
+      window.removeEventListener('wheel', handleWheel)
       if (animationFrame) cancelAnimationFrame(animationFrame)
     }
   }, [onComplete])
@@ -1003,33 +1028,78 @@ function AboutSvgStoryLight({
 }
 
 function AboutSection() {
+  const aboutRef = useRef(null)
   const legacyRef = useRef(null)
-  const legacyLightRef = useRef(null)
-  const storyRef = useRef(null)
-  const storyFromRef = useRef(null)
-  const storyDaysRef = useRef(null)
-  const storySecondImageRef = useRef(null)
   const videoRef = useRef(null)
   const endingRef = useRef(null)
-  const endingLightRef = useRef(null)
-  const aboutRef = useRef(null)
-  const [yearRevealed, setYearRevealed] = useState(false)
+  const previousStoryPhaseRef = useRef('before')
+  const introHasLeftRef = useRef(false)
+  const [introCycle, setIntroCycle] = useState(0)
   const [legacyRevealed, setLegacyRevealed] = useState(false)
-  const [storyRevealed, setStoryRevealed] = useState(false)
+  const [storyPhase, setStoryPhase] = useState('before')
+  const [storyCycle, setStoryCycle] = useState(0)
   const [videoRevealed, setVideoRevealed] = useState(false)
   const [endingRevealed, setEndingRevealed] = useState(false)
-  const [storyPhase, setStoryPhase] = useState('before')
   const [aboutVideoIndex, setAboutVideoIndex] = useState(0)
 
-  const handleIntroComplete = useCallback(() => {
-    setYearRevealed(true)
+  const handleIntroComplete = useCallback(() => {}, [])
+
+  useEffect(() => {
+    const legacy = legacyRef.current
+    if (!legacy) return undefined
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setLegacyRevealed(entry.isIntersecting)
+      },
+      {
+        rootMargin: '0px 0px 18% 0px',
+        threshold: 0.01,
+      },
+    )
+
+    observer.observe(legacy)
+    return () => observer.disconnect()
   }, [])
 
-  const handleLightReveal = useCallback((stopIndex) => {
-    if (stopIndex === 1) setLegacyRevealed(true)
-    if (stopIndex === 2) setStoryRevealed(true)
-    if (stopIndex === 3) setVideoRevealed(true)
-    if (stopIndex === 4) setEndingRevealed(true)
+  useEffect(() => {
+    const updateIntroCycle = () => {
+      if (window.scrollY > window.innerHeight * 0.65) {
+        introHasLeftRef.current = true
+        return
+      }
+
+      if (window.scrollY <= 8 && introHasLeftRef.current) {
+        introHasLeftRef.current = false
+        setIntroCycle((cycle) => cycle + 1)
+      }
+    }
+
+    window.addEventListener('scroll', updateIntroCycle, { passive: true })
+    updateIntroCycle()
+
+    return () => window.removeEventListener('scroll', updateIntroCycle)
+  }, [])
+
+  useEffect(() => {
+    const targets = [
+      [videoRef.current, setVideoRevealed],
+      [endingRef.current, setEndingRevealed],
+    ].filter(([element]) => element)
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const target = targets.find(([element]) => element === entry.target)
+          if (!target) return
+          target[1](entry.isIntersecting && entry.intersectionRatio >= 0.18)
+        })
+      },
+      { threshold: [0, 0.18] },
+    )
+
+    targets.forEach(([element]) => observer.observe(element))
+    return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
@@ -1044,10 +1114,20 @@ function AboutSection() {
       const distance = window.innerWidth * 0.56
       const progress = (window.scrollY - start) / distance
 
-      if (progress < 0) setStoryPhase('before')
-      else if (progress < 0.5) setStoryPhase('first')
-      else if (progress < 1) setStoryPhase('second')
-      else setStoryPhase('after')
+      let nextPhase = 'after'
+      if (progress < 0) nextPhase = 'before'
+      else if (progress < 0.5) nextPhase = 'first'
+      else if (progress < 1) nextPhase = 'second'
+
+      if (
+        nextPhase === 'first' &&
+        previousStoryPhaseRef.current === 'before'
+      ) {
+        setStoryCycle((cycle) => cycle + 1)
+      }
+
+      previousStoryPhaseRef.current = nextPhase
+      setStoryPhase(nextPhase)
 
       scrollFrame = null
     }
@@ -1084,25 +1164,15 @@ function AboutSection() {
         <span />
       </div>
 
-      <AboutIntroParticles onComplete={handleIntroComplete} />
-      <AboutSvgStoryLight
-        active={yearRevealed}
-        aboutRef={aboutRef}
-        legacyTargetRef={legacyLightRef}
-        storyDaysRef={storyDaysRef}
-        storySecondImageRef={storySecondImageRef}
-        videoTargetRef={videoRef}
-        endingTargetRef={endingLightRef}
-        storyPhase={storyPhase}
-        onReveal={handleLightReveal}
-      />
+      <AboutIntroParticles key={introCycle} onComplete={handleIntroComplete} />
       <div
         ref={legacyRef}
         className={`${styles.legacy} ${legacyRevealed ? styles.legacyRevealed : ''}`}
       >
         <div className={styles.legacyCopy}>
           <h2>
-            A Legacy of <span ref={legacyLightRef}>Light</span>
+            <span>A Legacy of </span>
+            <em>Light</em>
           </h2>
           <p>
             백열전구가 일상을 밝히던 시절부터 오늘에 이르기까지,
@@ -1134,15 +1204,17 @@ function AboutSection() {
       </div>
 
       <div
-        ref={storyRef}
-        className={`${styles.story} ${storyRevealed ? styles.storyRevealed : ''} ${
+        key={storyCycle}
+        className={`${styles.story} ${
+          storyPhase === 'first' || storyPhase === 'second' ? styles.storyRevealed : ''
+        } ${
           storyPhase === 'first' || storyPhase === 'second' ? styles.storyPinned : ''
         } ${storyPhase === 'second' || storyPhase === 'after' ? styles.storyPhaseTwo : ''} ${
           storyPhase === 'after' ? styles.storyPassed : ''
         }`}
       >
         <p className={styles.storyLead}>
-          <span ref={storyFromRef}>From</span> the <span ref={storyDaysRef}>days</span>
+          From the days
           <br />
           when incandescent bulbs lit
           <br />
@@ -1175,7 +1247,7 @@ function AboutSection() {
             shaped over time.
           </p>
 
-          <img ref={storySecondImageRef} className={styles.storyImage} src={cafeImage} alt="" />
+          <img className={styles.storyImage} src={cafeImage} alt="" />
 
           <p className={`${styles.storyClosing} ${styles.storyClosingYears}`}>
             Beyond a single
@@ -1214,7 +1286,7 @@ function AboutSection() {
         className={`${styles.ending} ${endingRevealed ? styles.endingRevealed : ''}`}
       >
         <p className={styles.tagline}>
-          Better <em>Life,</em> Better <em ref={endingLightRef}>Light,</em>
+          Better <em>Life,</em> Better <em>Light,</em>
         </p>
       </div>
     </section>
