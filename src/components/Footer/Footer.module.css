@@ -62,22 +62,28 @@
   inset: 0;
   z-index: 2;
   border-radius: inherit;
-  padding: 1px; /* 기존 border와 같은 두께의 링 */
+  padding: 3px; /* 얇은 링 — 빛은 filter(glow)로 도드라지게, 선 자체는 얇게 유지 */
+  /* LightCursor(.lightCore)와 같은 톤의 노란빛이 좁은 폭으로, 부드럽게 테두리를 한 바퀴 돈다 */
   background: conic-gradient(
     from var(--card-angle),
     transparent 0deg,
-    transparent 250deg,
-    rgba(255, 255, 255, 0.85) 300deg,
-    #fff 320deg,
-    rgba(255, 255, 255, 0.85) 340deg,
+    transparent 230deg,
+    rgba(255, 225, 154, 0.08) 260deg,
+    rgba(255, 225, 154, 0.4) 300deg,
+    rgba(255, 248, 224, 0.85) 313deg,
+    rgba(255, 225, 154, 0.4) 326deg,
+    rgba(255, 225, 154, 0.08) 350deg,
     transparent 360deg
   );
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
+  filter:
+    drop-shadow(0 0 3px rgba(255, 248, 224, 0.45))
+    drop-shadow(0 0 9px rgba(255, 210, 122, 0.36));
   pointer-events: none;
-  animation: cardBorderSweep 6s linear infinite;
+  animation: cardBorderSweep 3s linear infinite;
 }
 @keyframes cardBorderSweep {
   to { --card-angle: 360deg; }
