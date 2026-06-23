@@ -14,7 +14,6 @@ import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
 import CollaboLandingSection from './sections/CollaboLandingSection/CollaboLandingSection'
 import CollaboGallerySection from './sections/CollaboGallerySection/CollaboGallerySection'
-import collaboFooterPhoto from './sections/CollaboGallerySection/assets/collabo-footer.jpg'
 import CollaboDetailSection from './sections/CollaboDetailSection/CollaboDetailSection'
 import CollaboDetailContentSection from './sections/CollaboDetailSection/CollaboDetailContentSection'
 import kbpCollabo from './sections/CollaboDetailSection/collabos/kbp'
@@ -100,14 +99,8 @@ function App() {
             <>
               <Header />
               <CollaboGallerySection />
-              <Footer
-                photo={collaboFooterPhoto}
-                photoPosition="center 15%"
-                headingLines={['IF YOU HAVE AN IDEA FOR A COLLABORATION,', "WE'D LOVE TO HEAR FROM YOU."]}
-                contact={{ lines: ['Please', 'Contact us'], href: 'mailto:info@ilkwdesign.com' }}
-                email="INFO@ILKWDESIGN.COM"
-                emailHref="mailto:info@ilkwdesign.com"
-              />
+              {/* 푸터 위 사진+카드 섹션 제거 → 크림 푸터 본문만 */}
+              <Footer hidePhoto />
             </>
           }
         />

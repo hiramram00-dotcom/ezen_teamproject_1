@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom'
 import styles from './CollaboGallerySection.module.css'
 import ScrollHint from '../../components/ScrollHint/ScrollHint'
 import ilkwLogo from '../../assets/common/logo/ilkw-black.svg'
-import imgKakao from './assets/collabo-1.jpg'
-import imgKbp from './assets/collabo-2.jpg'
-import imgWarmgrey from './assets/collabo-3.jpg'
-import imgHankyoreh from './assets/collabo-4.png'
-import imgChilsung from './assets/collabo-5.png'
-import imgKanu from './assets/collabo-6.jpg'
+import imgKakao from './assets/collabo-1.webp'
+import imgKbp from './assets/collabo-2.webp'
+import imgWarmgrey from './assets/collabo-3.webp'
+import imgHankyoreh from './assets/collabo-4.webp'
+import imgChilsung from './assets/collabo-5.webp'
+import imgKanu from './assets/collabo-6.webp'
 
 /**
  * CollaboGallerySection — 콜라보 컬렉션 목록 (룰렛 다음 화면)
@@ -49,15 +49,21 @@ function CollaboGallerySection() {
     return () => cancelAnimationFrame(id)
   }, [])
 
-  // 스크롤 내릴수록 스크롤 힌트가 서서히 사라짐 (--hint-fade: 1 → 0, 앞 30vh 동안)
+  // 스크롤에 따라: ① 스크롤 힌트 페이드아웃 ② 배경 크림 → #fff (타이틀→리스트로 내려갈수록)
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
+    const clamp01 = (v) => Math.min(1, Math.max(0, v))
     let raf = 0
     const update = () => {
       raf = 0
-      const p = Math.min(1, window.scrollY / (window.innerHeight * 0.3))
-      el.style.setProperty('--hint-fade', String(1 - p))
+      const vh = window.innerHeight
+      const y = window.scrollY
+      // ① 힌트 페이드 (앞 30vh)
+      el.style.setProperty('--hint-fade', String(1 - Math.min(1, y / (vh * 0.3))))
+      // ② 배경: 크림(#FFF7EA=255,247,234) → 흰색(255,255,255). 0.15vh~0.8vh 구간 전환
+      const bp = clamp01((y - vh * 0.15) / (vh * 0.65))
+      el.style.backgroundColor = `rgb(255, ${Math.round(247 + 8 * bp)}, ${Math.round(234 + 21 * bp)})`
     }
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update)
@@ -79,14 +85,16 @@ function CollaboGallerySection() {
       rows.forEach((el) => el.classList.add(styles.inView))
       return
     }
-    // 토글: 화면에 들어오면 나타나고, 벗어나면 초기화 → 역(위로)스크롤로 다시 들어올 때도 재생
+    // 토글: 화면에 들어오면 나타나고 벗어나면 초기화 → 역(위로)스크롤로 다시 들어올 때도 재생.
+    // 깜빡임 방지: threshold 0(진입/이탈 경계가 서로 멀어 들락날락 안 함) + 하단 rootMargin 버퍼로
+    // 살짝 안쪽에서 나타나게 함(경계에서 미세 토글 방지).
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           e.target.classList.toggle(styles.inView, e.isIntersecting)
         })
       },
-      { threshold: 0.2 },
+      { threshold: 0, rootMargin: '0px 0px -12% 0px' },
     )
     rows.forEach((el) => io.observe(el))
     return () => io.disconnect()
