@@ -6,7 +6,7 @@ import styles from './MakeLightSection.module.css'
 gsap.registerPlugin(ScrollTrigger)
 
 const MAKE_LIGHT_VIDEO_URL =
-  'https://res.cloudinary.com/dht6hmacp/video/upload/v1781829634/10_vgb2kq.mp4'
+  'https://res.cloudinary.com/dht6hmacp/video/upload/f_auto,q_auto/v1781829634/10_vgb2kq.mp4'
 
 /**
  * MakeLightSection — 브랜드 마무리 화면 (Figma node 1106:489)
@@ -120,7 +120,7 @@ function MakeLightSection() {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
           aria-hidden="true"
         />
         {/* data-make-light-copy: StorySection이 핸드오프 시작 즉시 이 레이어를 강제로 꺼서,

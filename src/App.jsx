@@ -1,31 +1,38 @@
-import { useLayoutEffect } from 'react'
+import { useLayoutEffect, useEffect, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+// ===== 인덱스(Home) 첫 화면에 필요 — 정적 임포트 =====
 import HeroSection from './sections/HeroSection/HeroSection'
 import NewIntroSectionNew from './sections/NewIntroSection_new/NewIntroSection_new'
 import MakeLightSection from './sections/MakeLightSection/MakeLightSection'
 import StorySection from './sections/StorySection/StorySection'
 import SpaceMiddleSection from './sections/SpaceMiddleSection/SpaceMiddleSection'
 import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection'
-import FixSnowman2Section from './sections/FixSnowman2Section/FixSnowman2Section'
-import FixStorySection from './sections/FixStorySection/FixStorySection'
-import ProductSection from './sections/ProductSection/ProductSection'
-import FlamingoDetailSection from './sections/FlamingoDetailSection/FlamingoDetailSection'
 import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
-import CollaboLandingSection from './sections/CollaboLandingSection/CollaboLandingSection'
-import CollaboGallerySection from './sections/CollaboGallerySection/CollaboGallerySection'
-import collaboFooterPhoto from './sections/CollaboGallerySection/assets/collabo-footer.jpg'
-import CollaboDetailSection from './sections/CollaboDetailSection/CollaboDetailSection'
-import CollaboDetailContentSection from './sections/CollaboDetailSection/CollaboDetailContentSection'
-import kbpCollabo from './sections/CollaboDetailSection/collabos/kbp'
-import kakaoCollabo from './sections/CollaboDetailSection/collabos/kakao'
 import Footer from './components/Footer/Footer'
-import AboutPage from './pages/AboutPage/AboutPage'
-import ShowroomPage from './pages/ShowroomPage/ShowroomPage'
 import Header from './components/Header/Header'
 import LightCursor from './components/LightCursor/LightCursor'
 import ResizeAnchor from './components/ResizeAnchor/ResizeAnchor'
 import ScrollTopButton from './components/ScrollTopButton/ScrollTopButton'
+import collaboFooterPhoto from './sections/CollaboGallerySection/assets/collabo-footer.jpg'
+import kbpCollabo from './sections/CollaboDetailSection/collabos/kbp'
+import kakaoCollabo from './sections/CollaboDetailSection/collabos/kakao'
+
+// ===== 코드 스플리팅 — 첫 화면에 불필요한 무거운 코드는 지연로드(번들 분리) =====
+// FixSnowman2 = Three.js(3D 눈사람) 포함 → 인덱스 초기 번들에서 제외 → 첫 로딩/LCP 단축
+const FixSnowman2Section = lazy(() => import('./sections/FixSnowman2Section/FixSnowman2Section'))
+// 서브페이지 — 해당 경로로 이동할 때만 로드
+const AboutPage = lazy(() => import('./pages/AboutPage/AboutPage'))
+const ShowroomPage = lazy(() => import('./pages/ShowroomPage/ShowroomPage'))
+const ProductSection = lazy(() => import('./sections/ProductSection/ProductSection'))
+const FlamingoDetailSection = lazy(() => import('./sections/FlamingoDetailSection/FlamingoDetailSection'))
+const CollaboLandingSection = lazy(() => import('./sections/CollaboLandingSection/CollaboLandingSection'))
+const CollaboGallerySection = lazy(() => import('./sections/CollaboGallerySection/CollaboGallerySection'))
+const CollaboDetailSection = lazy(() => import('./sections/CollaboDetailSection/CollaboDetailSection'))
+const CollaboDetailContentSection = lazy(() => import('./sections/CollaboDetailSection/CollaboDetailContentSection'))
+const FixStorySection = lazy(() => import('./sections/FixStorySection/FixStorySection'))
 
 // 라우트 바뀔 때마다 맨 위로 (엉뚱한 스크롤 위치 방지)
 // useLayoutEffect = 페인트 전 / 다음 프레임에 한 번 더 = ScrollTrigger 등이 위치 복원하려는 것까지 눌러줌
@@ -44,6 +51,25 @@ function GlobalTopButton() {
   return <ScrollTopButton />
 }
 
+// 지연로드된 섹션이 DOM에 붙어 페이지 높이가 바뀐 뒤 ScrollTrigger 위치 재계산.
+// (Suspense 내부에 두어 실제 청크 로드 완료 후에만 마운트 → 그때 refresh 실행)
+function RefreshOnMount() {
+  useEffect(() => {
+    ScrollTrigger.refresh()
+  }, [])
+  return null
+}
+
+// FixSnowman2(3D) 지연로드 래퍼 — 로딩 중 자리 차지용 placeholder로 레이아웃 붕괴 방지
+function LazyFixSnowman2() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh' }} aria-hidden="true" />}>
+      <FixSnowman2Section />
+      <RefreshOnMount />
+    </Suspense>
+  )
+}
+
 // 메인(인덱스) 페이지 — 헤더는 인덱스 전용 동작(index)
 function Home() {
   return (
@@ -55,7 +81,7 @@ function Home() {
       <StorySection />
       <SpaceMiddleSection />
       <StoryEndingSection />
-      <FixSnowman2Section />
+      <LazyFixSnowman2 />
       <SpacesSection />
       {/* 고정된 Dining(ON) 위로 Collabo가 슬라이드업 (한 번만 렌더) */}
       <div className="collaboOverlap">
@@ -84,6 +110,7 @@ function App() {
       <LightCursor />
       <ScrollToTop />
       <ResizeAnchor />
+      <Suspense fallback={null}>
       <Routes>
         <Route path="/" element={<Home />} />
         {/* 서브페이지는 전역 헤더 상시표시(index 없음). About은 자체 헤더 없어 바로 적용 */}
@@ -140,6 +167,7 @@ function App() {
         {/* 작업용 미리보기 — FixSnowman2Section 단독 확인용, 메인 페이지에는 미연결 */}
         <Route path="/fixsnowman2" element={<><Header /><FixSnowman2Section /></>} />
       </Routes>
+      </Suspense>
       <GlobalTopButton />
     </>
   )
