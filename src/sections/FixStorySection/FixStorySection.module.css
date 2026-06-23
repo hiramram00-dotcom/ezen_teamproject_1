@@ -1,0 +1,119 @@
+/* =========================================================
+   FixStorySection — Figma node 1106:489 (1920×1080)
+   검은 배경에서 아래의 원이 커지며 사진 등장 → 카피 시차 등장
+   ========================================================= */
+
+/* 스크롤 거리 제공 — 검정 정지 + (천천히) 원형 리빌 + 글씨 + 여운
+   height가 작을수록 인터랙션이 더 짧은 스크롤에 압축돼 더 빨리 나온다. */
+.section {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 600vh; /* 애플 감성의 우아한 속도를 위해 스크롤 구간을 460vh에서 600vh로 연장 */
+  background: #000;
+  margin-bottom: 0;
+}
+
+/* 핀 고정 스테이지 */
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  /* 무대 뒤에 완벽한 세팅으로 대기. 연산 부하 0% */
+}
+
+/* 가장자리가 부드러운 안개 걷힘 마스크 효과 (단색 덮개에 적용하여 성능 최적화) */
+.dim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: #000;
+  /* GSAP에서 이 CSS 변수를 0%에서 150%로 증가시켜 구멍을 넓힙니다. */
+  --mask-radius: 0%;
+  -webkit-mask-image: radial-gradient(circle at 0% 100%, transparent var(--mask-radius), black calc(var(--mask-radius) + 20%));
+  mask-image: radial-gradient(circle at 0% 100%, transparent var(--mask-radius), black calc(var(--mask-radius) + 20%));
+}
+
+/* 하단으로 갈수록 검정 (위 절반 투명) */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  opacity: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, #000 100%);
+}
+
+/* "We Make Light, ILKW." — Instrument Sans + Playfair Display 120px @1920 */
+.headline {
+  position: absolute;
+  z-index: 4;
+  left: 4.64%; /* 89/1920 */
+  top: 66.85%; /* 722/1080 */
+  margin: 0;
+  opacity: 0;
+  will-change: transform, opacity;
+  font-family: var(--font-en);
+  font-weight: 400;
+  font-size: 6.25vw; /* 120px @1920 */
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #fff;
+  white-space: nowrap;
+}
+.headline strong {
+  font-weight: 400;
+}
+/* Light — StorySection 제목의 "Light"(Playfair Display 이탤릭)와 폰트를 맞춤.
+   흰색으로 보이다가 스크롤 시 빛남 — GSAP가 --glow(0~1)를 보간하고,
+   calc로 그림자를 만들어 매끄럽게 켜졌다 꺼진다. */
+.light {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: #fff;
+  --glow: 0;
+  text-shadow:
+    0 0 calc(26px * var(--glow)) rgba(255, 214, 150, calc(0.95 * var(--glow))),
+    0 0 calc(70px * var(--glow)) rgba(255, 190, 110, calc(0.6 * var(--glow)));
+}
+
+/* 본문 — Pretendard 24px @1920 */
+.desc {
+  position: absolute;
+  z-index: 4;
+  left: 4.64%;
+  top: 83.98%; /* 907/1080 */
+  width: 44.79%; /* 860/1920 */
+  margin: 0;
+  opacity: 0;
+  will-change: transform, opacity;
+  font-family: var(--font-kr);
+  font-weight: 400;
+  font-size: 1.25vw; /* 24px @1920 */
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+@media (max-width: 767px) {
+  .headline {
+    font-size: 40px;
+    white-space: normal;
+    width: 90%;
+  }
+  .desc {
+    font-size: 14px;
+    width: 90%;
+  }
+}

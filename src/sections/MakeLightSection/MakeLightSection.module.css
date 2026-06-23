@@ -7,9 +7,11 @@
    height가 작을수록 인터랙션이 더 짧은 스크롤에 압축돼 더 빨리 나온다. */
 .section {
   position: relative;
+  z-index: 10;
   width: 100%;
-  height: 300vh;
+  height: 460vh;
   background: #000;
+  margin-bottom: 0;
 }
 
 /* 핀 고정 스테이지 */
@@ -29,19 +31,33 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  /* 화면 60%(약간 위)의 작은 가로 타원에서 시작 (GSAP가 반지름을 키움) */
-  clip-path: ellipse(0% 0% at 50% 60%);
-  will-change: clip-path;
+  /* 무대 뒤에 완벽한 세팅으로 대기. 연산 부하 0% */
+  will-change: transform;
 }
 
-/* 사진 어둡게 처리용 검은 오버레이 (GSAP가 opacity 제어 — 처음 어둡게→원본). 원본보다 밝아지진 않음 */
+/* 부드러운 타원형 마스크 오버레이. --reveal이 커지며 이미지가 그라데이션으로 열린다. */
 .dim {
+  --reveal: 0%;
+  --feather: 9%;
   position: absolute;
-  inset: 0;
+  inset: -10%;
   z-index: 2;
-  opacity: 0.75; /* 처음부터 어둡게 시작 */
   background: #000;
-  will-change: opacity;
+  /* GSAP에서 이 CSS 변수를 0%에서 150%로 증가시켜 구멍을 넓힙니다. */
+  --mask-radius: 0%;
+  -webkit-mask-image: radial-gradient(circle at 0% 100%, transparent var(--mask-radius), black calc(var(--mask-radius) + 20%));
+  mask-image: radial-gradient(circle at 0% 100%, transparent var(--mask-radius), black calc(var(--mask-radius) + 20%));
+  opacity: 1;
+  background:
+    radial-gradient(
+      ellipse 170% 100% at 50% 50%,
+      rgba(0, 0, 0, 0) max(0%, calc(var(--reveal) - var(--feather))),
+      rgba(0, 0, 0, 0.34) var(--reveal),
+      #000 calc(var(--reveal) + var(--feather))
+    );
+  filter: blur(14px);
+  transform: scale(1.03);
+  will-change: opacity, background;
 }
 
 /* 하단으로 갈수록 검정 (위 절반 투명) */
@@ -53,7 +69,7 @@
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, #000 100%);
 }
 
-/* "We Make LIGHT, ILKW." — Instrument Sans 120px @1920 */
+/* "We Make Light, ILKW." — Instrument Sans + Playfair Display 120px @1920 */
 .headline {
   position: absolute;
   z-index: 4;
@@ -64,18 +80,21 @@
   will-change: transform, opacity;
   font-family: var(--font-en);
   font-weight: 400;
-  font-size: 6.25vw; /* 120px @1920 */
+  font-size: clamp(72px, 6.25vw, 120px); /* 120px @1920 */
   line-height: 1;
   letter-spacing: -0.02em;
   color: #fff;
   white-space: nowrap;
 }
 .headline strong {
-  font-weight: 700; /* LIGHT */
+  font-weight: 400;
 }
-/* LIGHT — 흰색으로 보이다가 스크롤 시 빛남.
-   GSAP가 --glow(0~1)를 보간하고, calc로 그림자를 만들어 매끄럽게 켜졌다 꺼진다. */
+/* Light — StorySection 제목의 "Light"(Playfair Display 이탤릭)와 폰트를 맞춤.
+   흰색으로 보이다가 스크롤 시 빛남 — GSAP가 --glow(0~1)를 보간하고,
+   calc로 그림자를 만들어 매끄럽게 켜졌다 꺼진다. */
 .light {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
   color: #fff;
   --glow: 0;
   text-shadow:
@@ -95,20 +114,78 @@
   will-change: transform, opacity;
   font-family: var(--font-kr);
   font-weight: 400;
-  font-size: 1.25vw; /* 24px @1920 */
+  font-size: clamp(18px, 1.25vw, 24px); /* 24px @1920 */
   line-height: 1.4;
   letter-spacing: -0.02em;
   color: #fff;
 }
 
-@media (max-width: 767px) {
+@media (min-width: 768px) and (max-width: 1199px) {
   .headline {
-    font-size: 40px;
-    white-space: normal;
-    width: 90%;
+    left: 5.5%;
+    top: 65%;
+    width: 89%;
+    font-size: clamp(54px, 7.5vw, 82px);
+    white-space: nowrap;
   }
+
   .desc {
-    font-size: 14px;
+    left: 5.5%;
+    top: 79%;
+    width: 74%;
+    font-size: clamp(16px, 2vw, 20px);
+  }
+
+  .dim {
+    --feather: 11%;
+  }
+}
+
+@media (max-width: 767px) {
+  .bg {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: none;
+    object-position: 39% center;
+  }
+
+  .headline {
+    left: 5%;
+    top: 60%;
     width: 90%;
+    font-size: clamp(38px, 11vw, 52px);
+    line-height: 1.08;
+    white-space: normal;
+  }
+
+  .desc {
+    left: 5%;
+    top: 77%;
+    width: 90%;
+    font-size: clamp(13px, 3.7vw, 15px);
+    line-height: 1.55;
+  }
+
+  .dim {
+    --feather: 13%;
+  }
+}
+
+@media (max-width: 767px) and (min-height: 820px) {
+  .bg {
+    object-position: 40% center;
+  }
+}
+
+@media (max-width: 430px) and (min-height: 800px) {
+  .bg {
+    object-position: 38% center;
+  }
+}
+
+@media (max-width: 430px) and (min-height: 900px) {
+  .bg {
+    object-position: 40% center;
   }
 }

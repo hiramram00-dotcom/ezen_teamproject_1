@@ -4,11 +4,7 @@ import styles from './LightCursor.module.css'
 const TRAIL_POINTS = 14
 
 function isInteractiveTarget(target) {
-  return Boolean(
-    target?.closest?.(
-      'a, button, input, textarea, select, summary, [role="button"], [data-cursor="hover"]',
-    ),
-  )
+  return Boolean(target?.closest?.('[data-cursor="pointer"]'))
 }
 
 function createTrailPoints(x, y) {
@@ -172,7 +168,8 @@ function LightCursor() {
         hasMovedRef.current = true
       }
 
-      rootRef.current?.classList.toggle(styles.isHovering, isInteractiveTarget(event.target))
+      const showPointer = isInteractiveTarget(event.target)
+      rootRef.current?.classList.toggle(styles.isPointer, showPointer)
     }
 
     const handlePointerDown = () => rootRef.current?.classList.add(styles.isPressed)

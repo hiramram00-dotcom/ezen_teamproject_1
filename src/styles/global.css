@@ -29,4 +29,23 @@ button { font: inherit; cursor: pointer; background: none; border: none; }
   .has-light-cursor * {
     cursor: none !important;
   }
+
+  .has-light-cursor [data-cursor='pointer'],
+  .has-light-cursor [data-cursor='pointer'] * {
+    cursor: pointer !important;
+  }
+}
+
+/* SpacesSection 종료 후 Collabo가 Dining(ON) 위로 슬라이드업 (데스크톱/태블릿 겹침 연출) */
+.collaboOverlap {
+  position: relative;
+  z-index: 2;
+  margin-top: -100vh;
+}
+
+/* 태블릿·모바일은 spaces가 세로 스택(height:auto)이라 겹치면 하단 룸이 가려짐 → 겹침 제거 */
+@media (max-width: 1199px) {
+  .collaboOverlap {
+    margin-top: 0;
+  }
 }

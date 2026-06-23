@@ -1,0 +1,134 @@
+import { useRef, useEffect } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import styles from './FixStorySection.module.css'
+
+gsap.registerPlugin(ScrollTrigger)
+
+const MAKE_LIGHT_VIDEO_URL =
+  'https://res.cloudinary.com/ddit4bjrw/video/upload/v1781749340/Lamp_glows_on_bedsheets_202606181112_vqzy0z.mp4'
+
+/**
+ * FixStorySection — 브랜드 마무리 화면 (MakeLightSection 복제본)
+ * 샌드박스용 테스트 컴포넌트입니다.
+ */
+function FixStorySection() {
+  const sectionRef = useRef(null)
+  const stageRef = useRef(null)
+  const bgRef = useRef(null)
+  const dimRef = useRef(null)
+  const overlayRef = useRef(null)
+  const headlineRef = useRef(null)
+  const moveTextRef = useRef(null)
+  const restTextRef = useRef(null)
+  const lightRef = useRef(null)
+  const descRef = useRef(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    const stage = stageRef.current
+    const bgEl = bgRef.current
+    const dim = dimRef.current
+    const overlay = overlayRef.current
+    const headline = headlineRef.current
+    const moveText = moveTextRef.current
+    const restText = restTextRef.current
+    const light = lightRef.current
+    const desc = descRef.current
+
+    bgEl.pause()
+    bgEl.currentTime = 0
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) {
+      bgEl.style.webkitMaskImage = 'none'
+      bgEl.style.maskImage = 'none'
+      gsap.set(dim, { opacity: 0 })
+      gsap.set([overlay, headline, desc], { opacity: 1, y: 0 })
+      gsap.set(light, { '--glow': 0 })
+      section.style.height = 'auto'
+      stage.style.position = 'static'
+      return
+    }
+
+    // 리스크 0% 우회 기법: 영상 대신 단색 검은 덮개(.dim)에 마스크를 씌워 확장시킴
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 30%', 
+        end: 'bottom bottom',
+        scrub: true,
+        invalidateOnRefresh: true,
+      },
+    })
+    
+    // 1. 대각선 안개 걷힘 (0.00 ~ 0.80): duration을 0.80으로 대폭 늘려 고급스럽고 여유로운 속도감 확보
+    tl.fromTo(dim, { '--mask-radius': '0%' }, { '--mask-radius': '150%', ease: 'power2.inOut', duration: 0.80 }, 0.00)
+      // 하단 그라데이션 오버레이 서서히 등장
+      .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', duration: 0.20 }, 0.60)
+      // 2. 타이포그래피 (0.75 ~ 0.90): 안개가 어느 정도 걷히고 나서 우아하게 등장
+      .fromTo(
+        headline,
+        { autoAlpha: 0, y: 48 },
+        { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.15 },
+        0.75
+      )
+      .fromTo(
+        desc,
+        { autoAlpha: 0, y: 48 },
+        { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.15 },
+        0.80
+      )
+      // "LIGHT" 글로우 효과
+      .to(light, { '--glow': 1, ease: 'power1.inOut', duration: 0.20 }, 0.75)
+      .to(light, { '--glow': 0, ease: 'power1.inOut', duration: 0.20 }, 0.95)
+      // 3. 섹션 여운 (1.05 ~ 1.15): 평범한 페이드 아웃
+      .to([bgEl, dim, overlay, desc, moveText, restText], { opacity: 0, ease: 'none', duration: 0.10 }, 1.05)
+
+    return () => {
+      tl.scrollTrigger && tl.scrollTrigger.kill()
+      tl.kill()
+    }
+  }, [])
+
+  return (
+    <section
+      ref={sectionRef}
+      className={styles.section}
+      data-fix-story-section
+      aria-label="We Make Light, ILKW."
+    >
+      <div ref={stageRef} className={styles.stage}>
+        <video
+          ref={bgRef}
+          className={styles.bg}
+          src={MAKE_LIGHT_VIDEO_URL}
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          aria-hidden="true"
+        />
+        <div ref={dimRef} className={styles.dim} aria-hidden="true" />
+        <div ref={overlayRef} className={styles.overlay} aria-hidden="true" />
+
+        <h2 ref={headlineRef} className={styles.headline}>
+          <span ref={moveTextRef}>
+            We Make{' '}
+            <strong ref={lightRef} className={styles.light}>
+              Light
+            </strong>
+          </span>
+          <span ref={restTextRef}>, ILKW.</span>
+        </h2>
+        <p ref={descRef} className={styles.desc}>
+          우리는 빛이 머무는 모든 순간을 생각합니다.
+          <br />
+          사람과 공간을 위한 더 나은 빛, 그것이 일광전구가 만드는 가치입니다.
+        </p>
+      </div>
+    </section>
+  )
+}
+
+export default FixStorySection

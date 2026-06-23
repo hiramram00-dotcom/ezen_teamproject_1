@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { Fragment, useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import logoIlkw from './assets/ilkw-logo.svg'
@@ -70,7 +70,15 @@ const NAV = [
   { label: '콜라보', target: 'collabo' },
 ]
 
-function Footer() {
+function Footer({
+  hidePhoto = false,
+  photo = footerTop,
+  photoPosition = 'center', // 사진 보이는 구간(object-position). 윗부분 더 보이려면 'center 15%' 등
+  headingLines = ['Ilkwang Lighting has SHAPEd light', 'with passion and craftsmanship.'],
+  contact = null, // 지정 시 네이버 링크 대신 이탤릭 안내문 표시: { lines: ['Please', 'Contact us'], href }
+  email = 'INFO@ILKWDESIGN.com',
+  emailHref = '#',
+}) {
   const footerRef = useRef(null)
   const photoRef = useRef(null)
   const photoImgRef = useRef(null)
@@ -86,28 +94,31 @@ function Footer() {
       // ───── 트리거 ① 사진 섹션(.photo) ─────
       // 사진 섹션이 화면에 들어올 때 — 스크롤 연동(scrub)으로 진행.
       // 사진: 살짝 확대 / 흰 카드: 아래에서 제자리로 떠오름 (함께 진행)
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: photoRef.current,
-          start: 'top 85%', // 사진 top이 화면 85% 지점에 닿으면 시작
-          end: 'center center', // 사진 중앙이 화면 중앙에 닿으면 끝
-          scrub: 1,
-          // 히어로 핀(늦게 생성, 페이지 높이 증가)보다 나중에 위치 계산하도록 강제.
-          refreshPriority: -1,
-        },
-      })
+      // (hidePhoto면 사진 미렌더 → 이 트리거 생략)
+      if (!hidePhoto && photoRef.current) {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: photoRef.current,
+            start: 'top 85%', // 사진 top이 화면 85% 지점에 닿으면 시작
+            end: 'center center', // 사진 중앙이 화면 중앙에 닿으면 끝
+            scrub: 1,
+            // 히어로 핀(늦게 생성, 페이지 높이 증가)보다 나중에 위치 계산하도록 강제.
+            refreshPriority: -1,
+          },
+        })
 
-      tl.fromTo(
-        photoImgRef.current,
-        { scale: 1 },
-        { scale: 1.08, ease: 'none', duration: 1 },
-        0
-      ).fromTo(
-        cardRef.current,
-        { yPercent: 60, autoAlpha: 0 },
-        { yPercent: 0, autoAlpha: 1, ease: 'none', duration: 1 },
-        0
-      )
+        tl.fromTo(
+          photoImgRef.current,
+          { scale: 1 },
+          { scale: 1.08, ease: 'none', duration: 1 },
+          0
+        ).fromTo(
+          cardRef.current,
+          { yPercent: 60, autoAlpha: 0 },
+          { yPercent: 0, autoAlpha: 1, ease: 'none', duration: 1 },
+          0
+        )
+      }
 
       // ───── 트리거 ② 푸터 본문(.body) ─────
       // 푸터 본문에 진입하면 워드마크 로고가 왼쪽 → 오른쪽으로 써지듯 리빌.
@@ -151,7 +162,7 @@ function Footer() {
       ro.disconnect()
       ctx.revert()
     }
-  }, [])
+  }, [hidePhoto])
 
   // 푸터 내비: 해당 섹션으로 일정 속도·부드러운 ease로 위로 스크롤 ('top'은 최상단)
   const handleNavClick = (e, target) => {
@@ -167,27 +178,44 @@ function Footer() {
 
   return (
     <div className={styles.footer} ref={footerRef}>
-      {/* 비주얼 사진 + 흰 카드 오버레이 (footer_C / 778:521) */}
-      <div className={styles.photo} ref={photoRef}>
-        <img className={styles.photoImg} src={footerTop} alt="" loading="lazy" ref={photoImgRef} />
-        <div className={styles.card} ref={cardRef}>
-          <p className={styles.cardHeading}>
-            Ilkwang Lighting has SHAPEd light
-            <br />
-            with passion and craftsmanship.
-          </p>
-          <a
-            className={styles.cardLink}
-            href="https://brand.naver.com/iklamp"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span>Go to Naver Brand Store </span>
-            <span className={styles.cardArrow}>→</span>
-          </a>
-          <a className={styles.cardEmail} href="#">INFO@ILKWDESIGN.com</a>
+      {/* 비주얼 사진 + 흰 카드 오버레이 (footer_C / 778:521) — hidePhoto면 생략 */}
+      {!hidePhoto && (
+        <div className={styles.photo} ref={photoRef}>
+          <img className={styles.photoImg} src={photo} alt="" loading="lazy" ref={photoImgRef} style={{ objectPosition: photoPosition }} />
+          <div className={`${styles.card} ${contact ? styles.cardCompact : ''}`} ref={cardRef}>
+            <p className={styles.cardHeading}>
+              {headingLines.map((line, i) => (
+                <Fragment key={i}>
+                  {i > 0 && <br />}
+                  {line}
+                </Fragment>
+              ))}
+            </p>
+            {contact ? (
+              <a className={styles.cardLink} href={contact.href} data-cursor="pointer">
+                {contact.lines.map((line, i) => (
+                  <Fragment key={i}>
+                    {i > 0 && <br />}
+                    {line}
+                  </Fragment>
+                ))}
+              </a>
+            ) : (
+              <a
+                className={styles.cardLink}
+                href="https://brand.naver.com/iklamp"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="pointer"
+              >
+                <span>Go to Naver Brand Store </span>
+                <span className={styles.cardArrow}>→</span>
+              </a>
+            )}
+            <a className={styles.cardEmail} href={emailHref}>{email}</a>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 크림 푸터 블록 */}
       <footer className={styles.body} ref={bodyRef}>
@@ -204,6 +232,7 @@ function Footer() {
               href={item.target === 'top' ? '#' : `#${item.target}`}
               onClick={(e) => handleNavClick(e, item.target)}
               className={`${styles.navLink} type-body-3`}
+              data-cursor="pointer"
             >
               {item.label}
             </a>

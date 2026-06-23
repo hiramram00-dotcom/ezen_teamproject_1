@@ -12,6 +12,8 @@
   padding-bottom: 170px;
   background: var(--color-base-2); /* 크림 */
   color: var(--color-base-3); /* 검정 */
+  /* 카드 크기 배율(폭·이미지높이·간격이 함께 스케일). 미디어쿼리에서 이 값만 조절 */
+  --card-scale: 1;
 }
 
 .sticky {
@@ -69,6 +71,28 @@
   color: var(--color-base-3);
 }
 
+/* ----- 글씨 등장: blur-in (흐림→선명) 스태거 ----- */
+/* 기본(숨김): 흐리고 투명하게 */
+.fxBlurIn {
+  opacity: 0;
+  filter: blur(8px);
+  transform: scale(1.02);
+  transition: none; /* 화면 벗어나면 즉시 초기화 */
+}
+/* 보일 때(선명): 부모 .intro에 .isVisible 붙으면 또렷해짐 */
+.isVisible .fxBlurIn {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+  transition:
+    opacity 2s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 2s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* 줄별 시차(스태거) — 제목 → 설명 순서대로 */
+.isVisible .fxBlurIn:nth-child(1) { transition-delay: 0.08s; }
+.isVisible .fxBlurIn:nth-child(2) { transition-delay: 0.32s; }
+
 /* ----- 가로 무한 마퀴 갤러리 ----- */
 /* top 을 살짝 올리고 track 에 위쪽 여유(padding-top)를 줘서
    카드가 둥둥 떠올라도 윗부분이 잘리지 않게 한다. */
@@ -94,9 +118,10 @@
 }
 
 .card {
-  flex: 0 0 379px;
-  width: 379px;
-  margin-right: 68px; /* 카드 사이 간격(끝에도 붙어 마퀴 이음새 균일) */
+  position: relative; /* ::after 구분선 기준 */
+  flex: 0 0 calc(379px * var(--card-scale));
+  width: calc(379px * var(--card-scale));
+  margin-right: calc(130px * var(--card-scale)); /* 카드 사이 간격(끝에도 붙어 마퀴 이음새 균일) */
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -106,6 +131,17 @@
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   will-change: transform;
+}
+/* 카드 사이 간격(68px)의 정가운데에 연한 회색 세로 구분선 */
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: calc(-65px * var(--card-scale)); /* 간격 130px의 절반 → 카드와 카드 정중앙 */
+  width: 1px;
+  background: rgba(0, 0, 0, 0.12);
+  pointer-events: none;
 }
 /* 호버한 카드는 둥둥 멈춤 */
 .card:hover {
@@ -127,6 +163,7 @@
 .cardImage {
   position: relative;
   width: 100%;
+  height: calc(var(--img-h, 250px) * var(--card-scale)); /* 높이는 카드별 인라인(--img-h) × 배율 */
   border-radius: 20px;
   overflow: hidden;
 }
@@ -202,28 +239,100 @@
 
 /* ----- 반응형 (브레이크포인트 px는 팀 [TBD], 임시값) ----- */
 @media (max-width: 1280px) {
+  .collabo {
+    --card-scale: 0.85; /* 카드 조금 축소 */
+  }
   .intro :global(.type-title-1),
   .intro :global(.type-italic-1) {
-    font-size: 90px;
+    font-size: 76px;
   }
 }
 
+/* ----- 모바일(≤767px): 마퀴 대신 세로 리스트 (가로 스크롤 없음) ----- */
 @media (max-width: 767px) {
-  .intro :global(.type-title-1),
-  .intro :global(.type-italic-1) {
-    font-size: 44px;
+  /* 모바일 전용 컨테이너 — 일반 흐름(스티키/160vh 아님) */
+  .collaboMobile {
+    position: relative;
+    width: 100%;
+    background: var(--color-base-2); /* 크림 */
+    color: var(--color-base-3);
+    padding: 60px 20px 60px; /* 상단 고정 헤더(70px) 여유 */
   }
-  .header {
-    top: 20px;
-    padding: 0 20px;
+
+  /* 헤더(타이틀 + 설명) */
+  .introMobile {
+    margin-bottom: 28px;
   }
-  .intro {
-    left: 20px;
-    top: 120px;
-    max-width: calc(100% - 40px);
+  .introMobile :global(.type-title-1),
+  .introMobile :global(.type-italic-1) {
+    font-size: 28px;
   }
-  .galleryViewport {
-    top: 336px;
+  .introMobile .desc {
+    margin-top: 8px;
+    font-size: 14px;
+  }
+
+  /* 세로 리스트 */
+  .mList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  /* 각 항목: 썸네일 + 텍스트, 아래 구분선(border-bottom) */
+  .mCard {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+  .mImage {
+    flex: 0 0 42%;
+    aspect-ratio: 4 / 3;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .mImage img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .mCard .cardText {
+    flex: 1 1 auto;
+    gap: 6px;
+  }
+  .mCard .cardTitle {
+    font-size: 15px;
+  }
+  .mCard .cardDesc {
+    font-size: 13px;
+  }
+
+  /* 더보기/닫기 — 작은 텍스트 + 화살표(아래=더보기, 위=닫기) 토글 */
+  .moreBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 6px auto 0;
+    padding: 6px 8px;
+    border: none;
+    background: transparent;
+    font-family: var(--font-en);
+    font-size: 13px;
+    letter-spacing: -0.02em;
+    color: var(--color-base-3);
+    cursor: pointer;
+  }
+  .moreIcon {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+  }
+  /* 열린 상태(닫기): 화살표 위로 */
+  .moreBtn[aria-expanded='true'] .moreIcon {
+    transform: rotate(180deg);
   }
 }
 
@@ -267,5 +376,13 @@
   }
   .card {
     animation: none !important;
+  }
+  /* 글씨 blur-in 즉시 표시 (isVisible 유무와 무관) */
+  .fxBlurIn,
+  .isVisible .fxBlurIn {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
   }
 }

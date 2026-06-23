@@ -32,7 +32,7 @@
 
 .item {
   font-family: var(--font-en, sans-serif);
-  font-weight: 800;
+  font-weight: 600;
   font-size: clamp(40px, 6vw, 110px);
   line-height: 1.18;
   letter-spacing: -0.01em;
@@ -73,7 +73,20 @@
 }
 .previewOn .previewInner img {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+}
+/* 마우스 올리면 사진이 살짝 확대 (슬롯은 overflow:hidden이라 크롭 줌인) */
+.preview:hover .previewInner img {
+  transform: translateY(0) scale(1.06);
+}
+/* 클릭(누르는 순간)엔 아주 살짝 작아지며 눌리는 듯한 피드백 */
+.preview:active .previewInner img {
+  transform: translateY(0) scale(1.03);
+  transition-duration: 0.12s; /* 빠르게 반응 */
+}
+/* menu-1: 대비↓ + 밝기↑ + 채도↓ + 미세 블러로 부드럽게 */
+.previewInner img.softImg {
+  filter: contrast(0.9) brightness(1.04) saturate(0.95);
 }
 
 @media (prefers-reduced-motion: reduce) {
