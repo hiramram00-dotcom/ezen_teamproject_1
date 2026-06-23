@@ -7,8 +7,10 @@ import story2 from './assets/story-2.webp'
 import story3 from './assets/story-3.webp'
 
 const VIDEO_MOBILE_Q = '(max-width: 767px)'
-const VIDEO_WIDE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto/hero-video2_ojabtt.mp4'
-const VIDEO_MOBILE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.mp4'
+// ⚠️ Hero 영상과 URL을 100% 동일하게 유지 → 브라우저가 한 번만 받아 공유(중복 다운로드 0).
+// (예전엔 캡 없는 f_auto,q_auto = 1.22MB 풀해상도를 따로 받아 LCP를 4.6초까지 늘렸음)
+const VIDEO_WIDE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto:eco,w_1280/hero-video2_ojabtt.mp4'
+const VIDEO_MOBILE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto:eco,w_720/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.mp4'
 const pickVideoSrc = () => typeof window !== 'undefined' && window.matchMedia(VIDEO_MOBILE_Q).matches ? VIDEO_MOBILE : VIDEO_WIDE
 
 /**
