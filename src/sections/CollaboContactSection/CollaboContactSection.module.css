@@ -8,7 +8,7 @@
   position: relative;
   z-index: 10;
   width: 100%;
-  height: 130vh; /* 스크롤 거리 축소 → 더 적은 스크롤로 리빌 완료 */
+  height: 220vh; /* 스크롤 거리 확보 → 같은 스크롤량 대비 원이 천천히 커짐 */
   background: var(--color-base-2); /* 크림 — 위 갤러리 섹션과 동일한 배경 */
 }
 
