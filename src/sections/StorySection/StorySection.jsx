@@ -386,7 +386,7 @@ export default function StorySection() {
           <div className={styles.imageCard}>
             <div className={styles.imageRevealMask}>
               <video
-                src="https://res.cloudinary.com/dht6hmacp/video/upload/v1781753639/mid2_vm7bbx.mp4"
+                src="https://res.cloudinary.com/dht6hmacp/video/upload/f_auto,q_auto/v1781753639/mid2_vm7bbx.mp4"
                 className={styles.imgScene}
                 autoPlay
                 loop
