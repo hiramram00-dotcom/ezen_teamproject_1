@@ -83,12 +83,19 @@
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, #000 100%);
 }
 
-/* "We Make Light, ILKW." — Instrument Sans + Playfair Display 120px @1920 */
-.headline {
+/* "We Make Light, ILKW."랑 서브카피 위치전용 Styles 코드 */
+.copyBlock {
   position: absolute;
   z-index: 4;
-  left: 4.64%; /* 89/1920 */
-  top: 72%; /* 전체 블록 아래로 (원래 66.85% = 722/1080) */
+  bottom: clamp(90px, 12%, 150px); /* 위치기준값을 하단으로 수정 */
+  left: 4.64%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.2vw, 24px);
+}
+
+/* "We Make Light, ILKW." — Instrument Sans + Playfair Display 120px @1920 */
+.headline {
   margin: 0;
   opacity: 0;
   will-change: transform, opacity;
@@ -118,10 +125,6 @@
 
 /* 본문 — Pretendard 24px @1920 */
 .desc {
-  position: absolute;
-  z-index: 4;
-  left: 4.64%;
-  top: 84%; /* 헤드라인 따라 같이 아래로 (빈틈 ~15px 유지). 원래 83.98% */
   width: 44.79%; /* 860/1920 */
   margin: 0;
   opacity: 0;
@@ -135,17 +138,18 @@
 }
 
 @media (min-width: 768px) and (max-width: 1199px) {
-  .headline {
+  .copyBlock {
     left: 5.5%;
-    top: 65%;
+    bottom: 14%;
+  }
+
+  .headline {
     width: 89%;
     font-size: clamp(54px, 7.5vw, var(--fs-title-3));
     white-space: nowrap;
   }
 
   .desc {
-    left: 5.5%;
-    top: 79%;
     width: 74%;
     font-size: clamp(16px, 2vw, var(--fs-sub-2));
   }
@@ -156,6 +160,12 @@
 }
 
 @media (max-width: 767px) {
+  .copyBlock {
+    left: 5%;
+    bottom: 16%;
+    width: 90%;
+  }
+
   .bg,
   .bgPoster {
     inset: 0;
@@ -166,18 +176,12 @@
   }
 
   .headline {
-    left: 5%;
-    top: 60%;
-    width: 90%;
     font-size: clamp(38px, 11vw, var(--fs-body-1));
     line-height: 1.08;
     white-space: normal;
   }
 
   .desc {
-    left: 5%;
-    top: 77%;
-    width: 90%;
     font-size: clamp(13px, 3.7vw, var(--fs-sub-3));
     line-height: 1.55;
   }

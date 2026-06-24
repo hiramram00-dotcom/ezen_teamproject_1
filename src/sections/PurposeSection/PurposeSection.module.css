@@ -1,7 +1,7 @@
-.purpose {
+﻿.purpose {
   position: relative;
   width: 100%;
-  height: 158.65vw;
+  height: calc(158.65 * var(--about-vw));
   overflow: hidden;
   background: var(--color-base-2);
   color: var(--color-base-3);
@@ -9,20 +9,20 @@
 
 .ceoBlock {
   position: absolute;
-  top: 16.82vw;
+  top: calc(16.82 * var(--about-vw));
   left: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4.17vw;
-  width: 67.63vw;
+  gap: calc(4.17 * var(--about-vw));
+  width: calc(67.63 * var(--about-vw));
   transform: translateX(-50%);
 }
 
 .videoPlaceholder {
   position: relative;
-  width: 67.63vw;
-  height: 38.05vw;
+  width: calc(67.63 * var(--about-vw));
+  height: calc(38.05 * var(--about-vw));
   overflow: hidden;
   background: var(--color-base-3);
   color: var(--color-base-1);
@@ -46,32 +46,32 @@
   width: 74%;
   transform: translate(-50%, -50%);
   font-family: var(--font-en);
-  font-size: 1.09375vw; /* type-body-4: 21px @1920 */
+  font-size: calc(1.09375 * var(--about-vw)); /* type-body-4: 21px @1920 */
   font-weight: 600;
 }
 
 .yearMark {
   font-family: var(--font-deco);
-  font-size: 1.09375vw; /* type-body-4: 21px @1920 */
+  font-size: calc(1.09375 * var(--about-vw)); /* type-body-4: 21px @1920 */
 }
 
 .videoLogos {
   position: absolute;
-  bottom: 3.35vw;
+  bottom: calc(3.35 * var(--about-vw));
   left: 50%;
   display: flex;
   align-items: center;
-  gap: 2.3vw;
+  gap: calc(2.3 * var(--about-vw));
   transform: translateX(-50%);
   font-family: var(--font-en);
 }
 
 .videoLogos span {
-  font-size: 1.09375vw; /* type-body-4: 21px @1920 */
+  font-size: calc(1.09375 * var(--about-vw)); /* type-body-4: 21px @1920 */
 }
 
 .videoLogos strong {
-  font-size: 1.458333vw; /* type-body-2: 28px @1920 */
+  font-size: calc(1.458333 * var(--about-vw)); /* type-body-2: 28px @1920 */
   font-style: italic;
 }
 
@@ -79,23 +79,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2.08vw;
-  width: 61.67vw;
+  gap: calc(2.08 * var(--about-vw));
+  width: calc(61.67 * var(--about-vw));
   text-align: center;
 }
 
 .ceo {
   display: flex;
   align-items: center;
-  gap: 0.94vw;
+  gap: calc(0.94 * var(--about-vw));
   font-family: var(--font-en);
-  font-size: 1.458333vw; /* type-body-2: 28px @1920 */
+  font-size: calc(1.458333 * var(--about-vw)); /* type-body-2: 28px @1920 */
   line-height: 1.4;
 }
 
 .ceo i {
   width: 1px;
-  height: 1.56vw;
+  height: calc(1.56 * var(--about-vw));
   background: var(--color-base-3);
 }
 
@@ -106,7 +106,7 @@
 
 .ceoCopy blockquote {
   font-family: var(--font-kr);
-  font-size: 1.458333vw; /* type-body-2: 28px @1920 */
+  font-size: calc(1.458333 * var(--about-vw)); /* type-body-2: 28px @1920 */
   font-style: normal;
   font-weight: 600;
   line-height: 1.4;
@@ -116,7 +116,7 @@
 
 .description {
   font-family: var(--font-kr);
-  font-size: 1.25vw; /* type-body-3: 24px @1920 */
+  font-size: calc(1.25 * var(--about-vw)); /* type-body-3: 24px @1920 */
   font-weight: 400;
   line-height: 1.4;
   letter-spacing: -0.03em;
@@ -124,19 +124,19 @@
 
 .mission {
   position: absolute;
-  top: 90.47vw;
+  top: calc(90.47 * var(--about-vw));
   left: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5.2vw;
-  width: 85.63vw;
+  gap: calc(5.2 * var(--about-vw));
+  width: calc(85.63 * var(--about-vw));
   transform: translateX(-50%);
 }
 
 .missionTitle {
   font-family: var(--font-kr);
-  font-size: 1.458333vw; /* type-body-2: 28px @1920 */
+  font-size: calc(1.458333 * var(--about-vw)); /* type-body-2: 28px @1920 */
   font-weight: 400;
   line-height: 1.4;
   letter-spacing: -0.03em;
@@ -147,8 +147,8 @@
 }
 
 .mission img {
-  width: 53.39vw;
-  height: 20vw;
+  width: calc(53.39 * var(--about-vw));
+  height: calc(20 * var(--about-vw));
   object-fit: cover;
 }
 
@@ -157,7 +157,7 @@
   background-clip: text;
   color: transparent;
   font-family: var(--font-en);
-  font-size: 3.645833vw; /* 70px @1920 */
+  font-size: calc(3.645833 * var(--about-vw)); /* 70px @1920 */
   font-weight: 500;
   line-height: 1.3;
   letter-spacing: -0.03em;

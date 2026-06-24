@@ -40,12 +40,18 @@
 .introLabel {
   margin: 0;
   font-family: 'Instrument Sans', sans-serif;
-  font-weight: 400;
-  font-size: clamp(18px, 2vw, var(--fs-body-2));
+  font-weight: 500; /* Medium — "defined by ILKW." */
+  font-size: var(--fs-title-3); /* 86px (typography fs-title-3) */
   line-height: 1.3;
-  letter-spacing: -0.52px;
-  /* 데스크톱/태블릿은 기존처럼 "SPACE, DEFINED BY ILKW." 한 줄 대문자 */
-  text-transform: uppercase;
+  letter-spacing: -0.02em; /* -2% */
+  white-space: nowrap; /* 데스크톱: "Space, defined by ILKW." 한 줄 유지 */
+}
+
+/* "Space," — Playfair Display 이탤릭 (대소문자 그대로 표기) */
+.introLabelSpace {
+  font-family: var(--font-deco);
+  font-style: italic;
+  font-weight: 400;
 }
 
 /* 줄바꿈은 모바일에서만 노출 (데스크톱/태블릿은 한 줄 유지) */
@@ -340,17 +346,18 @@
     font-size: clamp(48px, 5.4vw, var(--fs-title-4));
     text-align: left;
     text-transform: none;
+    white-space: normal; /* 모바일: <br>로 두 줄, 자연 줄바꿈 허용 */
   }
 
   .introLabelBr {
     display: inline;
   }
 
-  /* "defined by"만 Playfair Display 이탤릭 */
+  /* "defined by" — 모바일은 Instrument Sans */
   .introLabelDeco {
-    font-family: var(--font-deco);
-    font-style: italic;
-    font-weight: 400;
+    font-family: 'Instrument Sans', sans-serif;
+    font-style: normal;
+    font-weight: 500;
   }
 
   .introSub {

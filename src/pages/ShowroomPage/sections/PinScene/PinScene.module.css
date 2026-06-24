@@ -67,7 +67,7 @@
 .cardGroup {
   position: relative;
   width: 100%;
-  max-width: 1340px;
+  max-width: 1260px;
 }
 
 .labels {
@@ -96,25 +96,49 @@
 
 /* ---------- 카드 (visit 내용) ---------- */
 .card {
+  position: relative;
+  overflow: hidden;
   width: 100%;
-  max-width: 1340px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  max-width: 1260px;
+  border: 1px solid rgba(255, 255, 255, 0.62);
   border-radius: 24px;
   /* 유리 질감(backdrop-filter)은 GPU 가속이 켜진 환경에서만 동작함.
      가속이 꺼진 환경에서 블러가 죽어도 '투명'하게 보이지 않도록
      배경 불투명도를 중간값으로 받쳐 어디서나 '서리 낀 유리'로 보이게 함. */
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.58) 0%,
-    rgba(255, 249, 246, 0.4) 100%
-  );
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 249, 246, 0.48) 100%);
   backdrop-filter: blur(24px) saturate(1.4);
   -webkit-backdrop-filter: blur(24px) saturate(1.4);
   color: var(--color-base-3);
-  padding: clamp(40px, 4vw, 72px);
+  padding: clamp(36px, 3.6vw, 64px);
   box-shadow:
     0 8px 40px rgba(0, 0, 0, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 16% 8%, rgba(255, 255, 255, 0.48) 0, transparent 30%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 46%),
+    repeating-linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0.09) 0,
+      rgba(255, 255, 255, 0.09) 1px,
+      transparent 1px,
+      transparent 5px
+    );
+  opacity: 0.58;
+}
+
+.card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .top {
@@ -132,7 +156,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .titleEn {
@@ -248,21 +272,27 @@
 
   /* 카드 — 패딩·라운드 축소 */
   .card {
-    padding: 24px 20px;
+    padding: 40px 20px;
     border-radius: 16px;
+    text-align: center;
   }
 
   /* info + 지도: 가로 → 세로 스택 */
   .top {
+    align-items: center;
     flex-direction: column;
     gap: 28px;
+  }
+
+  .title {
+    align-items: center;
   }
 
   .map {
     flex: none;
     width: 100%;
     max-width: 320px;
-    align-self: flex-start;
+    align-self: center;
   }
 
   /* 카드 내 영문 제목 축소 */
@@ -274,13 +304,22 @@
     font-size: 15px;
   }
 
+  .divider {
+    width: min(220px, 64%);
+    margin-bottom: 24px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
   /* 하단 2열 그리드 → 1열, 좌측 보더 → 상단 보더 */
   .bottom {
     grid-template-columns: 1fr;
     gap: 24px;
+    justify-items: center;
   }
 
   .colContact {
+    width: min(220px, 64%);
     padding-left: 0;
     padding-top: 24px;
     border-left: none;
