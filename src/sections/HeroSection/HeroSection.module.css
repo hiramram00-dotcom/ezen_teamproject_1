@@ -17,8 +17,6 @@
   height: 100%;
   object-fit: cover;
   z-index: 1;
-  /* AI 인물 티 줄이기 — 덜 어둡게 + 살짝 흐릿 + 차분한 색감 (수치 조절 노브) */
-  filter: brightness(0.82) contrast(1.03) saturate(0.78) blur(1.3px);
 }
 
 /* 검정 패널 — 영상을 덮었다가 위/아래로 갈라짐 */
