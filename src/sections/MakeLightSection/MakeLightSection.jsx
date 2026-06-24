@@ -154,20 +154,22 @@ function MakeLightSection() {
           <div ref={dimRef} className={styles.dim} aria-hidden="true" />
           <div ref={overlayRef} className={styles.overlay} aria-hidden="true" />
 
-          <h2 ref={headlineRef} className={styles.headline}>
-            <span ref={moveTextRef}>
-              We Make{' '}
-              <strong ref={lightRef} className={styles.light}>
-                Light
-              </strong>
-            </span>
-            <span ref={restTextRef}>, ILKW.</span>
-          </h2>
-          <p ref={descRef} className={styles.desc}>
-            우리는 빛이 머무는 모든 순간을 생각합니다.
-            <br />
-            사람과 공간을 위한 더 나은 빛, 그것이 일광전구가 만드는 가치입니다.
-          </p>
+          <div className={styles.copyBlock}>
+            <h2 ref={headlineRef} className={styles.headline}>
+              <span ref={moveTextRef}>
+                We Make{' '}
+                <strong ref={lightRef} className={styles.light}>
+                  Light
+                </strong>
+              </span>
+              <span ref={restTextRef}>, ILKW.</span>
+            </h2>
+            <p ref={descRef} className={styles.desc}>
+              우리는 빛이 머무는 모든 순간을 생각합니다.
+              <br />
+              사람과 공간을 위한 더 나은 빛, 그것이 일광전구가 만드는 가치입니다.
+            </p>
+          </div>
         </div>
       </div>
     </section>
