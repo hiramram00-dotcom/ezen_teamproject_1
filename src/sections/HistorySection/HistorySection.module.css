@@ -13,18 +13,39 @@
   margin-bottom: 6.6vw;
   text-align: center;
   font-family: var(--font-en);
-  font-size: 8.33vw; /* 160px @1920 */
+  font-size: 6.25vw; /* type-title-1 / type-italic-1: 120px @1920 */
   font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.04em;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
   white-space: nowrap;
+  /* 스크롤 진입 시 흐림 → 선명 모션 (.headingShown이 붙으면 또렷해짐) */
+  opacity: 0;
+  filter: blur(18px);
+  transition:
+    opacity 0.6s ease,
+    filter 0.6s ease;
+  will-change: opacity, filter;
+}
+
+.headingShown {
+  opacity: 1;
+  filter: blur(0);
 }
 
 .heading em {
   margin-right: 0.8vw;
   font-family: var(--font-deco);
   font-style: italic;
-  font-weight: 400;
+  font-weight: 450;
+}
+
+/* 저모션 환경: 모션 없이 즉시 또렷하게 */
+@media (prefers-reduced-motion: reduce) {
+  .heading {
+    opacity: 1;
+    filter: none;
+    transition: none;
+  }
 }
 
 /* ----- 타임라인 ----- */
@@ -43,6 +64,9 @@
 }
 
 .railMotion {
+  position: relative;
+  width: 36.46vw;
+  --history-year-gap: 1.72vw;
   will-change: transform;
   transform: translateZ(0);
 }
@@ -52,9 +76,9 @@
   text-align: center;
   font-family: var(--font-deco);
   font-style: italic;
-  font-size: 3.65vw; /* 70px — 살짝 축소 */
+  font-size: 3.333333vw; /* type-italic-4: 64px @1920 */
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.4;
   letter-spacing: -0.02em;
 }
 
@@ -62,8 +86,57 @@
   display: block;
   width: 36.46vw; /* 700px @1920 */
   height: 1px;
-  margin-top: 1.72vw; /* 33px */
+  margin-top: var(--history-year-gap); /* 33px */
   background: var(--color-base-3);
+}
+
+.railPrefixLayer {
+  position: absolute;
+  top: calc(100% + var(--history-year-gap));
+  left: calc(50% - 2ch);
+  width: 2ch;
+  text-align: right;
+  font-family: var(--font-en);
+  font-size: 100px;
+  font-style: normal;
+  font-weight: 450;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.railSuffixLayer {
+  position: absolute;
+  top: calc(100% + var(--history-year-gap));
+  left: 50%;
+  width: 2ch;
+  text-align: left;
+  font-family: var(--font-en);
+  font-size: 100px;
+  font-style: normal;
+  font-weight: 450;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.railPrefixLayer span,
+.railSuffixLayer span {
+  position: absolute;
+  top: 0;
+  visibility: hidden;
+}
+
+.railPrefixLayer span {
+  right: 0;
+}
+
+.railSuffixLayer span {
+  left: 0;
 }
 
 /* ----- 챕터 블록: 좌(연도) | 우(콘텐츠, x=852·1000px) -----
@@ -89,18 +162,19 @@
   margin-top: -8vw;
 }
 
-/* 챕터 연도 — 헤더(chapters of Light·라인)와 동일 중심축에서 가운데 정렬. Playfair italic 160px. */
+/* 챕터 연도 — 헤더(chapters of Light·라인)와 동일 중심축에서 가운데 정렬. */
 .marker {
   position: relative;
   z-index: 3;
   margin-top: -0.46em; /* 콘텐츠 상단보다 살짝 위(Figma 연도 top≈콘텐츠 -74px) */
   text-align: center;
-  font-family: var(--font-deco);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 7.6vw; /* 146px @1920 — 살짝 축소 */
+  font-family: var(--font-en);
+  font-style: normal;
+  font-weight: 450;
+  font-size: 100px;
   line-height: 1.2;
-  letter-spacing: -0.08em;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
 }
 
 /* 기본(모바일·저모션 폴백): 각 블록에 전체 연도 노출. 데스크톱 모션에서는 아래에서
@@ -119,14 +193,11 @@
 .markerPrefixGhost,
 .markerSuffix {
   display: inline-block;
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
 }
 
 .markerPrefix,
 .markerPrefixGhost {
-  min-width: 0.98em;
+  min-width: 2ch;
   text-align: right;
 }
 
@@ -135,13 +206,14 @@
 }
 
 .markerSuffix {
-  min-width: 0.98em;
+  min-width: 2ch;
   text-align: left;
+  font-weight: 450;
 }
 
 .markerPrefixSpacer {
   display: inline-block;
-  width: 0.98em;
+  width: 2ch;
   pointer-events: none;
 }
 
@@ -169,15 +241,15 @@
 
 .title {
   font-family: var(--font-kr);
-  font-size: 2.08vw; /* 40px */
+  font-size: 2.083333vw; /* type-body-1 / type-body-semibold-1: 40px @1920 */
   font-weight: 500;
-  line-height: 1.5;
-  letter-spacing: -0.02em;
+  line-height: 1.4;
+  letter-spacing: -0.03em;
 }
 
 .description {
   font-family: var(--font-kr);
-  font-size: 1.09vw; /* 21px */
+  font-size: 1.09375vw; /* type-body-4: 21px @1920 */
   font-weight: 300;
   line-height: 1.4;
   letter-spacing: -0.04em;
@@ -245,12 +317,16 @@
 
   .heading {
     margin-bottom: 6vw;
-    font-size: clamp(48px, 12vw, 120px);
+    font-size: clamp(40px, 12vw, 120px);
     white-space: normal;
   }
 
   .rail {
     padding-top: 2vw;
+  }
+
+  .railMotion {
+    width: 100%;
   }
 
   .subtitle,
@@ -259,7 +335,7 @@
   }
 
   .subtitle {
-    font-size: clamp(22px, 5vw, 40px);
+    font-size: clamp(24px, 5vw, 40px);
   }
 
   .block {
@@ -271,7 +347,7 @@
   .marker {
     margin: 4vw 0 3vw;
     text-align: left;
-    font-size: clamp(64px, 18vw, 150px);
+    font-size: clamp(64px, 18vw, 120px);
   }
 
   .markerFull {
@@ -291,11 +367,11 @@
   }
 
   .title {
-    font-size: clamp(22px, 4.4vw, 34px);
+    font-size: clamp(24px, 4.4vw, 40px);
   }
 
   .description {
-    font-size: clamp(14px, 2.4vw, 19px);
+    font-size: clamp(21px, 2.4vw, 24px);
   }
 
   .mediaRow {
