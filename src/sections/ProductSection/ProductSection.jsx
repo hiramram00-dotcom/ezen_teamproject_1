@@ -1,18 +1,17 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './ProductSection.module.css'
-import blackLogo from '../Snowman1Section/assets/logo-ilkw-black.svg'
-import whiteLogo from '../Snowman1Section/assets/logo-ilkw.svg'
-import heroImage from './assets/product-hero.avif'
-import flamingoMain from './assets/flamingo-main.avif'
-import flamingoThumb from './assets/flamingo-thumb.avif'
-import snowmanMain from './assets/snowman-main.avif'
-import snowmanThumb from './assets/snowman-thumb.avif'
-import snowballMain from './assets/snowball-main.avif'
-import snowballThumb from './assets/snowball-thumb.avif'
-import teacupMain from './assets/teacup-main.avif'
-import teacupThumb from './assets/teacup-thumb.avif'
+import productWordmark from './assets/product-ilkw-wordmark.svg'
+import heroImage from './assets/product-hero-hq.webp'
+import flamingoMain from './assets/flamingo-main-hq.webp'
+import flamingoThumb from './assets/flamingo-thumb-hq.webp'
+import snowmanMain from './assets/snowman-main-hq.webp'
+import snowmanThumb from './assets/snowman-thumb-hq.webp'
+import snowballMain from './assets/snowball-main-hq.webp'
+import snowballThumb from './assets/snowball-thumb-hq.webp'
+import teacupMain from './assets/teacup-main-hq.webp'
+import teacupThumb from './assets/teacup-thumb-hq.webp'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -25,20 +24,14 @@ const products = [
     imageSide: 'right',
     detail: 'flamingo',
     contentX: '49.64%',
-    titleX: '48.28%',
-    logoLeft: '1.98%',
-    logoWidth: '4.23%',
   },
   {
     name: 'SNOWMAN',
-    description: ['유리 위에 새겨진 리듬을 따라,', '따뜻한 빛과 온기가 공간에 번집니다.'],
+    description: ['겹겹이 포개진 부드러운 곡선,', '그 사이로 은은한 빛이 피어납니다.'],
     mainImage: snowmanMain,
     thumbnail: snowmanThumb,
     imageSide: 'left',
     contentX: '50.68%',
-    titleX: '50.68%',
-    logoLeft: '1.2%',
-    logoWidth: '5.36%',
   },
   {
     name: 'SNOWBALL',
@@ -47,9 +40,6 @@ const products = [
     thumbnail: snowballThumb,
     imageSide: 'right',
     contentX: '53.28%',
-    titleX: '53.33%',
-    logoLeft: '1.2%',
-    logoWidth: '5.36%',
   },
   {
     name: 'TEACUP R',
@@ -58,208 +48,199 @@ const products = [
     thumbnail: teacupThumb,
     imageSide: 'left',
     contentX: '49.84%',
-    titleX: '49.9%',
-    logoLeft: '1.98%',
-    logoWidth: '5.36%',
   },
 ]
 
 function ProductSection({ onOpenProduct }) {
   const sectionRef = useRef(null)
-  const flamingoRowRef = useRef(null)
-  const flamingoMainRef = useRef(null)
-  const flamingoThumbImageRef = useRef(null)
-  const flamingoTitleRef = useRef(null)
+  const hoverTimerRef = useRef(null)
+  const [hoveredProduct, setHoveredProduct] = useState(null)
 
   useLayoutEffect(() => {
-    const row = flamingoRowRef.current
-    const mainImage = flamingoMainRef.current
-    const thumbnailImage = flamingoThumbImageRef.current
-    const title = flamingoTitleRef.current
-
-    if (!row || !mainImage || !thumbnailImage || !title) return undefined
+    const section = sectionRef.current
+    if (!section) return undefined
 
     const media = gsap.matchMedia()
 
-    media.add(
-      {
-        desktop: '(min-width: 701px)',
-        mobile: '(max-width: 700px)',
-        allowMotion: '(prefers-reduced-motion: no-preference)',
-      },
-      ({ conditions }) => {
-        if (!conditions.allowMotion) return undefined
+    media.add('(prefers-reduced-motion: no-preference)', () => {
+      const hero = section.querySelector('[data-hero-image]')
+      const rows = gsap.utils.toArray('[data-product-row]', section)
 
-        const timeline = gsap.timeline({
+      gsap.fromTo(
+        hero,
+        { scale: 1.1 },
+        { scale: 1, duration: 3, delay: 0.1, ease: 'power3.out' },
+      )
+
+      rows.forEach((row) => {
+        const titleChars = row.querySelectorAll('[data-title-char]')
+        const thumbnailInner = row.querySelector('[data-thumbnail-inner]')
+        const thumbnailReveal = row.querySelector('[data-thumbnail-reveal]')
+
+        const revealTimeline = gsap.timeline({
           scrollTrigger: {
             trigger: row,
-            start: 'top bottom',
-            end: 'center center',
-            scrub: 1.4,
-            invalidateOnRefresh: true,
+            start: 'top 85%',
+            once: true,
           },
         })
 
-        timeline.fromTo(
-          mainImage,
-          { scale: conditions.desktop ? 1.16 : 1.1 },
-          { scale: 1, ease: 'none' },
-          0,
+        revealTimeline.fromTo(
+          titleChars,
+          { opacity: 0, yPercent: 55 },
+          { opacity: 1, yPercent: 0, duration: 0.4, stagger: 0.04, ease: 'power2.out' },
+          0.05,
         )
 
-        timeline.fromTo(
-          thumbnailImage,
-          { clipPath: 'inset(0% 0% 100% 0%)' },
-          { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none' },
-          0,
+        revealTimeline.fromTo(
+          thumbnailInner,
+          { scale: 1.25, yPercent: -20 },
+          { scale: 1, yPercent: 0, duration: 2, ease: 'power3.out' },
+          0.4,
         )
 
-        timeline.fromTo(
-          title,
-          { y: conditions.desktop ? 10 : 6 },
-          { y: 0, ease: 'none' },
-          0,
+        revealTimeline.fromTo(
+          thumbnailReveal,
+          { scaleY: 1 },
+          { scaleY: 0, duration: 2, ease: 'power3.out' },
+          0.4,
         )
+      })
 
-        return () => timeline.kill()
-      },
-    )
+      return () => ScrollTrigger.getAll().forEach((trigger) => {
+        if (section.contains(trigger.trigger)) trigger.kill()
+      })
+    })
 
     ScrollTrigger.refresh()
-
-    return () => media.revert()
+    return () => {
+      window.clearTimeout(hoverTimerRef.current)
+      media.revert()
+    }
   }, [])
 
+  const openProduct = (product) => onOpenProduct?.(product)
+  const triggerProductTitleHover = (productName) => {
+    window.clearTimeout(hoverTimerRef.current)
+    setHoveredProduct(productName)
+    hoverTimerRef.current = window.setTimeout(() => {
+      setHoveredProduct(null)
+    }, 1100)
+  }
+
   return (
-    <section
-      ref={sectionRef}
-      id="product"
-      className={styles.products}
-      aria-label="ILKW 제품 컬렉션"
-    >
+    <section ref={sectionRef} id="product" className={styles.products} aria-label="ILKW 제품 컬렉션">
       <div className={styles.hero}>
-        <img
-          className={styles.heroImage}
-          src={heroImage}
-          alt="ILKW 조명 컬렉션"
-          fetchPriority="high"
-        />
-        <img className={styles.heroLogo} src={blackLogo} alt="ILKW" />
-        <img
-          className={styles.heroWordmark}
-          src={whiteLogo}
-          alt=""
-          aria-hidden="true"
-        />
+        <img data-hero-image className={styles.heroImage} src={heroImage} alt="ILKW 조명 제품 컬렉션" fetchPriority="high" />
+        <div className={styles.heroIdentity}>
+          <img className={styles.heroWordmark} src={productWordmark} alt="ILKW" />
+          <p className={styles.heroCopy}>
+            공간을 바꾸는 가장 쉬운 방법
+            <br />
+            일광전구의 제품 라인업을 만나보세요.
+          </p>
+        </div>
       </div>
 
       <div className={styles.catalog}>
-        {products.map((product) => (
-          <article
-            className={`${styles.productRow} ${
-              product.imageSide === 'left' ? styles.imageLeft : styles.imageRight
-            } ${product.detail ? styles.flamingoRow : ''}`}
-            key={product.name}
-            ref={product.detail ? flamingoRowRef : null}
-            style={{
-              '--content-x': product.contentX,
-              '--title-x': product.titleX,
-              '--logo-left': product.logoLeft,
-              '--logo-width': product.logoWidth,
-            }}
-          >
-            {product.detail ? (
-              <button
-                type="button"
-                className={`${styles.mainVisual} ${styles.productLink}`}
-                onClick={() => onOpenProduct(product.detail)}
-                aria-label={`${product.name} 상세 페이지 열기`}
-              >
-                <span ref={flamingoMainRef} className={styles.mainImageMotion}>
-                  <img
-                    src={product.mainImage}
-                    alt={`${product.name} 조명이 놓인 공간`}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </span>
-              </button>
-            ) : (
-              <figure className={styles.mainVisual}>
-                <img
-                  src={product.mainImage}
-                  alt={`${product.name} 조명이 놓인 공간`}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </figure>
-            )}
+        {products.map((product) => {
+          const isLinked = Boolean(product.detail)
+          const isHovered = hoveredProduct === product.name
+          const rowClassName = `${styles.productRow} ${product.imageSide === 'left' ? styles.imageLeft : styles.imageRight} ${isHovered ? styles.productHovered : ''}`
+          const titleChars = [...product.name].map((letter, index) => (
+            <span
+              aria-hidden="true"
+              className={styles.titleChar}
+              data-title-char
+              key={`${letter}-${index}`}
+              style={{ '--char-index': index }}
+            >
+              {letter}
+            </span>
+          ))
 
-            <div className={styles.productInfo}>
-              <h2
-                className={`${styles.productName} ${
-                  product.detail ? styles.flamingoName : ''
-                }`}
-                ref={product.detail ? flamingoTitleRef : null}
-              >
-                {product.detail
-                  ? (
-                      <button
-                        type="button"
-                        className={styles.flamingoTitleButton}
-                        onClick={() => onOpenProduct(product.detail)}
-                        aria-label={`${product.name} 상세 페이지 열기`}
-                      >
-                        {[...product.name].map((letter, index) => (
-                          <span
-                            className={styles.flamingoChar}
-                            key={`${letter}-${index}`}
-                            style={{ '--char-index': index }}
-                          >
-                            {letter}
-                          </span>
-                        ))}
-                      </button>
-                    )
-                  : product.name}
-              </h2>
-
-              <p className={styles.description}>
-                {product.description.map((line) => (
-                  <span key={line}>{line}</span>
-                ))}
-              </p>
-
-              {product.detail ? (
+          return (
+            <article
+              data-product-row
+              className={rowClassName}
+              key={product.name}
+              style={{ '--content-x': product.contentX }}
+            >
+              {isLinked ? (
                 <button
                   type="button"
-                  className={`${styles.thumbnail} ${styles.productLink}`}
-                  onClick={() => onOpenProduct(product.detail)}
+                  className={`${styles.mainVisual} ${styles.productLink}`}
+                  data-cursor="pointer"
+                  onClick={() => openProduct(product.detail)}
                   aria-label={`${product.name} 상세 페이지 열기`}
                 >
-                  <img
-                    ref={flamingoThumbImageRef}
-                    src={product.thumbnail}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <span className={styles.mainImageMotion}>
+                    <img src={product.mainImage} alt={`${product.name} 조명이 놓인 공간`} loading="lazy" decoding="async" />
+                  </span>
                 </button>
               ) : (
-                <figure className={styles.thumbnail}>
-                  <img
-                    src={product.thumbnail}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                  />
+                <figure className={styles.mainVisual} data-cursor="pointer">
+                  <span className={styles.mainImageMotion}>
+                    <img src={product.mainImage} alt={`${product.name} 조명이 놓인 공간`} loading="lazy" decoding="async" />
+                  </span>
                 </figure>
               )}
-            </div>
 
-            <img className={styles.rowLogo} src={blackLogo} alt="ILKW" />
-          </article>
-        ))}
+              <div className={styles.productInfo}>
+                <h2
+                  className={styles.productName}
+                  aria-label={product.name}
+                  data-cursor="pointer"
+                  onMouseEnter={() => triggerProductTitleHover(product.name)}
+                >
+                  {isLinked ? (
+                    <button
+                      type="button"
+                      className={styles.productTitleButton}
+                      onClick={() => openProduct(product.detail)}
+                      onFocus={() => triggerProductTitleHover(product.name)}
+                      aria-label={`${product.name} 상세 페이지 열기`}
+                    >
+                      {titleChars}
+                    </button>
+                  ) : titleChars}
+                </h2>
+
+                <p className={styles.description}>
+                  {product.description.map((line) => <span key={line}>{line}</span>)}
+                </p>
+
+                {isLinked ? (
+                  <button
+                    type="button"
+                    className={`${styles.thumbnail} ${styles.productLink}`}
+                    data-cursor="pointer"
+                    onClick={() => openProduct(product.detail)}
+                    onMouseEnter={() => triggerProductTitleHover(product.name)}
+                    onFocus={() => triggerProductTitleHover(product.name)}
+                    aria-label={`${product.name} 상세 페이지 열기`}
+                  >
+                    <span data-thumbnail-inner className={styles.thumbnailInner}>
+                      <img src={product.thumbnail} alt="" loading="lazy" decoding="async" />
+                    </span>
+                    <span data-thumbnail-reveal className={styles.thumbnailReveal} aria-hidden="true" />
+                  </button>
+                ) : (
+                  <figure
+                    className={styles.thumbnail}
+                    data-cursor="pointer"
+                    onMouseEnter={() => triggerProductTitleHover(product.name)}
+                  >
+                    <span data-thumbnail-inner className={styles.thumbnailInner}>
+                      <img src={product.thumbnail} alt="" loading="lazy" decoding="async" />
+                    </span>
+                    <span data-thumbnail-reveal className={styles.thumbnailReveal} aria-hidden="true" />
+                  </figure>
+                )}
+              </div>
+            </article>
+          )
+        })}
       </div>
     </section>
   )

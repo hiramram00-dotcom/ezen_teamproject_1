@@ -52,6 +52,15 @@
 }
 
 /* Small travelling light */
+.motionPathSvg {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 3133px;
+  pointer-events: none;
+  opacity: 0;
+}
+
 .lightTrailCanvas {
   position: absolute;
   inset: 0;
@@ -125,12 +134,20 @@
   white-space: nowrap;
 }
 
+.textStickyTrack {
+  position: absolute;
+  left: 1192px;
+  top: 0;
+  bottom: 0;
+  z-index: 20;
+}
+
 .textLine {
   display: flex;
   align-items: baseline;
   font-family: 'Instrument Sans', sans-serif;
   font-weight: 500;
-  font-size: 71px;
+  font-size: var(--fs-title-4);
   line-height: 1.11;
   letter-spacing: -1.42px;
   margin: 0;
@@ -166,9 +183,57 @@
   font-family: 'Playfair Display', serif;
   font-weight: 400;
   font-style: italic;
-  font-size: 67px;
+  font-size: var(--fs-title-4);
   line-height: 1.11;
   letter-spacing: -1.34px;
   color: #f49307;
   margin: 0;
+}
+
+@media (max-width: 767px) {
+  .textStickyTrack {
+    left: 70px;
+    right: 70px;
+  }
+
+  .textBlock {
+    width: 1500px;
+    align-items: flex-start;
+  }
+
+  .textLine {
+    font-size: 142px;
+    line-height: 0.98;
+    letter-spacing: -5px;
+  }
+
+  .textHighlight {
+    min-width: 980px;
+    font-size: 138px;
+    line-height: 1;
+    letter-spacing: -3px;
+  }
+
+  .travelLight {
+    width: 38px;
+    height: 38px;
+  }
+
+  .lightTail {
+    right: 21px;
+    width: 66px;
+    height: 13px;
+  }
+
+  .imageReduced,
+  .heroImage img {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    object-fit: contain;
+  }
+
+  .heroImage {
+    background-color: #000000;
+  }
 }

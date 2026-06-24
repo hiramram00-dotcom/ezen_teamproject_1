@@ -1,12 +1,13 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './MakeLightSection.module.css'
+import wemakeLightPoster from './assets/wemakelight-upscale.webp'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const MAKE_LIGHT_VIDEO_URL =
-  'https://res.cloudinary.com/dht6hmacp/video/upload/v1781829634/10_vgb2kq.mp4'
+  'https://res.cloudinary.com/dht6hmacp/video/upload/f_auto,q_auto:best/v1781829634/10_vgb2kq.mp4'
 
 /**
  * MakeLightSection — 브랜드 마무리 화면 (Figma node 1106:489)
@@ -25,6 +26,18 @@ function MakeLightSection() {
   const restTextRef = useRef(null)
   const lightRef = useRef(null)
   const descRef = useRef(null)
+
+  // 모바일(≤767px)은 풀스크린이 작아 영상이 안 깨짐 → 무거운 고화질 포스터(3.7MB) 안 씀.
+  // 타블렛 이상(≥768px)에서만 포스터 렌더. StorySection은 이 요소 유무로 자동 분기됨.
+  const [usePoster, setUsePoster] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches
+  )
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)')
+    const onChange = () => setUsePoster(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
 
   useEffect(() => {
     const section = sectionRef.current
@@ -120,9 +133,20 @@ function MakeLightSection() {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
           aria-hidden="true"
         />
+        {/* 풀스크린 고화질 정지 이미지 (타블렛↑만) — 영상이 크게 보일 땐 이걸 보여주고,
+            Story로 줄어드는 핸드오프 중 영상으로 크로스페이드. 모바일은 렌더 안 함(영상 직접). */}
+        {usePoster && (
+          <img
+            data-make-light-poster
+            className={styles.bgPoster}
+            src={wemakeLightPoster}
+            alt=""
+            aria-hidden="true"
+          />
+        )}
         {/* data-make-light-copy: StorySection이 핸드오프 시작 즉시 이 레이어를 강제로 꺼서,
             이 섹션 자체의 페이드아웃 타이밍과 어긋나도 텍스트/오버레이가 한 프레임에 통째로
             가려지며 "컷"되는 것을 막는다. */}

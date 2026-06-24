@@ -267,12 +267,13 @@ function FixSnowman2Intro() {
         </div>
 
         <div className={styles.title}>
-          <p ref={meetRef} className={`${styles.meetLine} type-italic-2`}>
+          <p ref={meetRef} className={`${styles.meetLine} fs-title-2`} style={{ fontFamily: 'var(--font-deco)', fontStyle: 'italic', fontWeight: 400 }}>
             <span className={styles.textInnerLeft}>Meet</span>
           </p>
           <p
             ref={snowmanWordRef}
-            className={`${styles.snowmanLine} type-title-semibold`}
+            className={`${styles.snowmanLine} fs-title-2`}
+            style={{ fontFamily: 'var(--font-en)' }} /* font-weight는 스크롤 애니(--snowman-weight 700→500)가 제어하므로 인라인 지정 금지 */
           >
             <span className={styles.textInnerRight}>SNOWMAN</span>
           </p>

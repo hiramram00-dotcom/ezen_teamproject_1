@@ -48,6 +48,49 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.8); /* 안쪽 상단 하이라이트(유리 sheen) */
   text-align: center;
 }
+
+/* 테두리를 따라 도는 빛 — 링(border 두께)만 마스킹해 두고, conic-gradient의 회전각(--card-angle)만
+   애니메이션. 카드 자체(사각형)를 회전시키지 않으므로 라운드 코너 모양이 흐트러지지 않는다. */
+@property --card-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 3px; /* 얇은 링 — 빛은 filter(glow)로 도드라지게, 선 자체는 얇게 유지 */
+  /* LightCursor(.lightCore)와 같은 톤의 노란빛이 좁은 폭으로, 부드럽게 테두리를 한 바퀴 돈다 */
+  background: conic-gradient(
+    from var(--card-angle),
+    transparent 0deg,
+    transparent 230deg,
+    rgba(255, 225, 154, 0.08) 260deg,
+    rgba(255, 225, 154, 0.4) 300deg,
+    rgba(255, 248, 224, 0.85) 313deg,
+    rgba(255, 225, 154, 0.4) 326deg,
+    rgba(255, 225, 154, 0.08) 350deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  filter:
+    drop-shadow(0 0 3px rgba(255, 248, 224, 0.45))
+    drop-shadow(0 0 9px rgba(255, 210, 122, 0.36));
+  pointer-events: none;
+  animation: cardBorderSweep 3s linear infinite;
+}
+@keyframes cardBorderSweep {
+  to { --card-angle: 360deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card::after { animation: none; }
+}
 /* 카드 안 텍스트 — 폰트는 1920 기준 px를 vw로 환산해 비례 스케일 */
 .cardHeading {
   position: absolute;
@@ -58,11 +101,15 @@
   margin: 0;
   font-family: var(--font-en);
   font-weight: 500;
-  font-size: 2.1875vw; /* 42px @1920 */
+  font-size: var(--fs-body-1); /* 42px @1920 */
   line-height: 1.1;
   letter-spacing: -0.02em;
   text-transform: uppercase;
   color: #000;
+}
+/* 콜라보 푸터(contact 지정)처럼 헤딩 문구가 길 때 — 폰트 살짝 줄여 깔끔히 2줄로 */
+.cardCompact .cardHeading {
+  font-size: var(--fs-body-1);
 }
 .cardLink {
   position: absolute;
@@ -73,7 +120,7 @@
   font-family: var(--font-deco);
   font-style: italic;
   font-weight: 400;
-  font-size: 2.0833vw; /* 40px @1920 */
+  font-size: var(--fs-body-1); /* 40px @1920 */
   line-height: 1.2;
   color: #000;
   transition: opacity 0.2s ease;
@@ -84,6 +131,21 @@
 .cardArrow {
   font-family: var(--font-kr);
   font-style: normal;
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: arrowNudge 1.8s ease-in-out infinite; /* 평소 살짝 까딱 → "클릭 가능" 신호 */
+}
+@keyframes arrowNudge {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(5px); }
+}
+/* 호버: 까딱 멈추고 오른쪽으로 더 슉 */
+.cardLink:hover .cardArrow {
+  animation: none;
+  transform: translateX(12px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cardArrow { animation: none; }
 }
 .cardEmail {
   position: absolute;
@@ -94,18 +156,19 @@
   white-space: nowrap;
   font-family: var(--font-en);
   font-weight: 600;
-  font-size: 3.125vw; /* 60px @1920 */
+  font-size: var(--fs-title-4); /* 60px @1920 */
   line-height: 1.2;
   letter-spacing: -0.02em;
   text-transform: uppercase;
   color: #d1ccc4;
-  opacity: 0.6; /* 기본을 기존 호버(연한) 모습으로 */
+  opacity: 0.9; /* 흐림 완화 (피드백: 이메일 너무 흐릿함) */
   text-decoration: none;
-  transition: color 0.2s ease, opacity 0.2s ease;
+  transition: color 0.25s ease, opacity 0.25s ease, text-shadow 0.3s ease;
 }
 .cardEmail:hover {
-  color: #d1ccc4; /* 호버 시 더 어둡게 */
-  opacity: 0.8;
+  color: #fff;
+  opacity: 1;
+  text-shadow: 0 0 22px rgba(255, 218, 160, 0.9); /* 호버 시 따뜻한 빛으로 밝게 빛남 */
 }
 
 /* 크림 푸터 블록 */
@@ -149,14 +212,14 @@
 }
 /* 내비 글씨 22px (type-body-3 기본 24px 오버라이드) */
 .nav :global(.type-body-3) {
-  font-size: 22px;
+  font-size: var(--fs-sub-1);
 }
 .navLink:hover {
   opacity: 0.6;
 }
 
 .divider {
-  height: 2px;
+  height: 1.5px;
   width: 100%;
   background: var(--color-footer); /* #252525 */
 }
@@ -170,7 +233,7 @@
 .legalText {
   font-family: var(--font-en); /* Instrument Sans */
   font-weight: 400;
-  font-size: 16px;
+  font-size: var(--fs-sub-3);
   line-height: normal;
   color: var(--color-footer); /* #252525 */
   white-space: nowrap;
@@ -185,14 +248,35 @@
 /* ----- 반응형 (브레이크포인트 px는 팀 [TBD], 임시값) ----- */
 @media (max-width: 1024px) {
   .nav :global(.type-body-3) {
-    font-size: 20px;
+    font-size: var(--fs-sub-2);
   }
   .legalText {
-    font-size: 16px;
+    font-size: var(--fs-sub-3);
   }
 }
 
 @media (max-width: 767px) {
+  /* 사진+카드 영역 세로 더 길게 */
+  .photo {
+    aspect-ratio: 4 / 5;
+  }
+  /* 카드 가로 더 넓힘(중앙 유지) + 안의 글씨 확대 (home 푸터 모바일과 동일) */
+  .card {
+    left: 13%;
+    width: 74%;
+  }
+  .cardHeading {
+    font-size: var(--fs-title-4);
+  }
+  .cardCompact .cardHeading {
+    font-size: var(--fs-body-1); /* 콜라보 푸터 긴 헤딩 — 2줄 유지 */
+  }
+  .cardLink {
+    font-size: var(--fs-title-4);
+  }
+  .cardEmail {
+    font-size: var(--fs-title-2);
+  }
   .body {
     min-height: auto;
     padding: 24px 20px 16px;
@@ -205,14 +289,14 @@
     gap: 12px 20px;
   }
   .nav :global(.type-body-3) {
-    font-size: 16px;
+    font-size: var(--fs-sub-3);
   }
   .legal {
     flex-direction: column;
     gap: 6px;
   }
   .legalText {
-    font-size: 14px;
+    font-size: var(--fs-sub-3);
   }
   .legalText {
     white-space: normal;

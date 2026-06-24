@@ -45,9 +45,9 @@
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-  /* 클릭 영역 확대 + 같은 만큼 음수 마진으로 레이아웃 상쇄 */
-  padding: 14px 18px;
-  margin: -14px -18px;
+  /* 클릭 영역 확대(1.2배) + 같은 만큼 음수 마진으로 레이아웃 상쇄 */
+  padding: 17px 22px;
+  margin: -17px -22px;
 }
 .logo {
   height: 26px;
@@ -60,13 +60,14 @@
   align-items: center;
   gap: 8px;
   margin-left: auto; /* 로고 사라져도 항상 오른쪽 고정 → Close 위치 = Menu 위치 */
-  padding: 0;
+  margin-right: -22px; /* 클릭영역 확대분(오른쪽 패딩)을 거터쪽으로 상쇄 → 글자 위치 유지 */
+  padding: 17px 22px; /* 클릭 영역 확대 (로고 버튼 수준) */
   background: none;
   border: none;
   cursor: pointer;
   color: #fff;
   font-family: var(--font-en, sans-serif);
-  font-size: 26px;
+  font-size: var(--fs-body-2);
   font-weight: 450;
   line-height: 1;
   letter-spacing: -0.02em;
@@ -140,12 +141,16 @@
     height: 18px; /* 데스크탑 26px의 0.7배 */
   }
   .menu {
-    font-size: 22px; /* 데스크탑 26px → 22px */
+    font-size: var(--fs-sub-1); /* 데스크탑 26px → 22px */
   }
 }
 
 /* ===== 반응형 — 모바일 (≤767px) ===== */
 @media (max-width: 767px) {
+  .header.hidden {
+    transform: translateY(0);
+  }
+
   /* 좌우여백은 --layout-gutter 토큰이 자동(16px) */
   .logo {
     height: 16px;

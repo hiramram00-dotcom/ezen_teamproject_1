@@ -17,6 +17,17 @@ function ScrollSequence({ dir, count, pad = 3, ext = 'jpg', progress = 0, classN
   const progressRef = useRef(progress)
 
   // 프레임 프리로드 (1회)
+  function draw(p) {
+    const c = canvasRef.current
+    const imgs = imagesRef.current
+    if (!c || !imgs.length) return
+    const idx = Math.min(count - 1, Math.max(0, Math.round(p * (count - 1))))
+    const img = imgs[idx]
+    if (!img || !img.complete || !img.naturalWidth) return
+    const ctx = c.getContext('2d')
+    ctx.drawImage(img, 0, 0, c.width, c.height)
+  }
+
   useEffect(() => {
     const imgs = []
     for (let i = 1; i <= count; i++) {
@@ -45,17 +56,6 @@ function ScrollSequence({ dir, count, pad = 3, ext = 'jpg', progress = 0, classN
     draw(progress)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [progress])
-
-  const draw = (p) => {
-    const c = canvasRef.current
-    const imgs = imagesRef.current
-    if (!c || !imgs.length) return
-    const idx = Math.min(count - 1, Math.max(0, Math.round(p * (count - 1))))
-    const img = imgs[idx]
-    if (!img || !img.complete || !img.naturalWidth) return
-    const ctx = c.getContext('2d')
-    ctx.drawImage(img, 0, 0, c.width, c.height)
-  }
 
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />
 }

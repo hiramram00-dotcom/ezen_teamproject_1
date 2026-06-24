@@ -89,7 +89,7 @@
 .overlayTitle {
   font-family: var(--font-en);
   font-weight: 600;
-  font-size: clamp(20px, 1.875vw, 36px);
+  font-size: clamp(20px, 1.875vw, var(--fs-body-1));
   line-height: 1.4;
   letter-spacing: -0.02em;
 }

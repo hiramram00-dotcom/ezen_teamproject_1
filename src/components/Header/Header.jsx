@@ -17,11 +17,13 @@ function Header() {
   useEffect(() => {
     if (!menuOpen) return
     document.body.style.overflow = 'hidden'
+    document.body.dataset.menuOpen = 'true' // Top 버튼 등 전역 요소가 메뉴 열림 감지
     const onKey = (e) => e.key === 'Escape' && setMenuOpen(false)
     window.addEventListener('keydown', onKey)
     return () => {
       window.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
+      delete document.body.dataset.menuOpen
     }
   }, [menuOpen])
 
@@ -37,9 +39,10 @@ function Header() {
     const apply = () => {
       raf = 0
       const y = window.scrollY
+      const isMobile = window.matchMedia('(max-width: 767px)').matches
 
       // 메뉴 열렸으면 항상 표시, 맨 위 근처도 항상 표시
-      if (menuOpen || y <= TOP_ALWAYS_SHOW) {
+      if (isMobile || menuOpen || y <= TOP_ALWAYS_SHOW) {
         h.classList.remove(styles.hidden)
       } else if (y > lastY + DELTA) {
         h.classList.add(styles.hidden) // 아래로 → 숨김

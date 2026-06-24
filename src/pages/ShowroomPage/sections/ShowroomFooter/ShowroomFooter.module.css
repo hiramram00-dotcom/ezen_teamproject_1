@@ -23,6 +23,10 @@
 
 .bottom {
   margin-top: auto;
+  width: 100%;
+  max-width: calc(var(--layout-container-width) - 68px);
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .nav {

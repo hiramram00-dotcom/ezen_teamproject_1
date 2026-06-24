@@ -21,3 +21,20 @@
     transition: none;
   }
 }
+
+/* collapseToFlow 측정용 — 화면에 보이지 않게 두고 각 줄의 실제 폭만 잰다. */
+.measurer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.measureLine {
+  display: block;
+  width: max-content; /* 컨테이너 제약 없이 줄의 고유 폭 측정 */
+  white-space: nowrap;
+}

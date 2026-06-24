@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import imgKakao from './assets/collabo-kakao.webp'
 import imgKittybunnypony from './assets/collabo-kittybunnypony.webp'
 import imgHankyoreh from './assets/collabo-hankyoreh.webp'
@@ -18,6 +19,7 @@ import styles from './CollaboSection.module.css'
  */
 
 // Figma 좌→우 배치 순서. imgH = 카드 이미지 높이(px), offset = 세로 stagger(px)
+// to = 클릭 시 이동할 콜라보 상세 페이지
 const CARDS = [
   {
     img: imgKakao,
@@ -25,6 +27,7 @@ const CARDS = [
     desc: ['춘식이의 친근한 감성과 함께', '특별한 컬렉션을 선보였습니다.'],
     imgH: 218,
     offset: 0,
+    to: '/collabo-detail/kakao',
   },
   {
     img: imgKittybunnypony,
@@ -32,6 +35,7 @@ const CARDS = [
     desc: ['키티버니포니의 감각적인 패턴과 함께', '오래 머물고 싶은 공간을 함께 만들어갔습니다.'],
     imgH: 297,
     offset: 131,
+    to: '/collabo-detail',
   },
   {
     img: imgHankyoreh,
@@ -39,6 +43,7 @@ const CARDS = [
     desc: ['빛은 공간을 밝히는 것을 넘어,', '연대의 상징이자 시대의 기록이 되었습니다.'],
     imgH: 261,
     offset: 0,
+    to: '/collabo-detail/kakao',
   },
   {
     img: imgChilsung,
@@ -46,6 +51,7 @@ const CARDS = [
     desc: ['칠성사이다의 청량한 브랜드 감성과 함께', '그린 크리스마스를 선보였습니다.'],
     imgH: 251,
     offset: 170,
+    to: '/collabo-detail',
   },
   {
     img: imgWarmgreytale,
@@ -53,6 +59,7 @@ const CARDS = [
     desc: ['웜그레이테일만의 따뜻한 일러스트에', '일광전구의 빛을 더했습니다.'],
     imgH: 322,
     offset: 0,
+    to: '/collabo-detail/kakao',
   },
   {
     img: imgKanu,
@@ -60,6 +67,7 @@ const CARDS = [
     desc: ['커피 한 잔의 여유와 함께하는 빛.', '일상의 여유를 더욱 따뜻하게 만들었습니다.'],
     imgH: 241,
     offset: 170,
+    to: '/collabo-detail',
   },
 ]
 
@@ -72,16 +80,62 @@ const BASE_SPEED = 70 // px/s 자동 흐름(스크롤 가속 없음)
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
 
+// 모바일: 처음 보여줄 카드 수 (나머지는 '더보기'에 숨김)
+const MOBILE_VISIBLE = 3
+
 function CollaboSection() {
   const wrapRef = useRef(null)
   const titleRef = useRef(null)
   const viewportRef = useRef(null)
   const trackRef = useRef(null)
+  const draggedRef = useRef(false) // 드래그였는지(=탭 이동 막기) 표시
+  const navigate = useNavigate()
+  const navigateRef = useRef(navigate)
+  // 포인터 핸들러(useEffect)에서 최신 navigate 사용 (렌더 중이 아닌 effect에서 갱신)
+  useEffect(() => {
+    navigateRef.current = navigate
+  }, [navigate])
+
+  const introMobileRef = useRef(null) // 모바일 헤더 blur-in 토글용
+
+  // 모바일이면 마퀴 대신 세로 리스트로 렌더 (가로 스크롤 없음)
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches,
+  )
+  const [expanded, setExpanded] = useState(false) // '더보기'로 전체 표시 여부
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)')
+    const onChange = () => setIsMobile(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  // 모바일 헤더(타이틀+설명) blur-in — 마퀴 JS가 없으니 IO로 화면 진입 시 .isVisible 토글
+  useEffect(() => {
+    if (!isMobile) return
+    const el = introMobileRef.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.classList.add(styles.isVisible)
+      return
+    }
+    // 토글: 화면에 들어오면 표시, 벗어나면 초기화 → 스크롤로 다시 들어올 때마다 blur-in 재생
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        el.classList.toggle(styles.isVisible, entry.isIntersecting)
+      },
+      { threshold: 0.3 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [isMobile])
 
   // 제목 + 아래 한글 문장 blur-in(흐림→선명 스태거)은 아래 rAF에서 스크롤 진행도(aP)로
   // .intro에 isVisible 토글 → 섹션이 핀되어 들어오면 표시, 위로 벗어나면 초기화.
 
   useEffect(() => {
+    if (isMobile) return // 모바일은 마퀴 미사용
     const wrap = wrapRef.current
     const title = titleRef.current
     const viewport = viewportRef.current
@@ -125,13 +179,26 @@ function CollaboSection() {
       dragging = true
       dragStartX = e.clientX
       dragStartPos = pos
+      draggedRef.current = false // 새 누름 → 드래그 여부 초기화
       if (viewport.setPointerCapture) viewport.setPointerCapture(e.pointerId)
     }
     const onMove = (e) => {
       if (!dragging) return
+      if (Math.abs(e.clientX - dragStartX) > 6) draggedRef.current = true // 6px 이상 = 드래그
       pos = posMod(dragStartPos - (e.clientX - dragStartX))
     }
-    const onUp = () => {
+    const onUp = (e) => {
+      // 드래그가 아니면(=탭) 포인터 위치의 카드를 찾아 상세로 이동.
+      // (포인터 캡처 때문에 li의 click 이벤트가 안 터져서 여기서 처리)
+      if (!draggedRef.current) {
+        const el = document.elementFromPoint(e.clientX, e.clientY)
+        const cardEl = el && el.closest && el.closest('[data-card]')
+        const to = cardEl && cardEl.dataset ? cardEl.dataset.to : null
+        if (to) navigateRef.current(to)
+      }
+      dragging = false
+    }
+    const onCancel = () => {
       dragging = false
     }
 
@@ -141,7 +208,7 @@ function CollaboSection() {
     viewport.addEventListener('pointerdown', onDown)
     viewport.addEventListener('pointermove', onMove)
     viewport.addEventListener('pointerup', onUp)
-    viewport.addEventListener('pointercancel', onUp)
+    viewport.addEventListener('pointercancel', onCancel)
 
     const frame = (now) => {
       raf = 0
@@ -204,9 +271,86 @@ function CollaboSection() {
       viewport.removeEventListener('pointerdown', onDown)
       viewport.removeEventListener('pointermove', onMove)
       viewport.removeEventListener('pointerup', onUp)
-      viewport.removeEventListener('pointercancel', onUp)
+      viewport.removeEventListener('pointercancel', onCancel)
     }
-  }, [])
+  }, [isMobile])
+
+  // ----- 모바일: 세로 리스트 (가로 스크롤 없음 · 3개 + 더보기) -----
+  if (isMobile) {
+    const visible = expanded ? CARDS : CARDS.slice(0, MOBILE_VISIBLE)
+    return (
+      <section id="collabo" className={styles.collaboMobile}>
+        <div className={styles.introMobile} ref={introMobileRef}>
+          <h2 className={`${styles.title} ${styles.fxBlurIn}`}>
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 600 }}>COLLABO</span>{' '}
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-deco)', fontStyle: 'italic', fontWeight: 400 }}>with</span>{' '}
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 600 }}>ILKW.</span>
+          </h2>
+          <p className={`${styles.desc} ${styles.fxBlurIn} fs-body-2`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
+            다양한 브랜드와 함께 새로운 빛의 경험을 만들어갑니다.
+          </p>
+        </div>
+
+        <ul className={styles.mList}>
+          {visible.map((card) => (
+            <li
+              key={card.brand}
+              className={styles.mCard}
+              onClick={() => navigate(card.to)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  navigate(card.to)
+                }
+              }}
+              role="link"
+              tabIndex={0}
+              data-cursor="pointer"
+              style={{ cursor: 'pointer' }}
+            >
+              <div className={styles.mImage}>
+                <img src={card.img} alt={`ILKW x ${card.brand}`} loading="lazy" />
+              </div>
+              <div className={styles.cardText}>
+                <p className={`${styles.cardTitle} fs-body-2`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 600 }}>
+                  ILKW <span className={styles.cardX}>x</span> {card.brand}
+                </p>
+                <p className={`${styles.cardDesc} fs-sub-1`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
+                  {card.desc[0]}
+                  <br />
+                  {card.desc[1]}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        {CARDS.length > MOBILE_VISIBLE && (
+          <button
+            type="button"
+            className={styles.moreBtn}
+            onClick={() => setExpanded((v) => !v)}
+            data-cursor="pointer"
+            aria-expanded={expanded}
+          >
+            <span>{expanded ? '닫기' : '더보기'}</span>
+            <svg
+              className={styles.moreIcon}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+        )}
+      </section>
+    )
+  }
 
   // 무한 마퀴용으로 카드 세트를 2벌 렌더
   const loopCards = [...CARDS, ...CARDS]
@@ -216,11 +360,11 @@ function CollaboSection() {
       <div className={styles.sticky}>
         <div ref={titleRef} className={styles.intro}>
           <h2 className={`${styles.title} ${styles.fxBlurIn}`}>
-            <span className="type-title-1">COLLABO</span>{' '}
-            <span className="type-italic-1">with</span>{' '}
-            <span className="type-title-1">ILKW.</span>
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 600 }}>COLLABO</span>{' '}
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-deco)', fontStyle: 'italic', fontWeight: 400 }}>with</span>{' '}
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 600 }}>ILKW.</span>
           </h2>
-          <p className={`${styles.desc} ${styles.fxBlurIn} type-body-3`}>
+          <p className={`${styles.desc} ${styles.fxBlurIn} fs-body-2`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
             다양한 브랜드와 함께 새로운 빛의 경험을 만들어갑니다.
           </p>
         </div>
@@ -235,15 +379,25 @@ function CollaboSection() {
                   key={`${card.brand}-${i}`}
                   className={styles.card}
                   data-card
+                  data-to={card.to}
                   data-cursor="pointer"
                   aria-hidden={isClone ? 'true' : undefined}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      navigate(card.to)
+                    }
+                  }}
+                  role={isClone ? undefined : 'link'}
+                  tabIndex={isClone ? -1 : 0}
                   style={{
+                    cursor: 'pointer',
                     marginTop: `${card.offset}px`,
                     animationDuration: FLOAT_DUR[base],
                     animationDelay: FLOAT_DELAY[base],
                   }}
                 >
-                  <div className={styles.cardImage} style={{ height: `${card.imgH}px` }}>
+                  <div className={styles.cardImage} style={{ aspectRatio: `379 / ${card.imgH}` }}>
                     <img src={card.img} alt={`ILKW x ${card.brand}`} loading="lazy" draggable="false" />
                     <div className={styles.cardOverlay}>
                       <span className={styles.cardArrow} aria-hidden="true">
@@ -255,10 +409,10 @@ function CollaboSection() {
                     </div>
                   </div>
                   <div className={styles.cardText}>
-                    <p className={`${styles.cardTitle} type-body-semibold-2`}>
+                    <p className={`${styles.cardTitle} fs-body-2`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 600 }}>
                       ILKW <span className={styles.cardX}>x</span> {card.brand}
                     </p>
-                    <p className={`${styles.cardDesc} type-body-4`}>
+                    <p className={`${styles.cardDesc} fs-sub-1`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
                       {card.desc[0]}
                       <br />
                       {card.desc[1]}

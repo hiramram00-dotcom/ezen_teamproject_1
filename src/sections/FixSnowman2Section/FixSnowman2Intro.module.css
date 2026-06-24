@@ -33,6 +33,8 @@
 
 .title p {
   width: 100%;
+  margin: 0;
+  line-height: 1.3;
 }
 
 .meetLine {
@@ -171,7 +173,7 @@
   position: relative;
   z-index: 1;
   font-family: var(--font-en);
-  font-size: 22px;
+  font-size: var(--fs-sub-1);
   font-weight: 500;
   letter-spacing: -0.03em;
   color: rgba(255, 255, 255, 0.78);
@@ -232,7 +234,7 @@
   .title :global(.type-italic-2),
   .title :global(.type-title-semibold) {
     /* 모바일 기기 폭에 맞춰 36px ~ 48px 사이로 자연스럽게 늘어났다 줄어듭니다 */
-    font-size: clamp(36px, 11.5vw, 48px);
+    font-size: clamp(36px, 11.5vw, var(--fs-body-1));
   }
 
   .cardStage {

@@ -1,7 +1,7 @@
 .about {
   position: relative;
   width: 100%;
-  height: 381.45vw;
+  height: 660.75vw;
   min-height: 100svh;
   overflow: hidden;
   background: var(--color-base-3);
@@ -69,19 +69,111 @@
 
 .introParticles {
   position: absolute;
-  z-index: 3;
+  z-index: 11;
   top: 0;
   left: 0;
   width: 100%;
-  height: 56.25vw;
+  height: max(56.25vw, 100svh);
   pointer-events: none;
+  background: var(--color-base-3);
+}
+
+.travelLightCanvas {
+  position: fixed;
+  z-index: 12;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: visible;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.travelLightGuide {
+  fill: none;
+  stroke: none;
+}
+
+.travelLightTrailGlow,
+.travelLightTrailCore {
+  fill: none;
+  stroke: rgba(255, 219, 158, 0.58);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.travelLightTrailGlow {
+  stroke-width: 8;
+  opacity: 0.38;
+  filter: blur(7px);
+}
+
+.travelLightTrailCore {
+  stroke-width: 1.8;
+  opacity: 0.52;
+  filter: blur(1.4px);
+}
+
+.travelLight {
+  position: fixed;
+  z-index: 13;
+  width: 30px;
+  height: 30px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+  will-change: left, top, transform, opacity;
+}
+
+.travelLightCore {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 245, 1) 0%,
+    rgba(255, 238, 196, 0.9) 18%,
+    rgba(247, 190, 105, 0.34) 48%,
+    rgba(247, 190, 105, 0) 78%
+  );
+  filter: blur(1.5px);
+  box-shadow: 0 0 12px rgba(255, 218, 151, 0.32);
+}
+
+.travelLightTail {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  width: 54px;
+  height: 11px;
+  border-radius: 50%;
+  background: linear-gradient(
+    to left,
+    rgba(255, 235, 196, 0.34),
+    rgba(255, 213, 145, 0.13) 48%,
+    rgba(255, 213, 145, 0)
+  );
+  filter: blur(3px);
+  transform: translateY(-50%);
+  transform-origin: right center;
+}
+
+.travelLightSpark .travelLightCore {
+  animation: travelLightSpark 0.45s ease-out;
 }
 
 .legacy h2 {
+  font-family: 'Instrument Sans', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.legacy h2 em {
   font-family: var(--font-deco);
   font-style: italic;
   font-weight: 400;
-  letter-spacing: -0.02em;
 }
 
 .legacy {
@@ -91,16 +183,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5.2vw;
+  gap: clamp(24px, 3.8vh, 56px);
   width: 46.72vw;
-  transform: translateX(-50%);
-}
-
-.legacyHolding {
-  position: fixed;
-  z-index: 3;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%) scale(0.95);
+  transform-origin: top center;
 }
 
 .legacyCopy {
@@ -138,17 +224,16 @@
 }
 
 .legacy h2 {
-  font-size: 6.25vw;
   line-height: 1.3;
+  padding-bottom: 0.08em;
 }
 
 .legacyCopy p {
-  margin-top: 1.05vw;
+  margin-top: 10px;
   font-family: var(--font-kr);
-  font-size: 1.46vw;
-  font-weight: 400;
+  font-weight: 300;
   line-height: 1.4;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
 }
 
 .legacyGallery {
@@ -158,9 +243,10 @@
   justify-content: center;
 }
 
-.legacyGallery img {
-  width: 20.68vw;
-  height: 27.6vw;
+.legacyGallery img,
+.legacyGallery video {
+  width: 17.74vw;
+  height: 23.66vw;
   object-fit: cover;
   clip-path: inset(0 0 100% 0);
   filter: brightness(0.5) saturate(0.55);
@@ -168,22 +254,26 @@
   transform-origin: center;
 }
 
-.legacyGallery img:last-child {
-  width: 20.26vw;
+.legacyGallery img:last-child,
+.legacyGallery video:last-child {
+  width: 17.38vw;
+  object-position: center center;
 }
 
-.legacyRevealed .legacyGallery img {
-  animation: storyImageTurnOn 2s 850ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.legacyRevealed .legacyGallery img,
+.legacyRevealed .legacyGallery video {
+  animation: storyImageTurnOn 1.8s 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.legacyRevealed .legacyGallery img:last-child {
-  animation-delay: 1.15s;
+.legacyRevealed .legacyGallery img:last-child,
+.legacyRevealed .legacyGallery video:last-child {
+  animation-delay: 600ms;
 }
 
 .story {
   position: absolute;
   z-index: 3;
-  top: 155vw;
+  top: 136vw;
   left: 0;
   width: 100%;
   height: max(56.25vw, 100svh);
@@ -191,7 +281,6 @@
   background: var(--color-base-3);
   color: rgba(255, 255, 255, 0.3);
   font-family: var(--font-en);
-  font-size: clamp(2.8rem, 4.25vw, 5.1rem);
   font-weight: 500;
   line-height: 1.3;
   letter-spacing: -0.03em;
@@ -203,7 +292,7 @@
 }
 
 .storyPassed {
-  top: 211vw;
+  top: 514.5vw;
 }
 
 .storyLead {
@@ -213,17 +302,18 @@
   width: 58vw;
 }
 
-.storyImage {
+.storyMedia {
   position: absolute;
   top: 31vh;
   left: 17vw;
   width: 41vw;
   height: 44vh;
   object-fit: cover;
-  clip-path: inset(0 0 100% 0);
-  filter: brightness(0.28) saturate(0.3);
-  transform: scale(1.08);
+  clip-path: inset(var(--story-media-mask, 50%) 0);
+  filter: brightness(var(--story-media-brightness, 0.18)) saturate(0.78);
+  transform: scale(var(--story-media-scale, 1.06));
   transform-origin: center;
+  will-change: clip-path, filter, transform;
 }
 
 .storyLead,
@@ -233,35 +323,11 @@
   transform: translateY(2vw);
 }
 
-.storyLead,
-.storyClosing {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.31) 0%,
-    rgba(255, 255, 255, 0.31) 48%,
-    rgba(255, 255, 255, 0.11) 52%,
-    rgba(255, 255, 255, 0.11) 100%
-  );
-  background-position: 100% 0;
-  background-size: 220% 100%;
-  background-clip: text;
-  color: transparent;
-}
-
-.storyRevealed .storyLead {
-  animation:
-    storyCopyReveal 1.25s ease-out forwards,
-    storyTextFill 2.6s 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.storyRevealed .storyImage {
-  animation: storyImageTurnOn 2s 850ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
+.storyRevealed .storyLead,
 .storyRevealed .storyClosing {
-  animation:
-    storyCopyReveal 1.35s 450ms ease-out forwards,
-    storyTextFill 2.6s 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 1;
+  filter: none;
+  transform: none;
 }
 
 .storyClosing {
@@ -281,7 +347,7 @@
   left: 39vw;
 }
 
-.storyClosingStatement span {
+.storyClosingStatement > .storyTypedLine {
   display: block;
 }
 
@@ -290,41 +356,54 @@
   font-weight: 700;
 }
 
+.storyTypedLine {
+  display: block;
+}
+
+.storyTypedWord {
+  display: inline;
+  color: rgba(255, 255, 255, 0.31);
+  opacity: 0;
+  filter: blur(0.12em);
+  transition:
+    color 220ms ease,
+    opacity 220ms ease,
+    filter 260ms ease;
+}
+
+.storyTypedWordVisible {
+  color: rgba(255, 255, 255, 0.31);
+  opacity: 1;
+  filter: blur(0);
+}
+
 .storySecond {
   position: absolute;
   inset: 0;
   opacity: 0;
   pointer-events: none;
-  transition:
-    opacity 900ms ease,
-    transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
-  transform: translateY(1.5vw);
+  transition: none;
+  transform: none;
 }
 
 .story > .storyLead,
-.story > .storyImage,
+.story > .storyMedia,
 .story > .storyClosing {
-  transition:
-    opacity 800ms ease,
-    filter 900ms ease,
-    transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: none;
 }
 
 .storyPhaseTwo > .storyLead,
-.storyPhaseTwo > .storyImage,
 .storyPhaseTwo > .storyClosing,
 .storyPassed > .storyLead,
-.storyPassed > .storyImage,
 .storyPassed > .storyClosing {
   pointer-events: none;
 }
 
 .storyPhaseTwo > .storyLead,
-.storyPhaseTwo > .storyImage,
 .storyPhaseTwo > .storyClosing {
   opacity: 0 !important;
-  filter: blur(0.45vw);
-  transform: translateY(-1.4vw) scale(0.985);
+  filter: none;
+  transform: none;
 }
 
 .story:not(.storyPhaseTwo) .storySecond {
@@ -340,18 +419,7 @@
 .storySecond .storyClosing {
   opacity: 1;
   filter: none;
-  background-position: 0 0;
   transform: none;
-}
-
-.storySecond .storyImage {
-  top: 31vh;
-  left: 17vw;
-  width: 41vw;
-  height: 44vh;
-  clip-path: inset(0);
-  filter: brightness(0.85) saturate(0.78);
-  transform: scale(1);
 }
 
 .storySecond .storyClosingYears {
@@ -364,45 +432,34 @@
   left: 39vw;
 }
 
-.videoPlaceholder {
-  position: absolute;
-  top: 268.85vw;
-  left: 0.2vw;
-  width: 99.8vw;
-  height: 56.3vw;
-  overflow: hidden;
-}
-
-.videoPlaceholder img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 58%;
-  filter: saturate(0.45) brightness(1.25);
-}
-
 .ending {
   position: absolute;
-  top: 325.15vw;
+  top: 570.75vw;
   left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 56.3vw;
+  height: max(90vw, 130svh);
   background: var(--color-base-3);
 }
 
 .tagline {
+  display: flex;
+  gap: 0.28em;
   font-family: var(--font-en);
-  font-size: 3.33vw;
   font-weight: 400;
   line-height: 1.4;
   letter-spacing: -0.02em;
   white-space: nowrap;
 }
 
-.tagline em {
+.taglinePhrase {
+  display: inline-block;
+  will-change: filter, opacity, transform;
+}
+
+.taglinePhrase em {
   color: #f7ebd7;
   font-family: var(--font-deco);
   font-style: italic;
@@ -410,12 +467,17 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .tagline em {
+  .taglinePhrase em {
     animation: glowPulse 3.5s ease-in-out infinite;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .travelLightCanvas,
+  .travelLight {
+    display: none;
+  }
+
   .introAtmosphere span {
     animation: none;
   }
@@ -428,7 +490,8 @@
   }
 
   .legacyGallery img,
-  .storyImage {
+  .legacyGallery video,
+  .storyMedia {
     clip-path: inset(0);
     filter: none;
     transform: none;
@@ -441,6 +504,28 @@
     filter: none;
     transform: none;
     animation: none;
+  }
+
+  .tagline {
+    filter: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+@keyframes travelLightSpark {
+  0% {
+    filter: blur(1.5px) brightness(1);
+    transform: scale(1);
+  }
+  35% {
+    filter: blur(1px) brightness(2.8);
+    transform: scale(2.2);
+  }
+  100% {
+    filter: blur(1.5px) brightness(1);
+    transform: scale(1);
   }
 }
 

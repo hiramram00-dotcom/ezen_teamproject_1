@@ -17,8 +17,6 @@
   height: 100%;
   object-fit: cover;
   z-index: 1;
-  /* AI 인물 티 줄이기 — 덜 어둡게 + 살짝 흐릿 + 차분한 색감 (수치 조절 노브) */
-  filter: brightness(0.82) contrast(1.03) saturate(0.78) blur(1.3px);
 }
 
 /* 검정 패널 — 영상을 덮었다가 위/아래로 갈라짐 */
@@ -71,7 +69,7 @@
   margin-bottom: 14px; /* 분할선에서 살짝 위 */
   font-family: var(--font-display, 'Playfair Display', serif);
   font-style: italic;
-  font-size: clamp(15px, 1.15vw, 22px);
+  font-size: clamp(15px, 1.15vw, var(--fs-body-2));
   letter-spacing: 0.01em;
   background-image: linear-gradient(
     90deg,
@@ -85,7 +83,7 @@
 .copyKr {
   margin-top: 14px; /* 분할선에서 살짝 아래 */
   font-family: var(--font-kr, 'Pretendard', sans-serif);
-  font-size: clamp(14px, 1.05vw, 20px);
+  font-size: clamp(14px, 1.05vw, var(--fs-body-2));
   letter-spacing: -0.01em;
   text-shadow: 0 0 7px rgba(244, 147, 7, 0.25);
   background-image: linear-gradient(

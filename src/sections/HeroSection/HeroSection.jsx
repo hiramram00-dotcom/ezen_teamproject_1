@@ -13,12 +13,20 @@ const SWEEP_DUR = 1.2 // 혜성이 지나가며 서브카피 등장
 const SPLIT_GAP = 0.3 // 혜성 끝 → 분할 시작 사이 텀 (2배)
 const SPLIT_DUR = 0.85 // 화면 위/아래로 갈라지는 시간 (텀 늘린 만큼 줄임)
 
-// ===== 영상 소스 — 모바일(≤767px)은 세로 버전으로 교체 =====
+// ===== 영상 소스 — 같은 4K 소스(3840×2160)에서 기기별 해상도만 다르게 (반응형 3단계) =====
+// 모바일 w_720 / 타블렛 w_1280 / 데스크탑 w_2560. 4K 디코딩 부하·용량을 기기별 최소화.
+// ⚠️ NewIntro 인라인 영상과 URL 100% 동일 유지 → 핸드오프 시 한 번만 받아 공유.
+const HERO_VIDEO_ID = 'HELLO_SNOWMAN_SOLID_PORTABLE_ILKW_SNOWMAN15_SOLID_Portable_-_4-10s_msfzbu'
+const CLD = 'https://res.cloudinary.com/ddit4bjrw/video/upload'
+const cldVideo = (w) => `${CLD}/f_auto,q_auto:best,w_${w}/${HERO_VIDEO_ID}.mp4`
+// poster = 첫 프레임(so_0) JPG → 영상 디코딩 전 즉시 표시(LCP 단축, 연출 동일)
+const cldPoster = (w) => `${CLD}/f_auto,q_auto,w_${w},so_0/${HERO_VIDEO_ID}.jpg`
 const VIDEO_MOBILE_Q = '(max-width: 767px)'
-const VIDEO_WIDE = 'https://res.cloudinary.com/dg9hg29hc/video/upload/0616_1_xt8vzh.mp4'
-const VIDEO_MOBILE = 'https://res.cloudinary.com/dg9hg29hc/video/upload/mobile_pnwzlg.mp4'
-const pickVideoSrc = () =>
-  window.matchMedia(VIDEO_MOBILE_Q).matches ? VIDEO_MOBILE : VIDEO_WIDE
+const VIDEO_TABLET_Q = '(max-width: 1199px)'
+const pickWidth = () =>
+  window.matchMedia(VIDEO_MOBILE_Q).matches ? 720 : window.matchMedia(VIDEO_TABLET_Q).matches ? 1280 : 2560
+const pickVideoSrc = () => cldVideo(pickWidth())
+const pickPosterSrc = () => cldPoster(pickWidth())
 
 const prefersReduced = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -35,6 +43,13 @@ const introWasPlayed = () => {
 const markIntroPlayed = () => {
   try { sessionStorage.setItem(INTRO_KEY, '1') } catch { /* 스토리지 차단 무시 */ }
 }
+// 새로고침(F5/Cmd-R) 여부 — reload일 땐 같은 세션이라도 인트로를 새 탭처럼 다시 재생
+const isReload = () => {
+  try {
+    const nav = performance.getEntriesByType('navigation')[0]
+    return nav ? nav.type === 'reload' : false
+  } catch { return false }
+}
 
 function HeroSection() {
   const heroRef = useRef(null)
@@ -46,11 +61,14 @@ function HeroSection() {
 
   // 모바일(≤767px)이면 세로 영상으로 교체 (리사이즈/회전 시 자동 갱신)
   const [videoSrc, setVideoSrc] = useState(pickVideoSrc)
+  const [posterSrc, setPosterSrc] = useState(pickPosterSrc)
   useEffect(() => {
-    const mq = window.matchMedia(VIDEO_MOBILE_Q)
-    const onChange = () => setVideoSrc(pickVideoSrc())
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
+    const onChange = () => { setVideoSrc(pickVideoSrc()); setPosterSrc(pickPosterSrc()) }
+    const mqM = window.matchMedia(VIDEO_MOBILE_Q)
+    const mqT = window.matchMedia(VIDEO_TABLET_Q)
+    mqM.addEventListener('change', onChange)
+    mqT.addEventListener('change', onChange)
+    return () => { mqM.removeEventListener('change', onChange); mqT.removeEventListener('change', onChange) }
   }, [])
 
   useEffect(() => {
@@ -66,8 +84,9 @@ function HeroSection() {
       document.body.dataset.heroRevealed = 'true' // 헤더 등장 신호
     }
 
-    // 스킵(reduce-motion / 뒤로·새로고침): 인트로 없이 최종 상태(영상 + 로고)
-    if (prefersReduced() || introWasPlayed()) {
+    // 스킵(reduce-motion / 같은 세션 내 재방문): 인트로 없이 최종 상태(영상 + 로고)
+    // ※ 새로고침(F5)이면 introWasPlayed여도 스킵하지 않고 인트로를 새 탭처럼 풀 재생
+    if (prefersReduced() || (introWasPlayed() && !isReload())) {
       gsap.set(panelTop, { yPercent: -100 })
       gsap.set(panelBottom, { yPercent: 100 })
       gsap.set(filament, { autoAlpha: 0 })
@@ -75,6 +94,9 @@ function HeroSection() {
       playVideo()
       return
     }
+
+    // 새로고침 시 브라우저가 직전 스크롤 위치를 복원해 hero를 지나치지 않도록 맨 위로
+    window.scrollTo(0, 0)
 
     // 인트로 동안 스크롤 잠금
     const sbw = window.innerWidth - document.documentElement.clientWidth
@@ -159,7 +181,9 @@ function HeroSection() {
           )
 
           gsap.set(targetVideo, { opacity: targetAlpha })
-          if (logo) gsap.set(logo, { autoAlpha: 1 - clamp01(p / 0.3) }) // 초반 30%에서 로고 완전히 사라짐(영상 줄기 전) — 0.3이 속도 노브
+          // 인라인 영상이 보이기 시작하면 재생 보장 (브라우저가 화면 밖일 때 멈춰둔 걸 다시 켬)
+          if (targetAlpha > 0 && targetVideo.paused) targetVideo.play().catch(() => {})
+          if (logo) gsap.set(logo, { autoAlpha: p > 0.01 ? 0 : 1 })
           if (p <= 0) {
             resetHeroVideo()
             return
@@ -187,6 +211,7 @@ function HeroSection() {
         },
         onLeave: () => {
           gsap.set(targetVideo, { opacity: 1 })
+          targetVideo.play().catch(() => {}) // 핸드오프 완료 후 인라인 영상 재생 유지
           gsap.set(video, { autoAlpha: 0 })
           if (logo) gsap.set(logo, { autoAlpha: 0 })
         },
@@ -194,6 +219,14 @@ function HeroSection() {
           gsap.set(targetVideo, { opacity: 0 })
           if (logo) gsap.set(logo, { clearProps: 'opacity,visibility' })
           resetHeroVideo()
+        },
+        // 방어: 새로고침/refresh 시 핸드오프 구간 밖(progress 0)이면 영상 깨끗이 리셋
+        // → 새로고침으로 영상이 fixed·반투명 중간상태로 박히는 현상 방지
+        onRefresh: (self) => {
+          if (self.progress <= 0) {
+            resetHeroVideo()
+            if (logo) gsap.set(logo, { autoAlpha: 1 })
+          }
         },
       })
     }
@@ -218,6 +251,7 @@ function HeroSection() {
         ref={videoRef}
         className={styles.video}
         src={videoSrc}
+        poster={posterSrc}
         muted
         loop
         playsInline
@@ -231,7 +265,7 @@ function HeroSection() {
       </div>
       {/* 검정 패널 — 갈라지며 아래로 (한글 카피 포함) */}
       <div className={styles.panelBottom} ref={panelBottomRef}>
-        <p className={styles.copyKr}>빛이 머문 자리에, 온기가 남습니다</p>
+        <p className={styles.copyKr}>우리는 세상을 이롭게 하는 빛을 만듭니다</p>
       </div>
 
       {/* 혜성 빛 — 분할선(가운데)에서 가로로 지나감 */}

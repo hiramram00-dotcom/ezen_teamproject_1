@@ -18,7 +18,29 @@
   color: #fff;
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
-  transition: background 0.25s ease;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(20px);
+  transition: background 0.25s ease, opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease, bottom 0.4s ease;
+}
+.topButton.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* 맨 아래 스크롤 — 버튼을 위로 올림 (푸터 버튼과 겹침 방지) */
+.topButton.atBottom {
+  bottom: 200px;
+}
+
+/* 메뉴 오버레이 열렸을 때 — Top 버튼 숨김 (메뉴 위로 비치지 않게) */
+:global(body[data-menu-open='true']) .topButton {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 .topButton:hover {
   background: rgba(0, 0, 0, 0.4);

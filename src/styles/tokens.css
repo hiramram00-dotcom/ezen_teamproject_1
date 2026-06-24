@@ -22,6 +22,26 @@
   --font-en:   'Instrument Sans', sans-serif;    /* 영문 기본 */
   --font-deco: 'Playfair Display', serif;        /* 영문 장식 */
 
+  /* ---------- FONT SIZE — 폰트 크기 (2026-06-23 팀 확정 / 웹 고정값) ----------
+     인덱스 기준 9단계. 모바일(반응형)은 보류 → 추후 미디어쿼리로 추가 예정.
+     사용: font-size: var(--fs-title-1)  또는 유틸 클래스 .fs-title-1 (typography.css) */
+
+  /* 디스플레이 Display */
+  --fs-display-1: 180px;
+
+  /* 제목 Title */
+  --fs-title-1: 120px;
+  --fs-title-2: 96px;
+  --fs-title-3: 86px;
+  --fs-title-4: 70px;
+  /* 본문 Body */
+  --fs-body-1: 40px;
+  --fs-body-2: 24px;
+  /* 서브텍스트 Subtext */
+  --fs-sub-1: 21px;
+  --fs-sub-2: 19px;
+  --fs-sub-3: 16px;
+
   /* ---------- BASE ---------- */
   --line-height-base: 1.4;   /* 행간 140% 통일 */
 }

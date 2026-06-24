@@ -16,7 +16,7 @@ import styles from './FixSnowman2Video.module.css'
  *   배포에서도 보이도록 외부 URL 사용. 로컬 파일(public/videos)은 백업용.
  */
 const VIDEO_SRC =
-  'https://res.cloudinary.com/ddit4bjrw/video/upload/video-ilkw-snowman_dufdig.mp4'
+  'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto:best/video-ilkw-snowman_dufdig.mp4'
 
 // 카드(최소) 크기 — Figma inset 기준: width 50.37%, height 45.09%
 const CARD_W = 50.37 // vw
@@ -127,11 +127,11 @@ function FixSnowman2Video() {
             muted
             loop
             playsInline
-            preload="auto"
+            preload="metadata"
           />
           <div ref={overlayRef} className={styles.overlay}>
             <p className={styles.overlayTitle}>SNOWMAN</p>
-            <p className={`${styles.overlayDesc} type-body-4`}>
+            <p className={`${styles.overlayDesc} fs-sub-1`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
               More than a light,
               <br />a presence.
             </p>
