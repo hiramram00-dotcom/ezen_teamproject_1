@@ -112,7 +112,9 @@ function PhilosophySection() {
         {/* 카드는 무대 안에서 아래→중앙으로 이동 — 섹션이 보이는 순간 화면 아래에서
             등장해 위로 올라오다가, 무대가 화면을 채우면 화면 정중앙에 위치한다. */}
         <div ref={panelRef} className={styles.panel}>
-          <img className={styles.light} src={philosophyLight} alt="빛을 밝히는 펜던트 조명" />
+          {/* Our Philosophy 텍스트 + 조명 이미지 + 문구를 하나의 묶음으로 카드 정중앙 배치 */}
+          <div className={styles.group}>
+            <img className={styles.light} src={philosophyLight} alt="빛을 밝히는 펜던트 조명" />
           <h2 id="philosophy-title" className={styles.title}>
             <span>Our</span>
             <span>Philosophy</span>
@@ -134,6 +136,7 @@ function PhilosophySection() {
               </span>
             ))}
           </p>
+          </div>
         </div>
       </div>
     </section>
