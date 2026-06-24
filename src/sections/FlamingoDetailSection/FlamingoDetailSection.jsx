@@ -2,8 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import ilkwLogo from './assets/ilkw-green.svg'
-import heroBackground from './assets/hero-background.webp'
-import introLamp from './assets/intro-lamp.webp'
+import introLamp from './assets/intro-window.webp'
 import floorLamp from './assets/floor-lamp.webp'
 import storyTulip from './assets/story-tulip.webp'
 import storyChair from './assets/story-chair.webp'
@@ -12,7 +11,6 @@ import posterCenter from './assets/poster-center.webp'
 import posterCream from './assets/poster-cream.webp'
 import kbpLeft from './assets/kbp-left.webp'
 import kbpRight from './assets/kbp-right.webp'
-import kbpWide from './assets/kbp-wide.webp'
 import otherSnowman from './assets/other-snowman.webp'
 import otherSnowball from './assets/other-snowball.webp'
 import otherMario from './assets/other-mario.webp'
@@ -36,6 +34,24 @@ function FlamingoDetailSection() {
   const storySlideRefs = useRef([])
   const storyTitleRef = useRef(null)
   const storyDescriptionRef = useRef(null)
+  const greenPosterRef = useRef(null)
+  const greenPosterImageRef = useRef(null)
+  const centerPosterRef = useRef(null)
+  const centerPosterImageRef = useRef(null)
+  const madeForRef = useRef(null)
+  const momentRef = useRef(null)
+  const creamPosterRef = useRef(null)
+  const madeToRef = useRef(null)
+  const glowRef = useRef(null)
+  const creamProductImageRef = useRef(null)
+  const creamLogoRef = useRef(null)
+  const creamYearRef = useRef(null)
+  const collaborationRef = useRef(null)
+  const collaborationGridRef = useRef(null)
+  const collaborationSubtitleRef = useRef(null)
+  const collaborationTitleRef = useRef(null)
+  const collaborationButtonRef = useRef(null)
+  const collaborationButtonTextRef = useRef(null)
   const [isDragging, setIsDragging] = useState(false)
   const dragState = useRef({ x: 0, left: 0 })
 
@@ -48,7 +64,7 @@ function FlamingoDetailSection() {
 
       gsap.fromTo(
         introImageRef.current,
-        { scale: 1.12 },
+        { scale: 1.35 },
         {
           scale: 1,
           ease: 'none',
@@ -61,24 +77,27 @@ function FlamingoDetailSection() {
         }
       )
 
+      const introTitleLines = introTitleRef.current.querySelectorAll('[data-intro-line]')
+
       gsap
         .timeline({
           scrollTrigger: {
             trigger: introCopyRef.current,
             start: 'top 88%',
-            toggleActions: 'play none none reverse',
+            toggleActions: 'restart none none reset',
           },
         })
         .fromTo(
-          introTitleRef.current,
-          { autoAlpha: 0, y: 32 },
-          { autoAlpha: 1, y: 0, duration: 0.7, ease: 'power2.out' }
+          introTitleLines,
+          { autoAlpha: 0, y: 130 },
+          { autoAlpha: 1, y: 0, duration: 1.15, ease: 'power3.out', stagger: 0.12 },
+          0
         )
         .fromTo(
           introDescriptionRef.current,
           { autoAlpha: 0, y: 24 },
-          { autoAlpha: 1, y: 0, duration: 0.65, ease: 'power2.out' },
-          '-=0.15'
+          { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power2.out' },
+          0.45
         )
     }, intro)
 
@@ -142,16 +161,274 @@ function FlamingoDetailSection() {
         })
         .fromTo(
           storyTitleRef.current,
-          { autoAlpha: 0, y: 28 },
-          { autoAlpha: 1, y: 0, duration: 0.55, ease: 'power2.out' }
+          { autoAlpha: 0, y: 18 },
+          { autoAlpha: 1, y: 0, duration: 0.42, ease: 'sine.out' }
         )
         .fromTo(
           storyDescriptionRef.current,
-          { autoAlpha: 0, y: 22 },
-          { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power2.out' },
-          '-=0.15'
+          { autoAlpha: 0, y: 14 },
+          { autoAlpha: 1, y: 0, duration: 0.38, ease: 'sine.out' },
+          '-=0.2'
         )
     }, story)
+
+    return () => ctx.revert()
+  }, [])
+
+  useLayoutEffect(() => {
+    const poster = greenPosterRef.current
+    if (!poster) return undefined
+
+    const ctx = gsap.context(() => {
+      const tracks = poster.querySelectorAll('[data-poster-track]')
+      const lineBar = poster.querySelector('[data-poster-line-bar]')
+
+      gsap.set(tracks, { yPercent: 0 })
+      gsap.set(lineBar, { scaleX: 0, transformOrigin: 'left center' })
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+      const swapLoop = gsap
+        .timeline({ paused: true, repeat: -1 })
+        .to(tracks, { yPercent: -50, duration: 0.4, ease: 'sine.inOut' }, 0.9)
+        .to(tracks, { yPercent: -50, duration: 0.9 }, 1.3)
+
+      const barIntro = gsap.fromTo(
+        lineBar,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 1.6, ease: 'power2.out', delay: 0.25, paused: true }
+      )
+
+      const pulse = gsap
+        .timeline({ paused: true, repeat: -1, repeatDelay: 1.5 })
+        .to(greenPosterImageRef.current, {
+          scale: 1.22,
+          duration: 2,
+          ease: 'sine.inOut',
+        })
+        .to(
+          greenPosterImageRef.current,
+          { scale: 1, duration: 2, ease: 'sine.inOut' },
+          '+=1.5'
+        )
+
+      ScrollTrigger.create({
+        trigger: poster,
+        start: 'top bottom',
+        end: 'bottom top',
+        onEnter: () => {
+          swapLoop.play()
+          barIntro.restart()
+          pulse.play()
+        },
+        onEnterBack: () => {
+          swapLoop.play()
+          barIntro.restart()
+          pulse.play()
+        },
+        onLeave: () => {
+          swapLoop.pause()
+          barIntro.pause(0)
+          pulse.pause()
+        },
+        onLeaveBack: () => {
+          swapLoop.pause()
+          barIntro.pause(0)
+          pulse.pause()
+        },
+      })
+    }, poster)
+
+    return () => ctx.revert()
+  }, [])
+
+  useLayoutEffect(() => {
+    const centerPoster = centerPosterRef.current
+    if (!centerPoster) return undefined
+
+    const ctx = gsap.context(() => {
+      gsap.set(madeForRef.current, { y: 0, autoAlpha: 1 })
+      gsap.set(momentRef.current, { y: 0, autoAlpha: 1 })
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+      gsap.fromTo(
+        centerPosterImageRef.current,
+        { scale: 1 },
+        {
+          scale: 1.16,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: centerPoster,
+            start: 'top 85%',
+            end: 'bottom 15%',
+            scrub: 0.8,
+          },
+        }
+      )
+
+      const posterHeight = centerPoster.offsetHeight
+      const madeForDistance = posterHeight * (-90 / 557)
+      const momentDistance = posterHeight * (147 / 557)
+
+      const float = gsap
+        .timeline({ paused: true, repeat: -1 })
+        .to(
+          madeForRef.current,
+          { y: madeForDistance, duration: 1, ease: 'sine.inOut' },
+          0.8
+        )
+        .to(
+          momentRef.current,
+          { y: momentDistance, duration: 1, ease: 'sine.inOut' },
+          0.8
+        )
+        .to(madeForRef.current, { y: 0, duration: 1, ease: 'sine.inOut' }, 2.6)
+        .to(momentRef.current, { y: 0, duration: 1, ease: 'sine.inOut' }, 2.6)
+
+      ScrollTrigger.create({
+        trigger: centerPoster,
+        start: 'top bottom',
+        end: 'bottom top',
+        onEnter: () => float.play(),
+        onEnterBack: () => float.play(),
+        onLeave: () => float.pause(),
+        onLeaveBack: () => float.pause(),
+      })
+    }, centerPoster)
+
+    return () => ctx.revert()
+  }, [])
+
+  useLayoutEffect(() => {
+    const creamPoster = creamPosterRef.current
+    if (!creamPoster) return undefined
+
+    const ctx = gsap.context(() => {
+      gsap.set(madeToRef.current, { x: 0 })
+      gsap.set(glowRef.current, { x: 0 })
+      gsap.set(creamProductImageRef.current, { scale: 1 })
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+      const posterWidth = creamPoster.offsetWidth
+      const madeToDistance = posterWidth * (159 / 450)
+      const glowDistance = posterWidth * (-123 / 450)
+
+      const drift = gsap
+        .timeline({ paused: true, repeat: -1 })
+        .to(
+          madeToRef.current,
+          { x: madeToDistance, duration: 1, ease: 'sine.inOut' },
+          0.8
+        )
+        .to(
+          glowRef.current,
+          { x: glowDistance, duration: 1, ease: 'sine.inOut' },
+          0.8
+        )
+        .to(madeToRef.current, { x: 0, duration: 1, ease: 'sine.inOut' }, 2.6)
+        .to(glowRef.current, { x: 0, duration: 1, ease: 'sine.inOut' }, 2.6)
+        .to(
+          creamProductImageRef.current,
+          { scale: 1.35, duration: 1, ease: 'sine.inOut' },
+          0.8
+        )
+        .to(
+          creamProductImageRef.current,
+          { scale: 1, duration: 1, ease: 'sine.inOut' },
+          2.6
+        )
+
+      ScrollTrigger.create({
+        trigger: creamPoster,
+        start: 'top bottom',
+        end: 'bottom top',
+        onEnter: () => drift.play(),
+        onEnterBack: () => drift.play(),
+        onLeave: () => drift.pause(),
+        onLeaveBack: () => drift.pause(),
+      })
+    }, creamPoster)
+
+    return () => ctx.revert()
+  }, [])
+
+  useLayoutEffect(() => {
+    const collaboration = collaborationRef.current
+    if (!collaboration) return undefined
+
+    const ctx = gsap.context(() => {
+      const collaborationImages = collaborationGridRef.current?.querySelectorAll('img')
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      if (prefersReducedMotion) {
+        gsap.set(collaborationImages, { autoAlpha: 1, y: 0, clipPath: 'inset(0 0 0% 0)' })
+        return
+      }
+
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: collaborationTitleRef.current,
+            start: 'top 95%',
+            toggleActions: 'play none none reverse',
+          },
+        })
+        .fromTo(
+          collaborationSubtitleRef.current,
+          { autoAlpha: 0, y: 18 },
+          { autoAlpha: 1, y: 0, duration: 0.42, ease: 'sine.out' }
+        )
+        .fromTo(
+          collaborationTitleRef.current,
+          { autoAlpha: 0, y: 14 },
+          { autoAlpha: 1, y: 0, duration: 0.38, ease: 'sine.out' },
+          '-=0.2'
+        )
+
+      gsap.fromTo(
+        collaborationImages,
+        {
+          autoAlpha: 0,
+          y: -12,
+          clipPath: 'inset(0 0 100% 0)',
+        },
+        {
+          autoAlpha: 1,
+          y: 0,
+          clipPath: 'inset(0 0 0% 0)',
+          duration: 1.25,
+          ease: 'sine.inOut',
+          stagger: 0,
+          scrollTrigger: {
+            trigger: collaborationGridRef.current,
+            start: 'top 90%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      )
+
+      const playButtonSweep = () => {
+        const buttonText = collaborationButtonTextRef.current
+        if (!buttonText) return
+
+        buttonText.classList.remove(styles.collaborationButtonTextSweep)
+        void buttonText.offsetWidth
+        buttonText.classList.add(styles.collaborationButtonTextSweep)
+      }
+
+      ScrollTrigger.create({
+        trigger: collaborationButtonRef.current,
+        start: 'top 92%',
+        onEnter: playButtonSweep,
+        onLeaveBack: () => {
+          collaborationButtonTextRef.current?.classList.remove(
+            styles.collaborationButtonTextSweep
+          )
+        },
+      })
+    }, collaboration)
 
     return () => ctx.revert()
   }, [])
@@ -181,20 +458,11 @@ function FlamingoDetailSection() {
     setIsDragging(false)
   }
 
-  const moveWithWheel = (event) => {
-    const scroller = scrollRef.current
-    if (!scroller || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return
-
-    event.preventDefault()
-    scroller.scrollLeft += event.deltaY
-  }
-
   return (
     <main className={styles.detail}>
       <section className={`${styles.panel} ${styles.hero}`}>
         <video
           className={styles.heroBackground}
-          poster={heroBackground}
           autoPlay
           loop
           muted
@@ -217,8 +485,8 @@ function FlamingoDetailSection() {
         </figure>
         <div ref={introCopyRef} className={styles.introCopy}>
           <h2 ref={introTitleRef} className={styles.introTitle}>
-            <span>A quiet</span>
-            <em>form of light.</em>
+            <span data-intro-line>A quiet</span>
+            <em data-intro-line>form of light.</em>
           </h2>
           <p ref={introDescriptionRef} className={styles.introDescription}>
             빛이 공간과 사람 사이에 만들어내는 감각에 주목했습니다. 시선을 끄는
@@ -263,52 +531,85 @@ function FlamingoDetailSection() {
 
       <section className={`${styles.panel} ${styles.posters}`}>
         <div className={styles.posterGrid}>
-          <article className={`${styles.posterCard} ${styles.greenPoster}`}>
-            <span className={styles.liveIn}>LIVE IN</span>
-            <span className={styles.better}>A BETTER</span>
-            <span className={styles.light}>LIGHT</span>
-            <span className={styles.posterLine} aria-hidden="true" />
-            <img src={posterGreen} alt="녹색 플라밍고 조명 포스터" />
-          </article>
-
-          <article className={`${styles.posterCard} ${styles.centerPoster}`}>
-            <img src={posterCenter} alt="플라밍고 조명 포스터" />
-            <span className={styles.madeFor}>MADE FOR THE</span>
-            <span className={styles.moment}>MOMENT</span>
-          </article>
-
-          <article className={`${styles.posterCard} ${styles.creamPoster}`}>
-            <h2>MADE TO GLOW</h2>
-            <img
-              className={styles.creamProductImage}
-              src={posterCream}
-              alt="크림색 플라밍고 조명 포스터"
+          <article ref={greenPosterRef} className={`${styles.posterCard} ${styles.greenPoster}`}>
+            <span className={styles.liveIn}>
+              <span className={styles.posterTrack} data-poster-track>
+                <span>LIVE IN</span>
+                <span aria-hidden="true">LIVE IN</span>
+              </span>
+            </span>
+            <span className={styles.better}>
+              <span className={styles.posterTrack} data-poster-track>
+                <span>A BETTER</span>
+                <span aria-hidden="true">A BETTER</span>
+              </span>
+            </span>
+            <span className={styles.light}>
+              <span className={styles.posterTrack} data-poster-track>
+                <span>LIGHT</span>
+                <span aria-hidden="true">LIGHT</span>
+              </span>
+            </span>
+            <span
+              className={styles.posterLine}
+              data-poster-line-bar
+              aria-hidden="true"
             />
-            <img className={styles.creamLogo} src={ilkwLogo} alt="ILKW" />
-            <span>— 1962</span>
+            <div className={styles.greenPosterImageMask}>
+              <img ref={greenPosterImageRef} src={posterGreen} alt="녹색 플라밍고 조명 포스터" />
+            </div>
+          </article>
+
+          <article ref={centerPosterRef} className={`${styles.posterCard} ${styles.centerPoster}`}>
+            <img ref={centerPosterImageRef} src={posterCenter} alt="플라밍고 조명 포스터" />
+            <span ref={madeForRef} className={styles.madeFor}>
+              <span>MADE FOR THE</span>
+            </span>
+            <span ref={momentRef} className={styles.moment}>
+              <span>MOMENT</span>
+            </span>
+          </article>
+
+          <article ref={creamPosterRef} className={`${styles.posterCard} ${styles.creamPoster}`}>
+            <h2 ref={madeToRef} className={styles.madeTo}>MADE TO</h2>
+            <h2 ref={glowRef} className={styles.glow}>GLOW</h2>
+            <div className={styles.creamProductImageMask}>
+              <img
+                ref={creamProductImageRef}
+                className={styles.creamProductImage}
+                src={posterCream}
+                alt="크림색 플라밍고 조명 포스터"
+              />
+            </div>
+            <img ref={creamLogoRef} className={styles.creamLogo} src={ilkwLogo} alt="ILKW" />
+            <span ref={creamYearRef}>— 1962</span>
           </article>
         </div>
       </section>
 
-      <section className={styles.collaboration}>
-        <h2 className={styles.collaborationTitle}>Kitty Bunny Pony</h2>
-        <p className={styles.collaborationDescription}>
-          플라밍고26에 키티버니포니 특유의 감각적인 패턴을 더한 협업 에디션입니다.
-          <br />
-          부드러운 빛과 생동감 있는 그래픽이 어우러져,
-          <br />
-          조명을 공간의 분위기를 완성하는 특별한 오브젝트로 만들어줍니다.
-        </p>
-        <div className={styles.collaborationGrid}>
-          <img src={kbpLeft} alt="검정 패턴 플라밍고 조명" />
-          <img src={kbpRight} alt="크림 패턴 플라밍고 조명" />
+      <section ref={collaborationRef} className={`${styles.panel} ${styles.collaboration}`}>
+        <div className={styles.collaborationHeading}>
+          <p ref={collaborationSubtitleRef} className={styles.collaborationSubtitle}>
+            공간에 온기를 더하는 빛.
+          </p>
+          <h2 ref={collaborationTitleRef} className={styles.collaborationTitle}>
+            FLAMINGO
+          </h2>
         </div>
-        <img
-          className={styles.collaborationWide}
-          src={kbpWide}
-          alt="튤립과 함께 놓인 플라밍고 조명"
-          loading="lazy"
-        />
+        <div ref={collaborationGridRef} className={styles.collaborationGrid}>
+          <img src={kbpLeft} alt="책 위에 놓인 키티버니포니 패턴 플라밍고 조명" />
+          <img src={kbpRight} alt="튤립 옆에 놓인 키티버니포니 패턴 플라밍고 조명" />
+        </div>
+        <a
+          ref={collaborationButtonRef}
+          className={styles.collaborationButton}
+          href="#"
+          data-cursor="pointer"
+        >
+          <span ref={collaborationButtonTextRef} className={styles.collaborationButtonText}>
+            제품 보러가기
+          </span>
+        </a>
       </section>
 
       <section
@@ -321,7 +622,6 @@ function FlamingoDetailSection() {
         onPointerMove={moveDrag}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
-        onWheel={moveWithWheel}
       >
         <div className={styles.otherTrack}>
           <div className={styles.otherIntro}>
