@@ -178,7 +178,10 @@
 
 .legacy {
   position: absolute;
-  top: calc(68 * var(--about-vw));
+  /* 인트로 검정 레이어(.introParticles: max(56.25*about-vw, 100svh)) 바로 아래에
+     항상 붙도록 — 예전엔 너비 기준 고정값(68*about-vw=1305px)이라, 화면이 1305px보다
+     높아지면 100svh로 커진 검정 인트로가 h2를 덮어 사라졌다. 간격(11.75)은 원래 값 유지. */
+  top: calc(max(calc(56.25 * var(--about-vw)), 100svh) + 11.75 * var(--about-vw));
   left: 50%;
   display: flex;
   flex-direction: column;
