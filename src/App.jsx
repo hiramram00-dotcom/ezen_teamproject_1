@@ -120,6 +120,7 @@ function App() {
           path="/product/flamingo"
           element={
             <>
+              <Header />
               <FlamingoDetailSection />
               <Footer hidePhoto />
             </>

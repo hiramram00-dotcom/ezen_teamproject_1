@@ -8,19 +8,32 @@
 .panel {
   position: relative;
   width: 100%;
-  height: min(56.25vw, 100svh);
+  max-width: var(--layout-container-width);
+  height: min(100svh, 1080px);
+  margin-inline: auto;
+  /*
+   * The detail artwork is composed on a 1920 x 1080 canvas. Keep that
+   * canvas from being squashed when only the browser height is reduced;
+   * the page can scroll instead, so cover images retain their intended crop.
+   */
+  min-height: min(56.25vw, 1080px);
   container-type: size;
   overflow: hidden;
   background: var(--color-base-2);
 }
 
+.hero {
+  max-width: none;
+  height: 100svh;
+  min-height: 56.25vw;
+}
+
 .intro {
-  min-height: min(56.25vw, 1000px);
-  margin-top: 0.2083vw;
+  margin-top: min(0.2083vw, 4px);
 }
 
 .posters {
-  margin-top: -0.0521vw;
+  margin-top: max(-0.0521vw, -1px);
 }
 
 .heroBackground {
@@ -64,42 +77,42 @@
 
 .introCopy {
   position: absolute;
-  top: calc(58.8889% + min(2.5vw, 48px));
+  top: calc(58.8889% + 2.0833cqw);
   left: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: min(1.875vw, 36px);
-  width: min(36.5625vw, 702px);
+  gap: 2.0833cqw;
+  width: 36.5625cqw;
   transform: translateX(-50%);
 }
 
 .introTitle {
   font-family: var(--font-en);
-  font-size: min(4.1667vw, 80px);
+  font-size: 4.1667cqw;
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.03em;
   text-align: center;
   white-space: nowrap;
-  will-change: transform, opacity;
 }
 
 .introTitle span,
 .introTitle em {
   display: block;
+  will-change: transform, opacity;
 }
 
 .introTitle em {
   font-family: var(--font-deco);
   font-style: italic;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .introDescription {
   width: 100%;
   font-family: var(--font-kr);
-  font-size: min(1.0938vw, 21px);
+  font-size: 1.0938cqw;
   font-weight: 300;
   line-height: 1.4;
   letter-spacing: -0.05em;
@@ -129,15 +142,15 @@
 
 .storyCopy {
   position: absolute;
-  bottom: min(1.3542vw, 26px);
-  left: min(1.9792vw, 38px);
-  width: min(29.4792vw, 566px);
+  bottom: 1.3542cqw;
+  left: 1.9792cqw;
+  width: 29.4792cqw;
 }
 
 .storyCopy h2 {
-  margin-bottom: min(0.1042vw, 2px);
+  margin-bottom: 0.2604cqw;
   font-family: var(--font-deco);
-  font-size: min(1.4583vw, 28px);
+  font-size: 1.4583cqw;
   font-style: italic;
   font-weight: 500;
   line-height: 1.4;
@@ -147,7 +160,7 @@
 
 .storyCopy p {
   font-family: var(--font-kr);
-  font-size: min(1.0938vw, 21px);
+  font-size: 1.0938cqw;
   font-weight: 300;
   line-height: 1.4;
   letter-spacing: -0.05em;
@@ -159,14 +172,14 @@
   top: 24.26%;
   left: 9.64%;
   display: grid;
-  grid-template-columns: repeat(3, 23.44vw);
-  gap: 5.2083vw;
+  grid-template-columns: repeat(3, 23.44cqw);
+  gap: 5.2083cqw;
 }
 
 .posterCard {
   position: relative;
-  width: 23.44vw;
-  height: 29.01vw;
+  width: 23.44cqw;
+  height: 29.01cqw;
   overflow: hidden;
 }
 
@@ -175,13 +188,24 @@
   color: #ffd900;
 }
 
-.greenPoster img {
+.greenPosterImageMask {
   position: absolute;
   top: 20%;
   left: 24%;
   width: 51.78%;
   height: 61.04%;
-  border-radius: 1.0417vw;
+  overflow: hidden;
+  border-radius: 1.0417cqw;
+}
+
+.greenPoster img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+  will-change: transform;
 }
 
 .greenPoster span,
@@ -195,55 +219,88 @@
   line-height: 1.4;
 }
 
+.liveIn,
+.better,
+.light {
+  font-size: 1.6667cqw;
+  height: 1.4em;
+  overflow: hidden;
+}
+
 .liveIn {
   top: 9.86%;
   left: 38.2%;
-  font-size: 1.6667vw;
 }
 
 .better {
   top: 45.45%;
   left: 2.4%;
-  font-size: 1.6667vw;
 }
 
 .light {
   top: 45.45%;
-  right: 0.9%;
-  font-size: 1.6667vw;
+  right: 4.7%;
+}
+
+.liveIn span,
+.better span,
+.light span {
+  position: static;
+  display: block;
+}
+
+.posterTrack {
+  display: block;
+  will-change: transform;
 }
 
 .posterLine {
   top: 49.9%;
   left: 35.9%;
   width: 36.4%;
-  height: 1px;
+  height: 0.6px;
   background: #ffd900;
+  will-change: transform;
 }
 
 .centerPoster img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform-origin: center;
+  will-change: transform;
 }
 
 .madeFor,
 .moment {
-  transform: rotate(-90deg);
-  transform-origin: left top;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 17.3333%;
   color: #ffd900;
-  font-size: 2.9167vw;
+  font-size: 2.9167cqw;
+  letter-spacing: -0.03em;
+  will-change: transform, opacity;
+}
+
+.madeFor > span,
+.moment > span {
+  position: static;
+  flex: none;
+  transform: rotate(-90deg);
   white-space: nowrap;
 }
 
 .madeFor {
-  left: 1%;
-  bottom: 6%;
+  left: 0;
+  top: 24.237%;
+  height: 69.12%;
 }
 
 .moment {
-  left: 18%;
-  bottom: 28%;
+  left: 17.33%;
+  top: 24.057%;
+  height: 42.908%;
 }
 
 .creamPoster {
@@ -252,105 +309,183 @@
 }
 
 .creamPoster h2 {
-  top: 4.3%;
-  left: 10.9%;
-  font-size: 2.5vw;
+  font-size: 2.5cqw;
+  letter-spacing: -0.03em;
   white-space: nowrap;
+}
+
+.madeTo {
+  top: 4.847%;
+  left: 9.778%;
+}
+
+.glow {
+  top: 16.876%;
+  left: 48.444%;
+}
+
+.creamProductImageMask {
+  position: absolute;
+  top: 31.78%;
+  left: 36.89%;
+  right: 21.05%;
+  height: 51.7%;
+  overflow: hidden;
+  border-radius: 1.0417cqw;
 }
 
 .creamProductImage {
   position: absolute;
-  top: 20%;
-  left: 38.7%;
-  width: 49.56%;
-  height: 61.04%;
-  border-radius: 1.0417vw;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+  will-change: transform;
 }
 
 .creamLogo {
   position: absolute;
-  left: 14.9%;
-  bottom: 5.8%;
-  width: 32.3%;
-  height: 7.8%;
+  left: 12.98%;
+  bottom: 6.64%;
+  width: 30.59%;
+  height: 7%;
   object-fit: contain;
 }
 
 .creamPoster span {
-  right: 10%;
-  bottom: 4.67%;
-  font-size: 2.0833vw;
+  left: 48.444%;
+  bottom: 4.668%;
+  font-size: 2.0833cqw;
+  letter-spacing: -0.03em;
 }
 
 .collaboration {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1920 / 2973;
-  margin-top: 0.1563vw;
-  overflow: hidden;
-  background: var(--color-base-2);
+  margin-top: min(0.1563vw, 3px);
+}
+
+.collaborationHeading {
+  position: absolute;
+  inset: 0;
+}
+
+.collaborationSubtitle {
+  position: absolute;
+  top: 2.7604cqw;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-kr);
+  font-size: 1.0938cqw;
+  font-weight: 300;
+  line-height: 1.4;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  will-change: transform, opacity;
 }
 
 .collaborationTitle {
   position: absolute;
-  top: 4.67%;
+  top: 3.9063cqw;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-deco);
-  font-size: min(6.25vw, 120px);
+  font-size: 4.1667cqw;
   font-style: italic;
   font-weight: 400;
   line-height: 1.3;
   letter-spacing: -0.02em;
+  will-change: transform, opacity;
   white-space: nowrap;
 }
 
-.collaborationDescription {
+.collaborationButton {
   position: absolute;
-  top: 11.261%;
+  top: 50.6771cqw;
   left: 50%;
-  width: min(35.7813vw, 687px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 11.9792cqw;
+  height: 2.9688cqw;
   transform: translateX(-50%);
+  border: 1px solid var(--color-base-3);
+  border-radius: 50px;
   font-family: var(--font-kr);
-  font-size: min(1.0938vw, 21px);
-  font-weight: 300;
-  line-height: 1.4;
-  letter-spacing: -0.04em;
-  text-align: center;
+  font-size: 0.9896cqw;
+  font-weight: 400;
+  line-height: normal;
+  color: var(--color-base-3);
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.collaborationButton:hover {
+  background: var(--color-base-3);
+  color: var(--color-base-1);
+}
+
+.collaborationButtonText {
+  position: relative;
+  display: inline-block;
+}
+
+.collaborationButtonTextSweep {
+  -webkit-mask-image: radial-gradient(
+    circle 38px at center,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 30%,
+    #000 95%
+  );
+  mask-image: radial-gradient(
+    circle 38px at center,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 30%,
+    #000 95%
+  );
+  -webkit-mask-size: 330% 100%;
+  mask-size: 330% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: collaborationButtonSweep 1s ease;
+}
+
+@keyframes collaborationButtonSweep {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+
+  to {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
 }
 
 .collaborationGrid {
   position: absolute;
-  top: 23.31%;
+  top: 11.7708cqw;
   left: 0;
+  width: 100%;
+  height: 36.4583cqw;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 100%;
-  gap: min(1.0417vw, 20px);
-  width: 100%;
-  height: 31.96%;
+  gap: 1.5625cqw;
 }
 
 .collaborationGrid img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.collaborationWide {
-  position: absolute;
-  top: 55.97%;
-  left: 0;
-  width: 100%;
-  height: 44.03%;
-  object-fit: cover;
+  will-change: clip-path, transform, opacity;
 }
 
 .otherProducts {
   position: relative;
   width: 100%;
-  height: 67.2917vw;
-  margin-top: 0.1563vw;
+  max-width: var(--layout-container-width);
+  height: min(67.2917vw, 1292px);
+  margin-top: min(0.1563vw, 3px);
+  margin-inline: auto;
   overflow-x: auto;
   overflow-y: hidden;
   background: var(--color-base-2);
@@ -358,6 +493,7 @@
   overscroll-behavior-x: contain;
   scrollbar-width: none;
   touch-action: pan-x;
+  container-type: inline-size;
 }
 
 .otherProducts::-webkit-scrollbar {
@@ -371,47 +507,59 @@
 
 .otherTrack {
   position: relative;
-  width: 253.4896vw;
-  height: 67.2917vw;
+  width: 180cqw;
+  height: 67.2917cqw;
   background: var(--color-base-2);
 }
 
 .otherIntro {
   position: absolute;
-  top: 10.4167vw;
-  left: 1.875vw;
+  left: 1.875cqw;
 }
 
 .otherIntro h2 {
+  position: absolute;
+  top: 5cqw;
+  left: 0;
+  margin: 0;
   font-family: var(--font-en);
-  font-size: min(6.7708vw, 130px);
+  font-size: 6.7708cqw;
   font-style: normal;
   font-weight: 400;
   line-height: 1.2;
   letter-spacing: -0.08em;
+  white-space: nowrap;
 }
 
 .otherIntro p {
-  margin-top: min(0.5208vw, 10px);
+  position: absolute;
+  top: 21.7708cqw;
+  left: 0;
+  margin: 0;
   font-family: var(--font-deco);
-  font-size: min(2.6042vw, 50px);
+  font-size: 2.0833cqw;
   font-style: italic;
   font-weight: 400;
   line-height: 1.3;
   letter-spacing: -0.02em;
   color: #8d8d8d;
+  white-space: nowrap;
 }
 
 .otherCard {
   position: absolute;
   overflow: hidden;
-  border-radius: 1.5625vw;
+  border-radius: 0;
   color: var(--color-base-1);
 }
 
 .otherCard img {
   position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   max-width: none;
+  object-fit: cover;
   user-select: none;
 }
 
@@ -419,115 +567,107 @@
   position: absolute;
   z-index: 2;
   font-family: var(--font-en);
-  font-size: min(3.6458vw, 70px);
+  font-size: 2.0833cqw;
   font-weight: 400;
   line-height: normal;
   letter-spacing: -0.02em;
 }
 
 .snowmanCard {
-  top: 16.09vw;
-  left: 36.2vw;
-  width: 42.97vw;
-  height: 32.19vw;
-}
-
-.snowmanCard img {
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 126.13%;
+  top: 20.7813cqw;
+  left: 32.1354cqw;
+  width: 29.9479cqw;
+  height: 22.4479cqw;
 }
 
 .snowmanCard h3 {
-  top: 1.2vw;
-  left: 1.15vw;
+  top: 1.6146cqw;
+  left: 3.9063cqw;
+  line-height: 1.4;
 }
 
-.snowballCard {
-  top: 9.64vw;
-  left: 81.3vw;
-  width: 38.91vw;
-  height: 38.91vw;
-}
-
-.snowballCard img {
+.snowmanCard img {
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+.snowballCard {
+  top: 17.2917cqw;
+  left: 63.6458cqw;
+  width: 26.0938cqw;
+  height: 26.0938cqw;
+}
+
 .snowballCard h3 {
-  right: 2.5vw;
-  bottom: 1.8vw;
+  right: 2.0313cqw;
+  bottom: 1.1458cqw;
   text-align: right;
 }
 
 .marioCard {
-  top: 9.64vw;
-  left: 122.92vw;
-  width: 57.4vw;
-  height: 35.78vw;
-}
-
-.marioCard img {
-  top: -82.53%;
-  left: 0;
-  width: 100%;
-  height: 182.53%;
+  top: 16.875cqw;
+  left: 91.3021cqw;
+  width: 35.8333cqw;
+  height: 20.1042cqw;
 }
 
 .marioCard h3 {
-  top: 1.9vw;
-  left: 21.77vw;
+  top: 1.875cqw;
+  right: 1.25cqw;
+  text-align: right;
   white-space: nowrap;
 }
 
-.flamingoCard {
-  top: 9.64vw;
-  left: 183.49vw;
-  width: 29.48vw;
-  height: 43.28vw;
+.marioCard img {
+  inset: auto;
+  width: 100%;
+  height: 202.87%;
+  left: 0;
+  top: -96.1%;
+  object-fit: fill;
 }
 
-.flamingoCard img {
-  top: 0;
-  left: -19.2%;
-  width: 124.96%;
-  height: 100%;
+.flamingoCard {
+  top: 16.8229cqw;
+  left: 128.6979cqw;
+  width: 19.7396cqw;
+  height: 29.0104cqw;
 }
 
 .flamingoCard h3 {
-  right: 1.5vw;
-  bottom: 4vw;
+  right: 1.875cqw;
+  bottom: 1.1979cqw;
   text-align: right;
 }
 
-.apolloCard {
-  top: 17.29vw;
-  left: 217.55vw;
-  width: 35.94vw;
-  height: 35.63vw;
+.flamingoCard img {
+  inset: auto;
+  width: 124.96%;
+  height: 100%;
+  left: -19.2%;
+  top: 0;
+  object-fit: fill;
 }
 
-.apolloCard img {
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.apolloCard {
+  top: 22.3958cqw;
+  left: 150cqw;
+  width: 23.6979cqw;
+  height: 23.4896cqw;
 }
 
 .apolloCard h3 {
-  right: 1.7vw;
-  bottom: 1.5vw;
+  right: 1.1198cqw;
+  bottom: 0.9883cqw;
   white-space: nowrap;
 }
 
 @media (max-width: 700px) {
   .introDescription,
   .storyCopy p,
-  .collaborationDescription {
+  .collaborationSubtitle {
     font-size: 7px;
   }
 
@@ -540,5 +680,9 @@
 @media (prefers-reduced-motion: reduce) {
   .detail {
     scroll-behavior: auto;
+  }
+
+  .collaborationButtonTextSweep {
+    animation: none;
   }
 }

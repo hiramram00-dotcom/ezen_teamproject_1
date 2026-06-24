@@ -44,7 +44,7 @@
 .heroCopy {
   color: var(--color-base-1);
   font-family: var(--font-en);
-  font-size: clamp(14px, 0.9375vw, 18px);
+  font-size: clamp(14px, 0.9375vw, var(--fs-sub-2));
   font-weight: 400;
   line-height: 1.4;
   letter-spacing: -0.04em;
@@ -55,7 +55,7 @@
 }
 
 .productRow {
-  --product-title-size: clamp(50px, 3.6458vw, 70px);
+  --product-title-size: clamp(50px, 3.6458vw, var(--fs-title-4));
   --product-title-line-height: clamp(70px, 5.1041vw, 98px);
 
   position: relative;
@@ -213,7 +213,7 @@
   width: 78%;
   transform: translateX(-50%);
   font-family: var(--font-en);
-  font-size: clamp(14px, 0.9375vw, 18px);
+  font-size: clamp(14px, 0.9375vw, var(--fs-sub-2));
   font-weight: 400;
   line-height: 1.4;
   letter-spacing: -0.04em;
