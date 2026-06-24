@@ -1222,7 +1222,7 @@ function AboutSection() {
         <span />
       </div>
 
-      <AboutIntroParticles key={introCycle} onComplete={handleIntroComplete} />
+      <AboutIntroParticles key={`intro-${introCycle}`} onComplete={handleIntroComplete} />
       <div
         ref={legacyRef}
         className={`${styles.legacy} ${legacyRevealed ? styles.legacyRevealed : ''}`}
@@ -1262,7 +1262,7 @@ function AboutSection() {
       </div>
 
       <div
-        key={storyCycle}
+        key={`story-${storyCycle}`}
         style={{
           '--story-media-mask': `${(1 - storyMediaProgress) * 50}%`,
           '--story-media-brightness': 0.18 + storyMediaProgress * 0.72,

@@ -51,6 +51,14 @@
   will-change: transform;
 }
 
+/* Our Philosophy 텍스트 + 이미지 + 문구 묶음 — 패널을 채우는 컨테이너를 살짝 내려
+   컴포지션 전체(Our 상단 ~ Philosophy 하단)를 카드 정중앙에 맞춤. */
+.group {
+  position: absolute;
+  inset: 0;
+  transform: translateY(3.57vw);
+}
+
 .light {
   position: absolute;
   top: 8.2vw;
@@ -102,12 +110,12 @@
 
 .message {
   position: absolute;
-  top: calc(var(--philosophy-title-bottom-top) + var(--philosophy-title-size) * 1.3 + ((50.1vw - (var(--philosophy-title-bottom-top) + var(--philosophy-title-size) * 1.3)) / 2));
+  top: calc(8.2vw + 28.2vw / 2); /* 상단 조명 이미지의 세로 중앙 */
   left: 50%;
   width: 100%;
   height: 3.4em;
   transform: translate(-50%, -50%);
-  color: var(--color-base-3);
+  color: #fff;
   font-family: var(--font-kr);
   font-size: 1.25vw;
   font-weight: 400;
