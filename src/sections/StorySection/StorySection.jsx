@@ -102,8 +102,13 @@ export default function StorySection() {
         height: '100%',
         objectFit: 'cover',
         objectPosition: '50% 50%',
-        force3D: true,
-        backfaceVisibility: 'hidden',
+        // 둥근 모서리를 핸드오프 처음부터 영상에 직접 부여(값 고정 4px) — 부모 카드의
+        // border-radius는 transform 걸린 자식을 못 둥글려서, 안착 때 갑자기 둥글어지며
+        // 툭 튀던 문제를 없앤다. 4px은 풀스크린에선 사실상 안 보이고 카드에서만 보인다.
+        clipPath: 'inset(0% round 4px)',
+        // 영상은 GPU 합성 레이어로 승격하지 않는다(처음부터 끝까지 일관) — 그래야
+        // 줄어드는 동안에도 선명하고, 안착 때 "흐림→선명" 토글로 툭 튀지 않는다.
+        force3D: false,
       })
 
       // 고화질 포스터 클론을 박스 안 영상 "위"에 겹침 — 영상과 100% 같이 줄어들다가
@@ -205,6 +210,7 @@ export default function StorySection() {
         pointerEvents: 'none',
         autoAlpha: 1,
         transformOrigin: '0 0',
+        force3D: false,
         clearProps: 'willChange,will-change',
       })
     }
@@ -369,7 +375,11 @@ export default function StorySection() {
           handoffStartRect = null
           handoffTargetRect = null
           isAtTarget = true
-          keepHandoffOnTargetCard()
+          // 핸드오프가 끝나는 즉시(섹션이 막 sticky 고정돼 카드가 안정적인 순간) 실제 카드로
+          // 교체한다. 예전엔 고정 박스로 200vh를 버티다가 sticky가 "풀리는 순간"에 교체해서
+          // 카드가 막 움직이기 시작한 찰나와 겹쳐 "툭" 튀었다. 이제 안정 구간에서 교체.
+          pinToTargetCard()
+          removeHandoffVideo()
           sourceVideo.play().catch(() => {})
           section.classList.remove(styles.isHandoffActive)
         },

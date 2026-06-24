@@ -6,12 +6,18 @@ import lamp from './assets/lamp.webp'
 import story2 from './assets/story-2.webp'
 import story3 from './assets/story-3.webp'
 
-const VIDEO_MOBILE_Q = '(max-width: 767px)'
 // ⚠️ Hero 영상과 URL을 100% 동일하게 유지 → 브라우저가 한 번만 받아 공유(중복 다운로드 0).
-// (예전엔 캡 없는 f_auto,q_auto = 1.22MB 풀해상도를 따로 받아 LCP를 4.6초까지 늘렸음)
-const VIDEO_WIDE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto:best,w_1920/hero-video2_ojabtt.mp4'
-const VIDEO_MOBILE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto:best,w_720/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.mp4'
-const pickVideoSrc = () => typeof window !== 'undefined' && window.matchMedia(VIDEO_MOBILE_Q).matches ? VIDEO_MOBILE : VIDEO_WIDE
+// 반응형 3단계: 모바일 w_720 / 타블렛 w_1280 / 데스크탑 w_2560 (같은 4K 소스)
+const HERO_VIDEO_ID = 'HELLO_SNOWMAN_SOLID_PORTABLE_ILKW_SNOWMAN15_SOLID_Portable_-_4-10s_msfzbu'
+const cldVideo = (w) => `https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto:best,w_${w}/${HERO_VIDEO_ID}.mp4`
+const VIDEO_MOBILE_Q = '(max-width: 767px)'
+const VIDEO_TABLET_Q = '(max-width: 1199px)'
+const pickVideoSrc = () => {
+  if (typeof window === 'undefined') return cldVideo(2560)
+  if (window.matchMedia(VIDEO_MOBILE_Q).matches) return cldVideo(720)
+  if (window.matchMedia(VIDEO_TABLET_Q).matches) return cldVideo(1280)
+  return cldVideo(2560)
+}
 
 /**
  * NewIntroSection — 브랜드 철학 인용 → 브랜드 스토리텔링 (핀 고정)
@@ -66,10 +72,12 @@ function NewIntroSectionNew() {
   const [videoSrc, setVideoSrc] = useState(pickVideoSrc)
 
   useEffect(() => {
-    const mq = window.matchMedia(VIDEO_MOBILE_Q)
     const onChange = () => setVideoSrc(pickVideoSrc())
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
+    const mqM = window.matchMedia(VIDEO_MOBILE_Q)
+    const mqT = window.matchMedia(VIDEO_TABLET_Q)
+    mqM.addEventListener('change', onChange)
+    mqT.addEventListener('change', onChange)
+    return () => { mqM.removeEventListener('change', onChange); mqT.removeEventListener('change', onChange) }
   }, [])
 
   const sectionRef = useRef(null)

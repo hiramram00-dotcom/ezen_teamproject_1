@@ -13,17 +13,20 @@ const SWEEP_DUR = 1.2 // 혜성이 지나가며 서브카피 등장
 const SPLIT_GAP = 0.3 // 혜성 끝 → 분할 시작 사이 텀 (2배)
 const SPLIT_DUR = 0.85 // 화면 위/아래로 갈라지는 시간 (텀 늘린 만큼 줄임)
 
-// ===== 영상 소스 — 모바일(≤767px)은 세로 버전으로 교체 =====
+// ===== 영상 소스 — 같은 4K 소스(3840×2160)에서 기기별 해상도만 다르게 (반응형 3단계) =====
+// 모바일 w_720 / 타블렛 w_1280 / 데스크탑 w_2560. 4K 디코딩 부하·용량을 기기별 최소화.
+// ⚠️ NewIntro 인라인 영상과 URL 100% 동일 유지 → 핸드오프 시 한 번만 받아 공유.
+const HERO_VIDEO_ID = 'HELLO_SNOWMAN_SOLID_PORTABLE_ILKW_SNOWMAN15_SOLID_Portable_-_4-10s_msfzbu'
+const CLD = 'https://res.cloudinary.com/ddit4bjrw/video/upload'
+const cldVideo = (w) => `${CLD}/f_auto,q_auto:best,w_${w}/${HERO_VIDEO_ID}.mp4`
+// poster = 첫 프레임(so_0) JPG → 영상 디코딩 전 즉시 표시(LCP 단축, 연출 동일)
+const cldPoster = (w) => `${CLD}/f_auto,q_auto,w_${w},so_0/${HERO_VIDEO_ID}.jpg`
 const VIDEO_MOBILE_Q = '(max-width: 767px)'
-// f_auto,q_auto = 브라우저 맞는 가벼운 포맷 + 화질 자동 최적화 (원본 13.9MB → 대폭 감소, 로딩 렉 해결)
-const VIDEO_WIDE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto:best,w_1920/hero-video2_ojabtt.mp4'
-const VIDEO_MOBILE = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto:best,w_720/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.mp4'
-// poster = 영상 첫 프레임(so_0)을 가벼운 JPG로 추출 → 영상 디코딩 전에 즉시 표시(LCP 단축).
-// 연출 변화 없음(첫 프레임과 동일 그림). 영상 재생 시작되면 자동으로 사라짐.
-const VIDEO_WIDE_POSTER = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto:best,w_1920,so_0/hero-video2_ojabtt.jpg'
-const VIDEO_MOBILE_POSTER = 'https://res.cloudinary.com/ddit4bjrw/video/upload/f_auto,q_auto:best,w_720,so_0/YTDown_YouTube_HELLO-SNOWMAN-SOLID-PORTABLE-ILKW-SNOWMA_Media_7Q9AIiPlFWQ_001_1080p_qnhlk1.jpg'
-const pickVideoSrc = () =>
-  window.matchMedia(VIDEO_MOBILE_Q).matches ? VIDEO_MOBILE : VIDEO_WIDE
+const VIDEO_TABLET_Q = '(max-width: 1199px)'
+const pickWidth = () =>
+  window.matchMedia(VIDEO_MOBILE_Q).matches ? 720 : window.matchMedia(VIDEO_TABLET_Q).matches ? 1280 : 2560
+const pickVideoSrc = () => cldVideo(pickWidth())
+const pickPosterSrc = () => cldPoster(pickWidth())
 
 const prefersReduced = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -58,12 +61,14 @@ function HeroSection() {
 
   // 모바일(≤767px)이면 세로 영상으로 교체 (리사이즈/회전 시 자동 갱신)
   const [videoSrc, setVideoSrc] = useState(pickVideoSrc)
-  const posterSrc = videoSrc === VIDEO_MOBILE ? VIDEO_MOBILE_POSTER : VIDEO_WIDE_POSTER
+  const [posterSrc, setPosterSrc] = useState(pickPosterSrc)
   useEffect(() => {
-    const mq = window.matchMedia(VIDEO_MOBILE_Q)
-    const onChange = () => setVideoSrc(pickVideoSrc())
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
+    const onChange = () => { setVideoSrc(pickVideoSrc()); setPosterSrc(pickPosterSrc()) }
+    const mqM = window.matchMedia(VIDEO_MOBILE_Q)
+    const mqT = window.matchMedia(VIDEO_TABLET_Q)
+    mqM.addEventListener('change', onChange)
+    mqT.addEventListener('change', onChange)
+    return () => { mqM.removeEventListener('change', onChange); mqT.removeEventListener('change', onChange) }
   }, [])
 
   useEffect(() => {
