@@ -17,6 +17,8 @@ const INTRO_CENTER_Y_RATIO = 0.46
 const INTRO_SINCE_OFFSET_RATIO = 0.008
 const INTRO_SCROLL_DISTANCE_RATIO = 0.5
 const INTRO_MAX_PROGRESS_STEP = 0.018
+
+const getAboutLayoutWidth = () => Math.min(window.innerWidth, 1920)
 const ABOUT_STORY_VIDEO =
   'https://res.cloudinary.com/dg9hg29hc/video/upload/ADORABLE_ANYWHERE_DUMBO13_-_YouTube_-_Chrome_2026-06-22_11-23-20_zhldeh.mp4'
 
@@ -33,7 +35,14 @@ function getFontSizeToken(tokenName, fallback) {
   return Number.parseFloat(tokenValue) || fallback
 }
 
-function StoryTypedLines({ lines, progress, startIndex = 0, totalWords, strongFirst = false }) {
+function StoryTypedLines({
+  lines,
+  progress,
+  startIndex = 0,
+  totalWords,
+  strongFirst = false,
+  strongWords = [],
+}) {
   let wordIndex = startIndex
 
   return lines.map((line, lineIndex) => {
@@ -53,7 +62,11 @@ function StoryTypedLines({ lines, progress, startIndex = 0, totalWords, strongFi
               }`}
               key={`${word}-${currentIndex}`}
             >
-              {strongFirst && currentIndex === startIndex ? <strong>{word}</strong> : word}
+              {(strongFirst && currentIndex === startIndex) || strongWords.includes(word) ? (
+                <span className={styles.storyTypedAccent}>{word}</span>
+              ) : (
+                word
+              )}
               {index < words.length - 1 ? '\u00a0' : ''}
             </span>
           )
@@ -312,755 +325,6 @@ function AboutIntroParticles({ onComplete }) {
   return <canvas className={styles.introParticles} ref={canvasRef} aria-hidden="true" />
 }
 
-function AboutTravelLight({ active, aboutRef, legacyLightRef, storyFromRef }) {
-  const canvasRef = useRef(null)
-  const lightRef = useRef(null)
-
-  useEffect(() => {
-    if (!active) return undefined
-
-    const canvas = canvasRef.current
-    const light = lightRef.current
-    const context = canvas?.getContext('2d')
-    if (!canvas || !light || !context) return undefined
-
-    let animationFrame = null
-    let renderRatio = 1
-    let current = null
-    let previous = null
-    let lastProgress = -1
-    const trail = []
-
-    const resizeCanvas = () => {
-      renderRatio = Math.min(window.devicePixelRatio || 1, 1.5)
-      canvas.width = Math.round(window.innerWidth * renderRatio)
-      canvas.height = Math.round(window.innerHeight * renderRatio)
-      canvas.style.width = `${window.innerWidth}px`
-      canvas.style.height = `${window.innerHeight}px`
-      context.setTransform(renderRatio, 0, 0, renderRatio, 0, 0)
-      trail.length = 0
-    }
-
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
-    const smooth = (value) => value * value * (3 - 2 * value)
-    const cubicPoint = (start, controlOne, controlTwo, end, progress) => {
-      const inverse = 1 - progress
-      return {
-        x:
-          inverse ** 3 * start.x +
-          3 * inverse ** 2 * progress * controlOne.x +
-          3 * inverse * progress ** 2 * controlTwo.x +
-          progress ** 3 * end.x,
-        y:
-          inverse ** 3 * start.y +
-          3 * inverse ** 2 * progress * controlOne.y +
-          3 * inverse * progress ** 2 * controlTwo.y +
-          progress ** 3 * end.y,
-      }
-    }
-
-    const getTarget = () => {
-      const about = aboutRef.current
-      const legacyLight = legacyLightRef.current
-      const storyFrom = storyFromRef.current
-      if (!about || !legacyLight || !storyFrom) return null
-
-      const aboutRect = about.getBoundingClientRect()
-      const aboutTop = aboutRect.top + window.scrollY
-      const legacyRect = legacyLight.getBoundingClientRect()
-      const storyRect = storyFrom.getBoundingClientRect()
-      const introHeight = Math.max(window.innerHeight, window.innerWidth * 0.5625)
-      const startDocument = {
-        x: window.innerWidth * 0.5,
-        y: aboutTop + introHeight * INTRO_CENTER_Y_RATIO + window.innerWidth * 0.075,
-      }
-      const legacyDocument = {
-        x: legacyRect.left + window.scrollX + legacyRect.width * 0.78,
-        y: legacyRect.top + window.scrollY + legacyRect.height * 0.58,
-      }
-      const storyDocument = {
-        x: storyRect.left + window.scrollX + storyRect.width * 0.5,
-        y: storyRect.top + window.scrollY + storyRect.height * 0.55,
-      }
-      const firstStart = Math.max(aboutTop, startDocument.y - window.innerHeight * 0.55)
-      const firstEnd = Math.max(firstStart + window.innerHeight * 0.7, legacyDocument.y - window.innerHeight * 0.38)
-      const secondEnd = Math.max(
-        firstEnd + window.innerHeight * 0.9,
-        aboutTop + window.innerWidth * 1.55 - window.innerHeight * 0.12,
-      )
-
-      if (window.scrollY < firstStart - 10 || window.scrollY > secondEnd + window.innerHeight * 0.12) {
-        return null
-      }
-
-      let position
-      let totalProgress
-
-      if (window.scrollY <= firstEnd) {
-        const progress = smooth(clamp((window.scrollY - firstStart) / (firstEnd - firstStart), 0, 1))
-        const start = { x: startDocument.x, y: startDocument.y - window.scrollY }
-        const end = { x: legacyDocument.x, y: legacyDocument.y - window.scrollY }
-        position = cubicPoint(
-          start,
-          { x: start.x + window.innerWidth * 0.18, y: start.y + window.innerHeight * 0.3 },
-          { x: end.x - window.innerWidth * 0.2, y: end.y - window.innerHeight * 0.22 },
-          end,
-          progress,
-        )
-        totalProgress = progress * 0.5
-      } else {
-        const progress = smooth(clamp((window.scrollY - firstEnd) / (secondEnd - firstEnd), 0, 1))
-        const start = { x: legacyDocument.x, y: legacyDocument.y - window.scrollY }
-        const end = {
-          x: storyRect.left + storyRect.width * 0.48,
-          y: storyRect.top + storyRect.height * 0.55,
-        }
-        position = cubicPoint(
-          start,
-          { x: start.x + window.innerWidth * 0.22, y: start.y + window.innerHeight * 0.24 },
-          { x: end.x + window.innerWidth * 0.24, y: end.y - window.innerHeight * 0.2 },
-          end,
-          progress,
-        )
-        totalProgress = 0.5 + progress * 0.5
-      }
-
-      return { ...position, progress: totalProgress }
-    }
-
-    const drawTrail = () => {
-      context.clearRect(0, 0, window.innerWidth, window.innerHeight)
-      for (let index = trail.length - 1; index >= 0; index -= 1) {
-        trail[index].life -= 0.026
-        if (trail[index].life <= 0) trail.splice(index, 1)
-      }
-
-      context.lineCap = 'round'
-      context.lineJoin = 'round'
-      for (let index = 1; index < trail.length; index += 1) {
-        const before = trail[Math.max(0, index - 2)]
-        const previousPoint = trail[index - 1]
-        const point = trail[index]
-        const alpha = Math.min(previousPoint.life, point.life) * 0.34
-        context.beginPath()
-        context.moveTo((before.x + previousPoint.x) / 2, (before.y + previousPoint.y) / 2)
-        context.quadraticCurveTo(
-          previousPoint.x,
-          previousPoint.y,
-          (previousPoint.x + point.x) / 2,
-          (previousPoint.y + point.y) / 2,
-        )
-        context.strokeStyle = `rgba(255, 205, 132, ${alpha})`
-        context.lineWidth = 2
-        context.shadowColor = `rgba(255, 231, 184, ${alpha * 0.9})`
-        context.shadowBlur = 7
-        context.stroke()
-      }
-      context.shadowBlur = 0
-    }
-
-    const animate = () => {
-      const target = getTarget()
-
-      if (!target) {
-        current = null
-        previous = null
-        trail.length = 0
-        light.style.opacity = '0'
-        drawTrail()
-        animationFrame = requestAnimationFrame(animate)
-        return
-      }
-
-      if (!current) current = { x: target.x, y: target.y }
-      previous = { ...current }
-      current.x += (target.x - current.x) * 0.14
-      current.y += (target.y - current.y) * 0.14
-
-      if (
-        !trail.length ||
-        Math.hypot(current.x - trail[trail.length - 1].x, current.y - trail[trail.length - 1].y) > 2.5
-      ) {
-        trail.push({ x: current.x, y: current.y, life: 1 })
-      }
-
-      if (
-        (lastProgress < 0.5 && target.progress >= 0.5) ||
-        (lastProgress < 0.99 && target.progress >= 0.99)
-      ) {
-        light.classList.remove(styles.travelLightSpark)
-        void light.offsetWidth
-        light.classList.add(styles.travelLightSpark)
-      }
-      lastProgress = target.progress
-
-      drawTrail()
-      const angle = Math.atan2(current.y - previous.y, current.x - previous.x) * (180 / Math.PI)
-      light.style.left = `${current.x}px`
-      light.style.top = `${current.y}px`
-      light.style.opacity = '1'
-      light.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`
-      animationFrame = requestAnimationFrame(animate)
-    }
-
-    resizeCanvas()
-    window.addEventListener('resize', resizeCanvas)
-    animationFrame = requestAnimationFrame(animate)
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas)
-      if (animationFrame) cancelAnimationFrame(animationFrame)
-    }
-  }, [active, aboutRef, legacyLightRef, storyFromRef])
-
-  return (
-    <>
-      <canvas ref={canvasRef} className={styles.travelLightCanvas} aria-hidden="true" />
-      <span ref={lightRef} className={styles.travelLight} aria-hidden="true">
-        <span className={styles.travelLightTail} />
-        <span className={styles.travelLightCore} />
-      </span>
-    </>
-  )
-}
-
-function AboutStoryLight({
-  active,
-  aboutRef,
-  legacyTargetRef,
-  storyTargetRef,
-  videoTargetRef,
-  endingTargetRef,
-  onReveal,
-}) {
-  const canvasRef = useRef(null)
-  const lightRef = useRef(null)
-
-  useEffect(() => {
-    if (!active) return undefined
-
-    const about = aboutRef.current
-    const canvas = canvasRef.current
-    const light = lightRef.current
-    const context = canvas?.getContext('2d')
-    if (!about || !canvas || !light || !context) return undefined
-
-    const trailPoints = []
-    const revealed = new Set([0])
-    let stops = []
-    let renderRatio = 1
-    let currentX = window.innerWidth * 0.5
-    let currentY = window.innerHeight * 0.5
-    let previousX = currentX
-    let previousY = currentY
-    let previousTargetScroll = 0
-    let lightProgress = 0
-    let flashingStop = -1
-    let flashTimer = null
-    let animationFrame = null
-
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
-    const smooth = (value) => value * value * value * (value * (value * 6 - 15) + 10)
-    const catmullRom = (p0, p1, p2, p3, progress) => {
-      const progressSquared = progress * progress
-      const progressCubed = progressSquared * progress
-      return 0.5 * (
-        2 * p1 +
-        (-p0 + p2) * progress +
-        (2 * p0 - 5 * p1 + 4 * p2 - p3) * progressSquared +
-        (-p0 + 3 * p1 - 3 * p2 + p3) * progressCubed
-      )
-    }
-
-    const sectionPoint = (element, xRatio = 0.5, yRatio = 0.5) => {
-      if (!element) return null
-      const aboutTop = about.getBoundingClientRect().top + window.scrollY
-      const rect = element.getBoundingClientRect()
-      return {
-        x: rect.left + rect.width * xRatio,
-        y: rect.top + window.scrollY - aboutTop + rect.height * yRatio,
-      }
-    }
-
-    const buildStops = () => {
-      const introHeight = Math.max(window.innerHeight, window.innerWidth * 0.5625)
-      const legacy = sectionPoint(legacyTargetRef.current, 0.78, 0.58)
-      const story = sectionPoint(storyTargetRef.current, 0.5, 0.55)
-      const video = sectionPoint(videoTargetRef.current, 0.68, 0.42)
-      const ending = sectionPoint(endingTargetRef.current, 0.62, 0.5)
-      if (!legacy || !story || !video || !ending) return
-
-      stops = [
-        {
-          x: window.innerWidth * 0.5,
-          y: introHeight * INTRO_CENTER_Y_RATIO + window.innerWidth * 0.075,
-        },
-        legacy,
-        story,
-        video,
-        ending,
-      ]
-    }
-
-    const resizeCanvas = () => {
-      renderRatio = Math.min(window.devicePixelRatio || 1, 1.5)
-      canvas.width = Math.round(window.innerWidth * renderRatio)
-      canvas.height = Math.round(window.innerHeight * renderRatio)
-      canvas.style.width = `${window.innerWidth}px`
-      canvas.style.height = `${window.innerHeight}px`
-      context.setTransform(renderRatio, 0, 0, renderRatio, 0, 0)
-      trailPoints.length = 0
-      buildStops()
-    }
-
-    const getTargetScroll = () => {
-      const aboutTop = about.getBoundingClientRect().top + window.scrollY
-      return window.scrollY - aboutTop + window.innerHeight * 0.65
-    }
-
-    const getPathPosition = (scrollPosition) => {
-      if (!stops.length) return null
-      if (scrollPosition <= stops[0].y) return stops[0]
-
-      for (let index = 0; index < stops.length - 1; index += 1) {
-        const stop = stops[index]
-        const next = stops[index + 1]
-        if (scrollPosition <= next.y) {
-          const progress = smooth(clamp((scrollPosition - stop.y) / (next.y - stop.y), 0, 1))
-          const previous = stops[Math.max(0, index - 1)]
-          const afterNext = stops[Math.min(stops.length - 1, index + 2)]
-          return {
-            x: clamp(
-              catmullRom(previous.x, stop.x, next.x, afterNext.x, progress),
-              24,
-              window.innerWidth - 24,
-            ),
-            y: catmullRom(previous.y, stop.y, next.y, afterNext.y, progress),
-          }
-        }
-      }
-
-      return stops[stops.length - 1]
-    }
-
-    const sparkleAndReveal = (index) => {
-      if (revealed.has(index)) return
-      revealed.add(index)
-      flashingStop = index
-      light.classList.remove(styles.travelLightSpark)
-      void light.offsetWidth
-      light.classList.add(styles.travelLightSpark)
-      onReveal(index)
-
-      window.clearTimeout(flashTimer)
-      flashTimer = window.setTimeout(() => {
-        flashingStop = -1
-        light.classList.remove(styles.travelLightSpark)
-      }, 450)
-    }
-
-    const drawTrail = () => {
-      context.clearRect(0, 0, window.innerWidth, window.innerHeight)
-      for (let index = trailPoints.length - 1; index >= 0; index -= 1) {
-        trailPoints[index].life -= 0.012
-        if (trailPoints[index].life <= 0) trailPoints.splice(index, 1)
-      }
-
-      context.lineCap = 'round'
-      context.lineJoin = 'round'
-      for (let index = 1; index < trailPoints.length; index += 1) {
-        const previousPoint = trailPoints[index - 1]
-        const point = trailPoints[index]
-        const beforePrevious = trailPoints[Math.max(0, index - 2)]
-        const alpha = Math.min(previousPoint.life, point.life) * 0.34
-        context.beginPath()
-        context.moveTo(
-          (beforePrevious.x + previousPoint.x) / 2,
-          (beforePrevious.y + previousPoint.y) / 2,
-        )
-        context.quadraticCurveTo(
-          previousPoint.x,
-          previousPoint.y,
-          (previousPoint.x + point.x) / 2,
-          (previousPoint.y + point.y) / 2,
-        )
-        context.strokeStyle = `rgba(255, 205, 132, ${alpha})`
-        context.lineWidth = 2.2
-        context.shadowColor = `rgba(255, 231, 184, ${alpha * 0.8})`
-        context.shadowBlur = 7
-        context.stroke()
-      }
-      context.shadowBlur = 0
-    }
-
-    const animate = () => {
-      if (!stops.length) buildStops()
-      if (!stops.length) {
-        animationFrame = requestAnimationFrame(animate)
-        return
-      }
-
-      const aboutTop = about.getBoundingClientRect().top + window.scrollY
-      const scrollInside = window.scrollY - aboutTop
-      const targetScroll = getTargetScroll()
-      const clampedScroll = clamp(targetScroll, stops[0].y, stops[stops.length - 1].y)
-      const targetScrollDelta = Math.abs(clampedScroll - previousTargetScroll)
-      const fastProgressThreshold = Math.max(85, window.innerHeight * 0.1)
-
-      stops.forEach((stop, index) => {
-        if (
-          index > 0 &&
-          !revealed.has(index) &&
-          previousTargetScroll < stop.y &&
-          clampedScroll >= stop.y &&
-          targetScrollDelta > fastProgressThreshold
-        ) {
-          sparkleAndReveal(index)
-        }
-      })
-
-      const progressDistance = clampedScroll - lightProgress
-      const maxProgressStep = Math.max(8, Math.min(24, window.innerHeight * 0.02))
-      lightProgress += clamp(progressDistance, -maxProgressStep, maxProgressStep)
-
-      const maxProgressLag = 180
-      if (clampedScroll - lightProgress > maxProgressLag) lightProgress = clampedScroll - maxProgressLag
-      else if (lightProgress - clampedScroll > maxProgressLag) lightProgress = clampedScroll + maxProgressLag
-
-      const target = getPathPosition(lightProgress)
-      const targetViewportY = target.y - scrollInside
-      previousX = currentX
-      previousY = currentY
-      currentX += (target.x - currentX) * 0.065
-      currentY += (targetViewportY - currentY) * 0.065
-
-      const lastTrailPoint = trailPoints[trailPoints.length - 1]
-      if (
-        !lastTrailPoint ||
-        Math.hypot(currentX - lastTrailPoint.x, currentY - lastTrailPoint.y) > 3
-      ) {
-        trailPoints.push({ x: currentX, y: currentY, life: 1 })
-      }
-
-      drawTrail()
-      const angle = Math.atan2(currentY - previousY, currentX - previousX) * (180 / Math.PI)
-      light.style.left = `${currentX}px`
-      light.style.top = `${currentY}px`
-      light.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`
-
-      stops.forEach((stop, index) => {
-        if (index === 0 || revealed.has(index)) return
-        const stopViewportY = stop.y - scrollInside
-        const distance = Math.hypot(currentX - stop.x, currentY - stopViewportY)
-        if (lightProgress >= stop.y - 70 && distance < 10) sparkleAndReveal(index)
-        else if (lightProgress > stop.y + 120) sparkleAndReveal(index)
-      })
-
-      const insideRevealedContent = stops.some((stop, index) => {
-        if (index === 0 || !revealed.has(index) || flashingStop === index) return false
-        return Math.hypot(currentX - stop.x, currentY - (stop.y - scrollInside)) < 36
-      })
-
-      light.style.opacity =
-        targetScroll >= stops[0].y &&
-        targetScroll <= stops[stops.length - 1].y + window.innerHeight * 0.12 &&
-        !insideRevealedContent
-          ? '1'
-          : '0'
-
-      previousTargetScroll = clampedScroll
-      animationFrame = requestAnimationFrame(animate)
-    }
-
-    resizeCanvas()
-    const initialScroll = getTargetScroll()
-    previousTargetScroll = initialScroll
-    lightProgress = initialScroll
-    window.addEventListener('resize', resizeCanvas)
-    animationFrame = requestAnimationFrame(animate)
-
-    return () => {
-      window.clearTimeout(flashTimer)
-      window.removeEventListener('resize', resizeCanvas)
-      if (animationFrame) cancelAnimationFrame(animationFrame)
-    }
-  }, [
-    active,
-    aboutRef,
-    endingTargetRef,
-    legacyTargetRef,
-    onReveal,
-    storyTargetRef,
-    videoTargetRef,
-  ])
-
-  return (
-    <>
-      <canvas ref={canvasRef} className={styles.travelLightCanvas} aria-hidden="true" />
-      <span ref={lightRef} className={styles.travelLight} aria-hidden="true">
-        <span className={styles.travelLightTail} />
-        <span className={styles.travelLightCore} />
-      </span>
-    </>
-  )
-}
-
-function AboutSvgStoryLight({
-  active,
-  aboutRef,
-  legacyTargetRef,
-  storyDaysRef,
-  storySecondImageRef,
-  videoTargetRef,
-  endingTargetRef,
-  storyPhase,
-  onReveal,
-}) {
-  const guidePathRef = useRef(null)
-  const tailGlowRef = useRef(null)
-  const tailCoreRef = useRef(null)
-  const lightRef = useRef(null)
-
-  useEffect(() => {
-    if (!active) return undefined
-
-    const about = aboutRef.current
-    const guidePath = guidePathRef.current
-    const light = lightRef.current
-    if (!about || !guidePath || !light) return undefined
-
-    const trail = Array.from({ length: 14 }, () => ({ x: 0, y: 0 }))
-    const revealed = new Set()
-    let segments = []
-    let current = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 }
-    let flashTimer = null
-    let animationFrame = null
-
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
-    const ease = (value) => value * value * (3 - 2 * value)
-
-    const sectionPoint = (element, xRatio = 0.5, yRatio = 0.5) => {
-      if (!element) return null
-      const aboutTop = about.getBoundingClientRect().top + window.scrollY
-      const rect = element.getBoundingClientRect()
-      return {
-        x: rect.left + rect.width * xRatio,
-        y: rect.top + window.scrollY - aboutTop + rect.height * yRatio,
-      }
-    }
-
-    const curve = (start, end, horizontalBend) => {
-      const verticalDistance = Math.max(140, end.y - start.y)
-      const controlOne = {
-        x: clamp(start.x + horizontalBend * window.innerWidth, 28, window.innerWidth - 28),
-        y: start.y + verticalDistance * 0.34,
-      }
-      const controlTwo = {
-        x: clamp(end.x - horizontalBend * window.innerWidth * 0.72, 28, window.innerWidth - 28),
-        y: end.y - verticalDistance * 0.3,
-      }
-      return `M ${start.x} ${start.y} C ${controlOne.x} ${controlOne.y}, ${controlTwo.x} ${controlTwo.y}, ${end.x} ${end.y}`
-    }
-
-    const appendCurve = (path, start, end, horizontalBend) => {
-      const nextCurve = curve(start, end, horizontalBend)
-      return `${path} ${nextCurve.replace(/^M [^C]+/, '')}`
-    }
-
-    const buildSegments = () => {
-      const introHeight = Math.max(window.innerHeight, window.innerWidth * 0.5625)
-      const start = {
-        x: window.innerWidth * 0.5,
-        y: introHeight * INTRO_CENTER_Y_RATIO - window.innerWidth * 0.005,
-      }
-      const legacy = sectionPoint(legacyTargetRef.current, 0.74, 0.58)
-      const days = sectionPoint(storyDaysRef.current, 0.5, 0.58)
-      const secondImageExit = sectionPoint(storySecondImageRef.current, 0.52, 1.08)
-      const video = sectionPoint(videoTargetRef.current, 0.5, 0.5)
-      const videoExit = sectionPoint(videoTargetRef.current, 0.5, 1.08)
-      const ending = sectionPoint(endingTargetRef.current, 0.5, 0.55)
-      if (!legacy || !days || !secondImageExit || !video || !videoExit || !ending) return
-
-      const firstPath = appendCurve(curve(start, legacy, 0.16), legacy, days, -0.2)
-      segments = [
-        {
-          d: firstPath,
-          startScroll: Math.max(0, start.y - window.innerHeight * 0.52),
-          endScroll: days.y - window.innerHeight * 0.5,
-          visible: () => storyPhase !== 'second' && storyPhase !== 'after',
-          targets: [
-            { index: 1, progress: 0.48 },
-            { index: 2, progress: 0.985 },
-          ],
-        },
-        {
-          d: curve(secondImageExit, video, 0.2),
-          startScroll: secondImageExit.y - window.innerHeight * 0.7,
-          endScroll: video.y - window.innerHeight * 0.5,
-          visible: () => storyPhase === 'after',
-          targets: [{ index: 3, progress: 0.985 }],
-        },
-        {
-          d: curve(videoExit, ending, -0.18),
-          startScroll: videoExit.y - window.innerHeight * 0.72,
-          endScroll: ending.y - window.innerHeight * 0.5,
-          visible: () => storyPhase === 'after',
-          targets: [{ index: 4, progress: 0.985 }],
-        },
-      ]
-    }
-
-    const buildSmoothLine = (points) => {
-      if (!points.length) return ''
-      const path = [`M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`]
-      for (let index = 1; index < points.length - 1; index += 1) {
-        const centerX = (points[index].x + points[index + 1].x) / 2
-        const centerY = (points[index].y + points[index + 1].y) / 2
-        path.push(
-          `Q ${points[index].x.toFixed(2)} ${points[index].y.toFixed(2)} ${centerX.toFixed(2)} ${centerY.toFixed(2)}`,
-        )
-      }
-      const last = points[points.length - 1]
-      path.push(`L ${last.x.toFixed(2)} ${last.y.toFixed(2)}`)
-      return path.join(' ')
-    }
-
-    const updateTrail = (x, y, visible) => {
-      if (!visible) {
-        trail.forEach((point) => {
-          point.x = x
-          point.y = y
-        })
-        tailGlowRef.current?.setAttribute('d', '')
-        tailCoreRef.current?.setAttribute('d', '')
-        return
-      }
-
-      trail[0].x = x
-      trail[0].y = y
-      for (let index = 1; index < trail.length; index += 1) {
-        const point = trail[index]
-        const previous = trail[index - 1]
-        const follow = Math.max(0.2, 0.44 - index * 0.01)
-        point.x += (previous.x - point.x) * follow
-        point.y += (previous.y - point.y) * follow
-      }
-      const path = buildSmoothLine(trail)
-      tailGlowRef.current?.setAttribute('d', path)
-      tailCoreRef.current?.setAttribute('d', path)
-    }
-
-    const sparkleAndReveal = (index) => {
-      if (revealed.has(index)) return
-      revealed.add(index)
-      light.classList.remove(styles.travelLightSpark)
-      void light.offsetWidth
-      light.classList.add(styles.travelLightSpark)
-      onReveal(index)
-      window.clearTimeout(flashTimer)
-      flashTimer = window.setTimeout(() => {
-        light.classList.remove(styles.travelLightSpark)
-      }, 450)
-    }
-
-    const animate = () => {
-      if (!segments.length) buildSegments()
-      const aboutTop = about.getBoundingClientRect().top + window.scrollY
-      const scrollInside = window.scrollY - aboutTop
-
-      segments.forEach((segment) => {
-        if (!segment.visible()) return
-        segment.targets.forEach((target) => {
-          const triggerScroll =
-            segment.startScroll +
-            (segment.endScroll - segment.startScroll) * target.progress
-          if (scrollInside >= triggerScroll) sparkleAndReveal(target.index)
-        })
-      })
-
-      const activeSegment = segments.find(
-        (segment) =>
-          scrollInside >= segment.startScroll &&
-          scrollInside <= segment.endScroll &&
-          segment.visible(),
-      )
-
-      if (!activeSegment) {
-        light.style.opacity = '0'
-        updateTrail(current.x, current.y, false)
-        animationFrame = requestAnimationFrame(animate)
-        return
-      }
-
-      guidePath.setAttribute('d', activeSegment.d)
-      const totalLength = guidePath.getTotalLength()
-      const progress = ease(
-        clamp(
-          (scrollInside - activeSegment.startScroll) /
-            (activeSegment.endScroll - activeSegment.startScroll),
-          0,
-          1,
-        ),
-      )
-      const point = guidePath.getPointAtLength(totalLength * progress)
-      const targetX = point.x
-      const targetY = point.y - scrollInside
-
-      current.x += (targetX - current.x) * 0.1
-      current.y += (targetY - current.y) * 0.1
-      updateTrail(current.x, current.y, true)
-
-      light.style.left = `${current.x}px`
-      light.style.top = `${current.y}px`
-      light.style.opacity = progress > 0.992 ? '0' : '1'
-
-      activeSegment.targets.forEach((target) => {
-        if (progress >= target.progress) sparkleAndReveal(target.index)
-      })
-
-      animationFrame = requestAnimationFrame(animate)
-    }
-
-    const handleResize = () => {
-      segments = []
-      buildSegments()
-    }
-
-    buildSegments()
-    window.addEventListener('resize', handleResize)
-    animationFrame = requestAnimationFrame(animate)
-
-    return () => {
-      window.clearTimeout(flashTimer)
-      window.removeEventListener('resize', handleResize)
-      if (animationFrame) cancelAnimationFrame(animationFrame)
-    }
-  }, [
-    active,
-    aboutRef,
-    endingTargetRef,
-    legacyTargetRef,
-    onReveal,
-    storyDaysRef,
-    storyPhase,
-    storySecondImageRef,
-    videoTargetRef,
-  ])
-
-  return (
-    <>
-      <svg className={styles.travelLightCanvas} aria-hidden="true">
-        <path ref={guidePathRef} className={styles.travelLightGuide} />
-        <path ref={tailGlowRef} className={styles.travelLightTrailGlow} />
-        <path ref={tailCoreRef} className={styles.travelLightTrailCore} />
-      </svg>
-      <span ref={lightRef} className={styles.travelLight} aria-hidden="true">
-        <span className={styles.travelLightCore} />
-      </span>
-    </>
-  )
-}
-
 function AboutSection() {
   const aboutRef = useRef(null)
   const legacyRef = useRef(null)
@@ -1073,6 +337,10 @@ function AboutSection() {
   const [storyProgress, setStoryProgress] = useState(0)
   const [storyCycle, setStoryCycle] = useState(0)
   const [endingProgress, setEndingProgress] = useState(0)
+  const [endingPhase, setEndingPhase] = useState('before')
+  const [glowProgress, setGlowProgress] = useState(0)
+  const [endingOverlayOpacity, setEndingOverlayOpacity] = useState(0)
+  const [historyOverlayProgress, setHistoryOverlayProgress] = useState(0)
 
   const handleIntroComplete = useCallback(() => {}, [])
 
@@ -1121,8 +389,9 @@ function AboutSection() {
       if (!about) return
 
       const aboutTop = about.getBoundingClientRect().top + window.scrollY
-      const start = aboutTop + window.innerWidth * 1.18
-      const distance = window.innerWidth * 3.05
+      const layoutWidth = getAboutLayoutWidth()
+      const start = aboutTop + layoutWidth * 1.18
+      const distance = layoutWidth * 3.05
       const progress = (window.scrollY - start) / distance
       const clampedProgress = Math.min(Math.max(progress, 0), 1.3)
 
@@ -1160,46 +429,110 @@ function AboutSection() {
     }
   }, [])
 
+  // 태그라인이 다 떠오르는 시점부터 일정 거리만큼 .ending을 화면에 고정(position:fixed)해
+  // 두고, 그동안 빛이 점처럼 나타나 커진 뒤 페이드되며 History로 넘어간다.
+  // 고정해두는 만큼 .about의 전체 높이도 늘려줘야 실제로 그만큼 스크롤할 거리가 생긴다.
+  const PIN_DISTANCE_RATIO = 2.2 // 뷰포트 높이의 220%만큼 고정 구간
+  const HOLD_FRAC = 0.25 // 고정 구간의 앞 25% — 빛 없이 정지
+  const GROW_END_FRAC = 0.86 // 25~86% — 빛이 점에서 천천히 커짐
+  // 75~100% — 전체가 서서히 사라지며 History로 핸드오프
+
   useEffect(() => {
-    let scrollFrame = null
+    const about = aboutRef.current
+    if (!about) return undefined
 
-    const updateEndingProgress = () => {
-      const ending = endingRef.current
-      if (!ending) return
-
-      const rect = ending.getBoundingClientRect()
-      const progress = clamp(
-        (window.innerHeight * 0.82 - rect.top) / (window.innerHeight * 0.95),
-        0,
-        1,
-      )
-
-      setEndingProgress(progress)
-      scrollFrame = null
+    const applyHeight = () => {
+      const bufferPx = window.innerHeight * PIN_DISTANCE_RATIO
+      about.style.height = `calc(660.75 * var(--about-vw) + ${bufferPx}px)`
     }
 
-    const onScroll = () => {
-      if (!scrollFrame) scrollFrame = requestAnimationFrame(updateEndingProgress)
+    applyHeight()
+    window.addEventListener('resize', applyHeight)
+    return () => window.removeEventListener('resize', applyHeight)
+  }, [])
+
+  useEffect(() => {
+    const updateEndingProgress = () => {
+      const about = aboutRef.current
+      if (!about) return
+
+      const aboutTop = about.getBoundingClientRect().top + window.scrollY
+      const vwPx = (v) => (v / 100) * getAboutLayoutWidth()
+      const bufferPx = window.innerHeight * PIN_DISTANCE_RATIO
+      const pinStartPx = aboutTop + vwPx(570.75) + window.innerHeight * 0.18
+      // .about의 실제 끝(= History 시작 지점)에 핀이 정확히 끝나도록 맞춰서
+      // 핀 해제 후 빈 검정 구간이 남지 않게 한다
+      const pinEndPx = aboutTop + vwPx(660.75) + bufferPx
+      const pinDistancePx = pinEndPx - pinStartPx
+      const scrollY = window.scrollY
+
+      if (scrollY < pinStartPx) {
+        // 아직 고정 전 — 일반 스크롤 흐름에서 태그라인이 떠오르는 중
+        const ending = endingRef.current
+        const rect = ending ? ending.getBoundingClientRect() : null
+        const progress = rect
+          ? clamp((window.innerHeight * 0.82 - rect.top) / (window.innerHeight * 0.95), 0, 1)
+          : 0
+        setEndingProgress(progress)
+        setEndingPhase('before')
+        setGlowProgress(0)
+        setEndingOverlayOpacity(0)
+        setHistoryOverlayProgress(0)
+      } else if (scrollY <= pinEndPx) {
+        const pinProgress = clamp((scrollY - pinStartPx) / pinDistancePx, 0, 1)
+        const grow = clamp((pinProgress - HOLD_FRAC) / (GROW_END_FRAC - HOLD_FRAC), 0, 1)
+        // 빛이 다 커진 뒤(GROW_END_FRAC~1)에는 배경 자체가 검정에서 크림색으로 바뀐다
+        const toCream = clamp((pinProgress - GROW_END_FRAC) / (1 - GROW_END_FRAC), 0, 1)
+        setEndingProgress(1)
+        setEndingPhase('pinned')
+        setGlowProgress(grow)
+        setEndingOverlayOpacity(toCream)
+        setHistoryOverlayProgress(clamp((toCream - 0.16) / 0.84, 0, 1))
+      } else {
+        const afterProgress = clamp(
+          (scrollY - pinEndPx - window.innerHeight * 0.45) / (window.innerHeight * 0.45),
+          0,
+          1,
+        )
+        setEndingProgress(1)
+        setEndingPhase('after')
+        setGlowProgress(1)
+        setEndingOverlayOpacity(1)
+        setHistoryOverlayProgress(1 - afterProgress)
+      }
     }
 
     updateEndingProgress()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
+    window.addEventListener('scroll', updateEndingProgress, { passive: true })
+    window.addEventListener('resize', updateEndingProgress)
 
     return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-      if (scrollFrame) cancelAnimationFrame(scrollFrame)
+      window.removeEventListener('scroll', updateEndingProgress)
+      window.removeEventListener('resize', updateEndingProgress)
     }
   }, [])
 
   const firstTaglineProgress = easeInOutCubic(clamp(endingProgress / 0.48, 0, 1))
   const secondTaglineProgress = easeInOutCubic(clamp((endingProgress - 0.52) / 0.48, 0, 1))
+  const endingContentFade = easeInOutCubic(clamp((glowProgress - 0.18) / 0.42, 0, 1))
   const getTaglinePhraseStyle = (progress) => ({
-    opacity: progress,
+    opacity: progress * (1 - endingContentFade),
     filter: `blur(${(1 - progress) * 0.65}vw) brightness(${0.24 + progress * 0.76})`,
-    transform: `translateY(${(1 - progress) * 2.3}vw)`,
+    transform: `translateY(${(1 - progress) * 4.6}vw)`,
   })
+  // 빛은 고정 구간의 hold가 끝난 뒤부터 점처럼 나타나 점점 커진다
+  const endingGlowFade = easeInOutCubic(clamp((endingOverlayOpacity - 0.62) / 0.38, 0, 1))
+  const endingGlowScale = 0.04 + glowProgress * 4.6
+  const endingGlowOpacity = clamp(glowProgress / 0.15, 0, 1) * (1 - endingGlowFade)
+  const endingHistoryTitleProgress = easeInOutCubic(historyOverlayProgress)
+  const historyScreenOpacity =
+    endingPhase === 'pinned'
+      ? easeInOutCubic(endingOverlayOpacity)
+      : historyOverlayProgress > 0
+        ? 1
+        : 0
+  // 검정(0) -> 크림(1)으로 배경색 자체를 보간 — History와 같은 색이라 핀이 풀려도 끊김이 없다
+  const endingBgColor = `rgb(${255 * endingOverlayOpacity}, ${247 * endingOverlayOpacity}, ${234 * endingOverlayOpacity})`
   const storyLeadProgress = clamp(storyProgress / 0.24, 0, 1)
   const storyMediaProgress = clamp((storyProgress - 0.28) / 0.16, 0, 1)
   const storyClosingProgress = clamp((storyProgress - 0.48) / 0.26, 0, 1)
@@ -1278,13 +611,28 @@ function AboutSection() {
       >
         <p className={styles.storyLead}>
           <StoryTypedLines
-            lines={[
-              'From the days',
-              'when incandescent bulbs lit',
-              'everyday life to the present day,',
-            ]}
+            lines={['From the days', 'when incandescent bulbs lit']}
             progress={storyLeadProgress}
             totalWords={13}
+            strongWords={['incandescent']}
+          />
+        </p>
+
+        <p className={styles.storyLeadSide}>
+          <StoryTypedLines
+            lines={['everyday', 'life to -']}
+            progress={storyLeadProgress}
+            startIndex={8}
+            totalWords={14}
+          />
+        </p>
+
+        <p className={styles.storyLeadTail}>
+          <StoryTypedLines
+            lines={['the present day,']}
+            progress={storyLeadProgress}
+            startIndex={11}
+            totalWords={14}
           />
         </p>
 
@@ -1319,9 +667,10 @@ function AboutSection() {
         <div className={styles.storySecond}>
           <p className={styles.storyLead}>
             <StoryTypedLines
-              lines={['Decades of technology', 'and a philosophy', 'shaped over time.']}
+              lines={['Decades of technology', 'and a philosophy shaped', 'over time.']}
               progress={storySecondProgress}
               totalWords={25}
+              strongWords={['technology']}
             />
           </p>
 
@@ -1334,12 +683,22 @@ function AboutSection() {
             />
           </p>
 
-          <p className={`${styles.storyClosing} ${styles.storyClosingStatement}`}>
+          <p className={`${styles.storyClosing} ${styles.storyClosingBridge}`}>
             <StoryTypedLines
-              lines={['we continue to understand people', 'and the spaces they inhabit.']}
+              lines={['we continue to']}
               progress={storySecondProgress}
               startIndex={15}
               totalWords={25}
+            />
+          </p>
+
+          <p className={`${styles.storyClosing} ${styles.storyClosingStatement}`}>
+            <StoryTypedLines
+              lines={['understand people and the', 'spaces they inhabit.']}
+              progress={storySecondProgress}
+              startIndex={18}
+              totalWords={25}
+              strongWords={['spaces']}
             />
           </p>
         </div>
@@ -1347,8 +706,14 @@ function AboutSection() {
 
       <div
         ref={endingRef}
-        className={styles.ending}
+        className={`${styles.ending} ${endingPhase === 'pinned' ? styles.endingPinned : ''}`}
+        style={{
+          '--glow-scale': endingGlowScale,
+          '--glow-opacity': endingGlowOpacity,
+          backgroundColor: endingBgColor,
+        }}
       >
+        <div className={styles.endingGlow} aria-hidden="true" />
         <p className={`${styles.tagline} fs-title-4`}>
           <span className={styles.taglinePhrase} style={getTaglinePhraseStyle(firstTaglineProgress)}>
             Better <em>Life,</em>
@@ -1358,6 +723,22 @@ function AboutSection() {
           </span>
         </p>
       </div>
+      <div
+        className={styles.historyScreenOverlay}
+        style={{ opacity: historyScreenOpacity }}
+        aria-hidden="true"
+      />
+      <h2
+        className={styles.historyTitleOverlay}
+        style={{
+          opacity: endingHistoryTitleProgress,
+          filter: `blur(${(1 - endingHistoryTitleProgress) * 1.2}vw)`,
+        }}
+        aria-hidden="true"
+      >
+        <span className={styles.historyTitlePlain}>our</span>
+        <em>History</em>
+      </h2>
     </section>
   )
 }
