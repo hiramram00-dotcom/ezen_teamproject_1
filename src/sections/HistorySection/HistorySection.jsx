@@ -143,13 +143,44 @@ const yearShorts = (() => {
   })
 })()
 
+const yearPrefixes = [
+  ...new Set(historyItems.map((item) => item.yearLabel.slice(0, 2))),
+]
+
+const yearSuffixes = [
+  ...new Set(historyItems.map((item) => item.yearLabel.slice(2))),
+]
+
 function HistorySection() {
-  // suffix는 실제 이벤트 위치에서 스크롤로 올라와 active marker에 닿고,
-  // 전환이 시작되면 해당 이미지 끝 위치에 남아 이미지와 함께 스크롤된다.
+  // suffix는 다음 이벤트 위치에서 실제로 올라오다가 active marker에 닿으면
+  // prefix와 함께 sticky 묶음 안에서 안정적으로 보인다.
   // chapters of Light + 라인 묶음은 아래로 이동하지 않는다.
   const blockRefs = useRef([])
   const railMotionRef = useRef(null)
   const dividerRef = useRef(null)
+  const metricsRef = useRef(null)
+  const headingRef = useRef(null)
+
+  // 'our HISTORY' 타이틀 — 화면에 들어오면 흐림 → 선명, 벗어나면 다시 흐려져
+  // 역스크롤(다시 진입)할 때마다 모션이 재생된다.
+  useEffect(() => {
+    const el = headingRef.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.classList.add(styles.headingShown)
+      return
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          el.classList.toggle(styles.headingShown, entry.isIntersecting)
+        })
+      },
+      { threshold: 0.3 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   useEffect(() => {
     // 데스크톱(넓은 화면·정밀 포인터·모션 허용)에서만 sticky 연도 묶음을 구동.
@@ -162,25 +193,59 @@ function HistorySection() {
     let lastFrameState = ''
     let active = false
 
-    const render = () => {
+    const resetAnimatedParts = () => {
       const railMotion = railMotionRef.current
+      if (railMotion) railMotion.style.transform = ''
+      blockRefs.current.forEach((block) => {
+        block
+          ?.querySelectorAll(
+            '[data-year-prefix], [data-year-prefix-ghost], [data-year-suffix]',
+          )
+          .forEach((part) => {
+            part.style.transform = ''
+            if (part.hasAttribute('data-year-suffix')) {
+              part.style.visibility = ''
+            }
+            if (
+              part.hasAttribute('data-year-prefix') ||
+              part.hasAttribute('data-year-prefix-ghost')
+            ) {
+              part.style.visibility = ''
+            }
+          })
+      })
+      railMotion
+        ?.querySelectorAll('[data-rail-prefix], [data-rail-suffix]')
+        .forEach((part) => {
+          part.style.visibility = ''
+          part.style.transform = ''
+          part.style.opacity = ''
+          part.style.filter = ''
+        })
+    }
+
+    const measure = () => {
       const divider = dividerRef.current
-      if (!railMotion || !divider) return
+      if (!divider) return
 
-      railMotion.style.transform = ''
+      resetAnimatedParts()
 
-      const markerElements = blockRefs.current
+      const scrollY = window.scrollY
+
+      const markers = blockRefs.current
         .map((block, index) => {
           const marker = block?.querySelector('[data-history-year-marker]')
           const media = block?.querySelector('[data-history-media]')
           if (!marker || marker.dataset.skipYear === 'true') return null
+
           const blockRect = block.getBoundingClientRect()
+          const blockTop = blockRect.top + scrollY
           const prefix = marker.querySelector('[data-year-prefix]')
           const prefixGhost = marker.querySelector('[data-year-prefix-ghost]')
           const suffix = marker.querySelector('[data-year-suffix]')
           const mediaBottom = media
-            ? blockRect.top + media.offsetTop + media.offsetHeight
-            : blockRect.bottom
+            ? blockTop + media.offsetTop + media.offsetHeight
+            : blockRect.bottom + scrollY
           let yearGroupMediaBottom = mediaBottom
 
           for (
@@ -194,75 +259,152 @@ function HistorySection() {
             if (!nextBlock || !nextMedia) continue
             const nextBlockRect = nextBlock.getBoundingClientRect()
             yearGroupMediaBottom =
-              nextBlockRect.top + nextMedia.offsetTop + nextMedia.offsetHeight
+              nextBlockRect.top +
+              scrollY +
+              nextMedia.offsetTop +
+              nextMedia.offsetHeight
           }
 
           return {
             index,
-            marker,
-            top: blockRect.top + marker.offsetTop,
+            top: blockTop + marker.offsetTop,
             mediaBottom: yearGroupMediaBottom,
             prefix,
             prefixGhost,
+            prefixValue: historyItems[index].yearLabel.slice(0, 2),
             suffix,
+            suffixValue: historyItems[index].yearLabel.slice(2),
             suffixHeight: suffix?.offsetHeight ?? marker.offsetHeight,
           }
         })
         .filter(Boolean)
 
-      markerElements.forEach(({ prefix, prefixGhost, suffix }) => {
-        if (prefix) prefix.style.transform = ''
-        if (prefixGhost) {
-          prefixGhost.style.transform = ''
-          prefixGhost.style.visibility = ''
-        }
-        if (suffix) suffix.style.transform = ''
-      })
+      metricsRef.current = {
+        markers,
+        viewportHeight: window.innerHeight,
+        viewportWidth: window.innerWidth,
+      }
+    }
 
-      const anchorTop = divider.getBoundingClientRect().bottom
-      const markers = markerElements
+    const render = () => {
+      const railMotion = railMotionRef.current
+      const divider = dividerRef.current
+      if (!railMotion || !divider) return
 
-      const moveBy = (value) => `translate3d(0, ${value.toFixed(3)}px, 0)`
+      const metrics = metricsRef.current
+      if (!metrics) {
+        measure()
+        return
+      }
+
+      const { markers } = metrics
+      const scrollY = window.scrollY
+
+      resetAnimatedParts()
+
+      const moveBy = (value) => {
+        const ratio = window.devicePixelRatio || 1
+        const snapped = Math.round(value * ratio) / ratio
+        return `translateY(${snapped}px)`
+      }
+
+      const yearGap = parseFloat(window.getComputedStyle(divider).marginTop) || 0
+      const anchorTop = divider.getBoundingClientRect().bottom + yearGap
+
       const moveEntryToTop = (entry, targetTop) => {
         if (!entry) return ''
-        return moveBy(targetTop - entry.top)
+        return moveBy(targetTop - (entry.top - scrollY))
       }
       const moveEntryToImageEnd = (entry) =>
-        moveEntryToTop(entry, entry.mediaBottom - entry.suffixHeight)
+        moveEntryToTop(
+          entry,
+          entry.mediaBottom - scrollY - entry.suffixHeight,
+        )
 
       const finalEntry = markers.at(-1)
       const finalAnchorTop =
-        finalEntry && finalEntry.mediaBottom - finalEntry.suffixHeight
+        finalEntry &&
+        finalEntry.mediaBottom - scrollY - finalEntry.suffixHeight
       const finalEntryEnding =
         finalEntry &&
-        finalEntry.mediaBottom <= anchorTop + finalEntry.suffixHeight
-      const activeAnchorTop = finalEntryEnding ? finalAnchorTop : anchorTop
+        finalEntry.mediaBottom - scrollY <= anchorTop + finalEntry.suffixHeight
 
       if (finalEntryEnding) {
+        // 마지막 연도를 이미지 끝까지 배웅할 때만 sticky 묶음을 이미지 끝으로 보낸다.
         railMotion.style.transform = moveBy(finalAnchorTop - anchorTop)
       }
 
+      const showRailPrefix = (value) => {
+        railMotion
+          .querySelectorAll('[data-rail-prefix]')
+          .forEach((part) => {
+            part.style.visibility =
+              part.dataset.railPrefix === value ? 'visible' : ''
+          })
+      }
+
+      const moveRailPrefix = (value, offset) => {
+        railMotion
+          .querySelectorAll(`[data-rail-prefix="${value}"]`)
+          .forEach((part) => {
+            part.style.visibility = 'visible'
+            part.style.transform = moveBy(offset)
+          })
+      }
+
+      const fadeRailPrefix = (value, progress) => {
+        railMotion
+          .querySelectorAll(`[data-rail-prefix="${value}"]`)
+          .forEach((part) => {
+            part.style.opacity = `${Math.max(0, 1 - progress)}`
+            part.style.filter = `blur(${(progress * 10).toFixed(2)}px)`
+          })
+      }
+
+      const moveRailSuffix = (value, offset) => {
+        railMotion
+          .querySelectorAll(`[data-rail-suffix="${value}"]`)
+          .forEach((part) => {
+            part.style.visibility = 'visible'
+            part.style.transform = moveBy(offset)
+          })
+      }
+
+      const fadeRailSuffix = (value, progress) => {
+        railMotion
+          .querySelectorAll(`[data-rail-suffix="${value}"]`)
+          .forEach((part) => {
+            part.style.opacity = `${Math.max(0, 1 - progress)}`
+            part.style.filter = `blur(${(progress * 10).toFixed(2)}px)`
+          })
+      }
+
       const nextPrefixIndex = markers.findIndex(
-        (entry) => entry.prefix && entry.top > anchorTop,
+        (entry) => entry.prefix && entry.top - scrollY > anchorTop,
       )
+      const prefixHandoffNextEntry =
+        nextPrefixIndex >= 0 ? markers[nextPrefixIndex] : null
       const prefixHandoffEntry =
         nextPrefixIndex > 0 ? markers[nextPrefixIndex - 1] : null
+      const prefixChangesAtHandoff =
+        prefixHandoffEntry?.prefixValue &&
+        prefixHandoffNextEntry?.prefixValue &&
+        prefixHandoffEntry.prefixValue !== prefixHandoffNextEntry.prefixValue
       const prefixHandoffActive =
         prefixHandoffEntry?.prefixGhost &&
-        prefixHandoffEntry.mediaBottom <=
+        !prefixChangesAtHandoff &&
+        prefixHandoffEntry.mediaBottom - scrollY <=
           anchorTop + prefixHandoffEntry.suffixHeight
 
       const activePrefix = prefixHandoffActive
         ? null
         : markers
-            .filter((entry) => entry.prefix && entry.top <= anchorTop)
+            .filter((entry) => entry.prefix && entry.top - scrollY <= anchorTop)
             .at(-1)
 
       if (activePrefix?.prefix) {
-        activePrefix.prefix.style.transform = moveEntryToTop(
-          activePrefix,
-          activeAnchorTop,
-        )
+        activePrefix.prefix.style.visibility = 'hidden'
+        showRailPrefix(activePrefix.prefixValue)
       }
 
       if (prefixHandoffActive) {
@@ -271,44 +413,137 @@ function HistorySection() {
           moveEntryToImageEnd(prefixHandoffEntry)
       }
 
+      const activeSuffix = markers
+        .filter((entry) => entry.suffix && entry.top - scrollY <= anchorTop)
+        .at(-1)
+      const nextSuffix = markers.find(
+        (entry) => entry.suffix && entry.top - scrollY > anchorTop,
+      )
+      const nextSuffixDistance = nextSuffix
+        ? nextSuffix.top - scrollY - anchorTop
+        : Number.POSITIVE_INFINITY
+      const suffixHeight =
+        activeSuffix?.suffixHeight ?? nextSuffix?.suffixHeight ?? 120
+      const suffixHandoffDistance = suffixHeight * 1.65
+      const prefixEntryDistance = prefixHandoffNextEntry
+        ? prefixHandoffNextEntry.top - scrollY - anchorTop
+        : Number.POSITIVE_INFINITY
+      const suffixHandoffProgress =
+        nextSuffix && Number.isFinite(nextSuffixDistance)
+          ? Math.max(
+              0,
+              Math.min(
+                1,
+                (suffixHandoffDistance - nextSuffixDistance) /
+                  suffixHandoffDistance,
+              ),
+            )
+          : 0
+      const initialGroupEntryActive =
+        !activeSuffix &&
+        nextSuffix &&
+        nextSuffixDistance <= suffixHandoffDistance
+      const initialGroupOffset = initialGroupEntryActive
+        ? Math.max(0, nextSuffixDistance)
+        : 0
+
+      if (initialGroupOffset > 0) {
+        railMotion.style.transform = moveBy(initialGroupOffset)
+      }
+
+      if (
+        !activePrefix &&
+        !prefixHandoffActive &&
+        prefixHandoffNextEntry?.prefix &&
+        prefixEntryDistance <= suffixHandoffDistance
+      ) {
+        prefixHandoffNextEntry.prefix.style.visibility = 'hidden'
+        moveRailPrefix(
+          prefixHandoffNextEntry.prefixValue,
+          initialGroupEntryActive ? 0 : Math.max(0, prefixEntryDistance),
+        )
+      }
+
       markers.forEach((entry) => {
         if (!entry.suffix) return
-
-        const suffixTouchesMarker = entry.top <= anchorTop
-        const suffixTouchesImageEnd =
-          entry.mediaBottom <= anchorTop + entry.suffixHeight
-
-        if (suffixTouchesImageEnd) {
-          entry.suffix.style.transform = moveEntryToImageEnd(entry)
-          return
-        }
-
-        if (suffixTouchesMarker) {
-          entry.suffix.style.transform = moveEntryToTop(entry, anchorTop)
+        const distance = entry.top - scrollY - anchorTop
+        if (distance <= suffixHandoffDistance) {
+          entry.suffix.style.visibility = 'hidden'
         }
       })
+
+      if (activeSuffix?.suffixValue) {
+        const activeOffset = suffixHandoffProgress
+          ? -suffixHandoffProgress * suffixHeight
+          : 0
+        moveRailSuffix(activeSuffix.suffixValue, activeOffset)
+        if (suffixHandoffProgress > 0) {
+          fadeRailSuffix(activeSuffix.suffixValue, suffixHandoffProgress)
+        }
+      }
+
+      if (
+        nextSuffix?.suffixValue &&
+        nextSuffixDistance <= suffixHandoffDistance
+      ) {
+        moveRailSuffix(
+          nextSuffix.suffixValue,
+          initialGroupEntryActive ? 0 : Math.max(0, nextSuffixDistance),
+        )
+      }
+
+      const prefixChangesDuringSuffixHandoff =
+        activeSuffix?.prefixValue &&
+        nextSuffix?.prefixValue &&
+        activeSuffix.prefixValue !== nextSuffix.prefixValue &&
+        nextSuffixDistance <= suffixHandoffDistance
+
+      if (prefixChangesDuringSuffixHandoff) {
+        const activePrefixOffset = -suffixHandoffProgress * suffixHeight
+        moveRailPrefix(activeSuffix.prefixValue, activePrefixOffset)
+        fadeRailPrefix(activeSuffix.prefixValue, suffixHandoffProgress)
+        moveRailPrefix(nextSuffix.prefixValue, Math.max(0, nextSuffixDistance))
+        if (nextSuffix.prefix) {
+          nextSuffix.prefix.style.visibility = 'hidden'
+        }
+      }
     }
 
     const tick = () => {
       if (!active) return
       const frameState = `${window.scrollY}:${window.innerWidth}:${window.innerHeight}`
       if (frameState !== lastFrameState) {
+        const needsMeasure =
+          !metricsRef.current ||
+          metricsRef.current.viewportWidth !== window.innerWidth ||
+          metricsRef.current.viewportHeight !== window.innerHeight
+        if (needsMeasure) measure()
         lastFrameState = frameState
         render()
       }
       frame = window.requestAnimationFrame(tick)
     }
 
+    const refreshMetrics = () => {
+      if (!active) return
+      measure()
+      render()
+    }
+
     const enable = () => {
       if (active) return
       active = true
       lastFrameState = ''
+      measure()
       render()
       frame = window.requestAnimationFrame(tick)
+      window.addEventListener('resize', refreshMetrics)
+      document.fonts?.ready?.then(refreshMetrics)
     }
     const disable = () => {
       if (!active) return
       active = false
+      window.removeEventListener('resize', refreshMetrics)
       if (frame) {
         window.cancelAnimationFrame(frame)
         frame = 0
@@ -316,13 +551,33 @@ function HistorySection() {
       // 정적 폴백으로 돌아갈 때 잔여 transform 제거.
       blockRefs.current.forEach((block) => {
         block
-          ?.querySelectorAll('[data-year-prefix], [data-year-suffix]')
+          ?.querySelectorAll(
+            '[data-year-prefix], [data-year-prefix-ghost], [data-year-suffix]',
+          )
           .forEach((part) => {
             part.style.transform = ''
+            if (part.hasAttribute('data-year-suffix')) {
+              part.style.visibility = ''
+            }
+            if (
+              part.hasAttribute('data-year-prefix') ||
+              part.hasAttribute('data-year-prefix-ghost')
+            ) {
+              part.style.visibility = ''
+            }
           })
       })
+      metricsRef.current = null
       if (railMotionRef.current) {
         railMotionRef.current.style.transform = ''
+        railMotionRef.current
+          .querySelectorAll('[data-rail-prefix], [data-rail-suffix]')
+          .forEach((part) => {
+            part.style.visibility = ''
+            part.style.transform = ''
+            part.style.opacity = ''
+            part.style.filter = ''
+          })
       }
     }
 
@@ -338,7 +593,7 @@ function HistorySection() {
 
   return (
     <section className={styles.history} aria-labelledby="history-title">
-      <h2 id="history-title" className={styles.heading}>
+      <h2 id="history-title" ref={headingRef} className={styles.heading}>
         <em>our</em> HISTORY
       </h2>
 
@@ -355,6 +610,20 @@ function HistorySection() {
               data-history-divider
               aria-hidden="true"
             />
+            <span className={styles.railPrefixLayer} aria-hidden="true">
+              {yearPrefixes.map((prefix) => (
+                <span key={prefix} data-rail-prefix={prefix}>
+                  {prefix}
+                </span>
+              ))}
+            </span>
+            <span className={styles.railSuffixLayer} aria-hidden="true">
+              {yearSuffixes.map((suffix) => (
+                <span key={suffix} data-rail-suffix={suffix}>
+                  {suffix}
+                </span>
+              ))}
+            </span>
           </div>
         </div>
 
