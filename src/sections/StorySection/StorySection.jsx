@@ -18,6 +18,7 @@ export default function StorySection() {
     const targetMask = targetMaskRef.current
     const sourceVideo = document.querySelector('[data-make-light-video]')
     const makeLightCopy = document.querySelector('[data-make-light-copy]')
+    const makeLightPoster = document.querySelector('[data-make-light-poster]')
     if (!section || !container || !targetCard || !targetMask || !sourceVideo) return
 
     const hideMakeLightCopy = () => {
@@ -48,6 +49,7 @@ export default function StorySection() {
     let setHandoffWidth = null
     let setHandoffHeight = null
     let setHandoffRadius = null
+    let posterClone = null // 줄어드는 박스 안에 겹치는 고화질 이미지 클론
 
     const getViewportRect = () => {
       return {
@@ -104,6 +106,28 @@ export default function StorySection() {
         backfaceVisibility: 'hidden',
       })
 
+      // 고화질 포스터 클론을 박스 안 영상 "위"에 겹침 — 영상과 100% 같이 줄어들다가
+      // 거의 다 줄어든 뒤에야 영상으로 크로스페이드(원본 포스터는 숨김).
+      if (makeLightPoster) {
+        posterClone = makeLightPoster.cloneNode(true)
+        posterClone.removeAttribute('data-make-light-poster')
+        makeLightPoster.style.opacity = '0'
+        handoffWrapper.appendChild(posterClone)
+        gsap.set(posterClone, {
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: '50% 50%',
+          zIndex: 2,
+          opacity: 1,
+          pointerEvents: 'none',
+          force3D: true,
+        })
+      }
+
       // MakeLightSection 자체의 페이드아웃 타이밍과 무관하게, 핸드오프가 화면을 덮는
       // 그 순간 텍스트/오버레이도 같이(트랜지션과 함께) 사라지게 강제한다 — 그래야
       // "아직 안 사라진 헤드라인이 한 프레임에 통째로 가려지는" 컷이 생기지 않는다.
@@ -130,6 +154,8 @@ export default function StorySection() {
       handoffWrapper.remove()
       handoffWrapper = null
       handoffVideo = null
+      posterClone = null // 클론은 wrapper와 함께 제거됨
+      if (makeLightPoster) makeLightPoster.style.opacity = '1' // 풀스크린 복귀 → 원본 이미지 다시
       setHandoffX = null
       setHandoffY = null
       setHandoffWidth = null
@@ -186,6 +212,7 @@ export default function StorySection() {
     const restoreToMakeLight = () => {
       sourceVideo.pause()
       sourceVideo.currentTime = 0
+      if (makeLightPoster) makeLightPoster.style.opacity = '1' // 풀스크린 복귀 → 고화질 이미지 다시 표시
       resetHandoff()
       restoreMakeLightCopy()
       if (sourceNextSibling?.parentNode === sourceParent) {
@@ -230,6 +257,21 @@ export default function StorySection() {
         height: `${lerp(100, 108, motionProgress)}%`,
         objectPosition: `${lerp(50, 38, motionProgress)}% ${lerp(50, 0, motionProgress)}%`,
       })
+      // 포스터 클론도 영상과 동일하게 변형 + 거의 다 줄어든 뒤(0.78~0.95)에야 페이드아웃
+      if (posterClone) {
+        // 핸드오프 내내 원본 풀스크린 포스터를 확실히 숨김 (한 번만 숨기면 재렌더 등으로
+        // 다시 보여 "줄어드는 박스 뒤에 풀스크린 이미지" 버그가 남음 → 매 프레임 강제)
+        if (makeLightPoster) makeLightPoster.style.opacity = '0'
+        gsap.set(posterClone, {
+          xPercent: lerp(0, -4, motionProgress),
+          yPercent: 0,
+          width: `${lerp(100, 108, motionProgress)}%`,
+          height: `${lerp(100, 108, motionProgress)}%`,
+          objectPosition: `${lerp(50, 38, motionProgress)}% ${lerp(50, 0, motionProgress)}%`,
+          opacity: 1 - smoothStep(clamp01((progress - 0.78) / 0.17)),
+        })
+        if (progress > 0.5) sourceVideo.play().catch(() => {}) // 드러나기 전 미리 재생 (프리즈 방지)
+      }
     }
 
     const keepHandoffOnTargetCard = () => {
