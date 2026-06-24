@@ -8,7 +8,10 @@
   display: flex;
   align-items: flex-start;
   gap: clamp(24px, 3vw, 56px);
-  padding: clamp(48px, 6vw, 120px) var(--layout-gutter);
+  width: calc(100% - (var(--layout-gutter) * 2));
+  max-width: calc(var(--layout-container-width) - (var(--layout-gutter) * 2));
+  margin: 0 auto;
+  padding: clamp(48px, 6vw, 120px) 0;
 }
 
 .galleryText {
@@ -31,8 +34,9 @@
 }
 
 .galleryImages {
-  flex: 1 1 0;
+  flex: 0 0 54%; /* 오른쪽 이미지 폭 축소 (기존 ~64%) */
   min-width: 0;
+  margin-left: auto; /* 오른쪽 가장자리에 정렬 — 텍스트와의 간격이 넓어짐 */
   display: flex;
   flex-direction: column;
   gap: var(--layout-section-gap); /* 36px */
@@ -51,6 +55,7 @@
 .galleryImages .galleryThirdImage {
   height: clamp(420px, 46vw, 760px);
   object-fit: cover;
+  object-position: center 63%; /* 박스 안 이미지를 살짝 위로 (사진 아래쪽이 더 보이게) */
 }
 
 /* ---------- 검정 풀스크린 블록 ---------- */
@@ -65,7 +70,10 @@
 }
 
 .darkTextWrap {
-  padding: clamp(48px, 6vw, 120px) var(--layout-gutter);
+  width: calc(100% - (var(--layout-gutter) * 2));
+  max-width: calc(var(--layout-container-width) - (var(--layout-gutter) * 2));
+  margin: 0 auto;
+  padding: clamp(48px, 6vw, 120px) 0;
   text-align: right;
   display: flex;
   flex-direction: column;
@@ -85,11 +93,14 @@
 }
 
 .darkPhotos {
+  width: calc(100% - (var(--layout-gutter) * 2));
+  max-width: calc(var(--layout-container-width) - (var(--layout-gutter) * 2));
+  margin: 0 auto;
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
   gap: clamp(20px, 2.4vw, 44px);
-  padding: 0 var(--layout-gutter) clamp(80px, 12vw, 200px);
+  padding: 0 0 clamp(80px, 12vw, 200px);
 }
 
 .darkPhotoSm {
@@ -127,8 +138,30 @@
     width: 100%;
   }
 
+  .desc {
+    display: block;
+  }
+
+  .desc p {
+    display: inline;
+  }
+
+  .desc p + p::before {
+    content: ' ';
+  }
+
+  .desc p > span {
+    display: inline;
+  }
+
+  .desc p > span::after {
+    content: ' ';
+  }
+
   .galleryImages {
+    flex: none; /* 세로 스택에서 base의 flex-basis(높이 오해석) 방지 */
     width: 100%;
+    margin-left: 0;
   }
 
   /* 큰 이미지 높이 축소 */
@@ -138,6 +171,21 @@
 
   .galleryImages .galleryThirdImage {
     height: clamp(240px, 60vw, 380px);
+  }
+
+  .darkTextWrap {
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  .darkText p > span,
+  .darkText > span {
+    display: inline;
+  }
+
+  .darkText p > span::after,
+  .darkText > span::after {
+    content: ' ';
   }
 
   /* 검정 블록 하단 두 사진 — 왼쪽 여백 크게 남던 것 균형 조정 */

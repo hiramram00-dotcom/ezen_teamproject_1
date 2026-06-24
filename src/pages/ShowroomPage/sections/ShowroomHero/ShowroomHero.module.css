@@ -5,8 +5,10 @@
 }
 
 .introWrap {
-  margin: 0 var(--layout-gutter) 66px;
-  padding-top: clamp(72px, 11vw, 200px);
+  width: calc(100% - (var(--layout-gutter) * 2));
+  max-width: calc(var(--layout-container-width) - (var(--layout-gutter) * 2));
+  margin: 0 auto 36px;
+  padding-top: clamp(96px, 13vw, 248px);
 }
 
 .heroTitle {
