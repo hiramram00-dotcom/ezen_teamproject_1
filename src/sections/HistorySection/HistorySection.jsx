@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+﻿import { useEffect, useRef } from 'react'
 
 import styles from './HistorySection.module.css'
 
@@ -15,10 +15,10 @@ import about2026 from './assets/about-2026.webp'
 import about2026daysA from './assets/about-2026-3days-a.webp'
 import about2026daysB from './assets/about-2026-3days-b.webp'
 
-// Figma "about-history" (node 1641:55) 기준 — 챕터마다 왼쪽에 연도, 오른쪽에 콘텐츠.
-// 연도는 x=570 우측 정렬. 세기가 바뀔 때만 전체(1962·2002), 같은 세기는 끝 두 자리(87·99·13…),
-// 직전과 같은 연도면 생략(2026 중복). 콘텐츠는 x=852·width 1000(오른쪽 68px 거터까지).
-// yearLabel: 전체 4자리. images: [{ src, w, h }] — 1장이면 단일(1000×580), 2장이면 가로 나열.
+// Figma "about-history" (node 1641:55) 湲곗? ??梨뺥꽣留덈떎 ?쇱そ???곕룄, ?ㅻⅨ履쎌뿉 肄섑뀗痢?
+// ?곕룄??x=570 ?곗륫 ?뺣젹. ?멸린媛 諛붾??뚮쭔 ?꾩껜(1962쨌2002), 媛숈? ?멸린???????먮━(87쨌99쨌13??,
+// 吏곸쟾怨?媛숈? ?곕룄硫??앸왂(2026 以묐났). 肄섑뀗痢좊뒗 x=852쨌width 1000(?ㅻⅨ履?68px 嫄고꽣源뚯?).
+// yearLabel: ?꾩껜 4?먮━. images: [{ src, w, h }] ??1?μ씠硫??⑥씪(1000횞580), 2?μ씠硫?媛濡??섏뿴.
 const historyItems = [
   {
     key: '1962',
@@ -128,16 +128,16 @@ const historyItems = [
   },
 ]
 
-// 챕터별 연도 표기 — 세기가 바뀌면 전체(1962·2002), 같은 세기면 끝 두 자리(87·99…),
-// 직전과 같은 연도면 생략(2026 중복). 데스크톱 전용 표기(모바일은 전체 연도 노출).
+// 梨뺥꽣蹂??곕룄 ?쒓린 ???멸린媛 諛붾뚮㈃ ?꾩껜(1962쨌2002), 媛숈? ?멸린硫??????먮━(87쨌99??,
+// 吏곸쟾怨?媛숈? ?곕룄硫??앸왂(2026 以묐났). ?곗뒪?ы넲 ?꾩슜 ?쒓린(紐⑤컮?쇱? ?꾩껜 ?곕룄 ?몄텧).
 const yearShorts = (() => {
   let prev = null
   return historyItems.map((item) => {
     const y = item.yearLabel
     let label
-    if (y === prev) label = '' // 직전과 동일 연도 → 표기 생략
-    else if (prev && y.slice(0, 2) === prev.slice(0, 2)) label = y.slice(2) // 같은 세기
-    else label = y // 첫 항목 또는 세기 변경 → 전체
+    if (y === prev) label = '' // 吏곸쟾怨??숈씪 ?곕룄 ???쒓린 ?앸왂
+    else if (prev && y.slice(0, 2) === prev.slice(0, 2)) label = y.slice(2) // 媛숈? ?멸린
+    else label = y // 泥???ぉ ?먮뒗 ?멸린 蹂寃????꾩껜
     prev = y
     return label
   })
@@ -152,17 +152,19 @@ const yearSuffixes = [
 ]
 
 function HistorySection() {
-  // suffix는 다음 이벤트 위치에서 실제로 올라오다가 active marker에 닿으면
-  // prefix와 함께 sticky 묶음 안에서 안정적으로 보인다.
-  // chapters of Light + 라인 묶음은 아래로 이동하지 않는다.
+  // suffix???ㅼ쓬 ?대깽???꾩튂?먯꽌 ?ㅼ젣濡??щ씪?ㅻ떎媛 active marker???우쑝硫?
+  // prefix? ?④퍡 sticky 臾띠쓬 ?덉뿉???덉젙?곸쑝濡?蹂댁씤??
+  // chapters of Light + ?쇱씤 臾띠쓬? ?꾨옒濡??대룞?섏? ?딅뒗??
   const blockRefs = useRef([])
   const railMotionRef = useRef(null)
   const dividerRef = useRef(null)
   const metricsRef = useRef(null)
   const headingRef = useRef(null)
+  const historyRef = useRef(null)
+  const timelineRef = useRef(null)
 
-  // 'our HISTORY' 타이틀 — 화면에 들어오면 흐림 → 선명, 벗어나면 다시 흐려져
-  // 역스크롤(다시 진입)할 때마다 모션이 재생된다.
+  // 'our HISTORY' ??댄? ???붾㈃???ㅼ뼱?ㅻ㈃ ?먮┝ ???좊챸, 踰쀬뼱?섎㈃ ?ㅼ떆 ?먮젮??
+  // ??뒪?щ·(?ㅼ떆 吏꾩엯)???뚮쭏??紐⑥뀡???ъ깮?쒕떎.
   useEffect(() => {
     const el = headingRef.current
     if (!el) return
@@ -176,15 +178,103 @@ function HistorySection() {
           el.classList.toggle(styles.headingShown, entry.isIntersecting)
         })
       },
-      { threshold: 0.3 },
+      { threshold: 0.08, rootMargin: '0px 0px -10% 0px' },
     )
     io.observe(el)
     return () => io.disconnect()
   }, [])
 
   useEffect(() => {
-    // 데스크톱(넓은 화면·정밀 포인터·모션 허용)에서만 sticky 연도 묶음을 구동.
-    // 그 외(모바일·저모션)는 각 블록의 전체 연도(.marker)가 정적으로 노출된다.
+    const blocks = blockRefs.current.filter(Boolean)
+    if (!blocks.length) return undefined
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
+    const ease = (value) => value * value * (3 - 2 * value)
+    let frame = 0
+
+    const setReveal = (block, rawProgress) => {
+      const progress = ease(clamp(rawProgress, 0, 1))
+      block.style.setProperty('--history-reveal-media', progress.toFixed(4))
+      block.style.setProperty('--history-reveal-marker', clamp((progress - 0.12) / 0.88, 0, 1).toFixed(4))
+      block.style.setProperty('--history-reveal-copy', clamp((progress - 0.2) / 0.8, 0, 1).toFixed(4))
+    }
+
+    const revealAll = () => {
+      blocks.forEach((block) => {
+        block.style.setProperty('--history-reveal-media', '1')
+        block.style.setProperty('--history-reveal-marker', '1')
+        block.style.setProperty('--history-reveal-copy', '1')
+      })
+    }
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      revealAll()
+      return undefined
+    }
+
+    const update = () => {
+      const vh = window.innerHeight
+      blocks.forEach((block) => {
+        const rect = block.getBoundingClientRect()
+        const start = vh * 0.94
+        const end = vh * 0.36
+        setReveal(block, (start - rect.top) / (start - end))
+      })
+      frame = 0
+    }
+
+    const requestUpdate = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+
+    update()
+    window.addEventListener('scroll', requestUpdate, { passive: true })
+    window.addEventListener('resize', requestUpdate)
+
+    return () => {
+      window.removeEventListener('scroll', requestUpdate)
+      window.removeEventListener('resize', requestUpdate)
+      if (frame) cancelAnimationFrame(frame)
+    }
+  }, [])
+
+  useEffect(() => {
+    const history = historyRef.current
+    const timeline = timelineRef.current
+    if (!history || !timeline) return undefined
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
+    const ease = (value) => value * value * (3 - 2 * value)
+    let frame = 0
+
+    const updateIntro = () => {
+      const rect = timeline.getBoundingClientRect()
+      const start = window.innerHeight * 0.78
+      const end = window.innerHeight * 0.24
+      const progress = ease(clamp((start - rect.top) / (start - end), 0, 1))
+
+      timeline.style.setProperty('--history-intro-progress', progress.toFixed(4))
+      frame = 0
+    }
+
+    const requestUpdate = () => {
+      if (!frame) frame = requestAnimationFrame(updateIntro)
+    }
+
+    updateIntro()
+    window.addEventListener('scroll', requestUpdate, { passive: true })
+    window.addEventListener('resize', requestUpdate)
+
+    return () => {
+      window.removeEventListener('scroll', requestUpdate)
+      window.removeEventListener('resize', requestUpdate)
+      if (frame) cancelAnimationFrame(frame)
+    }
+  }, [])
+
+  useEffect(() => {
+    // ?곗뒪?ы넲(?볦? ?붾㈃쨌?뺣? ?ъ씤?걔룸え???덉슜)?먯꽌留?sticky ?곕룄 臾띠쓬??援щ룞.
+    // 洹???紐⑤컮?셋룹?紐⑥뀡)??媛?釉붾줉???꾩껜 ?곕룄(.marker)媛 ?뺤쟻?쇰줈 ?몄텧?쒕떎.
     const mq = window.matchMedia(
       '(min-width: 1200px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)'
     )
@@ -330,8 +420,8 @@ function HistorySection() {
         finalEntry.mediaBottom - scrollY <= anchorTop + finalEntry.suffixHeight
 
       if (finalEntryEnding) {
-        // 마지막 연도를 이미지 끝까지 배웅할 때만 sticky 묶음을 이미지 끝으로 보낸다.
-        railMotion.style.transform = moveBy(finalAnchorTop - anchorTop)
+        // 留덉?留??곕룄瑜??대?吏 ?앷퉴吏 諛곗썒???뚮쭔 sticky 臾띠쓬???대?吏 ?앹쑝濡?蹂대궦??
+        railMotion.style.transform = ''
       }
 
       const showRailPrefix = (value) => {
@@ -448,7 +538,7 @@ function HistorySection() {
         : 0
 
       if (initialGroupOffset > 0) {
-        railMotion.style.transform = moveBy(initialGroupOffset)
+        railMotion.style.transform = ''
       }
 
       if (
@@ -548,7 +638,7 @@ function HistorySection() {
         window.cancelAnimationFrame(frame)
         frame = 0
       }
-      // 정적 폴백으로 돌아갈 때 잔여 transform 제거.
+      // ?뺤쟻 ?대갚?쇰줈 ?뚯븘媛????붿뿬 transform ?쒓굅.
       blockRefs.current.forEach((block) => {
         block
           ?.querySelectorAll(
@@ -592,18 +682,22 @@ function HistorySection() {
   }, [])
 
   return (
-    <section className={styles.history} aria-labelledby="history-title">
+    <section ref={historyRef} className={styles.history} aria-labelledby="history-title">
       <h2 id="history-title" ref={headingRef} className={styles.heading}>
-        <em>our</em> HISTORY
+        <span className={styles.headingPlain}>our</span>
+        <em>History</em>
       </h2>
 
-      <div className={styles.timeline}>
-        {/* chapters of Light + 라인 + 연도를 하나의 active marker(데스크톱 sticky 묶음)로.
-            연도는 prefix/suffix 두 컬럼에 실제 DOM으로 쌓여 스크롤에 맞춰 위로 이동한다.
-            모바일·저모션은 이 묶음을 숨기고 각 블록의 전체 연도를 정적으로 노출. */}
+      <div ref={timelineRef} className={styles.timeline}>
+        {/* chapters of Light + ?쇱씤 + ?곕룄瑜??섎굹??active marker(?곗뒪?ы넲 sticky 臾띠쓬)濡?
+            ?곕룄??prefix/suffix ??而щ읆???ㅼ젣 DOM?쇰줈 ?볦뿬 ?ㅽ겕濡ㅼ뿉 留욎떠 ?꾨줈 ?대룞?쒕떎.
+            紐⑤컮?셋룹?紐⑥뀡? ??臾띠쓬???④린怨?媛?釉붾줉???꾩껜 ?곕룄瑜??뺤쟻?쇰줈 ?몄텧. */}
         <div className={styles.rail}>
           <div ref={railMotionRef} className={styles.railMotion}>
-            <p className={styles.subtitle}>chapters of Light</p>
+            <p className={styles.subtitle}>
+              <span className={styles.subtitlePlain}>chapters of</span>
+              <em>Light</em>
+            </p>
             <span
               ref={dividerRef}
               className={styles.divider}
@@ -637,7 +731,7 @@ function HistorySection() {
               yearShorts[index] === '' ? ` ${styles.continued}` : ''
             }`}
           >
-            {/* 챕터 연도 — 우측 정렬(x=570). 데스크톱: 축약 표기 / 모바일: 전체 연도 */}
+            {/* 梨뺥꽣 ?곕룄 ???곗륫 ?뺣젹(x=570). ?곗뒪?ы넲: 異뺤빟 ?쒓린 / 紐⑤컮?? ?꾩껜 ?곕룄 */}
             <p
               className={styles.marker}
               aria-label={item.yearLabel}
@@ -668,8 +762,8 @@ function HistorySection() {
             </p>
             <div className={styles.content}>
               <div className={styles.copy}>
-                <h3 className={styles.title}>{item.title}</h3>
-                <p className={styles.description}>{item.description}</p>
+                <h3 className={`${styles.title} fs-body-2`}>{item.title}</h3>
+                <p className={`${styles.description} fs-sub-3`}>{item.description}</p>
               </div>
               <div
                 className={`${styles.media} ${
@@ -699,3 +793,4 @@ function HistorySection() {
 }
 
 export default HistorySection
+

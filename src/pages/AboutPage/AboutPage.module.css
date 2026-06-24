@@ -1,0 +1,7 @@
+.aboutPage {
+  --about-max-width: 1920px;
+  --about-vw: min(1vw, 19.2px);
+  --about-side-offset: max(0px, calc((100vw - var(--about-max-width)) / 2));
+
+  overflow-x: hidden;
+}
