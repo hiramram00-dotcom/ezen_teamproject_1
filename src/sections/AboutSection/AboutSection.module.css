@@ -1,7 +1,7 @@
 .about {
   position: relative;
   width: 100%;
-  height: 378.5vw;
+  height: 660.75vw;
   min-height: 100svh;
   overflow: hidden;
   background: var(--color-base-3);
@@ -292,7 +292,7 @@
 }
 
 .storyPassed {
-  top: 266vw;
+  top: 514.5vw;
 }
 
 .storyLead {
@@ -434,38 +434,32 @@
 
 .ending {
   position: absolute;
-  top: 322.25vw;
+  top: 570.75vw;
   left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: max(56.25vw, 100svh);
+  height: max(90vw, 130svh);
   background: var(--color-base-3);
 }
 
 .tagline {
+  display: flex;
+  gap: 0.28em;
   font-family: var(--font-en);
   font-weight: 400;
   line-height: 1.4;
   letter-spacing: -0.02em;
   white-space: nowrap;
-  filter: blur(0.45vw) brightness(0.3);
-  opacity: 0;
-  transform: translateY(1.6vw);
-  transition:
-    filter 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 900ms ease,
-    transform 1.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.endingRevealed .tagline {
-  filter: blur(0) brightness(1);
-  opacity: 1;
-  transform: translateY(0);
+.taglinePhrase {
+  display: inline-block;
+  will-change: filter, opacity, transform;
 }
 
-.tagline em {
+.taglinePhrase em {
   color: #f7ebd7;
   font-family: var(--font-deco);
   font-style: italic;
@@ -473,7 +467,7 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .tagline em {
+  .taglinePhrase em {
     animation: glowPulse 3.5s ease-in-out infinite;
   }
 }

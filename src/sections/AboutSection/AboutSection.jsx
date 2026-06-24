@@ -24,6 +24,10 @@ function easeInOutCubic(value) {
   return value < 0.5 ? 4 * value ** 3 : 1 - (-2 * value + 2) ** 3 / 2
 }
 
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max)
+}
+
 function getFontSizeToken(tokenName, fallback) {
   const tokenValue = getComputedStyle(document.documentElement).getPropertyValue(tokenName)
   return Number.parseFloat(tokenValue) || fallback
@@ -1068,7 +1072,7 @@ function AboutSection() {
   const [storyPhase, setStoryPhase] = useState('before')
   const [storyProgress, setStoryProgress] = useState(0)
   const [storyCycle, setStoryCycle] = useState(0)
-  const [endingRevealed, setEndingRevealed] = useState(false)
+  const [endingProgress, setEndingProgress] = useState(0)
 
   const handleIntroComplete = useCallback(() => {}, [])
 
@@ -1110,24 +1114,6 @@ function AboutSection() {
   }, [])
 
   useEffect(() => {
-    const targets = [[endingRef.current, setEndingRevealed]].filter(([element]) => element)
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const target = targets.find(([element]) => element === entry.target)
-          if (!target) return
-          target[1](entry.isIntersecting && entry.intersectionRatio >= 0.18)
-        })
-      },
-      { threshold: [0, 0.18] },
-    )
-
-    targets.forEach(([element]) => observer.observe(element))
-    return () => observer.disconnect()
-  }, [])
-
-  useEffect(() => {
     let scrollFrame = null
 
     const updateStoryPhase = () => {
@@ -1136,14 +1122,14 @@ function AboutSection() {
 
       const aboutTop = about.getBoundingClientRect().top + window.scrollY
       const start = aboutTop + window.innerWidth * 1.18
-      const distance = window.innerWidth * 1.48
+      const distance = window.innerWidth * 3.05
       const progress = (window.scrollY - start) / distance
-      const clampedProgress = Math.min(Math.max(progress, 0), 1)
+      const clampedProgress = Math.min(Math.max(progress, 0), 1.3)
 
       let nextPhase = 'after'
       if (progress < 0) nextPhase = 'before'
-      else if (progress < 0.7) nextPhase = 'first'
-      else if (progress < 1) nextPhase = 'second'
+      else if (progress < 0.86) nextPhase = 'first'
+      else if (progress < 1.3) nextPhase = 'second'
 
       if (
         nextPhase === 'first' &&
@@ -1173,6 +1159,51 @@ function AboutSection() {
       if (scrollFrame) cancelAnimationFrame(scrollFrame)
     }
   }, [])
+
+  useEffect(() => {
+    let scrollFrame = null
+
+    const updateEndingProgress = () => {
+      const ending = endingRef.current
+      if (!ending) return
+
+      const rect = ending.getBoundingClientRect()
+      const progress = clamp(
+        (window.innerHeight * 0.82 - rect.top) / (window.innerHeight * 0.95),
+        0,
+        1,
+      )
+
+      setEndingProgress(progress)
+      scrollFrame = null
+    }
+
+    const onScroll = () => {
+      if (!scrollFrame) scrollFrame = requestAnimationFrame(updateEndingProgress)
+    }
+
+    updateEndingProgress()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (scrollFrame) cancelAnimationFrame(scrollFrame)
+    }
+  }, [])
+
+  const firstTaglineProgress = easeInOutCubic(clamp(endingProgress / 0.48, 0, 1))
+  const secondTaglineProgress = easeInOutCubic(clamp((endingProgress - 0.52) / 0.48, 0, 1))
+  const getTaglinePhraseStyle = (progress) => ({
+    opacity: progress,
+    filter: `blur(${(1 - progress) * 0.65}vw) brightness(${0.24 + progress * 0.76})`,
+    transform: `translateY(${(1 - progress) * 2.3}vw)`,
+  })
+  const storyLeadProgress = clamp(storyProgress / 0.24, 0, 1)
+  const storyMediaProgress = clamp((storyProgress - 0.28) / 0.16, 0, 1)
+  const storyClosingProgress = clamp((storyProgress - 0.48) / 0.26, 0, 1)
+  const storySecondProgress = clamp((storyProgress - 0.86) / 0.32, 0, 1)
 
   return (
     <section ref={aboutRef} className={styles.about} aria-label="일광전구 브랜드 소개">
@@ -1233,13 +1264,9 @@ function AboutSection() {
       <div
         key={storyCycle}
         style={{
-          '--story-media-mask': `${
-            (1 - Math.min(Math.max((storyProgress - 0.52) / 0.18, 0), 1)) * 50
-          }%`,
-          '--story-media-brightness':
-            0.18 + Math.min(Math.max((storyProgress - 0.52) / 0.18, 0), 1) * 0.72,
-          '--story-media-scale':
-            1.06 - Math.min(Math.max((storyProgress - 0.52) / 0.18, 0), 1) * 0.06,
+          '--story-media-mask': `${(1 - storyMediaProgress) * 50}%`,
+          '--story-media-brightness': 0.18 + storyMediaProgress * 0.72,
+          '--story-media-scale': 1.06 - storyMediaProgress * 0.06,
         }}
         className={`${styles.story} fs-title-3 ${
           storyPhase === 'first' || storyPhase === 'second' ? styles.storyRevealed : ''
@@ -1256,8 +1283,8 @@ function AboutSection() {
               'when incandescent bulbs lit',
               'everyday life to the present day,',
             ]}
-            progress={Math.min(storyProgress / 0.48, 1)}
-            totalWords={24}
+            progress={storyLeadProgress}
+            totalWords={13}
           />
         </p>
 
@@ -1274,18 +1301,17 @@ function AboutSection() {
         <p className={`${styles.storyClosing} ${styles.storyClosingYears}`}>
           <StoryTypedLines
             lines={['for over 60 years,']}
-            progress={Math.min(storyProgress / 0.48, 1)}
-            startIndex={13}
-            totalWords={24}
+            progress={storyClosingProgress}
+            totalWords={11}
           />
         </p>
 
         <p className={`${styles.storyClosing} ${styles.storyClosingStatement}`}>
           <StoryTypedLines
             lines={['ILKWANG has brought light', 'into people’s lives.']}
-            progress={Math.min(storyProgress / 0.48, 1)}
-            startIndex={17}
-            totalWords={24}
+            progress={storyClosingProgress}
+            startIndex={4}
+            totalWords={11}
             strongFirst
           />
         </p>
@@ -1294,7 +1320,7 @@ function AboutSection() {
           <p className={styles.storyLead}>
             <StoryTypedLines
               lines={['Decades of technology', 'and a philosophy', 'shaped over time.']}
-              progress={Math.min(Math.max((storyProgress - 0.7) / 0.29, 0), 1)}
+              progress={storySecondProgress}
               totalWords={25}
             />
           </p>
@@ -1302,7 +1328,7 @@ function AboutSection() {
           <p className={`${styles.storyClosing} ${styles.storyClosingYears}`}>
             <StoryTypedLines
               lines={['Beyond a single', 'source of light,']}
-              progress={Math.min(Math.max((storyProgress - 0.7) / 0.29, 0), 1)}
+              progress={storySecondProgress}
               startIndex={9}
               totalWords={25}
             />
@@ -1311,7 +1337,7 @@ function AboutSection() {
           <p className={`${styles.storyClosing} ${styles.storyClosingStatement}`}>
             <StoryTypedLines
               lines={['we continue to understand people', 'and the spaces they inhabit.']}
-              progress={Math.min(Math.max((storyProgress - 0.7) / 0.29, 0), 1)}
+              progress={storySecondProgress}
               startIndex={15}
               totalWords={25}
             />
@@ -1321,10 +1347,15 @@ function AboutSection() {
 
       <div
         ref={endingRef}
-        className={`${styles.ending} ${endingRevealed ? styles.endingRevealed : ''}`}
+        className={styles.ending}
       >
         <p className={`${styles.tagline} fs-title-4`}>
-          Better <em>Life,</em> Better <em>Light,</em>
+          <span className={styles.taglinePhrase} style={getTaglinePhraseStyle(firstTaglineProgress)}>
+            Better <em>Life,</em>
+          </span>
+          <span className={styles.taglinePhrase} style={getTaglinePhraseStyle(secondTaglineProgress)}>
+            Better <em>Light,</em>
+          </span>
         </p>
       </div>
     </section>
