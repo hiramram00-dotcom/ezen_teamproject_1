@@ -396,17 +396,10 @@ function SpacesSection() {
             ref={introRef}
           >
             <p className={styles.introLabel}>
-              SPACE,{' '}
+              <span className={styles.introLabelSpace}>Space,</span>{' '}
               <br className={styles.introLabelBr} />
               <span className={styles.introLabelDeco}>defined by</span> ILKW.
             </p>
-            <h2 className={styles.introHeadline}>
-              Every space has its own purpose,
-              <br />
-              rhythm, and atmosphere.
-              <br />
-              ILKW brings the right light to each one.
-            </h2>
             <p className={styles.introSub}>
               일광전구는 공간에 가장 잘 어울리는 빛을 제안합니다.
             </p>
