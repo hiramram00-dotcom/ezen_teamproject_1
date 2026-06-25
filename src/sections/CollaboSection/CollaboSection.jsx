@@ -301,9 +301,9 @@ function CollaboSection() {
       <section id="collabo" className={styles.collaboMobile}>
         <div className={styles.introMobile} ref={introMobileRef}>
           <h2 className={`${styles.title} ${styles.fxBlurIn}`}>
-            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 600 }}>COLLABO</span>{' '}
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 500 }}>COLLABO</span>{' '}
             <span className="fs-title-1" style={{ fontFamily: 'var(--font-deco)', fontStyle: 'italic', fontWeight: 400 }}>with</span>{' '}
-            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 600 }}>ILKW.</span>
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 500 }}>ILKW.</span>
           </h2>
           <p className={`${styles.desc} ${styles.fxBlurIn} fs-body-2`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
             다양한 브랜드와 함께 새로운 빛의 경험을 만들어갑니다.
@@ -379,9 +379,9 @@ function CollaboSection() {
       <div className={styles.sticky}>
         <div ref={titleRef} className={styles.intro}>
           <h2 className={`${styles.title} ${styles.fxBlurIn}`}>
-            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 600 }}>COLLABO</span>{' '}
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 500 }}>COLLABO</span>{' '}
             <span className="fs-title-1" style={{ fontFamily: 'var(--font-deco)', fontStyle: 'italic', fontWeight: 400 }}>with</span>{' '}
-            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 600 }}>ILKW.</span>
+            <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 500 }}>ILKW.</span>
           </h2>
           <p className={`${styles.desc} ${styles.fxBlurIn} fs-body-2`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
             다양한 브랜드와 함께 새로운 빛의 경험을 만들어갑니다.
