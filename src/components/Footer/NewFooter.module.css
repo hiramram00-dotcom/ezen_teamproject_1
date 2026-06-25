@@ -1,0 +1,267 @@
+/* =========================================================
+   NewFooter — 다크 테마 (Figma node 2071:2)
+   배경 #121212 / 기존 Footer와 완전히 독립된 파일
+   ========================================================= */
+
+.footer {
+  width: 100%;
+  min-height: 100dvh;
+  background: #121212;
+  padding: 80px var(--layout-gutter) 40px;
+  font-family: var(--font-en);
+  color: #9b9b9b;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── 상단: 로고 + 마퀴 ── */
+.topBand {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 80px;
+}
+
+.logoWrap {
+  flex: 0 0 36%;
+  transform: translate(14px, -50px) skewX(-7.58deg) scaleY(0.99);
+  transform-origin: left center;
+}
+
+.logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* 기존 SVG(어두운 색) → 흰색으로 반전 */
+  filter: brightness(0) invert(1);
+}
+
+/* 마퀴 */
+.marqueeWrap {
+  flex: 1;
+  max-width: 50%;
+  align-self: flex-start;
+  margin-top: -30px;
+  margin-left: 120px;
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  overflow: hidden;
+}
+
+.marqueeTrack {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee 45s linear infinite;
+}
+
+.marqueeText {
+  font-family: var(--font-en);
+  font-size: var(--fs-sub-2); /* 19px */
+  font-weight: 400;
+  color: #9b9b9b;
+  padding-right: 60px;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marqueeTrack { animation: none; }
+}
+
+/* ── 중단: 3열 그리드 ── */
+.main {
+  display: grid;
+  grid-template-columns: 1fr 240px 260px;
+  gap: clamp(40px, 4vw, 80px);
+  margin-bottom: 80px;
+  align-items: start;
+}
+
+/* 왼쪽: 태그라인 + 소셜 */
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  margin-top: 150px;
+  width: max-content;
+}
+
+.tagline {
+  font-family: var(--font-kr);
+  font-size: var(--fs-sub-1); /* 21px */
+  font-weight: 400;
+  line-height: 1.7;
+  color: #9b9b9b;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.socials {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 45px;
+}
+
+.socialLink {
+  font-family: var(--font-en);
+  font-weight: 700;
+  font-size: var(--fs-body-2); /* 24px */
+  color: #cbcbcb;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.socialLink:hover {
+  color: #fff;
+}
+
+/* Explore 내비 */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 62px;
+  margin-left: -80px;
+}
+
+.navLabel {
+  font-family: var(--font-en);
+  font-weight: 400;
+  font-size: var(--fs-sub-1); /* 21px */
+  color: #9b9b9b;
+  margin-bottom: 4px;
+}
+
+.navLink {
+  font-family: var(--font-en);
+  font-weight: 700;
+  font-size: var(--fs-body-2); /* 24px */
+  color: #fff;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.navLink:hover {
+  opacity: 0.55;
+}
+
+/* 연락처 */
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-style: normal;
+  font-family: var(--font-en);
+  font-size: var(--fs-sub-2); /* 19px */
+  line-height: 1.65;
+  color: #9b9b9b;
+  margin-top: 20px;
+  margin-left: -40px;
+}
+
+.contact p {
+  margin: 0;
+}
+
+/* ── 하단 ── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: #2e2e2e;
+  margin-top: auto;
+  margin-bottom: 24px;
+}
+
+.legal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.copyright {
+  font-family: var(--font-en);
+  font-size: var(--fs-sub-3); /* 16px */
+  color: #9b9b9b;
+  margin: 0;
+}
+
+.legalLinks {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-en);
+  font-size: var(--fs-sub-3);
+  color: #9b9b9b;
+  margin: 0;
+}
+
+.legalLink {
+  color: #9b9b9b;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.legalLink:hover {
+  color: #fff;
+}
+
+/* ── 반응형 ── */
+@media (max-width: 1200px) {
+  .main {
+    grid-template-columns: 1fr 200px 220px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .main {
+    grid-template-columns: 1fr 180px 200px;
+  }
+
+  .socialLink,
+  .navLink {
+    font-size: var(--fs-sub-1);
+  }
+}
+
+@media (max-width: 767px) {
+  .footer {
+    padding: 60px var(--layout-gutter) 32px;
+  }
+
+  .topBand {
+    flex-direction: column;
+    gap: 32px;
+    margin-bottom: 48px;
+  }
+
+  .logoWrap {
+    flex: none;
+    width: 75%;
+    max-width: 300px;
+  }
+
+  .main {
+    grid-template-columns: 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+
+  .left {
+    gap: 40px;
+  }
+
+  .socials {
+    gap: 20px;
+  }
+
+  .legal {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
