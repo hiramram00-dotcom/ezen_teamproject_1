@@ -23,16 +23,7 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  /* filter 제거 — filter가 사진을 별도 합성 레이어로 분리시켜 카드 backdrop-filter를 깼다.
-     어둡기는 아래 .photoDark 오버레이로 옮김. (실험 C) */
-}
-
-/* 사진 어둠 오버레이 — filter 대신 어둡게. filter/transform이 없어 사진 레이어를 깨지 않음. */
-.photoDark {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  pointer-events: none;
+  filter: brightness(0.5); /* 살짝 어둡게 */
 }
 
 /* 흰 사각형 카드 (1204:21) — 위치·크기는 프레임 기준 % */
@@ -42,8 +33,9 @@
   top: 19.477%;    /* 335/1720 */
   width: 54.219%;  /* 1041/1920 */
   height: 61.047%; /* 1050/1720 */
-  /* 글래스(반투명 + 배경 블러) — 뒤 사진이 비치며 흐릿하게 */
   border-radius: 24px;
+  /* 글래스(반투명 + 배경 블러) — 뒤 사진이 비치며 흐릿하게.
+     ※ backdrop-filter는 카드/사진에 transform이 있으면 깨진다 → 둘 다 GSAP에서 transform 제거함. */
   background: linear-gradient(
     135deg,
     rgba(255, 255, 255, 0.5) 0%,
