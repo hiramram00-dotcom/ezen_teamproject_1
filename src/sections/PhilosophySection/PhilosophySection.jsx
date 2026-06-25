@@ -56,7 +56,7 @@ function PhilosophySection() {
       const enterProgress = clamp((vh - rect.top) / vh, 0, 1)
       const e = ease(enterProgress)
       // 배경: 살짝 확대 → 원래 크기 (스크롤하며 공간감)
-      room.style.transform = `scale(${(1.28 - 0.15 * e).toFixed(4)})`
+      room.style.transform = `scale(${(1.12 - 0.06 * e).toFixed(4)})`
       // 카드: 무대 아래쪽 → 무대 중앙으로 이동.
       // 스크롤과 1:1 선형으로 올려 화면상 아래→위로 매끄럽게 상승한다.
       // 무대가 화면을 채우는 순간(progress 1) 카드가 화면 정중앙에 온다.

@@ -9,18 +9,25 @@ function PurposeSection() {
   const videoRef = useRef(null)
   const ceoCopyRef = useRef(null)
   const descriptionRef = useRef(null)
+  const missionRef = useRef(null)
+  const missionVisualRef = useRef(null)
 
   useEffect(() => {
     const section = sectionRef.current
     const video = videoRef.current
     const ceoCopy = ceoCopyRef.current
     const description = descriptionRef.current
-    if (!section || !video || !ceoCopy || !description) return
+    const mission = missionRef.current
+    const missionVisual = missionVisualRef.current
+    if (!section || !video || !ceoCopy || !description || !mission || !missionVisual) return
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       section.style.setProperty('--purpose-dark', '1')
+      section.style.setProperty('--mission-shell-opacity', '1')
       section.style.setProperty('--mission-title-light', '1')
+      section.style.setProperty('--mission-image-progress', '1')
       section.style.setProperty('--mission-content-progress', '1')
+      section.style.setProperty('--mission-rise', '1')
       video.style.setProperty('--purpose-video-opacity', '1')
       video.style.setProperty('--purpose-video-mask-inner', '118%')
       video.style.setProperty('--purpose-video-mask-mid', '132%')
@@ -83,10 +90,23 @@ function PurposeSection() {
         const local = Math.min(1, Math.max(0, (missionProgress - from) / (to - from)))
         return local * local * (3 - 2 * local)
       }
+      const missionShellOpacity = sectionRect.top < vh && sectionRect.bottom > 0 ? 1 : 0
 
-      section.style.setProperty('--purpose-dark', missionStep(0, 0.34).toFixed(4))
-      section.style.setProperty('--mission-title-light', missionStep(0.18, 0.58).toFixed(4))
-      section.style.setProperty('--mission-content-progress', missionStep(0.56, 1).toFixed(4))
+      // 시퀀스: ①제목 선명 → ②뒷배경 이미지 희미하게 등장 → ③영문(하단)이 아래서
+      // 위로 올라오는 동시에 제목+이미지 묶음도 함께 위로 이동 → 스크롤 끝에서 전체가
+      // 화면 정중앙에 안착.
+      section.style.setProperty('--purpose-dark', missionStep(0, 0.16).toFixed(4))
+      section.style.setProperty('--mission-shell-opacity', String(missionShellOpacity))
+      section.style.setProperty('--mission-title-light', missionStep(0.16, 0.34).toFixed(4))
+      section.style.setProperty('--mission-image-progress', missionStep(0.36, 0.54).toFixed(4))
+      section.style.setProperty('--mission-content-progress', missionStep(0.56, 0.82).toFixed(4))
+
+      // 그룹 전체 상승 — 영문이 등장하는 구간부터 스크롤 끝(1.0)까지 위로 이동.
+      section.style.setProperty('--mission-rise', missionStep(0.56, 1).toFixed(4))
+      // rise 0: 이미지+제목이 화면 정중앙 / rise 1: 그룹 전체가 화면 정중앙.
+      // 그 차이만큼(=영문+간격의 절반) 시작 시 아래로 내려둘 양을 레이아웃에서 실측한다.
+      const startShift = mission.offsetHeight / 2 - (missionVisual.offsetTop + missionVisual.offsetHeight / 2)
+      mission.style.setProperty('--mission-rise-shift', `${startShift.toFixed(2)}px`)
     }
 
     const onScroll = () => {
@@ -142,12 +162,14 @@ function PurposeSection() {
         </div>
       </div>
 
-      <div className={styles.mission}>
-        <p className={styles.missionTitle}>
-          우리는 <strong>세상을 이롭게 하는 빛</strong>을 만듭니다.
-        </p>
+      <div ref={missionRef} className={styles.mission}>
+        <div ref={missionVisualRef} className={styles.missionVisual}>
+          <img className={styles.missionImage} src={teamImage} alt="" />
+          <p className={styles.missionTitle}>
+            우리는 <strong>세상을 이롭게 하는 빛</strong>을 만듭니다.
+          </p>
+        </div>
         <div className={styles.missionBody}>
-          <img src={teamImage} alt="일광전구 구성원 단체 사진" />
           <p className={styles.englishCopy}>
             From a single glowing filament
             <br />
