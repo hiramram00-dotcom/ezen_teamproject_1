@@ -107,12 +107,10 @@ function Footer({
           },
         })
 
+        // 사진 줌(scale) 제거 — transform이 사진을 별도 합성 레이어로 분리시켜 카드의
+        // backdrop-filter(유리 블러)를 배포에서 깼다. 줌을 빼 사진 레이어를 깨끗이 유지 → 블러 살림.
+        // (카드 등장 애니메이션은 그대로 유지)
         tl.fromTo(
-          photoImgRef.current,
-          { scale: 1 },
-          { scale: 1.08, ease: 'none', duration: 1 },
-          0
-        ).fromTo(
           cardRef.current,
           { yPercent: 60, autoAlpha: 0 },
           { yPercent: 0, autoAlpha: 1, ease: 'none', duration: 1 },
