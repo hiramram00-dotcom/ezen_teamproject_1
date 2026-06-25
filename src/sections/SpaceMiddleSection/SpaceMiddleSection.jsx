@@ -619,7 +619,7 @@ export default function SpaceMiddleSection() {
   }, [scale, isMobile]);
 
   return (
-    <section className={styles.section} ref={sectionRef}>
+    <section id="brand" className={styles.section} ref={sectionRef}>
 
       <div
         ref={containerRef}

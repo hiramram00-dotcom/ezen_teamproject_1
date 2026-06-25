@@ -61,7 +61,7 @@ export default function StoryEndingSection() {
   }, []);
 
   return (
-    <section className={styles.endingSection} ref={sectionRef}>
+    <section id="light-philosophy" className={styles.endingSection} ref={sectionRef}>
       <div className={styles.container}>
         <div className={styles.stickyWrapper}>
           <div className={styles.textBlock1} ref={text1Ref}>
