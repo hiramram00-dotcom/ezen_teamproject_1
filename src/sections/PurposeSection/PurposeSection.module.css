@@ -20,12 +20,44 @@
 }
 
 .videoPlaceholder {
+  --purpose-video-opacity: 0;
+  --purpose-video-mask-inner: 0%;
+  --purpose-video-mask-mid: 0%;
+  --purpose-video-mask-outer: 0%;
+  --purpose-video-blur: 18px;
+  --purpose-video-brightness: 1.8;
+  --purpose-video-scale: 1.08;
   position: relative;
   width: calc(67.63 * var(--about-vw));
   height: calc(38.05 * var(--about-vw));
   overflow: hidden;
   background: var(--color-base-3);
   color: var(--color-base-1);
+  opacity: var(--purpose-video-opacity);
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 50%,
+    #000 0%,
+    #000 var(--purpose-video-mask-inner),
+    rgba(0, 0, 0, 0.55) var(--purpose-video-mask-mid),
+    transparent var(--purpose-video-mask-outer)
+  );
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    #000 0%,
+    #000 var(--purpose-video-mask-inner),
+    rgba(0, 0, 0, 0.55) var(--purpose-video-mask-mid),
+    transparent var(--purpose-video-mask-outer)
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  filter:
+    brightness(var(--purpose-video-brightness))
+    blur(var(--purpose-video-blur));
+  transform: scale(var(--purpose-video-scale));
+  transform-origin: center;
+  will-change: clip-path, opacity, filter, transform;
 }
 
 .videoPlaceholder > img {
@@ -75,7 +107,28 @@
   font-style: italic;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .videoPlaceholder {
+    --purpose-video-opacity: 1;
+    --purpose-video-mask-inner: 76%;
+    --purpose-video-mask-mid: 84%;
+    --purpose-video-mask-outer: 92%;
+    --purpose-video-blur: 0px;
+    --purpose-video-brightness: 1;
+    --purpose-video-scale: 1;
+    opacity: 1;
+    -webkit-mask-image: none;
+    mask-image: none;
+    filter: none;
+    transform: none;
+    animation: none;
+  }
+}
+
 .ceoCopy {
+  --ceo-light: 0;
+  --quote-light: 0;
+  --desc-light: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -84,7 +137,21 @@
   text-align: center;
 }
 
+.ceo,
+.ceoCopy blockquote,
+.description {
+  opacity: calc(0.08 + var(--text-light, 0) * 0.92);
+  filter:
+    brightness(calc(0.58 + var(--text-light, 0) * 0.42))
+    blur(calc((1 - var(--text-light, 0)) * 10px));
+  text-shadow:
+    0 0 calc((1 - var(--text-light, 0)) * 18px) rgba(241, 224, 197, 0.42),
+    0 0 calc(var(--text-light, 0) * 14px) rgba(241, 224, 197, 0.18);
+  will-change: opacity, filter, text-shadow;
+}
+
 .ceo {
+  --text-light: var(--ceo-light);
   display: flex;
   align-items: center;
   gap: calc(0.94 * var(--about-vw));
@@ -105,6 +172,7 @@
 }
 
 .ceoCopy blockquote {
+  --text-light: var(--quote-light);
   font-family: var(--font-kr);
   font-size: calc(1.458333 * var(--about-vw)); /* type-body-2: 28px @1920 */
   font-style: normal;
@@ -115,6 +183,7 @@
 }
 
 .description {
+  --text-light: var(--desc-light);
   font-family: var(--font-kr);
   font-size: calc(1.25 * var(--about-vw)); /* type-body-3: 24px @1920 */
   font-weight: 400;

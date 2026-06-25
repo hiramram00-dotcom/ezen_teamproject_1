@@ -62,7 +62,7 @@
 .group {
   position: absolute;
   inset: 0;
-  transform: translateY(calc(3.57 * var(--about-vw)));
+  transform: translateY(calc(2.1 * var(--about-vw)));
 }
 
 .light {
