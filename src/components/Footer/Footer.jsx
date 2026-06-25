@@ -182,6 +182,10 @@ function Footer({
         <div className={styles.photo} ref={photoRef}>
           <img className={styles.photoImg} src={photo} alt="" loading="lazy" ref={photoImgRef} style={{ objectPosition: photoPosition }} />
           <div className={`${styles.card} ${contact ? styles.cardCompact : ''}`} ref={cardRef}>
+            {/* faux backdrop-filter: 블러된 사진 복사본 + 흰 틴트 — backdrop-filter가 배포에서
+                상위 transform 때문에 깨져, filter:blur로 직접 깐다(항상 작동) */}
+            <img className={styles.cardBg} src={photo} alt="" aria-hidden="true" />
+            <span className={styles.cardTint} aria-hidden="true" />
             <p className={styles.cardHeading}>
               {headingLines.map((line, i) => (
                 <Fragment key={i}>
