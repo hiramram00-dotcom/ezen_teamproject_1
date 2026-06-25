@@ -470,7 +470,9 @@ function AboutSection() {
       const vwPx = (v) => (v / 100) * getAboutLayoutWidth()
       const bufferPx = window.innerHeight * PIN_DISTANCE_RATIO
       const titleHoldPx = window.innerHeight * HISTORY_TITLE_HOLD_RATIO
-      const pinStartPx = aboutTop + vwPx(570.75) + window.innerHeight * 0.18
+      const endingTopPx = aboutTop + vwPx(570.75)
+      const pinStartPx = endingTopPx + window.innerHeight * 0.18
+      about.style.setProperty('--ending-pinned-top', (endingTopPx - pinStartPx).toFixed(2) + 'px')
       // .about의 실제 끝(= History 시작 지점)에 핀이 정확히 끝나도록 맞춰서
       // 핀 해제 후 빈 검정 구간이 남지 않게 한다
       const pinEndPx = aboutTop + vwPx(660.75) + bufferPx
