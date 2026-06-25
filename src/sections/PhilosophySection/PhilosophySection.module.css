@@ -110,7 +110,7 @@
 
 .message {
   position: absolute;
-  top: calc(calc(8.2 * var(--about-vw)) + calc(28.2 * var(--about-vw)) / 2); /* ?곷떒 議곕챸 ?대?吏???몃줈 以묒븰 */
+  top: calc(calc(8.2 * var(--about-vw)) + calc(28.2 * var(--about-vw)) / 2 + calc(1 * var(--about-vw))); /* ?곷떒 議곕챸 ?대?吏???몃줈 以묒븰 */
   left: 50%;
   width: 100%;
   height: 3.4em;
