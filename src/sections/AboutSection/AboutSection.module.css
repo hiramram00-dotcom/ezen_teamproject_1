@@ -1,4 +1,4 @@
-﻿.about {
+.about {
   position: relative;
   width: 100%;
   height: calc(660.75 * var(--about-vw));
@@ -514,10 +514,10 @@
    "硫덉떠?덈뒗" ?먮굦??二쇨퀬, 洹??ъ씠 鍮쏆씠 ?먯뿉??而ㅼ쭊 ???섏씠?쒕릺硫?History濡??섏뼱媛꾨떎 */
 .endingPinned {
   position: fixed;
-  top: 0;
+  top: var(--ending-pinned-top, calc(-18svh));
   left: 0;
   width: 100%;
-  height: 100svh;
+  height: max(calc(90 * var(--about-vw)), 130svh);
 }
 
 .tagline {
