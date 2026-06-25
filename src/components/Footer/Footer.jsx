@@ -72,6 +72,7 @@ const NAV = [
 
 function Footer({
   hidePhoto = false,
+  hideBody = false,
   photo = footerTop,
   photoPosition = 'center', // 사진 보이는 구간(object-position). 윗부분 더 보이려면 'center 15%' 등
   headingLines = ['Ilkwang Lighting has SHAPEd light', 'with passion and craftsmanship.'],
@@ -136,23 +137,23 @@ function Footer({
       }
 
       // ───── 트리거 ② 푸터 본문(.body) ─────
-      // 푸터 본문에 진입하면 워드마크 로고가 왼쪽 → 오른쪽으로 써지듯 리빌.
-      // scrub 없이 한 번 진입하면 스크롤과 무관하게 자체 duration으로 쭉 이어서 재생.
-      gsap.fromTo(
-        logoRef.current,
-        { clipPath: 'inset(0 100% 0 0)' },
-        {
-          clipPath: 'inset(0 0% 0 0)',
-          duration: 1.2,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: bodyRef.current,
-            start: 'top 85%', // 본문 top이 화면 85% 지점에 닿으면 1회 재생
-            toggleActions: 'play none none reset', // 들어오면 재생, 위로 벗어나면 초기화(재진입 시 다시)
-            refreshPriority: -1,
-          },
-        }
-      )
+      if (!hideBody && bodyRef.current) {
+        gsap.fromTo(
+          logoRef.current,
+          { clipPath: 'inset(0 100% 0 0)' },
+          {
+            clipPath: 'inset(0 0% 0 0)',
+            duration: 1.2,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: bodyRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none reset',
+              refreshPriority: -1,
+            },
+          }
+        )
+      }
     }, footerRef)
 
     // 푸터는 긴 페이지 맨 아래 — 위쪽 콘텐츠가 늦게 로드되며 높이가 바뀌면
@@ -177,7 +178,7 @@ function Footer({
       ro.disconnect()
       ctx.revert()
     }
-  }, [hidePhoto])
+  }, [hidePhoto, hideBody])
 
   // 푸터 내비: 해당 섹션으로 일정 속도·부드러운 ease로 위로 스크롤 ('top'은 최상단)
   const handleNavClick = (e, target) => {
@@ -237,7 +238,7 @@ function Footer({
       )}
 
       {/* 크림 푸터 블록 */}
-      <footer className={styles.body} ref={bodyRef}>
+      {!hideBody && <footer className={styles.body} ref={bodyRef}>
         {/* 거대 워드마크 — 단일 SVG(#252525 = footer 색) */}
         <div className={styles.logo}>
           <img src={logoIlkw} alt="ILKW." ref={logoRef} />
@@ -277,7 +278,7 @@ function Footer({
           </p>
         </div>
         </div>
-      </footer>
+      </footer>}
     </div>
   )
 }
