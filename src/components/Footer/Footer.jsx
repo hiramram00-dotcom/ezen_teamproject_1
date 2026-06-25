@@ -182,6 +182,10 @@ function Footer({
       {!hidePhoto && (
         <div className={styles.photo} ref={photoRef}>
           <img className={styles.photoImg} src={photo} alt="" loading="lazy" ref={photoImgRef} style={{ objectPosition: photoPosition }} />
+          {/* 어둠 오버레이 — 예전엔 .photoImg에 filter:brightness(0.5)로 어둡게 했는데, 그 filter가
+              사진을 별도 합성 레이어로 분리시켜 카드의 backdrop-filter(유리 블러)를 깼다(배포에서).
+              어둡기를 filter 대신 이 오버레이로 옮겨, 사진 레이어를 깨끗이 유지한다. */}
+          <div className={styles.photoDark} aria-hidden="true" />
           <div className={`${styles.card} ${contact ? styles.cardCompact : ''}`} ref={cardRef}>
             <p className={styles.cardHeading}>
               {headingLines.map((line, i) => (
