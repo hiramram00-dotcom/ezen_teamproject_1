@@ -23,7 +23,16 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  filter: brightness(0.5); /* 살짝 어둡게 */
+  /* filter 제거 — filter가 사진을 별도 합성 레이어로 분리시켜 카드 backdrop-filter를 깼다.
+     어둡기는 아래 .photoDark 오버레이로 옮김. (실험 C) */
+}
+
+/* 사진 어둠 오버레이 — filter 대신 어둡게. filter/transform이 없어 사진 레이어를 깨지 않음. */
+.photoDark {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
 }
 
 /* 흰 사각형 카드 (1204:21) — 위치·크기는 프레임 기준 % */
