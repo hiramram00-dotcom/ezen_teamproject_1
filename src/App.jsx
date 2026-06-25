@@ -12,6 +12,7 @@ import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection
 import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
 import Footer from './components/Footer/Footer'
+import NewFooter from './components/Footer/NewFooter'
 import Header from './components/Header/Header'
 import LightCursor from './components/LightCursor/LightCursor'
 import ResizeAnchor from './components/ResizeAnchor/ResizeAnchor'
@@ -170,6 +171,9 @@ function App() {
 
         {/* 작업용 미리보기 — FixSnowman2Section 단독 확인용, 메인 페이지에는 미연결 */}
         <Route path="/fixsnowman2" element={<><Header /><FixSnowman2Section /></>} />
+
+        {/* 작업용 미리보기 — NewFooter 단독 확인용 */}
+        <Route path="/newfooter" element={<NewFooter />} />
       </Routes>
       </Suspense>
       <GlobalTopButton />
