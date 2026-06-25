@@ -107,13 +107,14 @@ function Footer({
           },
         })
 
-        // 사진 줌(scale) 제거 — transform이 사진을 별도 합성 레이어로 분리시켜 카드의
-        // backdrop-filter(유리 블러)를 배포에서 깼다. 줌을 빼 사진 레이어를 깨끗이 유지 → 블러 살림.
-        // (카드 등장 애니메이션은 그대로 유지)
+        // 블러(backdrop-filter)를 살리기 위해 transform을 전부 제거.
+        // - 사진 줌(scale): backdrop의 transform
+        // - 카드 rise(yPercent): 카드 "자신"의 transform — 이게 backdrop-filter를 깨는 결정적 원인.
+        // 카드는 transform 없이 페이드(autoAlpha)로만 등장한다.
         tl.fromTo(
           cardRef.current,
-          { yPercent: 60, autoAlpha: 0 },
-          { yPercent: 0, autoAlpha: 1, ease: 'none', duration: 1 },
+          { autoAlpha: 0 },
+          { autoAlpha: 1, ease: 'none', duration: 1 },
           0
         )
       }
@@ -180,10 +181,6 @@ function Footer({
       {!hidePhoto && (
         <div className={styles.photo} ref={photoRef}>
           <img className={styles.photoImg} src={photo} alt="" loading="lazy" ref={photoImgRef} style={{ objectPosition: photoPosition }} />
-          {/* 어둠 오버레이 — 예전엔 .photoImg에 filter:brightness(0.5)로 어둡게 했는데, 그 filter가
-              사진을 별도 합성 레이어로 분리시켜 카드의 backdrop-filter(유리 블러)를 깼다(배포에서).
-              어둡기를 filter 대신 이 오버레이로 옮겨, 사진 레이어를 깨끗이 유지한다. */}
-          <div className={styles.photoDark} aria-hidden="true" />
           <div className={`${styles.card} ${contact ? styles.cardCompact : ''}`} ref={cardRef}>
             <p className={styles.cardHeading}>
               {headingLines.map((line, i) => (
