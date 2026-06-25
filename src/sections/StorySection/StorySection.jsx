@@ -427,7 +427,7 @@ export default function StorySection() {
             <span className={styles.titleRegular}>We Make</span>
             <span className={styles.titleItalic}> Light</span>
           </h2>
-          <p className={styles.desc}>
+                    <p className={styles.desc}>
             단순히 공간을 밝히는 것을 넘어,
             <br />
             그 공간이 가진 분위기와 감정을 완성합니다.

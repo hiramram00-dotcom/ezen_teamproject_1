@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import styles from './HistorySection.module.css'
 
@@ -127,9 +127,6 @@ const historyItems = [
     ],
   },
 ]
-
-// 梨뺥꽣蹂??곕룄 ?쒓린 ???멸린媛 諛붾뚮㈃ ?꾩껜(1962쨌2002), 媛숈? ?멸린硫??????먮━(87쨌99??,
-// 吏곸쟾怨?媛숈? ?곕룄硫??앸왂(2026 以묐났). ?곗뒪?ы넲 ?꾩슜 ?쒓린(紐⑤컮?쇱? ?꾩껜 ?곕룄 ?몄텧).
 const yearShorts = (() => {
   let prev = null
   return historyItems.map((item) => {
@@ -158,7 +155,6 @@ function HistorySection() {
   const blockRefs = useRef([])
   const railMotionRef = useRef(null)
   const dividerRef = useRef(null)
-  const metricsRef = useRef(null)
   const headingRef = useRef(null)
   const historyRef = useRef(null)
   const timelineRef = useRef(null)
@@ -273,414 +269,142 @@ function HistorySection() {
   }, [])
 
   useEffect(() => {
-    // ?곗뒪?ы넲(?볦? ?붾㈃쨌?뺣? ?ъ씤?걔룸え???덉슜)?먯꽌留?sticky ?곕룄 臾띠쓬??援щ룞.
-    // 洹???紐⑤컮?셋룹?紐⑥뀡)??媛?釉붾줉???꾩껜 ?곕룄(.marker)媛 ?뺤쟻?쇰줈 ?몄텧?쒕떎.
+    const rail = railMotionRef.current
+    const blocks = blockRefs.current.filter(Boolean)
+    if (!rail || !blocks.length) return undefined
+
     const mq = window.matchMedia(
-      '(min-width: 1200px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)'
+      '(min-width: 1200px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
     )
 
-    let frame = 0
-    let lastFrameState = ''
-    let active = false
+    const prefixSpans = Array.from(rail.querySelectorAll('[data-rail-prefix]'))
+    const suffixSpans = Array.from(rail.querySelectorAll('[data-rail-suffix]'))
+    const prefixMap = new Map(prefixSpans.map((span) => [span.dataset.railPrefix, span]))
+    const suffixMap = new Map(suffixSpans.map((span) => [span.dataset.railSuffix, span]))
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
+    const ease = (value) => value * value * (3 - 2 * value)
+    let rafId = 0
 
-    const resetAnimatedParts = () => {
-      const railMotion = railMotionRef.current
-      if (railMotion) railMotion.style.transform = ''
-      blockRefs.current.forEach((block) => {
-        block
-          ?.querySelectorAll(
-            '[data-year-prefix], [data-year-prefix-ghost], [data-year-suffix]',
-          )
-          .forEach((part) => {
-            part.style.transform = ''
-            if (part.hasAttribute('data-year-suffix')) {
-              part.style.visibility = ''
-            }
-            if (
-              part.hasAttribute('data-year-prefix') ||
-              part.hasAttribute('data-year-prefix-ghost')
-            ) {
-              part.style.visibility = ''
-            }
-          })
-      })
-      railMotion
-        ?.querySelectorAll('[data-rail-prefix], [data-rail-suffix]')
-        .forEach((part) => {
-          part.style.visibility = ''
-          part.style.transform = ''
-          part.style.opacity = ''
-          part.style.filter = ''
-        })
+    const resetSpan = (span) => {
+      span.style.visibility = 'hidden'
+      span.style.opacity = '0'
+      span.style.transform = 'translate3d(0, 0, 0)'
+      span.style.filter = 'blur(0px)'
     }
 
-    const measure = () => {
-      const divider = dividerRef.current
-      if (!divider) return
+    const showSpan = (span, opacity, y, blur) => {
+      if (!span) return
+      span.style.visibility = opacity > 0.001 ? 'visible' : 'hidden'
+      span.style.opacity = opacity.toFixed(4)
+      span.style.transform = `translate3d(0, ${y.toFixed(2)}px, 0)`
+      span.style.filter = `blur(${blur.toFixed(2)}px)`
+    }
 
-      resetAnimatedParts()
-
-      const scrollY = window.scrollY
-
-      const markers = blockRefs.current
-        .map((block, index) => {
-          const marker = block?.querySelector('[data-history-year-marker]')
-          const media = block?.querySelector('[data-history-media]')
-          if (!marker || marker.dataset.skipYear === 'true') return null
-
-          const blockRect = block.getBoundingClientRect()
-          const blockTop = blockRect.top + scrollY
-          const prefix = marker.querySelector('[data-year-prefix]')
-          const prefixGhost = marker.querySelector('[data-year-prefix-ghost]')
-          const suffix = marker.querySelector('[data-year-suffix]')
-          const mediaBottom = media
-            ? blockTop + media.offsetTop + media.offsetHeight
-            : blockRect.bottom + scrollY
-          let yearGroupMediaBottom = mediaBottom
-
-          for (
-            let nextIndex = index + 1;
-            nextIndex < historyItems.length &&
-            historyItems[nextIndex].yearLabel === historyItems[index].yearLabel;
-            nextIndex += 1
-          ) {
-            const nextBlock = blockRefs.current[nextIndex]
-            const nextMedia = nextBlock?.querySelector('[data-history-media]')
-            if (!nextBlock || !nextMedia) continue
-            const nextBlockRect = nextBlock.getBoundingClientRect()
-            yearGroupMediaBottom =
-              nextBlockRect.top +
-              scrollY +
-              nextMedia.offsetTop +
-              nextMedia.offsetHeight
-          }
-
-          return {
-            index,
-            top: blockTop + marker.offsetTop,
-            mediaBottom: yearGroupMediaBottom,
-            prefix,
-            prefixGhost,
-            prefixValue: historyItems[index].yearLabel.slice(0, 2),
-            suffix,
-            suffixValue: historyItems[index].yearLabel.slice(2),
-            suffixHeight: suffix?.offsetHeight ?? marker.offsetHeight,
-          }
-        })
-        .filter(Boolean)
-
-      metricsRef.current = {
-        markers,
-        viewportHeight: window.innerHeight,
-        viewportWidth: window.innerWidth,
-      }
+    const reset = () => {
+      prefixSpans.forEach(resetSpan)
+      suffixSpans.forEach(resetSpan)
+      rail.style.transform = ''
     }
 
     const render = () => {
-      const railMotion = railMotionRef.current
-      const divider = dividerRef.current
-      if (!railMotion || !divider) return
+      reset()
 
-      const metrics = metricsRef.current
-      if (!metrics) {
-        measure()
+      if (!mq.matches) {
+        rafId = 0
         return
       }
 
-      const { markers } = metrics
-      const scrollY = window.scrollY
-
-      resetAnimatedParts()
-
-      const moveBy = (value) => {
-        const ratio = window.devicePixelRatio || 1
-        const snapped = Math.round(value * ratio) / ratio
-        return `translateY(${snapped}px)`
+      const railRect = rail.getBoundingClientRect()
+      const fallbackYearStep = 96
+      const markerTop = railRect.top + railRect.height * 0.72
+      const lastBlock = blocks.at(-1)
+      const lastMedia = lastBlock?.querySelector('[data-history-media]')
+      const lastTarget = lastMedia || lastBlock
+      if (lastTarget) {
+        const exitStart = markerTop + window.innerHeight * 0.26
+        const exitY = Math.min(0, lastTarget.getBoundingClientRect().bottom - exitStart)
+        rail.style.transform = `translate3d(0, ${exitY.toFixed(2)}px, 0)`
       }
+      let currentIndex = 0
 
-      const yearGap = parseFloat(window.getComputedStyle(divider).marginTop) || 0
-      const anchorTop = divider.getBoundingClientRect().bottom + yearGap
-
-      const moveEntryToTop = (entry, targetTop) => {
-        if (!entry) return ''
-        return moveBy(targetTop - (entry.top - scrollY))
-      }
-      const moveEntryToImageEnd = (entry) =>
-        moveEntryToTop(
-          entry,
-          entry.mediaBottom - scrollY - entry.suffixHeight,
-        )
-
-      const finalEntry = markers.at(-1)
-      const finalAnchorTop =
-        finalEntry &&
-        finalEntry.mediaBottom - scrollY - finalEntry.suffixHeight
-      const finalEntryEnding =
-        finalEntry &&
-        finalEntry.mediaBottom - scrollY <= anchorTop + finalEntry.suffixHeight
-
-      if (finalEntryEnding) {
-        // 留덉?留??곕룄瑜??대?吏 ?앷퉴吏 諛곗썒???뚮쭔 sticky 臾띠쓬???대?吏 ?앹쑝濡?蹂대궦??
-        railMotion.style.transform = ''
-      }
-
-      const showRailPrefix = (value) => {
-        railMotion
-          .querySelectorAll('[data-rail-prefix]')
-          .forEach((part) => {
-            part.style.visibility =
-              part.dataset.railPrefix === value ? 'visible' : ''
-          })
-      }
-
-      const moveRailPrefix = (value, offset) => {
-        railMotion
-          .querySelectorAll(`[data-rail-prefix="${value}"]`)
-          .forEach((part) => {
-            part.style.visibility = 'visible'
-            part.style.transform = moveBy(offset)
-          })
-      }
-
-      const fadeRailPrefix = (value, progress) => {
-        railMotion
-          .querySelectorAll(`[data-rail-prefix="${value}"]`)
-          .forEach((part) => {
-            part.style.opacity = `${Math.max(0, 1 - progress)}`
-            part.style.filter = `blur(${(progress * 10).toFixed(2)}px)`
-          })
-      }
-
-      const moveRailSuffix = (value, offset) => {
-        railMotion
-          .querySelectorAll(`[data-rail-suffix="${value}"]`)
-          .forEach((part) => {
-            part.style.visibility = 'visible'
-            part.style.transform = moveBy(offset)
-          })
-      }
-
-      const fadeRailSuffix = (value, progress) => {
-        railMotion
-          .querySelectorAll(`[data-rail-suffix="${value}"]`)
-          .forEach((part) => {
-            part.style.opacity = `${Math.max(0, 1 - progress)}`
-            part.style.filter = `blur(${(progress * 10).toFixed(2)}px)`
-          })
-      }
-
-      const nextPrefixIndex = markers.findIndex(
-        (entry) => entry.prefix && entry.top - scrollY > anchorTop,
-      )
-      const prefixHandoffNextEntry =
-        nextPrefixIndex >= 0 ? markers[nextPrefixIndex] : null
-      const prefixHandoffEntry =
-        nextPrefixIndex > 0 ? markers[nextPrefixIndex - 1] : null
-      const prefixChangesAtHandoff =
-        prefixHandoffEntry?.prefixValue &&
-        prefixHandoffNextEntry?.prefixValue &&
-        prefixHandoffEntry.prefixValue !== prefixHandoffNextEntry.prefixValue
-      const prefixHandoffActive =
-        prefixHandoffEntry?.prefixGhost &&
-        !prefixChangesAtHandoff &&
-        prefixHandoffEntry.mediaBottom - scrollY <=
-          anchorTop + prefixHandoffEntry.suffixHeight
-
-      const activePrefix = prefixHandoffActive
-        ? null
-        : markers
-            .filter((entry) => entry.prefix && entry.top - scrollY <= anchorTop)
-            .at(-1)
-
-      if (activePrefix?.prefix) {
-        activePrefix.prefix.style.visibility = 'hidden'
-        showRailPrefix(activePrefix.prefixValue)
-      }
-
-      if (prefixHandoffActive) {
-        prefixHandoffEntry.prefixGhost.style.visibility = 'visible'
-        prefixHandoffEntry.prefixGhost.style.transform =
-          moveEntryToImageEnd(prefixHandoffEntry)
-      }
-
-      const activeSuffix = markers
-        .filter((entry) => entry.suffix && entry.top - scrollY <= anchorTop)
-        .at(-1)
-      const nextSuffix = markers.find(
-        (entry) => entry.suffix && entry.top - scrollY > anchorTop,
-      )
-      const nextSuffixDistance = nextSuffix
-        ? nextSuffix.top - scrollY - anchorTop
-        : Number.POSITIVE_INFINITY
-      const suffixHeight =
-        activeSuffix?.suffixHeight ?? nextSuffix?.suffixHeight ?? 120
-      const suffixHandoffDistance = suffixHeight * 1.65
-      const prefixEntryDistance = prefixHandoffNextEntry
-        ? prefixHandoffNextEntry.top - scrollY - anchorTop
-        : Number.POSITIVE_INFINITY
-      const suffixHandoffProgress =
-        nextSuffix && Number.isFinite(nextSuffixDistance)
-          ? Math.max(
-              0,
-              Math.min(
-                1,
-                (suffixHandoffDistance - nextSuffixDistance) /
-                  suffixHandoffDistance,
-              ),
-            )
-          : 0
-      const initialGroupEntryActive =
-        !activeSuffix &&
-        nextSuffix &&
-        nextSuffixDistance <= suffixHandoffDistance
-      const initialGroupOffset = initialGroupEntryActive
-        ? Math.max(0, nextSuffixDistance)
-        : 0
-
-      if (initialGroupOffset > 0) {
-        railMotion.style.transform = ''
-      }
-
-      if (
-        !activePrefix &&
-        !prefixHandoffActive &&
-        prefixHandoffNextEntry?.prefix &&
-        prefixEntryDistance <= suffixHandoffDistance
-      ) {
-        prefixHandoffNextEntry.prefix.style.visibility = 'hidden'
-        moveRailPrefix(
-          prefixHandoffNextEntry.prefixValue,
-          initialGroupEntryActive ? 0 : Math.max(0, prefixEntryDistance),
-        )
-      }
-
-      markers.forEach((entry) => {
-        if (!entry.suffix) return
-        const distance = entry.top - scrollY - anchorTop
-        if (distance <= suffixHandoffDistance) {
-          entry.suffix.style.visibility = 'hidden'
-        }
+      blocks.forEach((block, index) => {
+        const marker = block.querySelector('[data-history-year-marker]')
+        const target = marker || block.querySelector('[data-history-media]') || block
+        const rect = target.getBoundingClientRect()
+        if (rect.top <= markerTop) currentIndex = index
       })
 
-      if (activeSuffix?.suffixValue) {
-        const activeOffset = suffixHandoffProgress
-          ? -suffixHandoffProgress * suffixHeight
-          : 0
-        moveRailSuffix(activeSuffix.suffixValue, activeOffset)
-        if (suffixHandoffProgress > 0) {
-          fadeRailSuffix(activeSuffix.suffixValue, suffixHandoffProgress)
+      const current = historyItems[currentIndex]
+      const nextIndex = Math.min(currentIndex + 1, historyItems.length - 1)
+      const next = historyItems[nextIndex]
+      const currentSuffix = current.yearLabel.slice(2)
+      const yearStep = Math.max(
+        72,
+        (suffixMap.get(currentSuffix)?.getBoundingClientRect().height || fallbackYearStep) * 0.92,
+      )
+      let progress = 0
+      const incomingStartY = Math.max(yearStep * 6.4, window.innerHeight * 0.58)
+
+      if (next && next.yearLabel !== current.yearLabel) {
+        const nextBlock = blocks[nextIndex]
+        if (nextBlock) {
+          const rect = nextBlock.getBoundingClientRect()
+          const start = window.innerHeight * 0.94
+          const end = window.innerHeight * 0.36
+          progress = ease(clamp((start - rect.top) / (start - end), 0, 1))
         }
       }
 
-      if (
-        nextSuffix?.suffixValue &&
-        nextSuffixDistance <= suffixHandoffDistance
-      ) {
-        moveRailSuffix(
-          nextSuffix.suffixValue,
-          initialGroupEntryActive ? 0 : Math.max(0, nextSuffixDistance),
-        )
-      }
+      const currentPrefix = current.yearLabel.slice(0, 2)
+      const nextPrefix = next?.yearLabel.slice(0, 2)
+      const nextSuffix = next?.yearLabel.slice(2)
+      const outgoingY = -yearStep * progress
+      const nextY = incomingStartY * (1 - progress)
+      const incomingOpacity = clamp(progress / 0.42, 0, 1)
+      const outgoingOpacity = clamp((1 - progress) / 0.42, 0, 1)
+      const incomingBlur = (1 - incomingOpacity) * 10
+      const outgoingBlur = (1 - outgoingOpacity) * 4
 
-      const prefixChangesDuringSuffixHandoff =
-        activeSuffix?.prefixValue &&
-        nextSuffix?.prefixValue &&
-        activeSuffix.prefixValue !== nextSuffix.prefixValue &&
-        nextSuffixDistance <= suffixHandoffDistance
-
-      if (prefixChangesDuringSuffixHandoff) {
-        const activePrefixOffset = -suffixHandoffProgress * suffixHeight
-        moveRailPrefix(activeSuffix.prefixValue, activePrefixOffset)
-        fadeRailPrefix(activeSuffix.prefixValue, suffixHandoffProgress)
-        moveRailPrefix(nextSuffix.prefixValue, Math.max(0, nextSuffixDistance))
-        if (nextSuffix.prefix) {
-          nextSuffix.prefix.style.visibility = 'hidden'
+      if (!next || next.yearLabel === current.yearLabel || progress <= 0.001) {
+        showSpan(prefixMap.get(currentPrefix), 1, 0, 0)
+        showSpan(suffixMap.get(currentSuffix), 1, 0, 0)
+      } else if (progress >= 0.999) {
+        showSpan(prefixMap.get(nextPrefix), 1, 0, 0)
+        showSpan(suffixMap.get(nextSuffix), 1, 0, 0)
+      } else {
+        const samePrefix = currentPrefix === nextPrefix
+        if (samePrefix) {
+          showSpan(prefixMap.get(currentPrefix), 1, 0, 0)
+        } else {
+          showSpan(prefixMap.get(currentPrefix), outgoingOpacity, outgoingY, outgoingBlur)
+          showSpan(prefixMap.get(nextPrefix), incomingOpacity, nextY, incomingBlur)
         }
+
+        showSpan(suffixMap.get(currentSuffix), outgoingOpacity, outgoingY, outgoingBlur)
+        showSpan(suffixMap.get(nextSuffix), incomingOpacity, nextY, incomingBlur)
       }
+
+      rafId = 0
     }
 
-    const tick = () => {
-      if (!active) return
-      const frameState = `${window.scrollY}:${window.innerWidth}:${window.innerHeight}`
-      if (frameState !== lastFrameState) {
-        const needsMeasure =
-          !metricsRef.current ||
-          metricsRef.current.viewportWidth !== window.innerWidth ||
-          metricsRef.current.viewportHeight !== window.innerHeight
-        if (needsMeasure) measure()
-        lastFrameState = frameState
-        render()
-      }
-      frame = window.requestAnimationFrame(tick)
+    const requestRender = () => {
+      if (rafId) cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(render)
     }
 
-    const refreshMetrics = () => {
-      if (!active) return
-      measure()
-      render()
-    }
-
-    const enable = () => {
-      if (active) return
-      active = true
-      lastFrameState = ''
-      measure()
-      render()
-      frame = window.requestAnimationFrame(tick)
-      window.addEventListener('resize', refreshMetrics)
-      document.fonts?.ready?.then(refreshMetrics)
-    }
-    const disable = () => {
-      if (!active) return
-      active = false
-      window.removeEventListener('resize', refreshMetrics)
-      if (frame) {
-        window.cancelAnimationFrame(frame)
-        frame = 0
-      }
-      // ?뺤쟻 ?대갚?쇰줈 ?뚯븘媛????붿뿬 transform ?쒓굅.
-      blockRefs.current.forEach((block) => {
-        block
-          ?.querySelectorAll(
-            '[data-year-prefix], [data-year-prefix-ghost], [data-year-suffix]',
-          )
-          .forEach((part) => {
-            part.style.transform = ''
-            if (part.hasAttribute('data-year-suffix')) {
-              part.style.visibility = ''
-            }
-            if (
-              part.hasAttribute('data-year-prefix') ||
-              part.hasAttribute('data-year-prefix-ghost')
-            ) {
-              part.style.visibility = ''
-            }
-          })
-      })
-      metricsRef.current = null
-      if (railMotionRef.current) {
-        railMotionRef.current.style.transform = ''
-        railMotionRef.current
-          .querySelectorAll('[data-rail-prefix], [data-rail-suffix]')
-          .forEach((part) => {
-            part.style.visibility = ''
-            part.style.transform = ''
-            part.style.opacity = ''
-            part.style.filter = ''
-          })
-      }
-    }
-
-    const onMq = (e) => (e.matches ? enable() : disable())
-    if (mq.matches) enable()
-    mq.addEventListener('change', onMq)
+    render()
+    window.addEventListener('scroll', requestRender, { passive: true })
+    window.addEventListener('resize', requestRender)
+    mq.addEventListener?.('change', requestRender)
 
     return () => {
-      mq.removeEventListener('change', onMq)
-      disable()
+      if (rafId) cancelAnimationFrame(rafId)
+      window.removeEventListener('scroll', requestRender)
+      window.removeEventListener('resize', requestRender)
+      mq.removeEventListener?.('change', requestRender)
+      reset()
     }
   }, [])
-
   return (
     <section ref={historyRef} className={styles.history} aria-labelledby="history-title">
       <h2 id="history-title" ref={headingRef} className={styles.heading}>

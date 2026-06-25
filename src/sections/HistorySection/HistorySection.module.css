@@ -1,4 +1,4 @@
-﻿/* about-history (Figma node 1641:55) ??梨뺥꽣留덈떎 醫뚯륫???곕룄(x=570 ?곗륫 ?뺣젹),
+/* about-history (Figma node 1641:55) ??梨뺥꽣留덈떎 醫뚯륫???곕룄(x=570 ?곗륫 ?뺣젹),
    ?곗륫??肄섑뀗痢?x=852쨌width 1000px). 1920px 罹붾쾭??湲곗? vw ?섏궛. */
 .history {
   position: relative;
@@ -80,15 +80,16 @@
   position: relative;
   z-index: 2; /* ?쒕ぉ쨌?쇱씤? ?곕룄 ?レ옄 ??湲곗? ?덉씠?? ???レ옄媛 湲???쇱씤 ?ㅻ줈 ?듦낵 */
   padding-top: calc(1.2 * var(--about-vw));
+  --history-year-gap: calc(1.72 * var(--about-vw));
   opacity: var(--history-intro-progress);
   filter: blur(calc((1 - var(--history-intro-progress)) * 10px));
   will-change: opacity, filter;
+  padding-bottom: calc(var(--history-year-gap) + (var(--fs-title-2) + 4px) * 1.2);
 }
 
 .railMotion {
   position: relative;
   width: calc(36.46 * var(--about-vw));
-  --history-year-gap: calc(1.72 * var(--about-vw));
   will-change: transform;
   transform: translateZ(0);
 }
@@ -96,7 +97,7 @@
 .subtitle {
   width: calc(36.46 * var(--about-vw)); /* 700px @1920 */
   text-align: center;
-  font-size: calc(var(--fs-title-4) * 0.9142857); /* 64px */
+  font-size: 60px;
   font-weight: 400;
   line-height: 1.4;
   letter-spacing: -0.02em;
@@ -344,8 +345,14 @@
 /* ?곗뒪?ы넲: chapters of Light + ?쇱씤 + ?곕룄 ?ㅽ뀒?댁?媛 ?섎굹??臾띠쓬(.rail)?쇰줈 sticky 怨좎젙. */
 @media (min-width: 1200px) {
   .rail {
-    position: sticky;
+    position: fixed;
     top: 12vh;
+    left: max(var(--layout-gutter), calc((100vw - var(--about-max-width)) / 2 + var(--layout-gutter)));
+    width: calc(36.46 * var(--about-vw));
+  }
+
+  .block:first-of-type {
+    margin-top: calc(5.5 * var(--about-vw) + var(--history-year-gap) + (var(--fs-title-2) + 4px) * 1.2);
   }
 }
 
@@ -397,6 +404,7 @@
   .subtitle {
     font-size: clamp(24px, 5vw, 40px);
   }
+
 
   .block {
     display: block;

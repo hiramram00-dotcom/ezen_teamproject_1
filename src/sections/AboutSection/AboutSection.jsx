@@ -442,6 +442,7 @@ function AboutSection() {
   // 두고, 그동안 빛이 점처럼 나타나 커진 뒤 페이드되며 History로 넘어간다.
   // 고정해두는 만큼 .about의 전체 높이도 늘려줘야 실제로 그만큼 스크롤할 거리가 생긴다.
   const PIN_DISTANCE_RATIO = 2.2 // 뷰포트 높이의 220%만큼 고정 구간
+  const HISTORY_TITLE_HOLD_RATIO = 0.9
   const HOLD_FRAC = 0.25 // 고정 구간의 앞 25% — 빛 없이 정지
   const GROW_END_FRAC = 0.86 // 25~86% — 빛이 점에서 천천히 커짐
   // 75~100% — 전체가 서서히 사라지며 History로 핸드오프
@@ -451,7 +452,7 @@ function AboutSection() {
     if (!about) return undefined
 
     const applyHeight = () => {
-      const bufferPx = window.innerHeight * PIN_DISTANCE_RATIO
+      const bufferPx = window.innerHeight * (PIN_DISTANCE_RATIO + HISTORY_TITLE_HOLD_RATIO)
       about.style.height = `calc(660.75 * var(--about-vw) + ${bufferPx}px)`
     }
 
@@ -468,6 +469,7 @@ function AboutSection() {
       const aboutTop = about.getBoundingClientRect().top + window.scrollY
       const vwPx = (v) => (v / 100) * getAboutLayoutWidth()
       const bufferPx = window.innerHeight * PIN_DISTANCE_RATIO
+      const titleHoldPx = window.innerHeight * HISTORY_TITLE_HOLD_RATIO
       const pinStartPx = aboutTop + vwPx(570.75) + window.innerHeight * 0.18
       // .about의 실제 끝(= History 시작 지점)에 핀이 정확히 끝나도록 맞춰서
       // 핀 해제 후 빈 검정 구간이 남지 않게 한다
@@ -497,17 +499,19 @@ function AboutSection() {
         setGlowProgress(grow)
         setEndingOverlayOpacity(toCream)
         setHistoryOverlayProgress(clamp((toCream - 0.16) / 0.84, 0, 1))
-      } else {
-        const afterProgress = clamp(
-          (scrollY - pinEndPx - window.innerHeight * 0.45) / (window.innerHeight * 0.45),
-          0,
-          1,
-        )
+      } else if (scrollY <= pinEndPx + titleHoldPx) {
+        const afterProgress = clamp((scrollY - pinEndPx) / titleHoldPx, 0, 1)
         setEndingProgress(1)
-        setEndingPhase('after')
+        setEndingPhase('pinned')
         setGlowProgress(1)
         setEndingOverlayOpacity(1)
         setHistoryOverlayProgress(1 - afterProgress)
+      } else {
+        setEndingProgress(1)
+        setEndingPhase('after')
+        setGlowProgress(1)
+        setEndingOverlayOpacity(0)
+        setHistoryOverlayProgress(0)
       }
     }
 
