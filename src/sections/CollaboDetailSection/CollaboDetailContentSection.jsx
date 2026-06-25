@@ -179,7 +179,14 @@ function CollaboDetailContentSection({
       </div>
 
       {/* 제품 보러가기 — 외부 제품 페이지 */}
-      <a className={styles.cta} style={ctaStyle} href={productUrl} target="_blank" rel="noopener noreferrer">
+      <a
+        className={styles.cta}
+        style={ctaStyle}
+        href={productUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-cursor="pointer"
+      >
         제품 보러가기
       </a>
     </section>

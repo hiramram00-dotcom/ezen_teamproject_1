@@ -7,6 +7,9 @@
 .section {
   position: relative;
   width: 100%;
+  /* 2560 이상 큰 화면: 사진 콜라주 전체가 끝없이 커지지 않도록 1920에서 멈추고 가운데 정렬 */
+  max-width: 1920px;
+  margin: 0 auto;
   aspect-ratio: 1920 / 4683; /* 프레임 비율 → 폭에 비례해 높이 결정 */
   background: #000;
   /* overflow:hidden 제거 — 본문 position:sticky 고정이 동작하려면 조상에 overflow:hidden 금지 */
@@ -21,7 +24,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.6vw; /* 타이틀↔부제 간격 넉넉하게 */
+  gap: min(1.6vw, 30.72px); /* 타이틀↔부제 간격 넉넉하게. 30.72px = 1.6vw @1920(2560+에서 더 안 벌어지게) */
   text-align: center;
   white-space: nowrap;
   color: #fff;
@@ -93,10 +96,10 @@
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 1.77vw; /* 약간 좁힘 */
+  gap: min(1.77vw, 33.98px); /* 약간 좁힘. 33.98px = 1.77vw @1920 */
 }
 .ilkw {
-  width: 8.6vw; /* 살짝 축소 */
+  width: min(8.6vw, 165.12px); /* 살짝 축소. 165.12px = 8.6vw @1920 */
   height: auto;
   transform: skewX(-7.58deg) scaleY(0.99);
   /* 검정 배경이므로 흰 SVG 그대로 사용 */
@@ -104,13 +107,13 @@
 .x {
   font-family: 'Inter', var(--font-en);
   font-weight: 400;
-  font-size: 1.6vw;
+  font-size: min(1.6vw, 30.72px); /* 30.72px = 1.6vw @1920 */
   line-height: 1;
   color: #fff;
 }
 /* 브랜드 로고 — 높이 기준, 폭은 aspect-ratio(데이터)로. (kbp=정사각 / kakao=가로 워드마크) */
 .brandLogo {
-  height: 2.67vw;
+  height: min(2.67vw, 51.26px); /* 51.26px = 2.67vw @1920 */
   width: auto;
   flex-shrink: 0;
 }
