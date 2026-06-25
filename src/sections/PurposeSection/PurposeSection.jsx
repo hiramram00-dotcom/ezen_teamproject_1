@@ -1,8 +1,10 @@
 import { useEffect, useRef } from 'react'
 import styles from './PurposeSection.module.css'
 
-import videoPlaceholder from '../PhilosophySection/assets/philosophy-room.webp'
 import teamImage from './assets/purpose-team.webp'
+
+const CEO_VIDEO_URL =
+  'https://player.cloudinary.com/embed/?cloud_name=ddit4bjrw&public_id=about-ceo-video_iuezru'
 
 function PurposeSection() {
   const sectionRef = useRef(null)
@@ -134,7 +136,12 @@ function PurposeSection() {
           role="img"
           aria-label="브랜드 영상 미리보기"
         >
-          <img src={videoPlaceholder} alt="" />
+          <iframe
+            src={CEO_VIDEO_URL}
+            title="브랜드 영상"
+            allow="autoplay; fullscreen; encrypted-media"
+            allowFullScreen
+          />
           <div className={styles.videoCopy}>
             <strong>We Make Light.</strong>
             <span className={styles.yearMark}>1962</span>
