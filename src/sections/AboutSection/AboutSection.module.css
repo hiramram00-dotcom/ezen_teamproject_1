@@ -276,6 +276,10 @@
 .story {
   position: absolute;
   z-index: 3;
+  /* 1920 디자인(콘텐츠 높이 ≈ 56.25*about-vw = 1080px)을 핀 풀스크린 안에서 세로 가운데로
+     보정. 화면이 높을수록 위아래 여백이 생기는데 이 값이 콘텐츠를 중앙에 둔다(1080 높이선 0).
+     자식 요소들이 상속받아 top 계산에 사용. */
+  --story-vcenter: max(0px, calc((100svh - 56.25 * var(--about-vw)) / 2));
   top: calc(136 * var(--about-vw));
   left: 0;
   width: 100%;
@@ -300,14 +304,14 @@
 
 .storyLead {
   position: absolute;
-  top: 8vh;
+  top: calc(4.5 * var(--about-vw) + var(--story-vcenter));
   left: calc(var(--about-side-offset) + 1.8 * var(--about-vw));
   width: calc(58 * var(--about-vw));
 }
 
 .storyLeadSide {
   position: absolute;
-  top: 28vh;
+  top: calc(15.75 * var(--about-vw) + var(--story-vcenter));
   left: calc(var(--about-side-offset) + 1.8 * var(--about-vw));
   width: max-content;
   z-index: 3;
@@ -315,17 +319,17 @@
 
 .storyLeadTail {
   position: absolute;
-  top: 57vh;
+  top: calc(32.0625 * var(--about-vw) + var(--story-vcenter));
   left: calc(var(--about-side-offset) + 63 * var(--about-vw));
   width: max-content;
 }
 
 .storyMedia {
   position: absolute;
-  top: 31vh;
+  top: calc(17.4375 * var(--about-vw) + var(--story-vcenter));
   left: calc(var(--about-side-offset) + 21 * var(--about-vw));
   width: calc(41 * var(--about-vw));
-  height: 44vh;
+  height: calc(24.75 * var(--about-vw));
   object-fit: cover;
   clip-path: inset(var(--story-media-mask, 50%) 0);
   filter: brightness(var(--story-media-brightness, 0.18)) saturate(0.78);
@@ -360,12 +364,12 @@
 }
 
 .storyClosingYears {
-  top: 67vh;
+  top: calc(37.6875 * var(--about-vw) + var(--story-vcenter));
   left: calc(var(--about-side-offset) + 63 * var(--about-vw));
 }
 
 .storyClosingStatement {
-  top: 77vh;
+  top: calc(43.3125 * var(--about-vw) + var(--story-vcenter));
   left: calc(var(--about-side-offset) + 41 * var(--about-vw));
 }
 
@@ -456,17 +460,17 @@
 }
 
 .storySecond .storyClosingYears {
-  top: 48vh;
+  top: calc(27 * var(--about-vw) + var(--story-vcenter));
   left: calc(var(--about-side-offset) + 63 * var(--about-vw));
 }
 
 .storySecond .storyClosingBridge {
-  top: 66vh;
+  top: calc(37.125 * var(--about-vw) + var(--story-vcenter));
   left: calc(var(--about-side-offset) + 63 * var(--about-vw));
 }
 
 .storySecond .storyClosingStatement {
-  top: 76vh;
+  top: calc(42.75 * var(--about-vw) + var(--story-vcenter));
   left: calc(var(--about-side-offset) + 39 * var(--about-vw));
 }
 
