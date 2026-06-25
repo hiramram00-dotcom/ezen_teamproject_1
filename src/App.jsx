@@ -11,7 +11,6 @@ import SpaceMiddleSection from './sections/SpaceMiddleSection/SpaceMiddleSection
 import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection'
 import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
-import Footer from './components/Footer/Footer'
 import NewFooter from './components/Footer/NewFooter'
 import Header from './components/Header/Header'
 import LightCursor from './components/LightCursor/LightCursor'
@@ -88,7 +87,7 @@ function Home() {
       <div className="collaboOverlap">
         <CollaboSection />
       </div>
-      <Footer />
+      <NewFooter />
     </main>
   );
 }
@@ -123,7 +122,7 @@ function App() {
             <>
               <Header />
               <FlamingoDetailSection />
-              <Footer hidePhoto />
+              <NewFooter />
             </>
           }
         />
@@ -139,7 +138,7 @@ function App() {
               <CollaboGallerySection />
               <CollaboContactSection />
               {/* 푸터 위 사진+카드 섹션 제거 → 크림 푸터 본문만 */}
-              <Footer hidePhoto />
+              <NewFooter />
             </>
           }
         />
@@ -151,7 +150,7 @@ function App() {
               <Header />
               <CollaboDetailSection {...kbpCollabo.hero} />
               <CollaboDetailContentSection {...kbpCollabo.content} />
-              <Footer hidePhoto />
+              <NewFooter />
             </>
           }
         />
@@ -162,7 +161,7 @@ function App() {
               <Header />
               <CollaboDetailSection {...kakaoCollabo.hero} />
               <CollaboDetailContentSection {...kakaoCollabo.content} />
-              <Footer hidePhoto />
+              <NewFooter />
             </>
           }
         />

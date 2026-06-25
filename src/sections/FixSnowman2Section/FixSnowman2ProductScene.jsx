@@ -95,6 +95,7 @@ function FixSnowman2ProductScene() {
 
   return (
     <section
+      id="products"
       ref={sectionRef}
       className={styles.snowman}
       aria-labelledby="snowman-feature-title"
