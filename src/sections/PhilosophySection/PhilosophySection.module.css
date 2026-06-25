@@ -3,19 +3,19 @@
 .philosophy {
   position: relative;
   width: 100%;
-  height: 330svh;
-  min-height: 330svh;
+  height: 120svh;
+  min-height: 120svh;
   overflow: hidden;
   background: #000;
 }
 
 /* 臾대? ??酉고룷???ш린濡?諛곌꼍/移대뱶瑜??대뒗 而⑦뀒?대꼫(? ????. */
 .stage {
-  position: sticky;
-  top: 0;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: 100svh;
-  min-height: 100svh;
+  height: 100%;
+  min-height: 120svh;
   overflow: hidden;
 }
 
@@ -57,57 +57,11 @@
   will-change: transform;
 }
 
-@property --card-angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-
-.panel::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  border-radius: inherit;
-  padding: 3px;
-  background: conic-gradient(
-    from var(--card-angle),
-    transparent 0deg,
-    transparent 230deg,
-    rgba(255, 225, 154, 0.08) 260deg,
-    rgba(255, 225, 154, 0.4) 300deg,
-    rgba(255, 248, 224, 0.85) 313deg,
-    rgba(255, 225, 154, 0.4) 326deg,
-    rgba(255, 225, 154, 0.08) 350deg,
-    transparent 360deg
-  );
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  filter:
-    drop-shadow(0 0 3px rgba(255, 248, 224, 0.45))
-    drop-shadow(0 0 9px rgba(255, 210, 122, 0.36));
-  pointer-events: none;
-  animation: cardBorderSweep 3s linear infinite;
-}
-
-@keyframes cardBorderSweep {
-  to { --card-angle: 360deg; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .panel::after {
-    animation: none;
-  }
-}
-
 /* Our Philosophy ?띿뒪??+ ?대?吏 + 臾멸뎄 臾띠쓬 ???⑤꼸??梨꾩슦??而⑦뀒?대꼫瑜??댁쭩 ?대젮
    而댄룷吏???꾩껜(Our ?곷떒 ~ Philosophy ?섎떒)瑜?移대뱶 ?뺤쨷?숈뿉 留욎땄. */
 .group {
   position: absolute;
   inset: 0;
-  z-index: 1;
   transform: translateY(calc(3.57 * var(--about-vw)));
 }
 

@@ -24,10 +24,39 @@ function PhilosophySection() {
   const sceneRef = useRef(null)
   const roomRef = useRef(null)
   const panelRef = useRef(null)
-  const activeMessageRef = useRef(0)
   const [activeMessage, setActiveMessage] = useState(0)
 
   // 메시지 자동 전환 — 카드가 화면에 보이는 동안 3초마다 다음 문구로(화면 밖이면 멈춤).
+  useEffect(() => {
+    const scene = sceneRef.current
+    if (!scene) return
+
+    let timer = null
+    const start = () => {
+      if (timer) return
+      timer = window.setInterval(() => {
+        setActiveMessage((i) => (i + 1) % messages.length)
+      }, 2000)
+    }
+    const stop = () => {
+      if (!timer) return
+      window.clearInterval(timer)
+      timer = null
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => (entry.isIntersecting ? start() : stop()))
+      },
+      { threshold: 0.25 },
+    )
+    io.observe(scene)
+    return () => {
+      stop()
+      io.disconnect()
+    }
+  }, [])
+
   useEffect(() => {
     const scene = sceneRef.current
     const room = roomRef.current
@@ -58,18 +87,6 @@ function PhilosophySection() {
       // 무대가 화면을 채우는 순간(progress 1) 카드가 화면 정중앙에 온다.
       const up = ((1 - progress) * 50).toFixed(2) // svh, 중앙보다 아래에서 시작하는 양
       panel.style.transform = `translate(-50%, calc(-50% + ${up}svh)) scale(${cardScale})`
-
-      const scrollable = Math.max(scene.offsetHeight - vh, 1)
-      const messageProgress = clamp(-rect.top / scrollable, 0, 1)
-      const nextMessage = Math.min(
-        messages.length - 1,
-        Math.floor(messageProgress * messages.length),
-      )
-
-      if (nextMessage !== activeMessageRef.current) {
-        activeMessageRef.current = nextMessage
-        setActiveMessage(nextMessage)
-      }
     }
     const onScroll = () => {
       if (!ticking) {
