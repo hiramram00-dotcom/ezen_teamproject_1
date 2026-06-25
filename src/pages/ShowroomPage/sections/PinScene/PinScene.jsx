@@ -20,6 +20,9 @@ function PinScene() {
   const imageRef = useRef(null)
   const scrimRef = useRef(null)
   const cardRef = useRef(null)
+  const cardBoxRef = useRef(null)
+  const visualBlurRef = useRef(null)
+  const visualBlurImgRef = useRef(null)
   const cardGroupRef = useRef(null)
 
   useEffect(() => {
@@ -30,6 +33,10 @@ function PinScene() {
     if (!scene || !image || !scrim || !card) return
 
     const cardGroup = cardGroupRef.current
+    const cardBox = cardBoxRef.current
+    const visualBlur = visualBlurRef.current
+    const visualBlurImg = visualBlurImgRef.current
+    const visual = image.parentElement // .visual
 
     // 카드(라벨 포함)가 배경 이미지보다 크면 비율 그대로 균일 축소하여 이미지 안에 맞춤.
     // 카드는 이미지 정중앙 정렬이므로 center 기준 스케일하면 중심은 그대로 유지된다.
@@ -49,14 +56,32 @@ function PinScene() {
       cardGroup.style.transform = s < 1 ? `scale(${s})` : ''
     }
 
+    // faux 블러 동기화 — 안쪽 img는 배경 이미지와 같은 줌, wrapper는 카드 위치(rect)로 클립.
+    // getBoundingClientRect라 cardLayer 슬라이드·cardGroup 축소 등 중첩 transform이 자동 반영된다.
+    const syncBlur = () => {
+      if (!visualBlur || !visualBlurImg || !cardBox || !visual) return
+      visualBlurImg.style.transform = image.style.transform
+      const cr = cardBox.getBoundingClientRect()
+      const vr = visual.getBoundingClientRect()
+      visualBlur.style.clipPath =
+        `inset(${(cr.top - vr.top).toFixed(1)}px ${(vr.right - cr.right).toFixed(1)}px ` +
+        `${(vr.bottom - cr.bottom).toFixed(1)}px ${(cr.left - vr.left).toFixed(1)}px round 24px)`
+      visualBlur.style.visibility = card.style.visibility
+    }
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       image.style.transform = 'scale(1)'
       scrim.style.opacity = '0.42'
       card.style.transform = 'translateY(0)'
       card.style.visibility = 'visible'
       fitCard()
-      window.addEventListener('resize', fitCard)
-      return () => window.removeEventListener('resize', fitCard)
+      syncBlur()
+      const onResize = () => {
+        fitCard()
+        syncBlur()
+      }
+      window.addEventListener('resize', onResize)
+      return () => window.removeEventListener('resize', onResize)
     }
 
     let ticking = false
@@ -79,6 +104,7 @@ function PinScene() {
       scrim.style.opacity = (cardEase * 0.42).toFixed(3)
       card.style.transform = `translateY(${((1 - cardEase) * 100).toFixed(2)}%)`
       card.style.visibility = cardProgress > 0 ? 'visible' : 'hidden'
+      syncBlur()
     }
     const onScroll = () => {
       if (!ticking) {
@@ -116,6 +142,13 @@ function PinScene() {
           </div>
           <div ref={scrimRef} className={styles.scrim} aria-hidden="true" />
 
+          {/* faux backdrop-filter: 배경 이미지의 블러 복사본 — 매 프레임 이미지와 같은 줌으로 맞추고
+              카드 위치(rect)로 클립 → backdrop-filter 없이 카드 뒤만 흐려짐(배포서버 OK).
+              wrapper=클립(transform 영향 X) / 안쪽 img=줌. */}
+          <div ref={visualBlurRef} className={styles.visualBlur} aria-hidden="true">
+            <img ref={visualBlurImgRef} className={styles.visualBlurImg} src={heroImg} alt="" />
+          </div>
+
           {/* 카드 + 라벨 — 고정 구간 후반에 이미지 위로 올라옴.
               라벨은 cardGroup 안에서 카드 위에 절대배치하여, 카드만 이미지 정중앙에 정렬됨. */}
           <div ref={cardRef} className={styles.cardLayer}>
@@ -140,7 +173,7 @@ function PinScene() {
               </span>
             </div>
 
-            <div className={styles.card}>
+            <div ref={cardBoxRef} className={styles.card}>
               <div className={styles.top}>
                 <div className={styles.info}>
                   <h2 className={styles.title}>
