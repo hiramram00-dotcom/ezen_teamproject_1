@@ -3,5 +3,6 @@
   --about-vw: min(1vw, 19.2px);
   --about-side-offset: max(0px, calc((100vw - var(--about-max-width)) / 2));
 
-  overflow-x: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
 }

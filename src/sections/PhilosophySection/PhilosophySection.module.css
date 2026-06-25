@@ -3,19 +3,19 @@
 .philosophy {
   position: relative;
   width: 100%;
-  height: 120svh;
-  min-height: 120svh;
-  overflow: hidden;
+  height: 330svh;
+  min-height: 330svh;
+  overflow: visible;
   background: #000;
 }
 
 /* 臾대? ??酉고룷???ш린濡?諛곌꼍/移대뱶瑜??대뒗 而⑦뀒?대꼫(? ????. */
 .stage {
-  position: absolute;
-  inset: 0;
+  position: sticky;
+  top: 0;
   width: 100%;
-  height: 100%;
-  min-height: 120svh;
+  height: 100svh;
+  min-height: 100svh;
   overflow: hidden;
 }
 
@@ -35,7 +35,7 @@
   --philosophy-title-size: calc(6.25 * var(--about-vw)); /* type-italic-1: 120px @1920 */
   --philosophy-title-bottom-top: calc(32.4 * var(--about-vw)); /* 'Philosophy' 以묒떖??議곕챸 ?대?吏 ?섎떒(????留욎땄 */
   position: absolute;
-  top: 56svh;
+  top: 50svh;
   left: 50%;
   width: calc(50.1 * var(--about-vw));
   height: calc(50.1 * var(--about-vw));
@@ -57,21 +57,66 @@
   will-change: transform;
 }
 
+@property --card-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 3px;
+  background: conic-gradient(
+    from var(--card-angle),
+    transparent 0deg,
+    transparent 230deg,
+    rgba(255, 225, 154, 0.08) 260deg,
+    rgba(255, 225, 154, 0.4) 300deg,
+    rgba(255, 248, 224, 0.85) 313deg,
+    rgba(255, 225, 154, 0.4) 326deg,
+    rgba(255, 225, 154, 0.08) 350deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  filter:
+    drop-shadow(0 0 3px rgba(255, 248, 224, 0.45))
+    drop-shadow(0 0 9px rgba(255, 210, 122, 0.36));
+  pointer-events: none;
+  animation: cardBorderSweep 3s linear infinite;
+}
+
+@keyframes cardBorderSweep {
+  to { --card-angle: 360deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel::after {
+    animation: none;
+  }
+}
+
 /* Our Philosophy ?띿뒪??+ ?대?吏 + 臾멸뎄 臾띠쓬 ???⑤꼸??梨꾩슦??而⑦뀒?대꼫瑜??댁쭩 ?대젮
    而댄룷吏???꾩껜(Our ?곷떒 ~ Philosophy ?섎떒)瑜?移대뱶 ?뺤쨷?숈뿉 留욎땄. */
 .group {
   position: absolute;
   inset: 0;
+  z-index: 1;
   transform: translateY(calc(2.1 * var(--about-vw)));
 }
 
-.light {
+.lightFrame {
   position: absolute;
   top: calc(8.2 * var(--about-vw));
   left: 50%;
   width: calc(21.1 * var(--about-vw));
   height: calc(28.2 * var(--about-vw));
-  object-fit: cover;
   transform: translateX(-50%);
   /* 媛?μ옄由щ? 遺?쒕읇寃??섏씠???먮┸?섍쾶) ??4硫?紐⑤몢 ?щ챸?쇰줈 ?뱀븘?ㅼ뼱 ?ш컖 ?뚮몢由??쒓굅 */
   -webkit-mask-image:
@@ -82,6 +127,31 @@
     linear-gradient(to bottom, transparent 0, #000 3%, #000 97%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
+}
+
+.light {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  filter: blur(8px);
+  transform: scale(1.025);
+  transition:
+    opacity 0.55s ease 0.1s,
+    filter 0.55s ease 0.1s,
+    transform 0.75s ease 0.1s;
+}
+
+.lightActive {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+
+.group > img.light {
+  display: none;
 }
 
 .title {
@@ -147,8 +217,7 @@
 .message span.messageActive {
   opacity: 1;
   filter: blur(0);
-  /* ?ㅼ뼱?ㅻ뒗 履????섍???臾멸뎄媛 ?щ씪吏????꾩＜ 吏㏃? 鍮?援ш컙) ?쒖옉 */
   transition:
-    opacity 0.35s ease 0.38s,
-    filter 0.35s ease 0.38s;
+    opacity 0.35s ease,
+    filter 0.35s ease;
 }
