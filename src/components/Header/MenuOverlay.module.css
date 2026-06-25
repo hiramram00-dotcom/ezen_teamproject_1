@@ -38,11 +38,16 @@
   letter-spacing: -0.01em;
   color: #111;
   text-decoration: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, font-size 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    font-weight 0.4s ease;
 }
-/* 다른 항목 hover 중일 때 나머지는 살짝 흐려짐 (포커스 유도) */
+/* 다른 항목 hover 중일 때 나머지는 흐려짐 + 작아짐 + 두께↓. transform:scale 대신 font-size를
+   줄여서 글자뿐 아니라 "줄 높이(간격)"도 같이 줄어 항목들이 모인다(여백이 안 뜬다). 약 70% 크기,
+   두께는 600→500으로 한 단계 낮춰 더 가볍게(시선 분산↓). */
 .dim {
   opacity: 0.35;
+  font-size: clamp(28px, 4.2vw, calc(var(--fs-title-1) * 0.7));
+  font-weight: 500;
 }
 
 /* ===== 프리뷰 이미지 — hover 시 펼쳐지며 아래 항목 밀어냄 ===== */
