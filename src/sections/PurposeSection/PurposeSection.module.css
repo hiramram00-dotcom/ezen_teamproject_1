@@ -1,14 +1,29 @@
 ﻿.purpose {
+  --purpose-dark: 0;
+  --mission-title-light: 0;
+  --mission-content-progress: 0;
   position: relative;
   width: 100%;
-  height: calc(158.65 * var(--about-vw));
+  height: calc(149 * var(--about-vw));
   overflow: hidden;
   background: var(--color-base-2);
   color: var(--color-base-3);
 }
 
+.purpose::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: #000;
+  opacity: var(--purpose-dark);
+  pointer-events: none;
+  content: '';
+  will-change: opacity;
+}
+
 .ceoBlock {
   position: absolute;
+  z-index: 1;
   top: calc(16.82 * var(--about-vw));
   left: 50%;
   display: flex;
@@ -193,42 +208,100 @@
 
 .mission {
   position: absolute;
-  top: calc(90.47 * var(--about-vw));
+  z-index: 3;
+  top: calc(89.8 * var(--about-vw));
   left: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: calc(5.2 * var(--about-vw));
+  gap: calc(2.8 * var(--about-vw));
   width: calc(85.63 * var(--about-vw));
   transform: translateX(-50%);
 }
 
 .missionTitle {
+  color: #fff;
   font-family: var(--font-kr);
   font-size: calc(1.458333 * var(--about-vw)); /* type-body-2: 28px @1920 */
   font-weight: 400;
   line-height: 1.4;
   letter-spacing: -0.03em;
+  opacity: var(--mission-title-light);
+  filter:
+    blur(calc((1 - var(--mission-title-light)) * 14px))
+    brightness(calc(0.72 + var(--mission-title-light) * 0.28));
+  text-shadow:
+    0 0 calc((1 - var(--mission-title-light)) * 26px) rgba(255, 255, 255, 0.72),
+    0 0 calc(var(--mission-title-light) * 18px) rgba(255, 255, 255, 0.2);
+  transform: translateY(calc((1 - var(--mission-title-light)) * 2.5 * var(--about-vw)));
+  will-change: opacity, filter, text-shadow, transform;
 }
 
 .missionTitle strong {
   font-weight: 700;
 }
 
-.mission img {
+.missionBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(3.1 * var(--about-vw));
+  opacity: var(--mission-content-progress);
+  filter: blur(calc((1 - var(--mission-content-progress)) * 10px));
+  transform: translateY(calc((1 - var(--mission-content-progress)) * 8.5 * var(--about-vw)));
+  will-change: opacity, filter, transform;
+}
+
+.missionBody img {
   width: calc(53.39 * var(--about-vw));
   height: calc(20 * var(--about-vw));
   object-fit: cover;
 }
 
 .englishCopy {
-  background: linear-gradient(105deg, #f1e0c5 32%, #c5b59c 96%);
+  background:
+    linear-gradient(
+      105deg,
+      #f1e0c5 0%,
+      #b7a58b 22%,
+      #f8e8ca 36%,
+      #fff7df 43%,
+      #ffffff 48%,
+      #fff3d1 53%,
+      #c5b59c 66%,
+      #f1e0c5 100%
+    );
+  -webkit-background-clip: text;
   background-clip: text;
+  background-position: 150% 50%;
+  background-size: 340% 100%;
   color: transparent;
+  -webkit-text-fill-color: transparent;
   font-family: var(--font-en);
   font-size: calc(3.645833 * var(--about-vw)); /* 70px @1920 */
   font-weight: 500;
   line-height: 1.3;
   letter-spacing: -0.03em;
   text-align: center;
+  transform: translateY(calc(4.2 * var(--about-vw)));
+  animation: englishCopyShimmer 14s linear infinite;
+  text-shadow: 0 0 calc(var(--mission-content-progress) * 18px) rgba(255, 245, 220, 0.22);
+  will-change: background-position, text-shadow, transform;
+}
+
+@keyframes englishCopyShimmer {
+  0% {
+    background-position: 150% 50%;
+    text-shadow: 0 0 10px rgba(255, 245, 220, 0.2);
+  }
+
+  52% {
+    background-position: -55% 50%;
+    text-shadow: 0 0 28px rgba(255, 245, 220, 0.48);
+  }
+
+  100% {
+    background-position: -260% 50%;
+    text-shadow: 0 0 10px rgba(255, 245, 220, 0.16);
+  }
 }
