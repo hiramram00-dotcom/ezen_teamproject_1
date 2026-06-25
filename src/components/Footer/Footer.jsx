@@ -245,7 +245,7 @@ function Footer({
         <div className={styles.legal}>
           <p className={styles.legalText}>
             © 2026 일광전구 주식회사 &nbsp;·&nbsp; 서울 성동구 성수동 &nbsp;·&nbsp; 사업자
-            000-00-00000 &nbsp;·&nbsp; 통신판매업 신고번호 000-000-0000
+            123-45-12345 &nbsp;·&nbsp; 통신판매업 신고번호 123-456-7890
           </p>
           <p className={styles.legalText}>
             <a href="#privacy" className={styles.legalLink}>

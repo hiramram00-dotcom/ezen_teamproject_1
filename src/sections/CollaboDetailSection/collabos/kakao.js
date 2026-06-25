@@ -21,7 +21,7 @@ const kakao = {
     ],
     brandLogo,
     brandAlt: 'KAKAO FRIENDS',
-    productUrl: '#', // TODO: 카카오 에디션 제품 페이지 링크로 교체
+    productUrl: 'https://ilkwdesign.com/SNOWMAN22-V2-Table',
     bodyTriggerIndex: 1, // 2번째 사진에서 본문 등장
     // 위치/사이즈: Figma 프레임 1587:62 (1920×4683) 기준 %
     // top은 KBP 첫 사진(14.036%)에 맞춰 전체 +4.66% 내림 (타이틀-사진 여백 KBP와 동일)
