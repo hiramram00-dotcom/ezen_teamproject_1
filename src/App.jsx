@@ -12,6 +12,7 @@ import StoryEndingSection from './sections/StoryEndingSection/StoryEndingSection
 import SpacesSection from './sections/SpacesSection/SpacesSection'
 import CollaboSection from './sections/CollaboSection/CollaboSection'
 import NewFooter from './components/Footer/NewFooter'
+import Footer from './components/Footer/Footer'
 import Header from './components/Header/Header'
 import LightCursor from './components/LightCursor/LightCursor'
 import ResizeAnchor from './components/ResizeAnchor/ResizeAnchor'
@@ -87,6 +88,7 @@ function Home() {
       <div className="collaboOverlap">
         <CollaboSection />
       </div>
+      <Footer hideBody />
       <NewFooter />
     </main>
   );
