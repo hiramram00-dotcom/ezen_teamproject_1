@@ -89,6 +89,9 @@
   z-index: 4;
   bottom: clamp(90px, 12%, 150px); /* 위치기준값을 하단으로 수정 */
   left: 4.64%;
+  /* 명확한 width 필수 — 없으면 absolute라 내용물에 맞춰 쪼그라들어(shrink-to-fit),
+     안쪽 .desc의 width:50%가 그 좁은 폭 기준이 되어 본문이 3줄로 밀린다. */
+  width: 90%;
   display: flex;
   flex-direction: column;
   gap: clamp(12px, 1.2vw, 24px);
@@ -125,7 +128,7 @@
 
 /* 본문 — Pretendard 24px @1920 */
 .desc {
-  width: 44.79%; /* 860/1920 */
+  width: 50%; /* 긴 둘째 문장이 좁은 데스크톱 폭에서도 2줄 유지되게 넓힘 (원래 44.79%=860/1920) */
   margin: 0;
   opacity: 0;
   will-change: transform, opacity;
