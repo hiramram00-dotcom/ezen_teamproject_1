@@ -91,7 +91,7 @@
 @media (prefers-reduced-motion: reduce) {
   .card::after { animation: none; }
 }
-/* 카드 안 텍스트 — 폰트는 1920 기준 px를 vw로 환산해 비례 스케일 */
+/* 카드 안 텍스트 — 카드 폭(54.219vw)에 비례해 vw로 스케일 */
 .cardHeading {
   position: absolute;
   top: 5.71%;       /* 60/1050 */
@@ -101,7 +101,7 @@
   margin: 0;
   font-family: var(--font-en);
   font-weight: 500;
-  font-size: var(--fs-body-1); /* 42px @1920 */
+  font-size: clamp(11px, 2.08vw, var(--fs-body-1));
   line-height: 1.1;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -109,7 +109,7 @@
 }
 /* 콜라보 푸터(contact 지정)처럼 헤딩 문구가 길 때 — 폰트 살짝 줄여 깔끔히 2줄로 */
 .cardCompact .cardHeading {
-  font-size: var(--fs-body-1);
+  font-size: clamp(10px, 1.82vw, var(--fs-body-1));
 }
 .cardLink {
   position: absolute;
@@ -120,7 +120,7 @@
   font-family: var(--font-deco);
   font-style: italic;
   font-weight: 400;
-  font-size: var(--fs-body-1); /* 40px @1920 */
+  font-size: clamp(10px, 2.08vw, var(--fs-body-1));
   line-height: 1.2;
   color: #000;
   transition: opacity 0.2s ease;
@@ -156,7 +156,7 @@
   white-space: nowrap;
   font-family: var(--font-en);
   font-weight: 600;
-  font-size: var(--fs-title-4); /* 60px @1920 */
+  font-size: clamp(11px, 3.65vw, var(--fs-title-4));
   line-height: 1.2;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -260,23 +260,15 @@
   .photo {
     aspect-ratio: 4 / 5;
   }
-  /* 카드 가로 더 넓힘(중앙 유지) + 안의 글씨 확대 (home 푸터 모바일과 동일) */
+  /* 카드 가로 더 넓힘(중앙 유지) */
   .card {
     left: 13%;
     width: 74%;
   }
-  .cardHeading {
-    font-size: var(--fs-title-4);
-  }
-  .cardCompact .cardHeading {
-    font-size: var(--fs-body-1); /* 콜라보 푸터 긴 헤딩 — 2줄 유지 */
-  }
-  .cardLink {
-    font-size: var(--fs-title-4);
-  }
-  .cardEmail {
-    font-size: var(--fs-title-2);
-  }
+  .cardHeading { font-size: 12px; }
+  .cardCompact .cardHeading { font-size: 12px; }
+  .cardLink { font-size: 16px; }
+  .cardEmail { font-size: 20px; }
   .body {
     min-height: auto;
     padding: 24px 20px 16px;
