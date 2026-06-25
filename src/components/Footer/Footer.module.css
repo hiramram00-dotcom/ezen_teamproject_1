@@ -47,13 +47,17 @@
    깨져서, filter:blur로 직접 깐다(항상 작동). 음수 z-index라 카드 텍스트는 자동으로 위에 그려진다. */
 .cardBg {
   position: absolute;
-  inset: 0;
   z-index: -2;
-  width: 100%;
-  height: 100%;
+  /* 카드가 .photo의 (left 22.917% / top 19.477% / w 54.219% / h 61.047%)에 있으므로, 복사본을
+     .photo 전체 크기로 키우고 그만큼 음수 오프셋 → 카드가 "뒤 사진의 바로 그 자리"를 흐리게 한다
+     (진짜 프로스트 유리). object-fit·position·brightness는 실제 사진(.photoImg)과 동일하게 맞춤. */
+  left: -42.27%; /* -(22.917 / 54.219) */
+  top: -31.9%; /* -(19.477 / 61.047) */
+  width: 184.44%; /* 100 / 54.219 */
+  height: 163.81%; /* 100 / 61.047 */
   object-fit: cover;
   object-position: center;
-  filter: blur(24px) brightness(0.55) saturate(1.3);
+  filter: blur(24px) brightness(0.5) saturate(1.4);
 }
 /* 블러 위에 얹는 흰 프로스트 틴트 (예전 카드 배경색과 동일) */
 .cardTint {

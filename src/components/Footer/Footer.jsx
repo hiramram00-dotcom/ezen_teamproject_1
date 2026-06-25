@@ -82,6 +82,7 @@ function Footer({
   const footerRef = useRef(null)
   const photoRef = useRef(null)
   const photoImgRef = useRef(null)
+  const cardBgRef = useRef(null)
   const cardRef = useRef(null)
   const bodyRef = useRef(null)
   const logoRef = useRef(null)
@@ -96,26 +97,41 @@ function Footer({
       // 사진: 살짝 확대 / 흰 카드: 아래에서 제자리로 떠오름 (함께 진행)
       // (hidePhoto면 사진 미렌더 → 이 트리거 생략)
       if (!hidePhoto && photoRef.current) {
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: photoRef.current,
-            start: 'top 85%', // 사진 top이 화면 85% 지점에 닿으면 시작
-            end: 'center center', // 사진 중앙이 화면 중앙에 닿으면 끝
-            scrub: 1,
-            // 히어로 핀(늦게 생성, 페이지 높이 증가)보다 나중에 위치 계산하도록 강제.
-            refreshPriority: -1,
-          },
-        })
+        // 사진 + 블러 복사본(cardBg)을 함께 1.08배 확대 — 스크롤 연동(패럴랙스).
+        // 둘이 같이 커져야 카드 안 블러가 뒤 사진과 계속 정렬된다(faux 블러라 가능).
+        gsap.fromTo(
+          [photoImgRef.current, cardBgRef.current],
+          { scale: 1 },
+          {
+            scale: 1.08,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: photoRef.current,
+              start: 'top 85%',
+              end: 'center center',
+              scrub: 1,
+              refreshPriority: -1,
+            },
+          }
+        )
 
-        // 블러(backdrop-filter)를 살리기 위해 transform을 전부 제거.
-        // - 사진 줌(scale): backdrop의 transform
-        // - 카드 rise(yPercent): 카드 "자신"의 transform — 이게 backdrop-filter를 깨는 결정적 원인.
-        // 카드는 transform 없이 페이드(autoAlpha)로만 등장한다.
-        tl.fromTo(
+        // 흰 카드: 아래에서 떠오르며 페이드인. 한 번 재생 후 유지(toggleActions:'play none none none')
+        // → 스크롤 위로 올려도 안 사라진다(블러 사라지던 버그 수정). faux 블러라 카드 transform 무관.
+        gsap.fromTo(
           cardRef.current,
-          { autoAlpha: 0 },
-          { autoAlpha: 1, ease: 'none', duration: 1 },
-          0
+          { yPercent: 60, autoAlpha: 0 },
+          {
+            yPercent: 0,
+            autoAlpha: 1,
+            duration: 1.1,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: photoRef.current,
+              start: 'top 80%',
+              toggleActions: 'play none none none',
+              refreshPriority: -1,
+            },
+          }
         )
       }
 
@@ -184,7 +200,7 @@ function Footer({
           <div className={`${styles.card} ${contact ? styles.cardCompact : ''}`} ref={cardRef}>
             {/* faux backdrop-filter: 블러된 사진 복사본 + 흰 틴트 — backdrop-filter가 배포에서
                 상위 transform 때문에 깨져, filter:blur로 직접 깐다(항상 작동) */}
-            <img className={styles.cardBg} src={photo} alt="" aria-hidden="true" />
+            <img className={styles.cardBg} src={photo} alt="" aria-hidden="true" ref={cardBgRef} />
             <span className={styles.cardTint} aria-hidden="true" />
             <p className={styles.cardHeading}>
               {headingLines.map((line, i) => (
