@@ -65,13 +65,16 @@
   will-change: transform;
 }
 .title {
-  font-weight: 400; /* 굵기는 각 span의 type-* 가 결정 */
+  display: flex;
+  align-items: baseline;
+  gap: clamp(8px, 1.56vw, 24px);
+  font-weight: 400;
 }
 /* 전역 fs-title-1 / type-title-1·italic-1은 1920 기준 고정 120px → 화면 폭에 비례해 줄어들게 오버라이드 */
 .intro :global(.type-title-1),
 .intro :global(.type-italic-1),
 .intro :global(.fs-title-1) {
-  font-size: clamp(56px, 6.25vw, var(--fs-title-1));
+  font-size: clamp(56px, 4.48vw, 86px);
 }
 .desc {
   color: var(--color-base-3);

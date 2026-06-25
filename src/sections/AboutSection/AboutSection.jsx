@@ -15,6 +15,7 @@ const INTRO_FRAME_INTERVAL = 1000 / 45
 const INTRO_MAX_PIXEL_RATIO = 1.5
 const INTRO_CENTER_Y_RATIO = 0.46
 const INTRO_SINCE_OFFSET_RATIO = 0.008
+const INTRO_TEXT_GAP_RATIO = 0.003
 const INTRO_SCROLL_DISTANCE_RATIO = 0.5
 const INTRO_MAX_PROGRESS_STEP = 0.018
 
@@ -84,7 +85,7 @@ function sampleIntroTextPoints(width, height, particleCount) {
   const sinceSize = getFontSizeToken('--fs-title-4', 70)
   const yearSize = getFontSizeToken('--fs-display-1', 180)
   const textCenterY = centerY - width * 0.01
-  const textLeft = width * 0.409
+  const textGap = width * INTRO_TEXT_GAP_RATIO
   const maskWidth = Math.ceil(width * 0.3)
   const maskHeight = Math.ceil(width * 0.2)
   const maskLeft = centerX - maskWidth / 2
@@ -96,14 +97,21 @@ function sampleIntroTextPoints(width, height, particleCount) {
   maskContext.fillStyle = '#fff'
   maskContext.textAlign = 'left'
   maskContext.textBaseline = 'middle'
+  maskContext.font = `600 ${yearSize}px Arial, sans-serif`
+  const yearWidth = maskContext.measureText('1962').width
+  const yearLeft = maskWidth / 2 - yearWidth / 2
   maskContext.font = `italic 400 ${sinceSize}px "Playfair Display", "Times New Roman", serif`
   maskContext.fillText(
     'Since',
-    textLeft - maskLeft + width * INTRO_SINCE_OFFSET_RATIO,
-    maskHeight / 2 - yearSize * 0.42,
+    yearLeft + width * INTRO_SINCE_OFFSET_RATIO,
+    maskHeight / 2 - yearSize * 0.42 - textGap,
   )
   maskContext.font = `600 ${yearSize}px Arial, sans-serif`
-  maskContext.fillText('1962', textLeft - maskLeft, maskHeight / 2 + sinceSize * 0.62)
+  maskContext.fillText(
+    '1962',
+    yearLeft,
+    maskHeight / 2 + sinceSize * 0.62 + textGap,
+  )
 
   const pixels = maskContext.getImageData(0, 0, maskWidth, maskHeight).data
   const points = []
@@ -276,20 +284,23 @@ function AboutIntroParticles({ onComplete }) {
         const sinceSize = getFontSizeToken('--fs-title-4', 70)
         const yearSize = getFontSizeToken('--fs-display-1', 180)
         const textCenterY = centerY - width * 0.01
-        const textLeft = width * 0.409
+        const textGap = width * INTRO_TEXT_GAP_RATIO
 
         context.save()
         context.textAlign = 'left'
         context.textBaseline = 'middle'
         context.fillStyle = `rgba(255, 255, 255, ${solidTextOpacity})`
+        context.font = `600 ${yearSize}px Arial, sans-serif`
+        const yearWidth = context.measureText('1962').width
+        const yearLeft = centerX - yearWidth / 2
         context.font = `italic 400 ${sinceSize}px "Playfair Display", "Times New Roman", serif`
         context.fillText(
           'Since',
-          textLeft + width * INTRO_SINCE_OFFSET_RATIO,
-          textCenterY - yearSize * 0.42,
+          yearLeft + width * INTRO_SINCE_OFFSET_RATIO,
+          textCenterY - yearSize * 0.42 - textGap,
         )
         context.font = `600 ${yearSize}px Arial, sans-serif`
-        context.fillText('1962', textLeft, textCenterY + sinceSize * 0.62)
+        context.fillText('1962', yearLeft, textCenterY + sinceSize * 0.62 + textGap)
         context.restore()
       }
 
@@ -362,7 +373,7 @@ function AboutSection() {
         // 뷰포트 안으로 20% 들어왔을 때 발동(음수 하단 마진). 예전 +18%는 화면 밖
         // 아래까지 미리 감지해서, 키 큰 화면(legacy가 인트로 바로 아래)에선 로드 즉시
         // 발동→애니가 화면 밖에서 끝나버렸다. 이제 실제로 보일 때 재생된다.
-        rootMargin: '0px 0px -20% 0px',
+        rootMargin: '0px 0px 8% 0px',
         threshold: 0.01,
       },
     )
@@ -442,7 +453,7 @@ function AboutSection() {
   // 두고, 그동안 빛이 점처럼 나타나 커진 뒤 페이드되며 History로 넘어간다.
   // 고정해두는 만큼 .about의 전체 높이도 늘려줘야 실제로 그만큼 스크롤할 거리가 생긴다.
   const PIN_DISTANCE_RATIO = 2.2 // 뷰포트 높이의 220%만큼 고정 구간
-  const HISTORY_TITLE_HOLD_RATIO = 0.9
+  const HISTORY_TITLE_HOLD_RATIO = 1.8
   const HOLD_FRAC = 0.25 // 고정 구간의 앞 25% — 빛 없이 정지
   const GROW_END_FRAC = 0.86 // 25~86% — 빛이 점에서 천천히 커짐
   // 75~100% — 전체가 서서히 사라지며 History로 핸드오프

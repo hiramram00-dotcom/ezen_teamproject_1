@@ -3,6 +3,8 @@ import styles from './PhilosophySection.module.css'
 
 import philosophyRoom from './assets/philosophy-room.webp'
 import philosophyLight from './assets/philosophy-light.webp'
+import philosophyPendant from './assets/philosophy-pendant.webp'
+import philosophyWarmHandLight from './assets/philosophy-warm-hand-light.webp'
 
 const ease = (t) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
@@ -12,6 +14,8 @@ const messages = [
   '글로벌 넘버원 백년장인 기업이 된다',
   '삶에 온기를 주는 빛을 개발 공급한다',
 ]
+
+const lightImages = [philosophyLight, philosophyPendant, philosophyWarmHandLight]
 
 /**
  * PhilosophySection — Our Philosophy
@@ -24,39 +28,10 @@ function PhilosophySection() {
   const sceneRef = useRef(null)
   const roomRef = useRef(null)
   const panelRef = useRef(null)
+  const activeMessageRef = useRef(0)
   const [activeMessage, setActiveMessage] = useState(0)
 
-  // 메시지 자동 전환 — 카드가 화면에 보이는 동안 3초마다 다음 문구로(화면 밖이면 멈춤).
-  useEffect(() => {
-    const scene = sceneRef.current
-    if (!scene) return
-
-    let timer = null
-    const start = () => {
-      if (timer) return
-      timer = window.setInterval(() => {
-        setActiveMessage((i) => (i + 1) % messages.length)
-      }, 2000)
-    }
-    const stop = () => {
-      if (!timer) return
-      window.clearInterval(timer)
-      timer = null
-    }
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => (entry.isIntersecting ? start() : stop()))
-      },
-      { threshold: 0.25 },
-    )
-    io.observe(scene)
-    return () => {
-      stop()
-      io.disconnect()
-    }
-  }, [])
-
+  // 메시지는 카드가 중앙에 고정된 뒤 스크롤 진행도에 맞춰 하나씩 전환된다.
   useEffect(() => {
     const scene = sceneRef.current
     const room = roomRef.current
@@ -78,15 +53,27 @@ function PhilosophySection() {
       const rect = scene.getBoundingClientRect()
       const vh = window.innerHeight
       // 진행도: 섹션이 화면에 막 들어온 순간(rect.top=vh) → 무대가 화면을 꽉 채운 순간(rect.top=0)
-      const progress = clamp((vh - rect.top) / vh, 0, 1)
-      const e = ease(progress)
+      const enterProgress = clamp((vh - rect.top) / vh, 0, 1)
+      const e = ease(enterProgress)
       // 배경: 살짝 확대 → 원래 크기 (스크롤하며 공간감)
       room.style.transform = `scale(${(1.12 - 0.06 * e).toFixed(4)})`
       // 카드: 무대 아래쪽 → 무대 중앙으로 이동.
       // 스크롤과 1:1 선형으로 올려 화면상 아래→위로 매끄럽게 상승한다.
       // 무대가 화면을 채우는 순간(progress 1) 카드가 화면 정중앙에 온다.
-      const up = ((1 - progress) * 50).toFixed(2) // svh, 중앙보다 아래에서 시작하는 양
+      const up = ((1 - enterProgress) * 50).toFixed(2) // svh, 중앙보다 아래에서 시작하는 양
       panel.style.transform = `translate(-50%, calc(-50% + ${up}svh)) scale(${cardScale})`
+
+      const messageScrollDistance = Math.max(scene.offsetHeight - vh, 1)
+      const messageProgress = clamp(-rect.top / messageScrollDistance, 0, 1)
+      const nextMessage = Math.min(
+        messages.length - 1,
+        Math.floor(messageProgress * messages.length),
+      )
+
+      if (nextMessage !== activeMessageRef.current) {
+        activeMessageRef.current = nextMessage
+        setActiveMessage(nextMessage)
+      }
     }
     const onScroll = () => {
       if (!ticking) {
@@ -114,6 +101,18 @@ function PhilosophySection() {
         <div ref={panelRef} className={styles.panel}>
           {/* Our Philosophy 텍스트 + 조명 이미지 + 문구를 하나의 묶음으로 카드 정중앙 배치 */}
           <div className={styles.group}>
+            <div className={styles.lightFrame} aria-hidden="true">
+              {lightImages.map((image, index) => (
+                <img
+                  key={`${image}-${index}`}
+                  className={`${styles.light} ${
+                    index === activeMessage ? styles.lightActive : ''
+                  }`}
+                  src={image}
+                  alt=""
+                />
+              ))}
+            </div>
             <img className={styles.light} src={philosophyLight} alt="빛을 밝히는 펜던트 조명" />
           <h2 id="philosophy-title" className={styles.title}>
             <span>Our</span>
