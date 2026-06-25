@@ -149,8 +149,21 @@ function CollaboSection() {
     }
 
     let copyW = track.scrollWidth / 2 // 카드 세트 한 벌 폭(트랙엔 2벌)
+
+    // CSS max-height 미디어 쿼리 등으로 galleryViewport.top이 intro 하단보다 위에 올 수 있음
+    // → JS로 강제 조정해 어떤 화면 크기에서도 겹치지 않게 보장
+    const adjustGalleryTop = () => {
+      viewport.style.removeProperty('top')
+      const minTop = title.offsetTop + title.offsetHeight + 16
+      if (viewport.offsetTop < minTop) {
+        viewport.style.top = `${minTop}px`
+      }
+    }
+    adjustGalleryTop()
+
     const measure = () => {
       copyW = track.scrollWidth / 2
+      adjustGalleryTop()
     }
     const posMod = (v) => (copyW > 0 ? ((v % copyW) + copyW) % copyW : 0)
 
@@ -223,7 +236,13 @@ function CollaboSection() {
       const total = wrap.offsetHeight - vh
       const scrolled = Math.min(total, Math.max(0, -rect.top))
       const aP = ease(clamp01(scrolled / (total * 0.85)))
-      const rise = Math.max(0, vh / 2 - (title.offsetTop + title.offsetHeight / 2))
+      // 프레임마다 실측 — 리사이즈 대응 + 겹침 수학적 보장
+      // gallery도 (1-aP)*360 만큼 아래로 밀려 있으므로
+      // 어떤 aP에서도 intro_bottom ≤ gallery_top 이 되려면:
+      // rise ≤ viewport.offsetTop - title.offsetTop - title.offsetHeight - 16
+      const rawRise = Math.max(0, vh / 2 - (title.offsetTop + title.offsetHeight / 2))
+      const maxRise = Math.max(0, viewport.offsetTop - title.offsetTop - title.offsetHeight - 16)
+      const rise = Math.min(rawRise, maxRise)
       title.style.transform = `translateY(${(1 - aP) * rise}px)`
       // 제목+설명 blur-in: 섹션이 핀되어 들어오면(aP>0.02) 표시, 위로 벗어나면 초기화
       title.classList.toggle(styles.isVisible, aP > 0.02)

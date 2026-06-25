@@ -58,30 +58,28 @@ function CollaboContactSection() {
     // 면적이 급격히 커져 "확 커지는" 느낌이 난다. ease를 sine.out으로 바꿔 초반에
     // 더 빠르게, 후반엔 천천히 커지게 해 면적 증가가 고르게 느껴지도록 하고,
     // 전체 구간(duration)도 늘려 같은 스크롤 거리에서 더 느긋하게 커지게 한다.
-    tl.to(oval, { r: 120, ease: 'sine.out', duration: 0.75, onUpdate: setReveal }, 0)
-      .fromTo(dim, { opacity: 1 }, { opacity: 0, ease: 'none', duration: 0.25 }, 0.62)
-      // 영문 헤드라인 + 한글 부제를 같은 시점(0.65)에 동시에 등장시킨다 (기존엔 0.75/0.85로 순차 등장)
+    // 원이 확장되는 동안(0~0.65) 텍스트도 함께 등장 → 거의 동시에 나오는 느낌
+    tl.to(oval, { r: 120, ease: 'sine.out', duration: 0.65, onUpdate: setReveal }, 0)
+      .fromTo(dim, { opacity: 1 }, { opacity: 0, ease: 'none', duration: 0.30 }, 0.35)
       .fromTo(
         headline,
-        { autoAlpha: 0, y: 48, filter: 'blur(8px)' },
-        { autoAlpha: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.15 },
-        0.65
+        { autoAlpha: 0, y: 32, filter: 'blur(8px)' },
+        { autoAlpha: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.20 },
+        0.10   // 원이 막 커지기 시작할 때 텍스트도 동시에 등장
       )
       .fromTo(
         desc,
-        { autoAlpha: 0, y: 48, filter: 'blur(8px)' },
-        { autoAlpha: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.15 },
-        0.65
+        { autoAlpha: 0, y: 32, filter: 'blur(8px)' },
+        { autoAlpha: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.20 },
+        0.10
       )
       .fromTo(
         cta,
-        { autoAlpha: 0, y: 48, filter: 'blur(8px)' },
-        { autoAlpha: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.15 },
-        0.8
+        { autoAlpha: 0, y: 32, filter: 'blur(8px)' },
+        { autoAlpha: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.20 },
+        0.25
       )
-      // dwell: 타임라인 전체 길이(1.53)는 그대로 유지 → 원이 커지는 속도(스크롤량)는 변하지 않고,
-      // 텍스트만 더 앞쪽(0.65)으로 당겨와 더 적은 스크롤만으로 보이게 한다.
-      .to({}, { duration: 0.58 }, 0.95)
+      .to({}, { duration: 0.55 }, 0.70) // dwell
 
     return () => {
       tl.scrollTrigger && tl.scrollTrigger.kill()

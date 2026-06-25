@@ -67,9 +67,10 @@
 .title {
   font-weight: 400; /* 굵기는 각 span의 type-* 가 결정 */
 }
-/* 전역 type-title-1/italic-1 은 1920 기준 고정 120px → 화면 폭에 비례해 줄어들게 오버라이드 */
+/* 전역 fs-title-1 / type-title-1·italic-1은 1920 기준 고정 120px → 화면 폭에 비례해 줄어들게 오버라이드 */
 .intro :global(.type-title-1),
-.intro :global(.type-italic-1) {
+.intro :global(.type-italic-1),
+.intro :global(.fs-title-1) {
   font-size: clamp(56px, 6.25vw, var(--fs-title-1));
 }
 .desc {
@@ -234,6 +235,10 @@
 .cardTitle {
   color: var(--color-base-3);
 }
+/* 고정 24px → 카드 폭(19.74vw)에 맞춰 비례 스케일 */
+.cardTitle:global(.fs-body-2) {
+  font-size: clamp(15px, 1.25vw, var(--fs-body-2));
+}
 .cardX {
   font-family: 'Inter', var(--font-en);
   font-weight: 400;
@@ -241,6 +246,10 @@
 /* 캡션 회색: 디자인 #555 — 현재 토큰에 없는 값(팀에서 토큰화 검토 필요) */
 .cardDesc {
   color: #555;
+}
+/* 고정 21px → 카드 폭에 맞춰 비례 스케일 */
+.cardDesc:global(.fs-sub-1) {
+  font-size: clamp(13px, 1.09vw, var(--fs-sub-1));
 }
 
 /* ----- 모바일(≤767px): 마퀴 대신 세로 리스트 (가로 스크롤 없음) ----- */
@@ -259,7 +268,8 @@
     margin-bottom: 28px;
   }
   .introMobile :global(.type-title-1),
-  .introMobile :global(.type-italic-1) {
+  .introMobile :global(.type-italic-1),
+  .introMobile :global(.fs-title-1) {
     font-size: var(--fs-body-2);
   }
   .introMobile .desc {
