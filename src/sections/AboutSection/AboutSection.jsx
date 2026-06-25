@@ -350,7 +350,13 @@ function AboutSection() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setLegacyRevealed(entry.isIntersecting)
+        // 단방향 latch: 한 번 보이면 reveal 유지(다시 false로 안 내림).
+        // 예전엔 isIntersecting을 그대로 넣어, 큰 화면서 .legacy가 observer 범위를
+        // 벗어나는 순간 legacyRevealed=false → .legacyCopy opacity:0 으로 사라졌다.
+        if (entry.isIntersecting) {
+          setLegacyRevealed(true)
+          observer.disconnect()
+        }
       },
       {
         rootMargin: '0px 0px 18% 0px',
