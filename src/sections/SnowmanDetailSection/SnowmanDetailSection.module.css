@@ -40,6 +40,14 @@
   margin-top: max(-0.0521vw, -1px);
 }
 
+.marqueeShowcase {
+  max-width: none;
+  height: min(74.6875vw, 1434px);
+  min-height: min(74.6875vw, 1434px);
+  margin-top: max(-0.0521vw, -1px);
+  overflow: hidden;
+}
+
 .heroBackground {
   width: 100%;
   height: 100%;
@@ -180,6 +188,202 @@
   gap: 5.2083cqw;
   transform-origin: center;
   will-change: transform;
+}
+
+.marqueeRow {
+  position: absolute;
+  left: 0;
+  display: flex;
+  gap: min(1.9271vw, 37px);
+  width: max-content;
+  will-change: transform;
+}
+
+.marqueeRowTop {
+  top: min(3.4896vw, 67px);
+  animation: snowmanMarqueeRight 30s linear infinite;
+}
+
+.marqueeRowBottom {
+  top: min(36.9792vw, 710px);
+  animation: snowmanMarqueeLeft 30s linear infinite;
+}
+
+.marqueeCard {
+  position: relative;
+  flex: 0 0 auto;
+  width: min(27.6042vw, 530px);
+  height: min(27.6042vw, 530px);
+  overflow: hidden;
+  background: #716f6d;
+  color: var(--color-base-1);
+}
+
+.marqueeCard img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  user-select: none;
+}
+
+.marqueeCopy {
+  position: absolute;
+  z-index: 2;
+  margin: 0;
+  color: var(--color-base-1);
+  font-family: var(--font-en);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.marqueeCopy em {
+  font-family: var(--font-deco);
+  font-style: italic;
+}
+
+.quietlyCopy {
+  top: min(3.2292vw, 62px);
+  right: min(1.9792vw, 38px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: var(--font-deco);
+  font-size: min(2.0833vw, 40px);
+  font-style: italic;
+}
+
+.quietGlowCopy {
+  top: min(13.3854vw, 257px);
+  right: min(6.0417vw, 116px);
+  font-family: var(--font-deco);
+  font-size: min(1.1458vw, 22px);
+  font-style: italic;
+}
+
+.softHourCard {
+  background: #f5b17d;
+}
+
+.softHourCard::before {
+  position: absolute;
+  inset: min(3.3333vw, 64px) min(3.8542vw, 74px);
+  z-index: 1;
+  background: #ec7335;
+  content: '';
+}
+
+.softHourCard img {
+  inset: min(6.4063vw, 123px) auto auto 50%;
+  z-index: 2;
+  width: min(12.9167vw, 248px);
+  height: min(12.9167vw, 248px);
+  transform: translateX(-50%);
+}
+
+.softHourCopy {
+  top: min(1.0938vw, 21px);
+  left: 0;
+  width: 100%;
+  font-family: var(--font-deco);
+  font-size: min(1.1458vw, 22px);
+  font-style: italic;
+  text-align: center;
+}
+
+.lightStaysCopy {
+  top: min(12.9688vw, 249px);
+  left: min(3.1771vw, 61px);
+  font-size: min(1.5625vw, 30px);
+}
+
+.lessWarmerCard {
+  background: #2b5336;
+}
+
+.lessWarmerCard img {
+  inset: min(5.5208vw, 106px) auto auto 50%;
+  width: min(16.875vw, 324px);
+  height: min(16.875vw, 324px);
+  transform: translateX(-50%);
+}
+
+.lessWarmerCopy {
+  bottom: min(2.0833vw, 40px);
+  left: 0;
+  width: 100%;
+  font-family: var(--font-deco);
+  font-size: min(1.1458vw, 22px);
+  text-align: center;
+}
+
+.softDesignCopy {
+  top: min(13.125vw, 252px);
+  left: min(6.9792vw, 134px);
+  font-family: var(--font-deco);
+  font-size: min(1.7708vw, 34px);
+  font-style: italic;
+}
+
+.closeByCopy {
+  right: min(1.4063vw, 27px);
+  bottom: min(2.3958vw, 46px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: var(--font-kr);
+  font-size: min(0.7292vw, 14px);
+  line-height: 1.25;
+  text-align: right;
+}
+
+.closeByCopy p {
+  margin: 0 0 min(0.2604vw, 5px);
+  font-family: var(--font-en);
+  font-size: min(1.0417vw, 20px);
+}
+
+.stillWarmCard {
+  background: #777;
+}
+
+.stillWarmCard img {
+  inset: min(6.0938vw, 117px) auto auto 50%;
+  width: min(17.9167vw, 344px);
+  height: min(17.9167vw, 344px);
+  border-radius: min(0.4167vw, 8px);
+  transform: translateX(-50%);
+}
+
+.stillWarmCopy {
+  top: min(1.6146vw, 31px);
+  left: 0;
+  width: 100%;
+  font-size: min(1.5625vw, 30px);
+  text-align: center;
+}
+
+@keyframes snowmanMarqueeLeft {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-50% - min(0.9635vw, 18.5px)));
+  }
+}
+
+@keyframes snowmanMarqueeRight {
+  from {
+    transform: translateX(calc(-50% - min(0.9635vw, 18.5px)));
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 
 .posterCard {

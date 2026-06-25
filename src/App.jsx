@@ -28,6 +28,7 @@ const AboutPage = lazy(() => import('./pages/AboutPage/AboutPage'))
 const ShowroomPage = lazy(() => import('./pages/ShowroomPage/ShowroomPage'))
 const ProductSection = lazy(() => import('./sections/ProductSection/ProductSection'))
 const FlamingoDetailSection = lazy(() => import('./sections/FlamingoDetailSection/FlamingoDetailSection'))
+const SnowmanDetailSection = lazy(() => import('./sections/SnowmanDetailSection/SnowmanDetailSection'))
 const CollaboLandingSection = lazy(() => import('./sections/CollaboLandingSection/CollaboLandingSection'))
 const CollaboGallerySection = lazy(() => import('./sections/CollaboGallerySection/CollaboGallerySection'))
 const CollaboContactSection = lazy(() => import('./sections/CollaboContactSection/CollaboContactSection'))
@@ -101,6 +102,7 @@ function ProductRoute() {
     <ProductSection
       onOpenProduct={(product) => {
         if (product === 'flamingo') navigate('/product/flamingo')
+        if (product === 'snowman') navigate('/product/snowman')
       }}
     />
   )
@@ -117,13 +119,23 @@ function App() {
         <Route path="/" element={<Home />} />
         {/* 서브페이지는 전역 헤더 상시표시(index 없음). About은 자체 헤더 없어 바로 적용 */}
         <Route path="/about" element={<><Header /><AboutPage /></>} />
-        <Route path="/product" element={<><Header /><ProductRoute /></>} />
+        <Route path="/product" element={<><Header /><ProductRoute /><NewFooter /></>} />
         <Route
           path="/product/flamingo"
           element={
             <>
               <Header />
               <FlamingoDetailSection />
+              <NewFooter />
+            </>
+          }
+        />
+        <Route
+          path="/product/snowman"
+          element={
+            <>
+              <Header />
+              <SnowmanDetailSection />
               <NewFooter />
             </>
           }

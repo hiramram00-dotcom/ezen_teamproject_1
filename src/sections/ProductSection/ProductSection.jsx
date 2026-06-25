@@ -3,7 +3,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './ProductSection.module.css'
 import productWordmark from './assets/product-ilkw-wordmark.svg'
-import heroImage from './assets/product-hero-hq.webp'
+import heroImage from './assets/product-hero-figma-latest.webp'
 import flamingoMain from './assets/flamingo-main-hq.webp'
 import flamingoThumb from './assets/flamingo-thumb-hq.webp'
 import flamingoThumb2 from './assets/flamingo-thumb-2-figma.webp'
@@ -16,10 +16,10 @@ import snowballMain from './assets/snowball-main-hq.webp'
 import snowballThumb from './assets/snowball-thumb-hq.webp'
 import snowballThumb2 from './assets/snowball-thumb-2-figma.webp'
 import snowballThumb3 from './assets/snowball-thumb-3-figma.webp'
-import teacupMain from './assets/teacup-main-hq.webp'
+import teacupMain from './assets/teacup-main-figma-latest.webp'
 import teacupThumb from './assets/teacup-thumb-hq.webp'
-import teacupThumb2 from './assets/teacup-thumb-2-figma.webp'
-import teacupThumb3 from './assets/teacup-thumb-3-figma.webp'
+import teacupThumb2Latest from './assets/teacup-thumb-2-figma-latest.webp'
+import teacupThumb3Latest from './assets/teacup-thumb-3-figma-latest.webp'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -51,6 +51,7 @@ const products = [
       { src: snowmanThumb3, crop: { width: '103.48%', height: '673.04%', left: '-3.34%', top: '-35.91%' } },
     ],
     imageSide: 'left',
+    detail: 'snowman',
     contentX: '50.68%',
   },
   {
@@ -72,11 +73,12 @@ const products = [
     number: '4',
     description: ['작지만 선명한 빛으로,', '익숙한 공간에 따뜻한 온기를 더합니다.'],
     mainImage: teacupMain,
+    mainCrop: { width: '100%', height: '348.89%', left: '0', top: '-87.99%' },
     thumbnail: teacupThumb,
     thumbnailFrames: [
-      { src: teacupThumb },
-      { src: teacupThumb2, crop: { width: '113.5%', height: '925.92%', left: '0', top: '-331%' } },
-      { src: teacupThumb3, crop: { width: '100%', height: '833.19%', left: '0.12%', top: '-510.47%' } },
+      { src: teacupMain, crop: { width: '109.82%', height: '842.53%', left: '0', top: '-710.99%' } },
+      { src: teacupThumb2Latest, crop: { width: '100%', height: '833.19%', left: '0.12%', top: '-510.47%' } },
+      { src: teacupThumb3Latest, crop: { width: '224.94%', height: '1700.74%', left: '-43.82%', top: '-1401.01%' } },
     ],
     imageSide: 'left',
     contentX: '49.84%',
@@ -107,6 +109,13 @@ const renderThumbnailFrames = (product) => (
     ))}
   </span>
 )
+
+const getCropStyle = (crop) => ({
+  '--crop-width': crop?.width,
+  '--crop-height': crop?.height,
+  '--crop-left': crop?.left,
+  '--crop-top': crop?.top,
+})
 
 function ProductSection({ onOpenProduct }) {
   const sectionRef = useRef(null)
@@ -160,20 +169,20 @@ function ProductSection({ onOpenProduct }) {
         revealTimeline.fromTo(
           thumbnailInner,
           { scale: 1.25, yPercent: -20 },
-          { scale: 1, yPercent: 0, duration: 2, ease: 'power3.out' },
+          { scale: 1, yPercent: 0, duration: 1.15, ease: 'power3.out' },
           0.4,
         )
 
         revealTimeline.fromTo(
           thumbnailReveal,
           { scaleY: 1 },
-          { scaleY: 0, duration: 2, ease: 'power3.out' },
+          { scaleY: 0, duration: 1.15, ease: 'power3.out' },
           0.4,
         )
 
         revealTimeline.call(() => {
           if (thumbnailInner) thumbnailInner.dataset.cycle = 'on'
-        }, null, 2.65)
+        }, null, 1.8)
       })
 
       return () => ScrollTrigger.getAll().forEach((trigger) => {
@@ -244,13 +253,13 @@ function ProductSection({ onOpenProduct }) {
                   aria-label={`${product.name} 상세 페이지 열기`}
                 >
                   <span className={styles.mainImageMotion}>
-                    <img src={product.mainImage} alt={`${product.name} 조명이 놓인 공간`} loading="lazy" decoding="async" />
+                    <img src={product.mainImage} alt={`${product.name} 조명이 놓인 공간`} loading="lazy" decoding="async" style={getCropStyle(product.mainCrop)} />
                   </span>
                 </button>
               ) : (
                 <figure className={styles.mainVisual} data-cursor="pointer">
                   <span className={styles.mainImageMotion}>
-                    <img src={product.mainImage} alt={`${product.name} 조명이 놓인 공간`} loading="lazy" decoding="async" />
+                    <img src={product.mainImage} alt={`${product.name} 조명이 놓인 공간`} loading="lazy" decoding="async" style={getCropStyle(product.mainCrop)} />
                   </span>
                 </figure>
               )}
