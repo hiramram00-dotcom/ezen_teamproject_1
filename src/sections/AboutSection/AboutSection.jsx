@@ -86,7 +86,6 @@ function sampleIntroTextPoints(width, height, particleCount) {
   const yearSize = getFontSizeToken('--fs-display-1', 180)
   const textCenterY = centerY - width * 0.01
   const textGap = width * INTRO_TEXT_GAP_RATIO
-  const textLeft = width * 0.409
   const maskWidth = Math.ceil(width * 0.3)
   const maskHeight = Math.ceil(width * 0.2)
   const maskLeft = centerX - maskWidth / 2
@@ -98,16 +97,19 @@ function sampleIntroTextPoints(width, height, particleCount) {
   maskContext.fillStyle = '#fff'
   maskContext.textAlign = 'left'
   maskContext.textBaseline = 'middle'
+  maskContext.font = `600 ${yearSize}px Arial, sans-serif`
+  const yearWidth = maskContext.measureText('1962').width
+  const yearLeft = maskWidth / 2 - yearWidth / 2
   maskContext.font = `italic 400 ${sinceSize}px "Playfair Display", "Times New Roman", serif`
   maskContext.fillText(
     'Since',
-    textLeft - maskLeft + width * INTRO_SINCE_OFFSET_RATIO,
+    yearLeft + width * INTRO_SINCE_OFFSET_RATIO,
     maskHeight / 2 - yearSize * 0.42 - textGap,
   )
   maskContext.font = `600 ${yearSize}px Arial, sans-serif`
   maskContext.fillText(
     '1962',
-    textLeft - maskLeft,
+    yearLeft,
     maskHeight / 2 + sinceSize * 0.62 + textGap,
   )
 
@@ -283,20 +285,22 @@ function AboutIntroParticles({ onComplete }) {
         const yearSize = getFontSizeToken('--fs-display-1', 180)
         const textCenterY = centerY - width * 0.01
         const textGap = width * INTRO_TEXT_GAP_RATIO
-        const textLeft = width * 0.409
 
         context.save()
         context.textAlign = 'left'
         context.textBaseline = 'middle'
         context.fillStyle = `rgba(255, 255, 255, ${solidTextOpacity})`
+        context.font = `600 ${yearSize}px Arial, sans-serif`
+        const yearWidth = context.measureText('1962').width
+        const yearLeft = centerX - yearWidth / 2
         context.font = `italic 400 ${sinceSize}px "Playfair Display", "Times New Roman", serif`
         context.fillText(
           'Since',
-          textLeft + width * INTRO_SINCE_OFFSET_RATIO,
+          yearLeft + width * INTRO_SINCE_OFFSET_RATIO,
           textCenterY - yearSize * 0.42 - textGap,
         )
         context.font = `600 ${yearSize}px Arial, sans-serif`
-        context.fillText('1962', textLeft, textCenterY + sinceSize * 0.62 + textGap)
+        context.fillText('1962', yearLeft, textCenterY + sinceSize * 0.62 + textGap)
         context.restore()
       }
 

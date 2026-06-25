@@ -386,6 +386,8 @@
 
 .storyTypedLine {
   display: block;
+  height: 1.3em;
+  overflow: hidden;
 }
 
 .storyTypedWord {
@@ -456,7 +458,11 @@
   opacity: 1;
   filter: none;
   transform: none;
-  line-height: 1.08;
+  line-height: 1.3;
+}
+
+.storySecond .storyTypedLine {
+  height: 1.3em;
 }
 
 .storySecond .storyClosingYears {
@@ -514,10 +520,10 @@
    "硫덉떠?덈뒗" ?먮굦??二쇨퀬, 洹??ъ씠 鍮쏆씠 ?먯뿉??而ㅼ쭊 ???섏씠?쒕릺硫?History濡??섏뼱媛꾨떎 */
 .endingPinned {
   position: fixed;
-  top: var(--ending-pinned-top, calc(-18svh));
+  top: 0;
   left: 0;
   width: 100%;
-  height: max(calc(90 * var(--about-vw)), 130svh);
+  height: 100svh;
 }
 
 .tagline {
