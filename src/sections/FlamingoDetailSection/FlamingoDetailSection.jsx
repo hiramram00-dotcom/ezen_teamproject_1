@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import ilkwLogo from './assets/ilkw-green.svg'
+import heroFrame from './assets/hero-figma-frame.webp'
 import introLamp from './assets/intro-window.webp'
 import floorLamp from './assets/floor-lamp.webp'
 import storyTulip from './assets/story-tulip.webp'
@@ -22,6 +23,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const HERO_VIDEO_URL =
   'https://res.cloudinary.com/dfi8egvz1/video/upload/v1781840122/iklamp/flamingo26_floor_kbp_edition_1080p.mp4'
+const OTHER_PRODUCTS_DRAG_RESISTANCE = 0.48
 
 function FlamingoDetailSection() {
   const scrollRef = useRef(null)
@@ -34,6 +36,8 @@ function FlamingoDetailSection() {
   const storySlideRefs = useRef([])
   const storyTitleRef = useRef(null)
   const storyDescriptionRef = useRef(null)
+  const postersRef = useRef(null)
+  const posterGridRef = useRef(null)
   const greenPosterRef = useRef(null)
   const greenPosterImageRef = useRef(null)
   const centerPosterRef = useRef(null)
@@ -52,8 +56,26 @@ function FlamingoDetailSection() {
   const collaborationTitleRef = useRef(null)
   const collaborationButtonRef = useRef(null)
   const collaborationButtonTextRef = useRef(null)
+  const otherIntroRef = useRef(null)
   const [isDragging, setIsDragging] = useState(false)
+  const [hasDraggedOtherProducts, setHasDraggedOtherProducts] = useState(false)
   const dragState = useRef({ x: 0, left: 0 })
+
+  useLayoutEffect(() => {
+    const scroller = scrollRef.current
+    if (!scroller) return undefined
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) setHasDraggedOtherProducts(false)
+      },
+      { threshold: 0.05 }
+    )
+
+    observer.observe(scroller)
+
+    return () => observer.disconnect()
+  }, [])
 
   useLayoutEffect(() => {
     const intro = introRef.current
@@ -171,6 +193,32 @@ function FlamingoDetailSection() {
           '-=0.2'
         )
     }, story)
+
+    return () => ctx.revert()
+  }, [])
+
+  useLayoutEffect(() => {
+    const posters = postersRef.current
+    if (!posters) return undefined
+
+    const ctx = gsap.context(() => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+      gsap.fromTo(
+        posterGridRef.current,
+        { scale: 0.85 },
+        {
+          scale: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: posters,
+            start: 'top bottom',
+            end: 'top top',
+            scrub: true,
+          },
+        }
+      )
+    }, posters)
 
     return () => ctx.revert()
   }, [])
@@ -433,6 +481,59 @@ function FlamingoDetailSection() {
     return () => ctx.revert()
   }, [])
 
+  useLayoutEffect(() => {
+    const otherIntro = otherIntroRef.current
+    if (!otherIntro) return undefined
+
+    const ctx = gsap.context(() => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+      gsap.fromTo(
+        otherIntro.children,
+        { autoAlpha: 0, y: 28 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.72,
+          ease: 'power2.out',
+          stagger: 0.12,
+          scrollTrigger: {
+            trigger: otherIntro,
+            start: 'top 82%',
+            toggleActions: 'play none none reset',
+          },
+        }
+      )
+    }, otherIntro)
+
+    return () => ctx.revert()
+  }, [])
+
+  useLayoutEffect(() => {
+    const scroller = scrollRef.current
+    if (!scroller) return undefined
+
+    const cards = scroller.querySelectorAll(`.${styles.otherCard}`)
+    if (!cards.length) return undefined
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          entry.target.dataset.visible = entry.isIntersecting ? 'true' : 'false'
+        })
+      },
+      {
+        root: scroller,
+        rootMargin: '0px -14% 0px -8%',
+        threshold: 0.34,
+      }
+    )
+
+    cards.forEach((card) => observer.observe(card))
+
+    return () => observer.disconnect()
+  }, [])
+
   const startDrag = (event) => {
     const scroller = scrollRef.current
     if (!scroller) return
@@ -442,6 +543,7 @@ function FlamingoDetailSection() {
       left: scroller.scrollLeft,
     }
     setIsDragging(true)
+    setHasDraggedOtherProducts(true)
     scroller.setPointerCapture?.(event.pointerId)
   }
 
@@ -449,8 +551,9 @@ function FlamingoDetailSection() {
     const scroller = scrollRef.current
     if (!scroller || !isDragging) return
 
+    const dragDistance = event.clientX - dragState.current.x
     scroller.scrollLeft =
-      dragState.current.left - (event.clientX - dragState.current.x)
+      dragState.current.left - dragDistance * OTHER_PRODUCTS_DRAG_RESISTANCE
   }
 
   const endDrag = (event) => {
@@ -468,6 +571,7 @@ function FlamingoDetailSection() {
           muted
           playsInline
           preload="auto"
+          poster={heroFrame}
           aria-label="창가에 놓인 플라밍고 조명 영상"
         >
           <source src={HERO_VIDEO_URL} type="video/mp4" />
@@ -529,8 +633,8 @@ function FlamingoDetailSection() {
         </div>
       </section>
 
-      <section className={`${styles.panel} ${styles.posters}`}>
-        <div className={styles.posterGrid}>
+      <section ref={postersRef} className={`${styles.panel} ${styles.posters}`}>
+        <div ref={posterGridRef} className={styles.posterGrid}>
           <article ref={greenPosterRef} className={`${styles.posterCard} ${styles.greenPoster}`}>
             <span className={styles.liveIn}>
               <span className={styles.posterTrack} data-poster-track>
@@ -623,17 +727,34 @@ function FlamingoDetailSection() {
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
       >
+        <div
+          className={`${styles.dragHint} ${
+            hasDraggedOtherProducts ? styles.dragHintHidden : ''
+          }`}
+          aria-hidden="true"
+        >
+          <span>Drag</span>
+          <span>← →</span>
+        </div>
+
         <div className={styles.otherTrack}>
-          <div className={styles.otherIntro}>
+          <div ref={otherIntroRef} className={styles.otherIntro}>
             <h2>
-              Other
-              <br />
-              Products
+              <span className={styles.otherTitleLead}>Other</span>
+              <span className={styles.otherTitleAccent}>
+                Products
+                <span className={styles.otherArrow} aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="7" y1="7" x2="17" y2="17" />
+                    <polyline points="17 8 17 17 8 17" />
+                  </svg>
+                </span>
+              </span>
             </h2>
             <p>
-              Find the right light
+              부드러운 빛으로 일상에 편안함을 더하는
               <br />
-              for your space
+              조명을 찾고 있다면
             </p>
           </div>
 

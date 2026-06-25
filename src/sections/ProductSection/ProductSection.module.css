@@ -224,6 +224,22 @@
   display: block;
 }
 
+.productNumber {
+  position: absolute;
+  z-index: 2;
+  top: 43.43%;
+  left: 50%;
+  margin: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-deco);
+  font-size: var(--product-title-size);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  text-align: center;
+}
+
 .thumbnail {
   position: absolute;
   z-index: 2;
@@ -246,6 +262,51 @@
   display: block;
   transform-origin: center;
   will-change: transform;
+}
+
+.thumbnailFrame {
+  position: absolute;
+  inset: 0;
+  display: block;
+  opacity: 0;
+  animation: thumbnail-frame-cycle 12s ease-in-out infinite;
+  animation-delay: calc(var(--frame-index) * 4s);
+  animation-play-state: paused;
+  will-change: opacity;
+}
+
+.thumbnailFrame:first-child {
+  opacity: 1;
+}
+
+.thumbnailInner[data-cycle="on"] .thumbnailFrame {
+  animation-play-state: running;
+}
+
+.thumbnailFrame img {
+  position: absolute;
+  top: var(--crop-top, 0);
+  left: var(--crop-left, 0);
+  width: var(--crop-width, 100%);
+  max-width: none;
+  height: var(--crop-height, 100%);
+  object-fit: cover;
+}
+
+@keyframes thumbnail-frame-cycle {
+  0%,
+  26% {
+    opacity: 1;
+  }
+
+  33%,
+  93% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .thumbnailReveal {
@@ -347,6 +408,11 @@
     width: 86%;
     font-family: var(--font-kr);
     font-size: clamp(13px, 3.5vw, 16px);
+  }
+
+  .productNumber {
+    top: 43%;
+    font-size: var(--product-title-size);
   }
 
   .thumbnail {

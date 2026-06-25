@@ -6,50 +6,107 @@ import productWordmark from './assets/product-ilkw-wordmark.svg'
 import heroImage from './assets/product-hero-hq.webp'
 import flamingoMain from './assets/flamingo-main-hq.webp'
 import flamingoThumb from './assets/flamingo-thumb-hq.webp'
+import flamingoThumb2 from './assets/flamingo-thumb-2-figma.webp'
+import flamingoThumb3 from './assets/flamingo-thumb-3-figma.webp'
 import snowmanMain from './assets/snowman-main-hq.webp'
 import snowmanThumb from './assets/snowman-thumb-hq.webp'
+import snowmanThumb2 from './assets/snowman-thumb-2-figma.webp'
+import snowmanThumb3 from './assets/snowman-thumb-3-figma.webp'
 import snowballMain from './assets/snowball-main-hq.webp'
 import snowballThumb from './assets/snowball-thumb-hq.webp'
+import snowballThumb2 from './assets/snowball-thumb-2-figma.webp'
+import snowballThumb3 from './assets/snowball-thumb-3-figma.webp'
 import teacupMain from './assets/teacup-main-hq.webp'
 import teacupThumb from './assets/teacup-thumb-hq.webp'
+import teacupThumb2 from './assets/teacup-thumb-2-figma.webp'
+import teacupThumb3 from './assets/teacup-thumb-3-figma.webp'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const products = [
   {
     name: 'FLAMINGO',
+    number: '1',
     description: ['낮에는 하나의 오브제로,', '밤에는 따뜻한 빛으로.'],
     mainImage: flamingoMain,
     thumbnail: flamingoThumb,
+    thumbnailFrames: [
+      { src: flamingoThumb },
+      { src: flamingoThumb2, crop: { width: '102.3%', height: '840.19%', left: '0.06%', top: '-697.02%' } },
+      { src: flamingoThumb3, crop: { width: '107.07%', height: '245.02%', left: '-7.03%', top: '-63.13%' } },
+    ],
     imageSide: 'right',
     detail: 'flamingo',
     contentX: '49.64%',
   },
   {
     name: 'SNOWMAN',
+    number: '2',
     description: ['겹겹이 포개진 부드러운 곡선,', '그 사이로 은은한 빛이 피어납니다.'],
     mainImage: snowmanMain,
     thumbnail: snowmanThumb,
+    thumbnailFrames: [
+      { src: snowmanThumb },
+      { src: snowmanThumb2, crop: { width: '127.01%', height: '700.65%', left: '-14.33%', top: '-570.71%' } },
+      { src: snowmanThumb3, crop: { width: '103.48%', height: '673.04%', left: '-3.34%', top: '-35.91%' } },
+    ],
     imageSide: 'left',
     contentX: '50.68%',
   },
   {
     name: 'SNOWBALL',
+    number: '3',
     description: ['가장 가까운 곳에서,', '일상의 온도를 부드럽게 바꿉니다.'],
     mainImage: snowballMain,
     thumbnail: snowballThumb,
+    thumbnailFrames: [
+      { src: snowballThumb },
+      { src: snowballThumb2, crop: { width: '100%', height: '624.14%', left: '0', top: '-486.66%' } },
+      { src: snowballThumb3, crop: { width: '100.04%', height: '182.63%', left: '-0.02%', top: '-46.31%' } },
+    ],
     imageSide: 'right',
     contentX: '53.28%',
   },
   {
     name: 'TEACUP R',
+    number: '4',
     description: ['작지만 선명한 빛으로,', '익숙한 공간에 따뜻한 온기를 더합니다.'],
     mainImage: teacupMain,
     thumbnail: teacupThumb,
+    thumbnailFrames: [
+      { src: teacupThumb },
+      { src: teacupThumb2, crop: { width: '113.5%', height: '925.92%', left: '0', top: '-331%' } },
+      { src: teacupThumb3, crop: { width: '100%', height: '833.19%', left: '0.12%', top: '-510.47%' } },
+    ],
     imageSide: 'left',
     contentX: '49.84%',
   },
 ]
+
+const renderThumbnailFrames = (product) => (
+  <span data-thumbnail-inner className={styles.thumbnailInner}>
+    {(product.thumbnailFrames ?? [{ src: product.thumbnail }]).map((frame, index) => (
+      <span
+        className={styles.thumbnailFrame}
+        key={`${product.name}-thumbnail-${index}`}
+        style={{ '--frame-index': index }}
+      >
+        <img
+          src={frame.src}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          style={{
+            '--crop-width': frame.crop?.width,
+            '--crop-height': frame.crop?.height,
+            '--crop-left': frame.crop?.left,
+            '--crop-top': frame.crop?.top,
+          }}
+        />
+      </span>
+    ))}
+  </span>
+)
 
 function ProductSection({ onOpenProduct }) {
   const sectionRef = useRef(null)
@@ -73,7 +130,9 @@ function ProductSection({ onOpenProduct }) {
       )
 
       rows.forEach((row) => {
-        const titleChars = row.querySelectorAll('[data-title-char]')
+        const titleBlock = row.querySelector('[data-title-block]')
+        const description = row.querySelector('[data-product-description]')
+        const number = row.querySelector('[data-product-number]')
         const thumbnailInner = row.querySelector('[data-thumbnail-inner]')
         const thumbnailReveal = row.querySelector('[data-thumbnail-reveal]')
 
@@ -81,14 +140,20 @@ function ProductSection({ onOpenProduct }) {
           scrollTrigger: {
             trigger: row,
             start: 'top 85%',
-            once: true,
+            toggleActions: 'play none none reset',
+            onEnter: () => {
+              if (thumbnailInner) thumbnailInner.dataset.cycle = 'off'
+            },
+            onLeaveBack: () => {
+              if (thumbnailInner) thumbnailInner.dataset.cycle = 'off'
+            },
           },
         })
 
         revealTimeline.fromTo(
-          titleChars,
-          { opacity: 0, yPercent: 55 },
-          { opacity: 1, yPercent: 0, duration: 0.4, stagger: 0.04, ease: 'power2.out' },
+          [titleBlock, description, number],
+          { opacity: 0, y: 34 },
+          { opacity: 1, y: 0, duration: 0.76, stagger: 0.12, ease: 'power2.out' },
           0.05,
         )
 
@@ -105,6 +170,10 @@ function ProductSection({ onOpenProduct }) {
           { scaleY: 0, duration: 2, ease: 'power3.out' },
           0.4,
         )
+
+        revealTimeline.call(() => {
+          if (thumbnailInner) thumbnailInner.dataset.cycle = 'on'
+        }, null, 2.65)
       })
 
       return () => ScrollTrigger.getAll().forEach((trigger) => {
@@ -190,6 +259,7 @@ function ProductSection({ onOpenProduct }) {
                 <h2
                   className={styles.productName}
                   aria-label={product.name}
+                  data-title-block
                   data-cursor="pointer"
                   onMouseEnter={() => triggerProductTitleHover(product.name)}
                 >
@@ -206,8 +276,12 @@ function ProductSection({ onOpenProduct }) {
                   ) : titleChars}
                 </h2>
 
-                <p className={styles.description}>
+                <p className={styles.description} data-product-description>
                   {product.description.map((line) => <span key={line}>{line}</span>)}
+                </p>
+
+                <p className={styles.productNumber} data-product-number>
+                  {product.number}
                 </p>
 
                 {isLinked ? (
@@ -220,9 +294,7 @@ function ProductSection({ onOpenProduct }) {
                     onFocus={() => triggerProductTitleHover(product.name)}
                     aria-label={`${product.name} 상세 페이지 열기`}
                   >
-                    <span data-thumbnail-inner className={styles.thumbnailInner}>
-                      <img src={product.thumbnail} alt="" loading="lazy" decoding="async" />
-                    </span>
+                    {renderThumbnailFrames(product)}
                     <span data-thumbnail-reveal className={styles.thumbnailReveal} aria-hidden="true" />
                   </button>
                 ) : (
@@ -231,9 +303,7 @@ function ProductSection({ onOpenProduct }) {
                     data-cursor="pointer"
                     onMouseEnter={() => triggerProductTitleHover(product.name)}
                   >
-                    <span data-thumbnail-inner className={styles.thumbnailInner}>
-                      <img src={product.thumbnail} alt="" loading="lazy" decoding="async" />
-                    </span>
+                    {renderThumbnailFrames(product)}
                     <span data-thumbnail-reveal className={styles.thumbnailReveal} aria-hidden="true" />
                   </figure>
                 )}
