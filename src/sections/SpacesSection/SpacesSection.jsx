@@ -20,9 +20,9 @@ const rooms = [
         <br className={styles.brDesktop} />
         일광전구는 공간의 크기와 생활 방식을 살펴{' '}
         <br className={styles.brDesktop} />
-        머무는 시간이 더욱 편안해지도록{' '}
+        머무는 시간이 더욱 편안해지도록 거실의 빛과
         <br className={styles.brDesktop} />
-        거실의 빛과 분위기를 완성합니다.
+        분위기를 완성합니다.
       </>
     ),
   },
