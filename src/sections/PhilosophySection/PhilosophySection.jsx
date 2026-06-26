@@ -55,15 +55,26 @@ function PhilosophySection() {
       // 진행도: 섹션이 화면에 막 들어온 순간(rect.top=vh) → 무대가 화면을 꽉 채운 순간(rect.top=0)
       const enterProgress = clamp((vh - rect.top) / vh, 0, 1)
       const e = ease(enterProgress)
+      const sectionTravel = Math.max(scene.offsetHeight - vh, 1)
+      const exitProgress = ease(
+        clamp((-rect.top - sectionTravel * 0.72) / (sectionTravel * 0.28), 0, 1),
+      )
+      const exitScale = 1 - exitProgress * 0.08
+      const exitLift = exitProgress * 4
+      const exitOpacity = 1 - exitProgress * 0.88
+      const exitBlur = exitProgress * 5
       // 배경: 살짝 확대 → 원래 크기 (스크롤하며 공간감)
-      room.style.transform = `scale(${(1.12 - 0.06 * e).toFixed(4)})`
+      room.style.transform = `scale(${(1.12 - 0.06 * e + exitProgress * 0.03).toFixed(4)})`
+      room.style.opacity = `${1 - exitProgress * 0.35}`
       // 카드: 무대 아래쪽 → 무대 중앙으로 이동.
       // 스크롤과 1:1 선형으로 올려 화면상 아래→위로 매끄럽게 상승한다.
       // 무대가 화면을 채우는 순간(progress 1) 카드가 화면 정중앙에 온다.
       const up = ((1 - enterProgress) * 50).toFixed(2) // svh, 중앙보다 아래에서 시작하는 양
-      panel.style.transform = `translate(-50%, calc(-50% + ${up}svh)) scale(${cardScale})`
+      panel.style.transform = `translate(-50%, calc(-50% + ${up}svh - ${exitLift}svh)) scale(${(cardScale * exitScale).toFixed(4)})`
+      panel.style.opacity = `${exitOpacity}`
+      panel.style.filter = `blur(${exitBlur}px)`
 
-      const messageScrollDistance = Math.max(scene.offsetHeight - vh, 1)
+      const messageScrollDistance = sectionTravel
       const messageProgress = clamp(-rect.top / messageScrollDistance, 0, 1)
       const nextMessage = Math.min(
         messages.length - 1,

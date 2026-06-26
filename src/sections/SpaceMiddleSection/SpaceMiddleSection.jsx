@@ -115,7 +115,9 @@ export default function SpaceMiddleSection() {
     const isTablet = viewportWidth >= 768 && viewportWidth < 1200;
     const textRevealOffset = isMobile ? 300 : 650;
     const wordChangeOffset = isMobile ? 900 : 650;
-    const wordChangeEnd = isMobile ? 6050 : isTablet ? 2250 : 3133;
+    const desktopWordChangeEnd = DESKTOP_IMAGES[7].top;
+    const wordChangeEnd = isMobile ? 6050 : isTablet ? 2250 : desktopWordChangeEnd;
+    const wordChangeEndLine = isMobile || isTablet ? 'top' : '8%';
 
     let ctx = gsap.context(() => {
       // Reveal animation for the whole text block (rises + fades in as one
@@ -145,7 +147,7 @@ export default function SpaceMiddleSection() {
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: () => `top+=${wordChangeOffset * scale}px ${isMobile ? '80%' : '80px'}`,
-        end: () => `top+=${wordChangeEnd * scale}px top`,
+        end: () => `top+=${wordChangeEnd * scale}px ${wordChangeEndLine}`,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           const responsiveThresholds =

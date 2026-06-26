@@ -37,7 +37,7 @@
 .panel {
   --card-scale: 0.86; /* 移대뱶 ?ш린(鍮꾩쑉 ?좎???梨?異뺤냼) ??JS????媛믪쓣 ?쎌뼱 ?곸슜 */
   --philosophy-title-size: calc(6.25 * var(--philosophy-unit)); /* type-italic-1: 120px @1920 */
-  --philosophy-title-bottom-top: calc(32.4 * var(--philosophy-unit)); /* 'Philosophy' 以묒떖??議곕챸 ?대?吏 ?섎떒(????留욎땄 */
+  --philosophy-title-bottom-top: calc(36 * var(--philosophy-unit)); /* 'Philosophy' 以묒떖??議곕챸 ?대?吏 ?섎떒(????留욎땄 */
   position: absolute;
   top: 50svh;
   left: 50%;
@@ -58,7 +58,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
   /* 鍮꾩쑉 ?좎? 異뺤냼 + ?꾨옒?먯꽌 以묒븰?쇰줈 ?щ씪?대뱶??(JS媛 translateY ?ㅽ봽?뗭쓣 援щ룞) */
   transform: translate(-50%, -50%) scale(var(--card-scale));
-  will-change: transform;
+  will-change: transform, opacity, filter;
 }
 
 @property --card-angle {
@@ -117,18 +117,18 @@
 
 .lightFrame {
   position: absolute;
-  top: calc(8.2 * var(--philosophy-unit));
+  top: 47%;
   left: 50%;
   width: calc(21.1 * var(--about-vw));
   height: calc(28.2 * var(--about-vw));
-  transform: translateX(-50%);
-  /* 媛?μ옄由щ? 遺?쒕읇寃??섏씠???먮┸?섍쾶) ??4硫?紐⑤몢 ?щ챸?쇰줈 ?뱀븘?ㅼ뼱 ?ш컖 ?뚮몢由??쒓굅 */
+  transform: translate(-50%, -50%);
+  overflow: hidden;
   -webkit-mask-image:
-    linear-gradient(to right, transparent 0, #000 3%, #000 97%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 3%, #000 97%, transparent 100%);
+    linear-gradient(to right, transparent 0, #000 1.2%, #000 98.8%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 1.2%, #000 98.8%, transparent 100%);
   mask-image:
-    linear-gradient(to right, transparent 0, #000 3%, #000 97%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 3%, #000 97%, transparent 100%);
+    linear-gradient(to right, transparent 0, #000 1.2%, #000 98.8%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 1.2%, #000 98.8%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
 }
@@ -177,7 +177,7 @@
 }
 
 .title span:first-child {
-  top: calc(4.2 * var(--philosophy-unit));
+  top: calc(3 * var(--philosophy-unit));
   font-size: var(--philosophy-title-size);
   line-height: 1;
 }
@@ -190,7 +190,7 @@
 
 .message {
   position: absolute;
-  top: calc(calc(8.2 * var(--philosophy-unit)) + calc(28.2 * var(--philosophy-unit)) / 2 + calc(1 * var(--philosophy-unit))); /* ?곷떒 議곕챸 ?대?吏???몃줈 以묒븰 */
+  top: calc(calc(8.2 * var(--philosophy-unit)) + calc(28.2 * var(--philosophy-unit)) / 2 + calc(2 * var(--philosophy-unit))); /* ?곷떒 議곕챸 ?대?吏???몃줈 以묒븰 */
   left: 50%;
   width: 100%;
   height: 3.4em;

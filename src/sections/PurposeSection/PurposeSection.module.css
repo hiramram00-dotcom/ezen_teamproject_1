@@ -5,7 +5,7 @@
   --mission-content-progress: 0;
   --mission-rise: 0;
   --mission-shell-opacity: 0;
-  --purpose-height: calc(168 * var(--about-vw));
+  --purpose-height: calc(188 * var(--about-vw));
   position: relative;
   width: 100%;
   height: var(--purpose-height);
