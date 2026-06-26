@@ -54,7 +54,10 @@
    ※ Home 메인 섹션들은 토큰 미사용(각자 하드코딩) → 자동 적용 안 됨.
    ========================================================= */
 @media (min-width: 768px) and (max-width: 1023px) {
-  :root { --layout-gutter: 24px; }
+  :root { --layout-gutter: 24px;
+          --fs-title-2: 72px;
+          --fs-title-4: 56px;
+        }
 }
 @media (max-width: 767px) {
   :root { --layout-gutter: 16px; }

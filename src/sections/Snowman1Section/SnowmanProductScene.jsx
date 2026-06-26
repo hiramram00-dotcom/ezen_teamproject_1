@@ -103,7 +103,7 @@ function SnowmanProductScene() {
         <p
           ref={featureTitleRef}
           id="snowman-feature-title"
-          className={styles.featureTitle}
+          className={`${styles.featureTitle} fs-title-2`}
         >
           LIGHT,
           <br />
