@@ -155,7 +155,7 @@ function NewIntroSectionNew() {
       const stageWidth = stage.offsetWidth
       const positions =
         stageWidth >= 1200
-          ? [0.0445, 0.284, 0.714, 0.955]
+          ? [0.0445, 0.13, 0.87, 0.955]
           : stageWidth >= 768
             ? [0.125, 0.375, 0.625, 0.875]
             : [0.125, 0.375, 0.625, 0.875]
