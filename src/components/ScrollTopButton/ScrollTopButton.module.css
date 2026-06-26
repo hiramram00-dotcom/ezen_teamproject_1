@@ -31,11 +31,6 @@
   transform: translateY(0);
 }
 
-/* 맨 아래 스크롤 — 버튼을 위로 올림 (푸터 버튼과 겹침 방지) */
-.topButton.atBottom {
-  bottom: 200px;
-}
-
 /* 메뉴 오버레이 열렸을 때 — Top 버튼 숨김 (메뉴 위로 비치지 않게) */
 :global(body[data-menu-open='true']) .topButton {
   opacity: 0;
