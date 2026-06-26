@@ -561,6 +561,7 @@ function AboutSection() {
   const endingBgColor = `rgb(${255 * endingOverlayOpacity}, ${247 * endingOverlayOpacity}, ${234 * endingOverlayOpacity})`
   const storyLeadProgress = clamp(storyProgress / 0.24, 0, 1)
   const storyMediaProgress = clamp((storyProgress - 0.28) / 0.16, 0, 1)
+  const storyTailProgress = clamp((storyProgress - 0.44) / 0.1, 0, 1)
   const storyClosingProgress = clamp((storyProgress - 0.48) / 0.26, 0, 1)
   const storySecondProgress = clamp((storyProgress - 0.86) / 0.32, 0, 1)
 
@@ -656,9 +657,8 @@ function AboutSection() {
         <p className={styles.storyLeadTail}>
           <StoryTypedLines
             lines={['the present day,']}
-            progress={storyLeadProgress}
-            startIndex={11}
-            totalWords={14}
+            progress={storyTailProgress}
+            totalWords={3}
           />
         </p>
 
