@@ -133,6 +133,12 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
+@property --showroom-card-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
 .card::before {
   content: '';
   position: absolute;
@@ -153,9 +159,48 @@
   opacity: 0.58;
 }
 
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 3px;
+  background: conic-gradient(
+    from var(--showroom-card-angle),
+    transparent 0deg,
+    transparent 230deg,
+    rgba(255, 225, 154, 0.08) 260deg,
+    rgba(255, 225, 154, 0.4) 300deg,
+    rgba(255, 248, 224, 0.85) 313deg,
+    rgba(255, 225, 154, 0.4) 326deg,
+    rgba(255, 225, 154, 0.08) 350deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  filter:
+    drop-shadow(0 0 3px rgba(255, 248, 224, 0.45))
+    drop-shadow(0 0 9px rgba(255, 210, 122, 0.36));
+  pointer-events: none;
+  animation: showroomCardBorderSweep 3s linear infinite;
+}
+
 .card > * {
   position: relative;
-  z-index: 1;
+  z-index: 3;
+}
+
+@keyframes showroomCardBorderSweep {
+  to { --showroom-card-angle: 360deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card::after {
+    animation: none;
+  }
 }
 
 .top {

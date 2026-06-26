@@ -85,20 +85,23 @@ function PurposeSection() {
       const sectionRect = section.getBoundingClientRect()
       const scrollY = window.scrollY
       const missionStartScroll = scrollY + descRect.top - vh * 0.35
-      const missionEndScroll = scrollY + sectionRect.bottom - vh * 0.96
+      const missionEndScroll = scrollY + sectionRect.bottom - vh * 1.22
       const missionRange = Math.max(1, missionEndScroll - missionStartScroll)
       const missionProgress = Math.min(1, Math.max(0, (scrollY - missionStartScroll) / missionRange))
       const missionStep = (from, to) => {
         const local = Math.min(1, Math.max(0, (missionProgress - from) / (to - from)))
         return local * local * (3 - 2 * local)
       }
-      const missionShellOpacity = sectionRect.top < vh && sectionRect.bottom > 0 ? 1 : 0
+      const footerFadeProgress = Math.min(1, Math.max(0, (sectionRect.bottom - vh * 0.58) / (vh * 0.24)))
+      const missionShellOpacity = sectionRect.top < vh && sectionRect.bottom > vh * 0.58
+        ? footerFadeProgress
+        : 0
 
       // 시퀀스: ①제목 선명 → ②뒷배경 이미지 희미하게 등장 → ③영문(하단)이 아래서
       // 위로 올라오는 동시에 제목+이미지 묶음도 함께 위로 이동 → 스크롤 끝에서 전체가
       // 화면 정중앙에 안착.
       section.style.setProperty('--purpose-dark', missionStep(0, 0.16).toFixed(4))
-      section.style.setProperty('--mission-shell-opacity', String(missionShellOpacity))
+      section.style.setProperty('--mission-shell-opacity', missionShellOpacity.toFixed(4))
       section.style.setProperty('--mission-title-light', missionStep(0.16, 0.34).toFixed(4))
       section.style.setProperty('--mission-image-progress', missionStep(0.36, 0.54).toFixed(4))
       section.style.setProperty('--mission-content-progress', missionStep(0.56, 0.82).toFixed(4))
