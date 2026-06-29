@@ -67,7 +67,7 @@ const products = [
     detail: 'snowball',
   },
   {
-    name: 'TEACUP R',
+    name: 'TEACUP',
     number: '4',
     description: ['작지만 선명한 빛으로,', '익숙한 공간에 따뜻한 온기를 더합니다.'],
     mainImage: teacupMain,
@@ -83,28 +83,48 @@ const products = [
   },
 ]
 
+// crop으로 확대/이동된 이미지는 자기 자신의 박스 중심이 실제 보이는 영역의 중심과
+// 다르다. hover 시 scale의 transform-origin을 보이는 영역의 중심으로 맞춰서,
+// 확대될 때 프레임이 위/아래로 밀리지 않고 그 자리에서 커지도록 보정한다.
+const getCropOrigin = (crop) => {
+  if (!crop) return { x: 50, y: 50 }
+  const left = parseFloat(crop.left) || 0
+  const top = parseFloat(crop.top) || 0
+  const width = parseFloat(crop.width) || 100
+  const height = parseFloat(crop.height) || 100
+  return {
+    x: ((50 - left) / width) * 100,
+    y: ((50 - top) / height) * 100,
+  }
+}
+
 const renderThumbnailFrames = (product) => (
   <span data-thumbnail-inner className={styles.thumbnailInner}>
-    {(product.thumbnailFrames ?? [{ src: product.thumbnail }]).map((frame, index) => (
-      <span
-        className={styles.thumbnailFrame}
-        key={`${product.name}-thumbnail-${index}`}
-        style={{ '--frame-index': index }}
-      >
-        <img
-          src={frame.src}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          style={{
-            '--crop-width': frame.crop?.width,
-            '--crop-height': frame.crop?.height,
-            '--crop-left': frame.crop?.left,
-            '--crop-top': frame.crop?.top,
-          }}
-        />
-      </span>
-    ))}
+    {(product.thumbnailFrames ?? [{ src: product.thumbnail }]).map((frame, index) => {
+      const origin = getCropOrigin(frame.crop)
+      return (
+        <span
+          className={styles.thumbnailFrame}
+          key={`${product.name}-thumbnail-${index}`}
+          style={{ '--frame-index': index }}
+        >
+          <img
+            src={frame.src}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            style={{
+              '--crop-width': frame.crop?.width,
+              '--crop-height': frame.crop?.height,
+              '--crop-left': frame.crop?.left,
+              '--crop-top': frame.crop?.top,
+              '--origin-x': `${origin.x}%`,
+              '--origin-y': `${origin.y}%`,
+            }}
+          />
+        </span>
+      )
+    })}
   </span>
 )
 
