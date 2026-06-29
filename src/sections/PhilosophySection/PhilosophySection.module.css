@@ -41,8 +41,8 @@
   position: absolute;
   top: 50svh;
   left: 50%;
-  width: calc(50.1 * var(--philosophy-unit));
-  height: calc(50.1 * var(--philosophy-unit));
+  width: min(43.75vw, 840px);
+  height: min(43.75vw, 840px);
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 24px;

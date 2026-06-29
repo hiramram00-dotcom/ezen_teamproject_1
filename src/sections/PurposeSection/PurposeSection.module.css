@@ -3,9 +3,7 @@
   --mission-title-light: 0;
   --mission-image-progress: 0;
   --mission-content-progress: 0;
-  --mission-rise: 0;
-  --mission-shell-opacity: 0;
-  --purpose-height: calc(188 * var(--about-vw));
+  --purpose-height: calc(136 * var(--about-vw));
   position: relative;
   width: 100%;
   height: var(--purpose-height);
@@ -216,22 +214,16 @@
 }
 
 .mission {
-  --mission-rise-shift: 0px;
-  position: fixed;
+  position: absolute;
   z-index: 3;
-  top: 50%;
+  top: calc(83 * var(--about-vw));
   left: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: calc(2.5 * var(--about-vw));
   width: calc(85.63 * var(--about-vw));
-  opacity: var(--mission-shell-opacity);
-  pointer-events: none;
-  /* rise 0: 이미지+제목이 화면 정중앙 / rise 1: 그룹 전체가 화면 정중앙.
-     시작 시 그룹을 rise-shift만큼 아래로 내려두고, 스크롤에 따라 위로 끌어올린다. */
-  transform: translate(-50%, calc(-50% + (1 - var(--mission-rise)) * var(--mission-rise-shift)));
-  will-change: transform;
+  transform: translateX(-50%);
 }
 
 .missionVisual {

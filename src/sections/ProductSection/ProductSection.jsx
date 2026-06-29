@@ -37,7 +37,6 @@ const products = [
     ],
     imageSide: 'right',
     detail: 'flamingo',
-    contentX: '49.64%',
   },
   {
     name: 'SNOWMAN',
@@ -52,7 +51,6 @@ const products = [
     ],
     imageSide: 'left',
     detail: 'snowman',
-    contentX: '50.68%',
   },
   {
     name: 'SNOWBALL',
@@ -67,7 +65,6 @@ const products = [
     ],
     imageSide: 'right',
     detail: 'snowball',
-    contentX: '53.28%',
   },
   {
     name: 'TEACUP R',
@@ -83,7 +80,6 @@ const products = [
     ],
     imageSide: 'left',
     detail: 'teacup',
-    contentX: '49.84%',
   },
 ]
 
@@ -128,6 +124,19 @@ function ProductSection({ onOpenProduct }) {
     const section = sectionRef.current
     if (!section) return undefined
 
+    // productName 위/아래 밑줄 길이를 제목 텍스트 길이에 맞춘다.
+    const syncTitleLineWidth = () => {
+      section.querySelectorAll('[data-product-row]').forEach((row) => {
+        const titleBlock = row.querySelector('[data-title-block]')
+        if (!titleBlock) return
+        row.style.setProperty('--title-line-width', `${titleBlock.getBoundingClientRect().width}px`)
+      })
+    }
+    syncTitleLineWidth()
+    window.addEventListener('resize', syncTitleLineWidth)
+    // 웹폰트가 늦게 적용되어 제목 너비가 바뀌는 경우까지 다시 한번 보정.
+    document.fonts?.ready?.then(syncTitleLineWidth)
+
     const media = gsap.matchMedia()
 
     media.add('(prefers-reduced-motion: no-preference)', () => {
@@ -136,14 +145,13 @@ function ProductSection({ onOpenProduct }) {
 
       gsap.fromTo(
         hero,
-        { scale: 1.1 },
-        { scale: 1, duration: 3, delay: 0.1, ease: 'power3.out' },
+        { scale: 1.22 },
+        { scale: 1, duration: 2.2, delay: 0.1, ease: 'power3.out' },
       )
 
       rows.forEach((row) => {
         const titleBlock = row.querySelector('[data-title-block]')
         const description = row.querySelector('[data-product-description]')
-        const number = row.querySelector('[data-product-number]')
         const thumbnailInner = row.querySelector('[data-thumbnail-inner]')
         const thumbnailReveal = row.querySelector('[data-thumbnail-reveal]')
 
@@ -162,7 +170,7 @@ function ProductSection({ onOpenProduct }) {
         })
 
         revealTimeline.fromTo(
-          [titleBlock, description, number],
+          [titleBlock, description],
           { opacity: 0, y: 34 },
           { opacity: 1, y: 0, duration: 0.76, stagger: 0.12, ease: 'power2.out' },
           0.05,
@@ -195,6 +203,7 @@ function ProductSection({ onOpenProduct }) {
     ScrollTrigger.refresh()
     return () => {
       window.clearTimeout(hoverTimerRef.current)
+      window.removeEventListener('resize', syncTitleLineWidth)
       media.revert()
     }
   }, [])
@@ -244,7 +253,20 @@ function ProductSection({ onOpenProduct }) {
               data-product-row
               className={rowClassName}
               key={product.name}
-              style={{ '--content-x': product.contentX }}
+              role={isLinked ? 'link' : undefined}
+              tabIndex={isLinked ? 0 : undefined}
+              aria-label={isLinked ? `${product.name} 상세 페이지 열기` : undefined}
+              data-cursor={isLinked ? 'pointer' : undefined}
+              onClick={(event) => {
+                if (!isLinked || event.target.closest?.('button, a')) return
+                openProduct(product.detail)
+              }}
+              onKeyDown={(event) => {
+                if (!isLinked || event.target !== event.currentTarget) return
+                if (event.key !== 'Enter' && event.key !== ' ') return
+                event.preventDefault()
+                openProduct(product.detail)
+              }}
             >
               {isLinked ? (
                 <button
@@ -257,6 +279,10 @@ function ProductSection({ onOpenProduct }) {
                   <span className={styles.mainImageMotion}>
                     <img src={product.mainImage} alt={`${product.name} 조명이 놓인 공간`} loading="lazy" decoding="async" style={getCropStyle(product.mainCrop)} />
                   </span>
+                  <span className={styles.mainCta} aria-hidden="true">
+                    컬렉션 자세히 보기
+                    <span className={styles.mainCtaArrow}>→</span>
+                  </span>
                 </button>
               ) : (
                 <figure className={styles.mainVisual} data-cursor="pointer">
@@ -267,6 +293,7 @@ function ProductSection({ onOpenProduct }) {
               )}
 
               <div className={styles.productInfo}>
+                <div className={styles.productInfoInner}>
                 <h2
                   className={styles.productName}
                   aria-label={product.name}
@@ -289,10 +316,6 @@ function ProductSection({ onOpenProduct }) {
 
                 <p className={styles.description} data-product-description>
                   {product.description.map((line) => <span key={line}>{line}</span>)}
-                </p>
-
-                <p className={styles.productNumber} data-product-number>
-                  {product.number}
                 </p>
 
                 {isLinked ? (
@@ -318,6 +341,7 @@ function ProductSection({ onOpenProduct }) {
                     <span data-thumbnail-reveal className={styles.thumbnailReveal} aria-hidden="true" />
                   </figure>
                 )}
+                </div>
               </div>
             </article>
           )

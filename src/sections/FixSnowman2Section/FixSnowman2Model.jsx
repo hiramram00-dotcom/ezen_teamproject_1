@@ -12,6 +12,7 @@ function FixSnowman2Model({
   bodyColor = '#9f9f9f',
   lampColor = '#ffd7a6',
   cameraZ = 14,
+  modelSize = 4.2,
 }) {
   const canvasRef = useRef(null)
 
@@ -88,7 +89,7 @@ function FixSnowman2Model({
       const maxSize = Math.max(size.x, size.y, size.z)
 
       model.position.sub(center)
-      model.scale.setScalar(4.2 / maxSize)
+      model.scale.setScalar(modelSize / maxSize)
       model.rotation.y = -0.16
       model.traverse((object) => {
         if (!object.isMesh) return
@@ -211,7 +212,7 @@ function FixSnowman2Model({
       environmentGenerator.dispose()
       renderer.dispose()
     }
-  }, [bodyColor, cameraZ, glassColor, lampColor])
+  }, [bodyColor, cameraZ, glassColor, lampColor, modelSize])
 
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />
 }

@@ -116,20 +116,20 @@ function Footer({
           }
         )
 
-        // 흰 카드: 아래에서 떠오르며 페이드인. 한 번 재생 후 유지(toggleActions:'play none none none')
-        // → 스크롤 위로 올려도 안 사라진다(블러 사라지던 버그 수정). faux 블러라 카드 transform 무관.
+        // 흰 카드: Philosophy 카드처럼 이미지 섹션 진입 진행률에 맞춰
+        // 화면 아래에서 중앙으로 떠오른다. 역스크롤하면 같은 경로로 되감긴다.
         gsap.fromTo(
           cardRef.current,
           { yPercent: 60, autoAlpha: 0 },
           {
             yPercent: 0,
             autoAlpha: 1,
-            duration: 1.1,
-            ease: 'power2.out',
+            ease: 'none',
             scrollTrigger: {
               trigger: photoRef.current,
-              start: 'top 80%',
-              toggleActions: 'play none none none',
+              start: 'top bottom',
+              end: 'top top',
+              scrub: 1,
               refreshPriority: -1,
             },
           }

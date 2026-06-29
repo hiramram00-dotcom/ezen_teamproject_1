@@ -90,7 +90,7 @@
 
 .tagline {
   font-family: var(--font-kr);
-  font-size: var(--fs-sub-1); /* 21px */
+  font-size: var(--fs-sub-2); /* 19px */
   font-weight: 400;
   line-height: 1.7;
   color: #9b9b9b;
@@ -98,11 +98,22 @@
   white-space: nowrap;
 }
 
+/* 태그라인을 두 줄로 보여도 소셜 링크의 데스크톱 가로 배치는 기존 한 줄 문구 폭을 유지 */
+.tagline::after {
+  content: '처음 빛을 밝혔던 그 온도 그대로, 60년의 시간을 넘어 지금 이 순간에도 일광전구는 빛의 원형을 이어갑니다.';
+  display: block;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  white-space: nowrap;
+  font-size: var(--fs-sub-1);
+}
+
 .socials {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  margin-top: 45px;
+  margin-top: 16px;
 }
 
 .socialLink {
@@ -225,14 +236,19 @@
   }
 
   .tagline {
-    font-size: clamp(12px, 1.3vw, 21px);
+    font-size: var(--fs-sub-2);
     white-space: normal;
+  }
+
+  .tagline::after {
+    content: none;
   }
 
   .socials {
     justify-content: flex-start;
     gap: clamp(16px, 2vw, 32px);
     flex-wrap: wrap;
+    margin-top: 45px;
   }
 
   .socialLink {

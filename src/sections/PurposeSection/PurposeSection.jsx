@@ -12,7 +12,7 @@ function PurposeSection() {
   const ceoCopyRef = useRef(null)
   const descriptionRef = useRef(null)
   const missionRef = useRef(null)
-  const missionVisualRef = useRef(null)
+  const missionBodyRef = useRef(null)
 
   useEffect(() => {
     const section = sectionRef.current
@@ -20,16 +20,14 @@ function PurposeSection() {
     const ceoCopy = ceoCopyRef.current
     const description = descriptionRef.current
     const mission = missionRef.current
-    const missionVisual = missionVisualRef.current
-    if (!section || !video || !ceoCopy || !description || !mission || !missionVisual) return
+    const missionBody = missionBodyRef.current
+    if (!section || !video || !ceoCopy || !description || !mission || !missionBody) return
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       section.style.setProperty('--purpose-dark', '1')
-      section.style.setProperty('--mission-shell-opacity', '1')
       section.style.setProperty('--mission-title-light', '1')
       section.style.setProperty('--mission-image-progress', '1')
       section.style.setProperty('--mission-content-progress', '1')
-      section.style.setProperty('--mission-rise', '1')
       video.style.setProperty('--purpose-video-opacity', '1')
       video.style.setProperty('--purpose-video-mask-inner', '118%')
       video.style.setProperty('--purpose-video-mask-mid', '132%')
@@ -81,37 +79,38 @@ function PurposeSection() {
       setTextLight('quote', step(0.14, 0.58))
       setTextLight('desc', step(0.42, 1))
 
-      const descRect = description.getBoundingClientRect()
-      const sectionRect = section.getBoundingClientRect()
-      const scrollY = window.scrollY
-      const missionStartScroll = scrollY + descRect.top - vh * 0.35
-      const missionEndScroll = scrollY + sectionRect.bottom - vh * 1.22
-      const missionRange = Math.max(1, missionEndScroll - missionStartScroll)
-      const missionProgress = Math.min(1, Math.max(0, (scrollY - missionStartScroll) / missionRange))
+      // mission은 더 이상 화면에 고정(pin)되지 않고 일반 문서 흐름에 놓인다.
+      // 화면에 들어오는 동안 자기 위치만으로 단계별 등장을 계산한다. 어두워지는
+      // 전환이 한번에 뚝 끊기지 않도록 화면 높이의 1.4배에 걸쳐 천천히 진행한다.
+      const missionRect = mission.getBoundingClientRect()
+      const missionStart = vh * 1.1
+      const missionEnd = vh * -0.3
+      const missionProgress = Math.min(
+        1,
+        Math.max(0, (missionStart - missionRect.top) / (missionStart - missionEnd)),
+      )
       const missionStep = (from, to) => {
         const local = Math.min(1, Math.max(0, (missionProgress - from) / (to - from)))
         return local * local * (3 - 2 * local)
       }
-      const footerFadeProgress = Math.min(1, Math.max(0, (sectionRect.bottom - vh * 0.58) / (vh * 0.24)))
-      const missionShellOpacity = sectionRect.top < vh && sectionRect.bottom > vh * 0.58
-        ? footerFadeProgress
-        : 0
 
-      // 시퀀스: ①제목 선명 → ②뒷배경 이미지 희미하게 등장 → ③영문(하단)이 아래서
-      // 위로 올라오는 동시에 제목+이미지 묶음도 함께 위로 이동 → 스크롤 끝에서 전체가
-      // 화면 정중앙에 안착.
-      section.style.setProperty('--purpose-dark', missionStep(0, 0.16).toFixed(4))
-      section.style.setProperty('--mission-shell-opacity', missionShellOpacity.toFixed(4))
-      section.style.setProperty('--mission-title-light', missionStep(0.16, 0.34).toFixed(4))
-      section.style.setProperty('--mission-image-progress', missionStep(0.36, 0.54).toFixed(4))
-      section.style.setProperty('--mission-content-progress', missionStep(0.56, 0.82).toFixed(4))
+      // 시퀀스: ①배경이 서서히 어두워짐 → ②제목 선명 → ③뒷배경 이미지 등장 → ④영문 카피 등장.
+      section.style.setProperty('--purpose-dark', missionStep(0, 0.55).toFixed(4))
+      section.style.setProperty('--mission-title-light', missionStep(0.35, 0.6).toFixed(4))
+      section.style.setProperty('--mission-image-progress', missionStep(0.45, 0.7).toFixed(4))
 
-      // 그룹 전체 상승 — 영문이 등장하는 구간부터 스크롤 끝(1.0)까지 위로 이동.
-      section.style.setProperty('--mission-rise', missionStep(0.56, 1).toFixed(4))
-      // rise 0: 이미지+제목이 화면 정중앙 / rise 1: 그룹 전체가 화면 정중앙.
-      // 그 차이만큼(=영문+간격의 절반) 시작 시 아래로 내려둘 양을 레이아웃에서 실측한다.
-      const startShift = mission.offsetHeight / 2 - (missionVisual.offsetTop + missionVisual.offsetHeight / 2)
-      mission.style.setProperty('--mission-rise-shift', `${startShift.toFixed(2)}px`)
+      // 영문 카피는 missionVisual 아래쪽에 있어 mission(이미지+제목) 기준 progress보다
+      // 늦게 화면에 들어온다. 화면 중앙에 왔을 때 이미 선명해 보이도록, 자기 자신의
+      // 위치를 기준으로 별도 progress를 계산한다.
+      const bodyRect = missionBody.getBoundingClientRect()
+      const bodyStart = vh * 1.05
+      const bodyEnd = vh * 0.68
+      const bodyProgress = Math.min(
+        1,
+        Math.max(0, (bodyStart - bodyRect.top) / (bodyStart - bodyEnd)),
+      )
+      const bodyEased = bodyProgress * bodyProgress * (3 - 2 * bodyProgress)
+      section.style.setProperty('--mission-content-progress', bodyEased.toFixed(4))
     }
 
     const onScroll = () => {
@@ -173,13 +172,13 @@ function PurposeSection() {
       </div>
 
       <div ref={missionRef} className={styles.mission}>
-        <div ref={missionVisualRef} className={styles.missionVisual}>
+        <div className={styles.missionVisual}>
           <img className={styles.missionImage} src={teamImage} alt="" />
           <p className={styles.missionTitle}>
             우리는 <strong>세상을 이롭게 하는 빛</strong>을 만듭니다.
           </p>
         </div>
-        <div className={styles.missionBody}>
+        <div ref={missionBodyRef} className={styles.missionBody}>
           <p className={styles.englishCopy}>
             From a single glowing filament
             <br />

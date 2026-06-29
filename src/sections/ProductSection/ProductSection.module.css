@@ -68,6 +68,15 @@
   background: var(--color-base-2);
 }
 
+.productRow[role='link'] {
+  cursor: pointer;
+}
+
+.productRow[role='link']:focus-visible {
+  outline: 3px solid var(--color-base-3);
+  outline-offset: -3px;
+}
+
 .mainVisual,
 .productInfo {
   position: relative;
@@ -105,14 +114,62 @@
   will-change: transform;
 }
 
-.mainVisual:hover .mainImageMotion,
-.mainVisual:focus-visible .mainImageMotion {
+.productRow:hover .mainImageMotion,
+.productRow:focus-within .mainImageMotion {
   transform: scale(1.05);
 }
 
-.mainVisual:hover::after,
-.mainVisual:focus-visible::after {
+.productRow:hover .mainVisual::after,
+.productRow:focus-within .mainVisual::after {
   opacity: 1;
+}
+
+.mainCta {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.12);
+  color: var(--color-base-1);
+  font-family: var(--font-kr);
+  font-size: var(--fs-sub-3);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -35%) scale(0.96);
+  transition:
+    opacity 350ms ease,
+    transform 450ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 250ms ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.productRow:hover .mainCta,
+.productRow:focus-within .mainCta {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.mainCtaArrow {
+  display: inline-block;
+  font-family: var(--font-en);
+  font-size: 1.15em;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.productRow:hover .mainCtaArrow,
+.productRow:focus-within .mainCtaArrow {
+  transform: translateX(4px);
 }
 
 .mainVisual img,
@@ -160,8 +217,75 @@
   grid-row: 1;
 }
 
+/* 제목·설명·썸네일을 하나의 그룹으로 묶어 productInfo 정중앙에 배치 */
 .productInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--color-base-2);
+  text-align: center;
+}
+
+.productInfoInner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 32px 0 48px;
+}
+
+.productInfoInner::before,
+.productInfoInner::after {
+  position: absolute;
+  left: 50%;
+  width: var(--title-line-width, 120px);
+  height: 1px;
+  background: rgba(0, 0, 0, 0.18);
+  content: '';
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.productInfoInner::before {
+  top: 0;
+}
+
+.productInfoInner::after {
+  bottom: 0;
+}
+
+.productInfoInner .productName {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: fit-content;
+  padding: 0;
+  transform: none;
+  line-height: 1.12;
+}
+
+.productInfoInner .description {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: fit-content;
+  margin-top: 16px;
+  padding: 0;
+  transform: none;
+}
+
+.productInfoInner .thumbnail {
+  position: relative;
+  top: auto;
+  left: auto;
+  flex: none;
+  width: 32.4%;
+  height: auto;
+  margin-top: clamp(64px, 7vh, 96px);
+  aspect-ratio: 311 / 190;
+  transform: none;
 }
 
 .productName {
@@ -222,10 +346,11 @@
   width: 78%;
   transform: translateX(-50%);
   font-family: var(--font-en);
-  font-size: clamp(14px, 0.9375vw, var(--fs-sub-2));
+  font-size: var(--fs-sub-3);
   font-weight: 400;
   line-height: 1.4;
   letter-spacing: -0.04em;
+  color: #6f6f6f;
   text-align: center;
 }
 
@@ -233,27 +358,11 @@
   display: block;
 }
 
-.productNumber {
-  position: absolute;
-  z-index: 2;
-  top: 43.43%;
-  left: 50%;
-  margin: 0;
-  transform: translateX(-50%);
-  font-family: var(--font-deco);
-  font-size: var(--product-title-size);
-  font-style: italic;
-  font-weight: 400;
-  line-height: 1.2;
-  letter-spacing: -0.03em;
-  text-align: center;
-}
-
 .thumbnail {
   position: absolute;
   z-index: 2;
   top: 72.22%;
-  left: var(--content-x);
+  left: 50%;
   width: 32.4%;
   height: 17.5926%;
   margin: 0;
@@ -278,10 +387,11 @@
   inset: 0;
   display: block;
   opacity: 0;
-  animation: thumbnail-frame-cycle 4.05s linear infinite;
-  animation-delay: calc(var(--frame-index) * 1.35s);
+  transform: scale(1.015);
+  animation: thumbnail-frame-cycle 9s linear infinite;
+  animation-delay: calc(var(--frame-index) * -6s);
   animation-play-state: paused;
-  will-change: opacity;
+  will-change: opacity, transform;
 }
 
 .thumbnailFrame:first-child {
@@ -312,17 +422,40 @@
 
 @keyframes thumbnail-frame-cycle {
   0% {
-    opacity: 0;
-  }
-
-  3%,
-  31% {
+    z-index: 2;
     opacity: 1;
+    transform: scale(1);
   }
 
-  34%,
-  100% {
+  25%,
+  33.32% {
+    z-index: 2;
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  33.33% {
+    z-index: 0;
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  91.65% {
+    z-index: 0;
     opacity: 0;
+    transform: scale(1.015);
+  }
+
+  91.66% {
+    z-index: 3;
+    opacity: 0;
+    transform: scale(1.015);
+  }
+
+  100% {
+    z-index: 3;
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -346,7 +479,7 @@
 
 .thumbnail:hover,
 .thumbnail:focus-visible {
-  transform: translateX(-50%) scale(0.95);
+  transform: scale(0.95);
 }
 
 .thumbnail:hover img,
@@ -424,12 +557,7 @@
     left: 50%;
     width: 86%;
     font-family: var(--font-kr);
-    font-size: clamp(13px, 3.5vw, 16px);
-  }
-
-  .productNumber {
-    top: 43%;
-    font-size: var(--product-title-size);
+    font-size: var(--fs-sub-3);
   }
 
   .thumbnail {
@@ -439,11 +567,22 @@
     height: auto;
     aspect-ratio: 311 / 190;
   }
+
+  .productInfoInner {
+    padding: 24px 0 36px;
+  }
+
+  .productInfoInner .thumbnail {
+    width: 42%;
+    margin-top: 56px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .mainImageMotion,
   .mainVisual::after,
+  .mainCta,
+  .mainCtaArrow,
   .thumbnail,
   .thumbnail img {
     transition: none;

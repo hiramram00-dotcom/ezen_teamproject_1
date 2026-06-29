@@ -47,6 +47,7 @@ export default function ScrollTopButton() {
       aria-label="맨 위로"
       tabIndex={isVisible ? 0 : -1}
       aria-hidden={!isVisible}
+      data-cursor="pointer"
     >
       {/* 위로 향하는 꺾쇠 3개 (이어서 쌓음) */}
       <span className={styles.chevrons} aria-hidden="true">
