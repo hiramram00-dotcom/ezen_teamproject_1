@@ -22,7 +22,8 @@
   visibility: hidden;
   pointer-events: none;
   transform: translateY(20px);
-  transition: background 0.25s ease, opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease, bottom 0.4s ease;
+  /* bottom은 스크롤 따라 실시간으로 푸터 위에 머무르게 하므로 트랜지션 제외(있으면 버벅임) */
+  transition: background 0.25s ease, opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease;
 }
 .topButton.visible {
   opacity: 1;
