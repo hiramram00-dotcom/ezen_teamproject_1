@@ -29,6 +29,8 @@ const ShowroomPage = lazy(() => import('./pages/ShowroomPage/ShowroomPage'))
 const ProductSection = lazy(() => import('./sections/ProductSection/ProductSection'))
 const FlamingoDetailSection = lazy(() => import('./sections/FlamingoDetailSection/FlamingoDetailSection'))
 const SnowmanDetailSection = lazy(() => import('./sections/SnowmanDetailSection/SnowmanDetailSection'))
+const SnowballDetailSection = lazy(() => import('./sections/SnowballDetailSection/SnowballDetailSection'))
+const TeacupDetailSection = lazy(() => import('./sections/TeacupDetailSection/TeacupDetailSection'))
 const CollaboLandingSection = lazy(() => import('./sections/CollaboLandingSection/CollaboLandingSection'))
 const CollaboGallerySection = lazy(() => import('./sections/CollaboGallerySection/CollaboGallerySection'))
 const CollaboContactSection = lazy(() => import('./sections/CollaboContactSection/CollaboContactSection'))
@@ -103,6 +105,8 @@ function ProductRoute() {
       onOpenProduct={(product) => {
         if (product === 'flamingo') navigate('/product/flamingo')
         if (product === 'snowman') navigate('/product/snowman')
+        if (product === 'snowball') navigate('/product/snowball')
+        if (product === 'teacup') navigate('/product/teacup')
       }}
     />
   )
@@ -136,6 +140,26 @@ function App() {
             <>
               <Header />
               <SnowmanDetailSection />
+              <NewFooter />
+            </>
+          }
+        />
+        <Route
+          path="/product/snowball"
+          element={
+            <>
+              <Header />
+              <SnowballDetailSection />
+              <NewFooter />
+            </>
+          }
+        />
+        <Route
+          path="/product/teacup"
+          element={
+            <>
+              <Header />
+              <TeacupDetailSection />
               <NewFooter />
             </>
           }

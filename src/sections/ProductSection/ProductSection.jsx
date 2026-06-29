@@ -66,6 +66,7 @@ const products = [
       { src: snowballThumb3, crop: { width: '100.04%', height: '182.63%', left: '-0.02%', top: '-46.31%' } },
     ],
     imageSide: 'right',
+    detail: 'snowball',
     contentX: '53.28%',
   },
   {
@@ -81,6 +82,7 @@ const products = [
       { src: teacupThumb3Latest, crop: { width: '224.94%', height: '1700.74%', left: '-43.82%', top: '-1401.01%' } },
     ],
     imageSide: 'left',
+    detail: 'teacup',
     contentX: '49.84%',
   },
 ]

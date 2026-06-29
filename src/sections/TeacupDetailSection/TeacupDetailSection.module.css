@@ -1,0 +1,260 @@
+.detail {
+  width: 100%;
+  overflow: hidden;
+  background: var(--color-base-2, #fff7ea);
+  color: var(--color-base-3, #000);
+}
+
+.panel {
+  position: relative;
+  width: 100%;
+  max-width: 1920px;
+  height: min(56.25vw, 1080px);
+  margin-inline: auto;
+  overflow: hidden;
+  background: var(--color-base-2, #fff7ea);
+  container-type: inline-size;
+}
+
+.heroImage {
+  position: absolute;
+  top: -5.8333%;
+  left: -5.4167%;
+  width: 110.7813%;
+  height: 120.463%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.hero h1 {
+  position: absolute;
+  left: 1.5625cqw;
+  bottom: 2.7778%;
+  z-index: 1;
+  margin: 0;
+  color: #fff;
+  font-family: var(--font-en);
+  font-size: 6.25cqw;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.introVisual {
+  position: absolute;
+  top: 4.4444%;
+  left: 24.4792%;
+  width: 52.9688%;
+  height: 54.4444%;
+  overflow: hidden;
+}
+
+.introVisual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.introCopy {
+  position: absolute;
+  top: 62.5926%;
+  left: 50%;
+  width: 36.5625%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.introCopy h2 {
+  margin: 0 0 2.0833cqw;
+  font-family: var(--font-en);
+  font-size: 4.1667cqw;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+.introCopy h2 em {
+  font-family: var(--font-deco);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.introCopy p,
+.storyCopy p {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-size: 1.0938cqw;
+  font-weight: 300;
+  line-height: 1.4;
+  letter-spacing: -0.05em;
+}
+
+.storyVisual {
+  position: absolute;
+  inset: 0 0 0 50%;
+  overflow: hidden;
+}
+
+.storyVisual img {
+  position: absolute;
+  top: -20.62%;
+  left: 0;
+  width: 100%;
+  height: 133.33%;
+  max-width: none;
+}
+
+.storyCopy {
+  position: absolute;
+  left: 1.9792cqw;
+  bottom: 1.3542cqw;
+  width: 29.4792cqw;
+}
+
+.storyCopy h2,
+.mosaic figcaption {
+  margin: 0;
+  font-family: var(--font-deco);
+  font-size: 1.4583cqw;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.05em;
+}
+
+.storyCopy h2 {
+  margin-bottom: 0.2604cqw;
+}
+
+.mosaic figure {
+  position: absolute;
+  margin: 0;
+}
+
+.mosaic figure img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.mosaicLeft {
+  top: 11.6667%;
+  left: 14.7396%;
+  width: 28.6458%;
+  height: 59.8148%;
+}
+
+.mosaicLeft img {
+  object-position: 50% 45%;
+}
+
+.mosaicLeft figcaption {
+  position: absolute;
+  top: calc(100% + 0.6771cqw);
+  left: 0.1042cqw;
+  white-space: nowrap;
+}
+
+.mosaicRight {
+  top: 28.2407%;
+  left: 56.5625%;
+  width: 28.6458%;
+  height: 59.8148%;
+}
+
+.mosaicRight img {
+  object-position: center top;
+}
+
+.mosaicRight figcaption {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.6771cqw);
+  white-space: nowrap;
+}
+
+.galleryEyebrow {
+  position: absolute;
+  top: 4.9074%;
+  left: 50%;
+  margin: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-kr);
+  font-size: 1.0938cqw;
+  font-weight: 300;
+  line-height: 1.4;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.gallery h2 {
+  position: absolute;
+  top: 6.9444%;
+  left: 50%;
+  z-index: 2;
+  margin: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-deco);
+  font-size: 4.1667cqw;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+.galleryGrid {
+  position: absolute;
+  top: 20.9259%;
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1458cqw;
+  width: 100%;
+  height: 64.8148%;
+}
+
+.galleryGrid div {
+  overflow: hidden;
+}
+
+.galleryGrid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.productButton {
+  position: absolute;
+  top: 90.0926%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 13.0208cqw;
+  height: 3.2813cqw;
+  transform: translateX(-50%);
+  border: 1px solid currentColor;
+  border-radius: 50px;
+  font-family: var(--font-kr);
+  font-size: 1.0938cqw;
+}
+
+@media (max-width: 700px) {
+  .panel {
+    min-height: 360px;
+  }
+
+  .introCopy p,
+  .storyCopy p,
+  .galleryEyebrow,
+  .productButton {
+    font-size: 7px;
+  }
+
+  .storyCopy h2,
+  .mosaic figcaption {
+    font-size: 9px;
+  }
+}
