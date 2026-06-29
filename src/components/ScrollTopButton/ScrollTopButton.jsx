@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import styles from './ScrollTopButton.module.css'
 
 // 푸터에서 버튼이 올라오는 "최대 높이"(px). 푸터 top까지 다 따라가면 너무 높이 올라가므로 이만큼만.
-const FOOTER_LIFT_MAX = 220
+const FOOTER_LIFT_MAX = 110
 
 // 전역 우측 하단 고정 "맨 위로" 버튼 (스크롤 내릴 때 표시)
 export default function ScrollTopButton() {
