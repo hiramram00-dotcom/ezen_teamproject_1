@@ -103,6 +103,15 @@
   padding: 0 0 clamp(80px, 12vw, 200px);
 }
 
+.darkTextWrapLeft {
+  text-align: left;
+  align-items: flex-start;
+}
+
+.darkPhotosLeft {
+  justify-content: flex-start;
+}
+
 .darkPhotoSm {
   flex: 0 0 32%;
   width: 32%;

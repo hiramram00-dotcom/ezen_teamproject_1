@@ -370,10 +370,10 @@ function AboutSection() {
         }
       },
       {
-        // 뷰포트 안으로 20% 들어왔을 때 발동(음수 하단 마진). 예전 +18%는 화면 밖
-        // 아래까지 미리 감지해서, 키 큰 화면(legacy가 인트로 바로 아래)에선 로드 즉시
-        // 발동→애니가 화면 밖에서 끝나버렸다. 이제 실제로 보일 때 재생된다.
-        rootMargin: '0px 0px 8% 0px',
+        // 화면 밖 아래로 12%까지 미리 감지해서 살짝 더 일찍 발동(빠른 스크롤 시 다 본
+        // 상태로 보이게). 예전 +18%는 키 큰 화면(legacy가 인트로 바로 아래)에서 로드
+        // 즉시 발동하는 버그가 있었어서, 그 임계값보다 충분히 낮게(12%) 유지한다.
+        rootMargin: '0px 0px 12% 0px',
         threshold: 0.01,
       },
     )
@@ -654,13 +654,23 @@ function AboutSection() {
           />
         </p>
 
-        <p className={styles.storyLeadTail}>
-          <StoryTypedLines
-            lines={['the present day,']}
-            progress={storyTailProgress}
-            totalWords={3}
-          />
-        </p>
+        <div className={styles.storyTailYearsGroup}>
+          <p className={styles.storyLeadTail}>
+            <StoryTypedLines
+              lines={['the present day,']}
+              progress={storyTailProgress}
+              totalWords={3}
+            />
+          </p>
+
+          <p className={`${styles.storyClosing} ${styles.storyClosingYears}`}>
+            <StoryTypedLines
+              lines={['for over 60 years,']}
+              progress={storyClosingProgress}
+              totalWords={11}
+            />
+          </p>
+        </div>
 
         <video
           className={styles.storyMedia}
@@ -671,14 +681,6 @@ function AboutSection() {
           playsInline
           aria-label="ILKW 브랜드 영상"
         />
-
-        <p className={`${styles.storyClosing} ${styles.storyClosingYears}`}>
-          <StoryTypedLines
-            lines={['for over 60 years,']}
-            progress={storyClosingProgress}
-            totalWords={11}
-          />
-        </p>
 
         <p className={`${styles.storyClosing} ${styles.storyClosingStatement}`}>
           <StoryTypedLines

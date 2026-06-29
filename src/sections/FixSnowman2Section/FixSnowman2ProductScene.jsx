@@ -113,7 +113,7 @@ function FixSnowman2ProductScene() {
 
         <div ref={modelRef} className={styles.modelWrap}>
           <span className={styles.modelShadow} aria-hidden="true" />
-          <SnowmanModel className={styles.modelCanvas} />
+          <SnowmanModel className={styles.modelCanvas} modelSize={3.85} />
         </div>
 
         <div ref={detailRef} className={styles.detail}>

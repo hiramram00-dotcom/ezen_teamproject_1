@@ -71,7 +71,7 @@ function PinScene() {
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       image.style.transform = 'scale(1)'
-      scrim.style.opacity = '0.42'
+      scrim.style.opacity = '1'
       card.style.transform = 'translateY(0)'
       card.style.visibility = 'visible'
       fitCard()
@@ -101,7 +101,7 @@ function PinScene() {
       const cardEase = ease(cardProgress)
 
       image.style.transform = `scale(${(1.15 - 0.15 * imageEase).toFixed(4)})`
-      scrim.style.opacity = (cardEase * 0.42).toFixed(3)
+      scrim.style.opacity = cardEase.toFixed(3)
       card.style.transform = `translateY(${((1 - cardEase) * 100).toFixed(2)}%)`
       card.style.visibility = cardProgress > 0 ? 'visible' : 'hidden'
       syncBlur()

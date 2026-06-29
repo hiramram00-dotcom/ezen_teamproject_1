@@ -5,6 +5,8 @@ import gallery04 from './assets/showroom-gallery-04.webp'
 import exterior from './assets/showroom-beyond-exterior.webp'
 import interiorLg from './assets/showroom-beyond-01.webp'
 import interiorSm from './assets/showroom-beyond-02.webp'
+import interiorSm2 from './assets/showroom-beyond-03.webp'
+import interiorLg2 from './assets/showroom-beyond-04.webp'
 import Reveal from '../../components/Reveal/Reveal'
 import RevealLines from '../../components/RevealLines/RevealLines'
 import Parallax from '../../components/Parallax/Parallax'
@@ -87,6 +89,29 @@ function BeyondSection() {
           <RevealImage className={styles.darkPhotoSm} src={interiorSm} alt="쇼룸 인테리어 1" loading="lazy" delay={350} />
           {/* 우측(큰) — 먼저 시작 */}
           <RevealImage className={styles.darkPhotoLg} src={interiorLg} alt="쇼룸 인테리어 2" loading="lazy" delay={0} />
+        </div>
+
+        {/* 동일 레이아웃, 텍스트만 좌측정렬 */}
+        <div className={`${styles.darkTextWrap} ${styles.darkTextWrapLeft}`}>
+          <Reveal as="h2" className={`${styles.darkTitle} type-subtitle-1`}>Light, Up Close</Reveal>
+          <RevealLines
+            as="p"
+            className={`${styles.darkText} type-collabo-x`}
+            collapseToFlow
+            lines={[
+              '멀리서 보던 조명을 가까이서 만지고, 켜고, 비교해 볼 수 있는 곳.',
+              '같은 제품도 공간과 각도에 따라 전혀 다른 빛을 보여줍니다.',
+              '일광전구 서울 쇼룸은 그 차이를 가장 정직하게 보여주는 자리이며,',
+              '선택의 기준이 되어줍니다.',
+            ]}
+          />
+        </div>
+
+        <div className={`${styles.darkPhotos} ${styles.darkPhotosLeft}`}>
+          {/* 좌측(큰) — 먼저 시작 */}
+          <RevealImage className={styles.darkPhotoLg} src={interiorSm2} alt="쇼룸 인테리어 3" loading="lazy" delay={0} />
+          {/* 우측(작은) — 좌측보다 늦게 시작 */}
+          <RevealImage className={styles.darkPhotoSm} src={interiorLg2} alt="쇼룸 인테리어 4" loading="lazy" delay={350} />
         </div>
       </div>
     </section>

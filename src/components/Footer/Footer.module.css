@@ -28,11 +28,12 @@
 
 /* 흰 사각형 카드 (1204:21) — 위치·크기는 프레임 기준 % */
 .card {
+  --footer-card-size: min(43.75vw, 840px);
   position: absolute;
-  left: 22.917%;   /* 440/1920 */
-  top: 19.477%;    /* 335/1720 */
-  width: 54.219%;  /* 1041/1920 */
-  height: 61.047%; /* 1050/1720 */
+  left: calc(50% - var(--footer-card-size) / 2);
+  top: calc(50% - var(--footer-card-size) / 2);
+  width: var(--footer-card-size);
+  height: var(--footer-card-size);
   border-radius: 24px;
   overflow: hidden; /* 블러 복사본(.cardBg)을 둥근 카드 모양으로 클립 */
   background: transparent; /* 블러는 .cardBg, 흰 틴트는 .cardTint가 담당 (faux backdrop-filter) */
@@ -48,13 +49,13 @@
 .cardBg {
   position: absolute;
   z-index: -2;
-  /* 카드가 .photo의 (left 22.917% / top 19.477% / w 54.219% / h 61.047%)에 있으므로, 복사본을
-     .photo 전체 크기로 키우고 그만큼 음수 오프셋 → 카드가 "뒤 사진의 바로 그 자리"를 흐리게 한다
+  /* 카드 위치와 크기의 역비율로 복사본을 .photo 전체 크기에 맞추고 음수 오프셋 →
+     카드가 "뒤 사진의 바로 그 자리"를 흐리게 한다
      (진짜 프로스트 유리). object-fit·position·brightness는 실제 사진(.photoImg)과 동일하게 맞춤. */
-  left: -42.27%; /* -(22.917 / 54.219) */
-  top: -31.9%; /* -(19.477 / 61.047) */
-  width: 184.44%; /* 100 / 54.219 */
-  height: 163.81%; /* 100 / 61.047 */
+  left: -64.286%;
+  top: -52.381%;
+  width: 228.571%;
+  height: 204.762%;
   object-fit: cover;
   object-position: center;
   filter: blur(24px) brightness(0.5) saturate(1.4);
@@ -114,7 +115,7 @@
 @media (prefers-reduced-motion: reduce) {
   .card::after { animation: none; }
 }
-/* 카드 안 텍스트 — 카드 폭(54.219vw)에 비례해 vw로 스케일 */
+/* 카드 안 텍스트 — 축소된 카드 크기에 맞춰 함께 스케일 */
 .cardHeading {
   position: absolute;
   top: 5.71%;       /* 60/1050 */
@@ -124,7 +125,7 @@
   margin: 0;
   font-family: var(--font-en);
   font-weight: 500;
-  font-size: clamp(11px, 2.08vw, var(--fs-body-1));
+  font-size: clamp(11px, 1.6vw, 32px);
   line-height: 1.1;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -132,7 +133,7 @@
 }
 /* 콜라보 푸터(contact 지정)처럼 헤딩 문구가 길 때 — 폰트 살짝 줄여 깔끔히 2줄로 */
 .cardCompact .cardHeading {
-  font-size: clamp(10px, 1.82vw, var(--fs-body-1));
+  font-size: clamp(11px, 1.6vw, 32px);
 }
 .cardLink {
   position: absolute;
@@ -143,7 +144,7 @@
   font-family: var(--font-deco);
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(10px, 2.08vw, var(--fs-body-1));
+  font-size: clamp(10px, 1.45vw, 28px);
   line-height: 1.2;
   color: #000;
   transition: opacity 0.2s ease;
@@ -179,7 +180,7 @@
   white-space: nowrap;
   font-family: var(--font-en);
   font-weight: 600;
-  font-size: clamp(11px, 3.65vw, var(--fs-title-4));
+  font-size: clamp(11px, 2.4vw, 48px);
   line-height: 1.2;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -286,10 +287,13 @@
   /* 카드 가로 더 넓힘(중앙 유지) */
   .card {
     left: 13%;
+    top: 19.477%;
     width: 74%;
+    height: 61.047%;
+    translate: none;
   }
-  .cardHeading { font-size: 12px; }
-  .cardCompact .cardHeading { font-size: 12px; }
+  .cardHeading { font-size: 20px; }
+  .cardCompact .cardHeading { font-size: 20px; }
   .cardLink { font-size: 16px; }
   .cardEmail { font-size: 20px; }
   .body {

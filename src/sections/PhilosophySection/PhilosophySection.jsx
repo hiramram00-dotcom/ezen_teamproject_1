@@ -57,7 +57,7 @@ function PhilosophySection() {
       const e = ease(enterProgress)
       const sectionTravel = Math.max(scene.offsetHeight - vh, 1)
       const exitProgress = ease(
-        clamp((-rect.top - sectionTravel * 0.72) / (sectionTravel * 0.28), 0, 1),
+        clamp((-rect.top - sectionTravel * 0.92) / (sectionTravel * 0.08), 0, 1),
       )
       const exitScale = 1 - exitProgress * 0.08
       const exitLift = exitProgress * 4
