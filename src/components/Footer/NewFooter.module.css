@@ -107,7 +107,7 @@
 
 .socialLink {
   font-family: var(--font-en);
-  font-weight: 700;
+  font-weight: 500;
   font-size: var(--fs-body-2); /* 24px */
   color: #cbcbcb;
   text-decoration: none;
@@ -137,7 +137,7 @@
 
 .navLink {
   font-family: var(--font-en);
-  font-weight: 700;
+  font-weight: 500;
   font-size: var(--fs-body-2); /* 24px */
   color: #fff;
   text-decoration: none;
