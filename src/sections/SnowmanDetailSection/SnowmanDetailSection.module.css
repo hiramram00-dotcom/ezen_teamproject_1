@@ -42,8 +42,8 @@
 
 .marqueeShowcase {
   max-width: none;
-  height: min(74.6875vw, 1434px);
-  min-height: min(74.6875vw, 1434px);
+  height: min(56.25vw, 1080px);
+  min-height: min(56.25vw, 1080px);
   margin-top: max(-0.0521vw, -1px);
   overflow: hidden;
 }
@@ -194,26 +194,26 @@
   position: absolute;
   left: 0;
   display: flex;
-  gap: min(1.9271vw, 37px);
+  gap: min(2.6042vw, 50px);
   width: max-content;
   will-change: transform;
 }
 
 .marqueeRowTop {
-  top: min(3.4896vw, 67px);
-  animation: snowmanMarqueeRight 30s linear infinite;
+  top: min(6.849vw, 131.5px);
+  animation: snowmanMarqueeRight 24s linear infinite;
 }
 
 .marqueeRowBottom {
-  top: min(36.9792vw, 710px);
-  animation: snowmanMarqueeLeft 30s linear infinite;
+  top: min(30.2865vw, 581.5px);
+  animation: snowmanMarqueeLeft 24s linear infinite;
 }
 
 .marqueeCard {
   position: relative;
   flex: 0 0 auto;
-  width: min(27.6042vw, 530px);
-  height: min(27.6042vw, 530px);
+  width: min(19.1146vw, 367px);
+  height: min(19.1146vw, 367px);
   overflow: hidden;
   background: #716f6d;
   color: var(--color-base-1);
@@ -246,8 +246,8 @@
 }
 
 .quietlyCopy {
-  top: min(3.2292vw, 62px);
-  right: min(1.9792vw, 38px);
+  top: min(2.6042vw, 50px);
+  right: min(1.5625vw, 30px);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -256,11 +256,20 @@
   font-style: italic;
 }
 
+.quietGlowCard img {
+  inset: auto;
+  left: 0;
+  top: -100%;
+  width: 100%;
+  height: 541.8%;
+  object-fit: fill;
+}
+
 .quietGlowCopy {
-  top: min(13.3854vw, 257px);
-  right: min(6.0417vw, 116px);
+  top: min(14.0625vw, 270px);
+  right: min(5.9375vw, 114px);
   font-family: var(--font-deco);
-  font-size: min(1.1458vw, 22px);
+  font-size: min(1.0417vw, 20px);
   font-style: italic;
 }
 
@@ -270,17 +279,17 @@
 
 .softHourCard::before {
   position: absolute;
-  inset: min(3.3333vw, 64px) min(3.8542vw, 74px);
+  inset: min(3.2813vw, 63px) min(3.75vw, 72px);
   z-index: 1;
   background: #ec7335;
   content: '';
 }
 
 .softHourCard img {
-  inset: min(6.4063vw, 123px) auto auto 50%;
+  inset: min(6.5625vw, 126px) auto auto 50%;
   z-index: 2;
-  width: min(12.9167vw, 248px);
-  height: min(12.9167vw, 248px);
+  width: min(13.3333vw, 256px);
+  height: min(13.3333vw, 256px);
   transform: translateX(-50%);
 }
 
@@ -295,9 +304,10 @@
 }
 
 .lightStaysCopy {
-  top: min(12.9688vw, 249px);
-  left: min(3.1771vw, 61px);
-  font-size: min(1.5625vw, 30px);
+  top: 50%;
+  left: min(3.125vw, 60px);
+  font-size: min(1.9792vw, 38px);
+  transform: translateY(-50%);
 }
 
 .lessWarmerCard {
@@ -305,9 +315,11 @@
 }
 
 .lessWarmerCard img {
-  inset: min(5.5208vw, 106px) auto auto 50%;
-  width: min(16.875vw, 324px);
-  height: min(16.875vw, 324px);
+  inset: auto auto auto 50%;
+  top: calc(min(5.7292vw, 110px) - min(17.3438vw, 333px));
+  width: min(17.3438vw, 333px);
+  height: min(83.6458vw, 1606px);
+  object-fit: fill;
   transform: translateX(-50%);
 }
 
@@ -316,22 +328,34 @@
   left: 0;
   width: 100%;
   font-family: var(--font-deco);
-  font-size: min(1.1458vw, 22px);
+  font-size: min(1.25vw, 24px);
   text-align: center;
 }
 
+.softDesignCard img {
+  inset: auto;
+  left: 0;
+  top: -130%;
+  width: 100%;
+  height: 501.3%;
+  object-fit: fill;
+}
+
 .softDesignCopy {
-  top: min(13.125vw, 252px);
-  left: min(6.9792vw, 134px);
+  top: 50%;
+  left: 0;
+  width: 100%;
   font-family: var(--font-deco);
-  font-size: min(1.7708vw, 34px);
+  font-size: min(1.9792vw, 38px);
   font-style: italic;
+  text-align: center;
+  transform: translateY(-50%);
 }
 
 .closeByCopy {
+  display: none;
   right: min(1.4063vw, 27px);
   bottom: min(2.3958vw, 46px);
-  display: flex;
   flex-direction: column;
   align-items: flex-end;
   font-family: var(--font-kr);
@@ -351,18 +375,18 @@
 }
 
 .stillWarmCard img {
-  inset: min(6.0938vw, 117px) auto auto 50%;
-  width: min(17.9167vw, 344px);
-  height: min(17.9167vw, 344px);
+  inset: min(6.25vw, 120px) auto auto 50%;
+  width: min(18.2292vw, 350px);
+  height: min(18.2292vw, 350px);
   border-radius: min(0.4167vw, 8px);
   transform: translateX(-50%);
 }
 
 .stillWarmCopy {
-  top: min(1.6146vw, 31px);
+  top: min(2.0313vw, 39px);
   left: 0;
   width: 100%;
-  font-size: min(1.5625vw, 30px);
+  font-size: min(1.9792vw, 38px);
   text-align: center;
 }
 
@@ -372,13 +396,13 @@
   }
 
   to {
-    transform: translateX(calc(-50% - min(0.9635vw, 18.5px)));
+    transform: translateX(calc(-50% - min(1.3021vw, 25px)));
   }
 }
 
 @keyframes snowmanMarqueeRight {
   from {
-    transform: translateX(calc(-50% - min(0.9635vw, 18.5px)));
+    transform: translateX(calc(-50% - min(1.3021vw, 25px)));
   }
 
   to {
@@ -680,7 +704,7 @@
   display: grid;
   grid-template-columns: repeat(2, 49.4792cqw);
   justify-content: center;
-  gap: 1.1458cqw;
+  gap: 1.0417cqw;
 }
 
 .collaborationGrid img {
@@ -933,19 +957,18 @@
 }
 
 .marioCard h3 {
-  top: min(1.1458cqw, 22px);
   right: min(2.0313cqw, 39px);
+  bottom: min(1.1458cqw, 22px);
   text-align: right;
   white-space: nowrap;
 }
 
 .marioCard img {
-  inset: auto;
+  inset: 0;
   width: 100%;
-  height: 202.87%;
-  left: 0;
-  top: -96.1%;
-  object-fit: fill;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 52%;
 }
 
 .flamingoCard {
@@ -982,8 +1005,9 @@
 }
 
 .apolloCard h3 {
+  top: min(1.1458cqw, 22px);
   right: min(2.0313cqw, 39px);
-  bottom: min(1.1458cqw, 22px);
+  text-align: right;
   white-space: nowrap;
 }
 

@@ -1,6 +1,12 @@
-import heroImage from './assets/hero.webp'
+import { useLayoutEffect, useRef, useState } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import heroImage from './assets/hero-figma.webp'
 import introImage from './assets/intro.webp'
-import storyImage from './assets/story-b.webp'
+import storySlideShelf from './assets/story-slide-shelf.webp'
+import storySlideWhite from './assets/story-slide-white.webp'
+import storySlidePink from './assets/story-slide-pink.webp'
+import mosaicBox from './assets/mosaic-box.webp'
 import mosaicLamp from './assets/mosaic-lamp.webp'
 import mosaicGlow from './assets/mosaic-glow.webp'
 import mosaicPendant from './assets/mosaic-pendant.webp'
@@ -13,6 +19,16 @@ import otherFlamingo from '../FlamingoDetailSection/assets/other-flamingo.webp'
 import otherApollo from '../FlamingoDetailSection/assets/other-apollo.webp'
 import styles from './SnowballDetailSection.module.css'
 
+gsap.registerPlugin(ScrollTrigger)
+
+const OTHER_PRODUCTS_DRAG_RESISTANCE = 0.48
+
+const storySlides = [
+  { src: storySlidePink, alt: '창가 공간에 설치된 핑크 SNOWBALL 조명' },
+  { src: storySlideWhite, alt: '하얀 오브제와 함께 놓인 SNOWBALL 조명' },
+  { src: storySlideShelf, alt: '선반 위를 밝히는 SNOWBALL 천장 조명' },
+]
+
 const otherProducts = [
   { name: <>SNOWMAN22<br />V2</>, image: otherSnowman, className: 'snowmanCard' },
   { name: <>V2<br />SNOWBALL22</>, image: otherSnowball, className: 'snowballCard' },
@@ -22,16 +38,147 @@ const otherProducts = [
 ]
 
 export function ProductOtherSection() {
+  const scrollRef = useRef(null)
+  const otherIntroRef = useRef(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [hasDraggedOtherProducts, setHasDraggedOtherProducts] = useState(false)
+  const dragState = useRef({ x: 0, left: 0 })
+
+  useLayoutEffect(() => {
+    const scroller = scrollRef.current
+    if (!scroller) return undefined
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) setHasDraggedOtherProducts(false)
+      },
+      { threshold: 0.05 }
+    )
+
+    observer.observe(scroller)
+
+    return () => observer.disconnect()
+  }, [])
+
+  useLayoutEffect(() => {
+    const otherIntro = otherIntroRef.current
+    if (!otherIntro) return undefined
+
+    const ctx = gsap.context(() => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+      gsap.fromTo(
+        otherIntro.children,
+        { autoAlpha: 0, y: 28 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.72,
+          ease: 'power2.out',
+          stagger: 0.12,
+          scrollTrigger: {
+            trigger: otherIntro,
+            start: 'top 82%',
+            toggleActions: 'play none none reset',
+          },
+        }
+      )
+    }, otherIntro)
+
+    return () => ctx.revert()
+  }, [])
+
+  useLayoutEffect(() => {
+    const scroller = scrollRef.current
+    if (!scroller) return undefined
+
+    const cards = scroller.querySelectorAll(`.${styles.otherCard}`)
+    if (!cards.length) return undefined
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          entry.target.dataset.visible = entry.isIntersecting ? 'true' : 'false'
+        })
+      },
+      {
+        root: scroller,
+        rootMargin: '0px -14% 0px -8%',
+        threshold: 0.34,
+      }
+    )
+
+    cards.forEach((card) => observer.observe(card))
+
+    return () => observer.disconnect()
+  }, [])
+
+  const startDrag = (event) => {
+    const scroller = scrollRef.current
+    if (!scroller) return
+
+    dragState.current = {
+      x: event.clientX,
+      left: scroller.scrollLeft,
+    }
+    setIsDragging(true)
+    setHasDraggedOtherProducts(true)
+    scroller.setPointerCapture?.(event.pointerId)
+  }
+
+  const moveDrag = (event) => {
+    const scroller = scrollRef.current
+    if (!scroller || !isDragging) return
+
+    const dragDistance = event.clientX - dragState.current.x
+    scroller.scrollLeft =
+      dragState.current.left - dragDistance * OTHER_PRODUCTS_DRAG_RESISTANCE
+  }
+
+  const endDrag = (event) => {
+    scrollRef.current?.releasePointerCapture?.(event.pointerId)
+    setIsDragging(false)
+  }
+
   return (
-    <section className={styles.otherProducts} aria-label="다른 제품">
+    <section
+      ref={scrollRef}
+      className={`${styles.otherProducts} ${isDragging ? styles.dragging : ''}`}
+      aria-label="다른 제품"
+      onPointerDown={startDrag}
+      onPointerMove={moveDrag}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+    >
+      <div
+        className={`${styles.dragHint} ${
+          hasDraggedOtherProducts ? styles.dragHintHidden : ''
+        }`}
+        aria-hidden="true"
+      >
+        <span>Drag</span>
+        <span>→</span>
+      </div>
+
       <div className={styles.otherTrack}>
-        <div className={styles.otherIntro}>
+        <div ref={otherIntroRef} className={styles.otherIntro}>
           <h2>
-            <span>Other</span>
-            <em>Products</em>
-            <span className={styles.arrow} aria-hidden="true">↘</span>
+            <span className={styles.otherTitleLead}>Other</span>
+            <span className={styles.otherTitleAccent}>
+              Products
+              <span className={styles.otherArrow} aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="7" y1="7" x2="17" y2="17" />
+                  <polyline points="17 8 17 17 8 17" />
+                </svg>
+              </span>
+            </span>
           </h2>
-          <p>부드러운 빛으로 일상에 편안함을 더하는<br />조명을 찾고 있다면</p>
+          <p>
+            부드러운 빛으로 일상에 편안함을 더하는
+            <br />
+            조명을 찾고 있다면
+          </p>
         </div>
 
         {otherProducts.map((product) => (
@@ -46,6 +193,220 @@ export function ProductOtherSection() {
 }
 
 function SnowballDetailSection() {
+  const introRef = useRef(null)
+  const introImageRef = useRef(null)
+  const introCopyRef = useRef(null)
+  const introTitleRef = useRef(null)
+  const introDescriptionRef = useRef(null)
+  const storyRef = useRef(null)
+  const storySlideRefs = useRef([])
+  const storyTitleRef = useRef(null)
+  const storyDescriptionRef = useRef(null)
+  const galleryRef = useRef(null)
+  const galleryGridRef = useRef(null)
+  const galleryEyebrowRef = useRef(null)
+  const galleryTitleRef = useRef(null)
+  const productButtonRef = useRef(null)
+  const productButtonTextRef = useRef(null)
+
+  useLayoutEffect(() => {
+    const intro = introRef.current
+    if (!intro) return undefined
+
+    const ctx = gsap.context(() => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+      gsap.fromTo(
+        introImageRef.current,
+        { scale: 1.35 },
+        {
+          scale: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: introImageRef.current,
+            start: 'top 90%',
+            end: 'bottom 35%',
+            scrub: 1,
+          },
+        }
+      )
+
+      const introTitleLines = introTitleRef.current.querySelectorAll('[data-intro-line]')
+
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: introCopyRef.current,
+            start: 'top 88%',
+            toggleActions: 'restart none none reset',
+          },
+        })
+        .fromTo(
+          introTitleLines,
+          { autoAlpha: 0, y: 130 },
+          { autoAlpha: 1, y: 0, duration: 1.15, ease: 'power3.out', stagger: 0.12 },
+          0
+        )
+        .fromTo(
+          introDescriptionRef.current,
+          { autoAlpha: 0, y: 24 },
+          { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power2.out' },
+          0.45
+        )
+    }, intro)
+
+    return () => ctx.revert()
+  }, [])
+
+  useLayoutEffect(() => {
+    const story = storyRef.current
+    const slides = storySlideRefs.current.filter(Boolean)
+    if (!story || slides.length !== storySlides.length) return undefined
+
+    const ctx = gsap.context(() => {
+      gsap.set(slides, {
+        xPercent: 100,
+        yPercent: 0,
+        autoAlpha: 1,
+        zIndex: 0,
+        clipPath: 'inset(0 0 0% 0)',
+      })
+      gsap.set(slides[0], { xPercent: 0, zIndex: 1 })
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+      const slider = gsap.timeline({ paused: true, repeat: -1 })
+      let current = 0
+
+      for (let index = 1; index <= slides.length; index += 1) {
+        const next = index % slides.length
+        slider
+          .set(slides[next], { xPercent: 100, zIndex: 2 }, '+=1.5')
+          .to(slides[next], {
+            xPercent: 0,
+            duration: 0.7,
+            ease: 'power1.out',
+          })
+          .set(slides[current], { xPercent: 100, zIndex: 0 })
+          .set(slides[next], { zIndex: 1 })
+        current = next
+      }
+
+      ScrollTrigger.create({
+        trigger: story,
+        start: 'top bottom',
+        end: 'bottom top',
+        onEnter: () => slider.play(),
+        onEnterBack: () => slider.play(),
+        onLeave: () => slider.pause(),
+        onLeaveBack: () => {
+          slider.pause(0)
+          gsap.set(slides, { xPercent: 100, zIndex: 0 })
+          gsap.set(slides[0], { xPercent: 0, zIndex: 1 })
+        },
+      })
+
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: storyDescriptionRef.current,
+            start: 'top 95%',
+            toggleActions: 'play none none reverse',
+          },
+        })
+        .fromTo(
+          storyTitleRef.current,
+          { autoAlpha: 0, y: 18 },
+          { autoAlpha: 1, y: 0, duration: 0.42, ease: 'sine.out' }
+        )
+        .fromTo(
+          storyDescriptionRef.current,
+          { autoAlpha: 0, y: 14 },
+          { autoAlpha: 1, y: 0, duration: 0.38, ease: 'sine.out' },
+          '-=0.2'
+        )
+    }, story)
+
+    return () => ctx.revert()
+  }, [])
+
+  useLayoutEffect(() => {
+    const gallery = galleryRef.current
+    if (!gallery) return undefined
+
+    const ctx = gsap.context(() => {
+      const galleryImages = galleryGridRef.current?.querySelectorAll('img')
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      if (prefersReducedMotion) {
+        gsap.set(galleryImages, { autoAlpha: 1, y: 0, clipPath: 'inset(0 0 0% 0)' })
+        return
+      }
+
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: galleryTitleRef.current,
+            start: 'top 95%',
+            toggleActions: 'play none none reverse',
+          },
+        })
+        .fromTo(
+          galleryEyebrowRef.current,
+          { autoAlpha: 0, y: 18 },
+          { autoAlpha: 1, y: 0, duration: 0.42, ease: 'sine.out' }
+        )
+        .fromTo(
+          galleryTitleRef.current,
+          { autoAlpha: 0, y: 14 },
+          { autoAlpha: 1, y: 0, duration: 0.38, ease: 'sine.out' },
+          '-=0.2'
+        )
+
+      gsap.fromTo(
+        galleryImages,
+        {
+          autoAlpha: 0,
+          y: -12,
+          clipPath: 'inset(0 0 100% 0)',
+        },
+        {
+          autoAlpha: 1,
+          y: 0,
+          clipPath: 'inset(0 0 0% 0)',
+          duration: 1.25,
+          ease: 'sine.inOut',
+          stagger: 0,
+          scrollTrigger: {
+            trigger: galleryGridRef.current,
+            start: 'top 90%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      )
+
+      const playButtonSweep = () => {
+        const buttonText = productButtonTextRef.current
+        if (!buttonText) return
+
+        buttonText.classList.remove(styles.productButtonTextSweep)
+        void buttonText.offsetWidth
+        buttonText.classList.add(styles.productButtonTextSweep)
+      }
+
+      ScrollTrigger.create({
+        trigger: productButtonRef.current,
+        start: 'top 92%',
+        onEnter: playButtonSweep,
+        onLeaveBack: () => {
+          productButtonTextRef.current?.classList.remove(styles.productButtonTextSweep)
+        },
+      })
+    }, gallery)
+
+    return () => ctx.revert()
+  }, [])
+
   return (
     <main className={styles.detail}>
       <section className={`${styles.panel} ${styles.hero}`} aria-label="SNOWBALL 제품 소개">
@@ -55,36 +416,53 @@ function SnowballDetailSection() {
         <h1>SNOWBALL</h1>
       </section>
 
-      <section className={`${styles.panel} ${styles.intro}`}>
+      <section ref={introRef} className={`${styles.panel} ${styles.intro}`}>
         <div className={styles.introVisual}>
-          <img src={introImage} alt="창가에 놓인 SNOWBALL 테이블 조명" />
+          <img ref={introImageRef} src={introImage} alt="창가에 놓인 SNOWBALL 테이블 조명" />
         </div>
-        <div className={styles.introCopy}>
-          <h2>A quiet<br /><em>form of light.</em></h2>
-          <p>
+        <div ref={introCopyRef} className={styles.introCopy}>
+          <h2 ref={introTitleRef}>
+            <span data-intro-line>A quiet</span>
+            <em data-intro-line>form of light.</em>
+          </h2>
+          <p ref={introDescriptionRef}>
             빛이 공간과 사람 사이에 만들어내는 감각에 주목했습니다. 시선을 끄는 조형성과 편안한 조명 경험으로 공간의 인상을 섬세하게 변화시키고, 머무는 시간에 여유와 깊이를 더합니다. 조명을 단순한 기능이 아닌 취향을 표현하며 일상에 오래 머무는 존재로 제안합니다.
           </p>
         </div>
       </section>
 
-      <section className={`${styles.panel} ${styles.story}`}>
+      <section ref={storyRef} className={`${styles.panel} ${styles.story}`}>
         <div className={styles.storyCopy}>
-          <h2>Elegance in Every Curve.</h2>
-          <p>
+          <h2 ref={storyTitleRef}>Elegance in Every Curve.</h2>
+          <p ref={storyDescriptionRef}>
             플라밍고 시리즈는 유연하게 이어지는 곡선과 절제된 형태로 공간에 우아한 균형을 더합니다. 낮에는 하나의 오브제로 존재하고, 밤에는 따뜻한 빛으로 일상의 풍경을 부드럽게 밝힙니다. 빛을 켜는 순간의 온도와 결에는, 오랜 시간 빛을 다루어 온 일광전구의 감각이 조용히 담겨 있습니다.
           </p>
         </div>
         <div className={styles.storyVisual}>
-          <img src={storyImage} alt="선반 위를 밝히는 SNOWBALL 천장 조명" />
+          {storySlides.map((slide, index) => (
+            <img
+              key={slide.src}
+              ref={(element) => {
+                storySlideRefs.current[index] = element
+              }}
+              className={styles.storySlide}
+              src={slide.src}
+              alt={slide.alt}
+            />
+          ))}
         </div>
       </section>
 
       <section className={`${styles.panel} ${styles.mosaic}`} aria-label="SNOWBALL 제품 이미지">
         <div className={styles.mosaicLeft}>
-          <img src={heroImage} alt="테이블 위 SNOWBALL 조명과 패키지" />
+          <img src={mosaicBox} alt="테이블 위 SNOWBALL 조명과 패키지" />
         </div>
         <div className={styles.mosaicTop}>
-          <img src={mosaicLamp} alt="SNOWBALL 테이블 조명" />
+          <div className={styles.mosaicTopFrame}>
+            <div className={styles.mosaicTopRotated}>
+              <img src={mosaicLamp} alt="SNOWBALL 테이블 조명" />
+            </div>
+          </div>
         </div>
         <div className={styles.mosaicBottom}>
           <img src={mosaicGlow} alt="빛을 밝힌 SNOWBALL 조명" />
@@ -95,14 +473,18 @@ function SnowballDetailSection() {
         <div className={styles.mosaicBlank} aria-hidden="true" />
       </section>
 
-      <section className={`${styles.panel} ${styles.gallery}`}>
-        <p className={styles.galleryEyebrow}>공간에 온기를 더하는 빛.</p>
-        <h2>SNOWBALL</h2>
-        <div className={styles.galleryGrid}>
+      <section ref={galleryRef} className={`${styles.panel} ${styles.gallery}`}>
+        <p ref={galleryEyebrowRef} className={styles.galleryEyebrow}>공간에 온기를 더하는 빛.</p>
+        <h2 ref={galleryTitleRef}>SNOWBALL</h2>
+        <div ref={galleryGridRef} className={styles.galleryGrid}>
           <div><img src={galleryLeft} alt="천장에 설치된 SNOWBALL 조명" /></div>
           <div><img src={galleryRight} alt="카펫 위에 놓인 SNOWBALL 조명" /></div>
         </div>
-        <span className={styles.productButton}>제품 보러가기</span>
+        <span ref={productButtonRef} className={styles.productButton}>
+          <span ref={productButtonTextRef} className={styles.productButtonText}>
+            제품 보러가기
+          </span>
+        </span>
       </section>
 
       <ProductOtherSection />

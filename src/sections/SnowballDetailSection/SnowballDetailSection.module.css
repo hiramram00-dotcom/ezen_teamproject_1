@@ -16,17 +16,24 @@
   container-type: inline-size;
 }
 
+.hero {
+  max-width: none;
+  height: 100svh;
+  min-height: 100svh;
+}
+
 .heroVisual,
 .heroVisual img {
   position: absolute;
   inset: 0;
   width: 100%;
+  height: 100%;
 }
 
 .heroVisual img {
-  top: -288.3%;
-  height: 676.67%;
   max-width: none;
+  object-fit: cover;
+  object-position: center;
 }
 
 .hero h1 {
@@ -59,6 +66,8 @@
   width: 100%;
   height: 259.36%;
   max-width: none;
+  transform-origin: center;
+  will-change: transform;
 }
 
 .introCopy {
@@ -85,6 +94,12 @@
   font-weight: 400;
 }
 
+.introCopy h2 span,
+.introCopy h2 em {
+  display: block;
+  will-change: transform, opacity;
+}
+
 .introCopy p,
 .storyCopy p {
   margin: 0;
@@ -93,6 +108,7 @@
   font-weight: 300;
   line-height: 1.4;
   letter-spacing: -0.05em;
+  will-change: transform, opacity;
 }
 
 .storyVisual {
@@ -103,11 +119,19 @@
 
 .storyVisual img {
   position: absolute;
-  top: -136.15%;
-  left: -1.07%;
-  width: 101.63%;
-  height: 242.42%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   max-width: none;
+  object-fit: cover;
+  object-position: center;
+  will-change: transform, opacity;
+}
+
+.storyVisual .storySlide {
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .storyCopy {
@@ -125,6 +149,7 @@
   font-weight: 500;
   line-height: 1.4;
   letter-spacing: -0.05em;
+  will-change: transform, opacity;
 }
 
 .mosaic > div {
@@ -142,11 +167,12 @@
 
 .mosaicLeft img {
   position: absolute;
-  top: -209.47%;
-  left: -4.01%;
-  width: 104.01%;
-  height: 323.14%;
+  top: 24.453%;
+  left: 14.519%;
+  width: 70.961%;
+  height: 54.697%;
   max-width: none;
+  object-fit: cover;
 }
 
 .mosaicTop {
@@ -157,14 +183,32 @@
   background: #f08a42;
 }
 
-.mosaicTop img {
+.mosaicTopFrame {
+  position: absolute;
+  top: -0.5333%;
+  left: 17.552%;
+  width: 70.8181%;
+  height: 103.8971%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mosaicTopRotated {
+  position: relative;
+  width: 81.121%;
+  height: 90.174%;
+  overflow: hidden;
+  transform: rotate(10.13deg);
+}
+
+.mosaicTopRotated img {
   position: absolute;
   top: -27.54%;
-  left: -7%;
-  width: 114%;
+  left: -57.4%;
+  width: 211.42%;
   height: 149.7%;
-  object-fit: contain;
-  transform: rotate(10.13deg);
+  max-width: none;
 }
 
 .mosaicBottom {
@@ -177,11 +221,13 @@
 
 .mosaicBottom img {
   position: absolute;
-  top: -185.7%;
+  top: 16%;
   left: 17.55%;
   width: 65.13%;
-  height: 299.57%;
+  height: 68%;
   max-width: none;
+  object-fit: cover;
+  object-position: center bottom;
 }
 
 .mosaicPendant {
@@ -249,6 +295,7 @@
 }
 
 .galleryGrid div {
+  position: relative;
   overflow: hidden;
 }
 
@@ -256,9 +303,16 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  will-change: clip-path, transform, opacity;
 }
 
 .galleryGrid div:first-child img {
+  position: absolute;
+  top: -34.57%;
+  left: -3.68%;
+  width: 107.47%;
+  height: 169.14%;
+  max-width: none;
   object-position: center bottom;
 }
 
@@ -277,109 +331,348 @@
   font-family: var(--font-kr);
   font-size: 1.0938cqw;
   color: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.productButton:hover {
+  background: var(--color-base-3, #000);
+  color: var(--color-base-2, #fff7ea);
+}
+
+.productButtonText {
+  position: relative;
+  display: inline-block;
+}
+
+.productButtonTextSweep {
+  -webkit-mask-image: radial-gradient(
+    circle 38px at center,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 30%,
+    #000 95%
+  );
+  mask-image: radial-gradient(
+    circle 38px at center,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 30%,
+    #000 95%
+  );
+  -webkit-mask-size: 330% 100%;
+  mask-size: 330% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: productButtonSweep 1s ease;
+}
+
+@keyframes productButtonSweep {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+
+  to {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
 }
 
 .otherProducts {
   position: relative;
   width: 100%;
-  height: min(56.25vw, 1080px);
+  max-width: none;
+  height: calc(min(56.25vw, 1080px) + 70px);
+  margin-top: min(0.1563vw, 3px);
+  margin-bottom: clamp(80px, 6.4063vw, 123px);
+  margin-inline: auto;
+  box-sizing: border-box;
   overflow-x: auto;
   overflow-y: hidden;
-  background: var(--color-base-2, #fff7ea);
+  background: var(--color-base-2);
+  cursor: grab;
+  overscroll-behavior-x: contain;
   scrollbar-width: none;
+  touch-action: pan-x;
+  container-type: inline-size;
 }
 
 .otherProducts::-webkit-scrollbar {
   display: none;
 }
 
+.dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
 .otherTrack {
   position: relative;
-  width: max(178vw, 3420px);
-  height: 100%;
+  width: 178cqw;
+  min-width: calc(100cqw + 1050px);
+  height: 56.25cqw;
+  min-height: 100%;
+  background: var(--color-base-2);
 }
 
 .otherIntro {
-  position: absolute;
-  top: 9.2593%;
-  left: max(40px, calc((100vw - 1920px) / 2 + 40px));
-  z-index: 2;
+  position: sticky;
+  top: 159px;
+  left: calc(max((100vw - 1920px) / 2, 0px) + 40px);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  width: max-content;
+  margin-top: 159px;
+  margin-left: calc(max((100vw - 1920px) / 2, 0px) + 40px);
+  pointer-events: none;
 }
 
 .otherIntro h2 {
-  margin: 0 0 0.8854vw;
-  font-size: min(4.1667vw, 80px);
+  margin: 0;
+  font-size: 80px;
   font-weight: 400;
   line-height: 1.2;
-  letter-spacing: -0.03em;
+  letter-spacing: -2.4px;
+  white-space: nowrap;
 }
 
-.otherIntro h2 span,
-.otherIntro h2 em {
+.otherTitleLead,
+.otherTitleAccent {
   display: block;
+  line-height: 1.2;
 }
 
-.otherIntro h2 span:first-child {
+.otherTitleLead {
   font-family: var(--font-en);
+  font-style: normal;
 }
 
-.otherIntro h2 em {
-  font-family: var(--font-deco);
+.otherTitleAccent {
+  font-family: "Playfair Display", var(--font-deco);
   font-style: italic;
 }
 
-.otherIntro h2 .arrow {
-  position: absolute;
-  left: min(10.4vw, 200px);
-  bottom: min(4.4vw, 85px);
-  font-family: var(--font-en);
-  font-size: min(2.2vw, 42px);
+.otherArrow {
+  display: inline-flex;
+  width: 37px;
+  height: 37px;
+  margin-left: 10px;
+  vertical-align: -6px;
+}
+
+.otherArrow svg {
+  width: 100%;
+  height: 100%;
 }
 
 .otherIntro p {
   margin: 0;
-  color: #8d8d8d;
   font-family: var(--font-kr);
-  font-size: min(1.0938vw, 21px);
+  font-size: 21px;
+  font-style: normal;
   font-weight: 300;
   line-height: 1.4;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.84px;
+  color: #8d8d8d;
+  white-space: nowrap;
+}
+
+.dragHint {
+  position: absolute;
+  top: calc(min(22.2396cqw, 427px) + 138px);
+  left: calc(max((100vw - 1920px) / 2, 0px) + min(21.3021cqw, 409px));
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  height: 0;
+  font-family: var(--font-en);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #8d8d8d;
+  opacity: 0.72;
+  translate: 0 0;
+  pointer-events: none;
+  transition: opacity 0.55s ease 0.08s, translate 0.55s ease 0.08s;
+}
+
+.dragHint span:last-child {
+  display: inline-block;
+  animation: dragHintDrift 1.8s ease-in-out infinite;
+}
+
+.dragHintHidden {
+  opacity: 0;
+  translate: 0 4px;
+}
+
+.dragHintHidden span:last-child {
+  animation: none;
+}
+
+@keyframes dragHintDrift {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(8px);
+  }
 }
 
 .otherCard {
   position: absolute;
+  z-index: 1;
   overflow: hidden;
-  color: #fff;
+  border-radius: 0;
+  color: var(--color-base-1);
+  opacity: 0.72;
+  transform: translateY(var(--card-enter-y, 44px)) scale(0.975);
+  transition:
+    transform 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.7s ease;
+  will-change: transform, opacity;
+}
+
+.otherCard[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.dragging .otherCard[data-visible="true"] {
+  transform: translateY(var(--drag-float-y, -22px)) scale(0.985);
+  transition-duration: 0.68s;
+}
+
+.dragging .otherCard[data-visible="true"]:nth-of-type(2n) {
+  transform: translateY(var(--drag-float-y-alt, 14px)) scale(0.985);
 }
 
 .otherCard img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   max-width: none;
   object-fit: cover;
+  user-select: none;
 }
 
 .otherCard h3 {
   position: absolute;
-  z-index: 1;
-  margin: 0;
+  z-index: 2;
   font-family: var(--font-en);
-  font-size: min(2.0833vw, 40px);
+  font-size: 2.0833cqw;
   font-weight: 400;
-  line-height: 1.4;
+  line-height: normal;
   letter-spacing: -0.02em;
 }
 
-.snowmanCard { top: 25.3704%; left: 21.3021vw; width: min(29.9479vw, 575px); height: min(22.4479vw, 431px); }
-.snowmanCard h3 { top: 7.2%; left: 13%; }
-.snowballCard { top: 19.1667%; left: 52.3958vw; width: min(26.0938vw, 501px); height: min(26.0938vw, 501px); }
-.snowballCard h3 { right: 7.8%; bottom: 6%; text-align: right; }
-.marioCard { top: 19.1667%; left: 79.6354vw; width: min(35.8333vw, 688px); height: min(20.1042vw, 386px); }
-.marioCard h3 { top: 7.7%; right: 3.5%; white-space: nowrap; }
-.flamingoCard { top: 19.1667%; left: 116.6146vw; width: min(19.7396vw, 379px); height: min(29.0104vw, 557px); }
-.flamingoCard h3 { right: 9.5%; bottom: 4%; text-align: right; }
-.apolloCard { top: 29.0741%; left: 137.5vw; width: min(23.6979vw, 455px); height: min(23.4896vw, 451px); }
-.apolloCard h3 { right: 4%; bottom: 4%; white-space: nowrap; }
+.snowmanCard {
+  top: calc(min(19.5313cqw, 375px) + 60px);
+  left: calc(max((100vw - 1920px) / 2, 0px) + min(21.3021cqw, 409px));
+  width: min(29.9479cqw, 575px);
+  height: min(22.4479cqw, 431px);
+  --card-enter-y: 46px;
+  --drag-float-y: -24px;
+}
+
+.snowmanCard h3 {
+  top: min(1.1458cqw, 22px);
+  left: min(2.0313cqw, 39px);
+  line-height: 1.4;
+}
+
+.snowmanCard img {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.snowballCard {
+  top: calc(min(15.625cqw, 300px) + 60px);
+  left: calc(max((100vw - 1920px) / 2, 0px) + min(52.3958cqw, 1006px));
+  width: min(26.0938cqw, 501px);
+  height: min(26.3542cqw, 506px);
+  --card-enter-y: 54px;
+  --drag-float-y-alt: 16px;
+}
+
+.snowballCard h3 {
+  right: min(2.0313cqw, 39px);
+  bottom: min(1.1458cqw, 22px);
+  text-align: right;
+}
+
+.marioCard {
+  top: calc(min(15.625cqw, 300px) + 60px);
+  left: calc(max((100vw - 1920px) / 2, 0px) + min(79.6354cqw, 1529px));
+  width: min(35.8333cqw, 688px);
+  height: min(20.1042cqw, 386px);
+  --card-enter-y: 42px;
+  --drag-float-y: -18px;
+}
+
+.marioCard h3 {
+  right: min(2.0313cqw, 39px);
+  bottom: min(1.1458cqw, 22px);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.marioCard img {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 52%;
+}
+
+.flamingoCard {
+  top: calc(min(15.625cqw, 300px) + 60px);
+  left: calc(max((100vw - 1920px) / 2, 0px) + min(116.6146cqw, 2239px));
+  width: min(19.7396cqw, 379px);
+  height: min(29.0104cqw, 557px);
+  --card-enter-y: 58px;
+  --drag-float-y-alt: 18px;
+}
+
+.flamingoCard h3 {
+  right: min(2.0313cqw, 39px);
+  bottom: min(1.1458cqw, 22px);
+  text-align: right;
+}
+
+.flamingoCard img {
+  inset: auto;
+  width: 124.96%;
+  height: 100%;
+  left: -19.2%;
+  top: 0;
+  object-fit: fill;
+}
+
+.apolloCard {
+  top: calc(min(21.1458cqw, 406px) + 60px);
+  left: calc(max((100vw - 1920px) / 2, 0px) + min(137.5cqw, 2640px));
+  width: min(23.6979cqw, 455px);
+  height: min(23.4896cqw, 451px);
+  --card-enter-y: 50px;
+  --drag-float-y: -20px;
+}
+
+.apolloCard h3 {
+  top: min(1.1458cqw, 22px);
+  right: min(2.0313cqw, 39px);
+  text-align: right;
+  white-space: nowrap;
+}
 
 @media (max-width: 700px) {
   .panel,
@@ -404,5 +697,11 @@
 
   .otherIntro {
     left: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .productButtonTextSweep {
+    animation: none;
   }
 }

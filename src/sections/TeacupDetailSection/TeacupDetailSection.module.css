@@ -16,12 +16,17 @@
   container-type: inline-size;
 }
 
+.hero {
+  max-width: none;
+  height: 100svh;
+  min-height: 100svh;
+}
+
 .heroImage {
   position: absolute;
-  top: -5.8333%;
-  left: -5.4167%;
-  width: 110.7813%;
-  height: 120.463%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   max-width: none;
   object-fit: cover;
 }
@@ -53,6 +58,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform-origin: center;
+  will-change: transform;
 }
 
 .introCopy {
@@ -73,6 +80,12 @@
   letter-spacing: -0.03em;
 }
 
+.introCopy h2 span,
+.introCopy h2 em {
+  display: block;
+  will-change: transform, opacity;
+}
+
 .introCopy h2 em {
   font-family: var(--font-deco);
   font-style: italic;
@@ -87,6 +100,7 @@
   font-weight: 300;
   line-height: 1.4;
   letter-spacing: -0.05em;
+  will-change: transform, opacity;
 }
 
 .storyVisual {
@@ -102,6 +116,16 @@
   width: 100%;
   height: 133.33%;
   max-width: none;
+  object-fit: cover;
+  will-change: transform;
+}
+
+.storyVisual .storySlide {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-position: center;
 }
 
 .storyCopy {
@@ -124,11 +148,18 @@
 
 .storyCopy h2 {
   margin-bottom: 0.2604cqw;
+  will-change: transform, opacity;
 }
 
 .mosaic figure {
   position: absolute;
   margin: 0;
+}
+
+.mosaicImageMask {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .mosaic figure img {
@@ -137,6 +168,11 @@
   height: 100%;
   max-width: none;
   object-fit: cover;
+  will-change: transform;
+}
+
+.mosaic figcaption {
+  will-change: transform, opacity;
 }
 
 .mosaicLeft {
@@ -223,6 +259,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  will-change: clip-path, transform, opacity;
 }
 
 .productButton {
@@ -239,6 +276,51 @@
   border-radius: 50px;
   font-family: var(--font-kr);
   font-size: 1.0938cqw;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.productButton:hover {
+  background: var(--color-base-3, #000);
+  color: var(--color-base-2, #fff7ea);
+}
+
+.productButtonText {
+  position: relative;
+  display: inline-block;
+}
+
+.productButtonTextSweep {
+  -webkit-mask-image: radial-gradient(
+    circle 38px at center,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 30%,
+    #000 95%
+  );
+  mask-image: radial-gradient(
+    circle 38px at center,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 30%,
+    #000 95%
+  );
+  -webkit-mask-size: 330% 100%;
+  mask-size: 330% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: productButtonSweep 1s ease;
+}
+
+@keyframes productButtonSweep {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+
+  to {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
 }
 
 @media (max-width: 700px) {
@@ -256,5 +338,11 @@
   .storyCopy h2,
   .mosaic figcaption {
     font-size: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .productButtonTextSweep {
+    animation: none;
   }
 }

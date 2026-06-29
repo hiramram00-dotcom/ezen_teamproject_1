@@ -3,16 +3,16 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import heroImage from './assets/hero-snowman.webp'
 import introLamp from './assets/intro-snowman.webp'
-import collaborationLeft from './assets/snowman-collab-left.webp'
-import collaborationRight from './assets/snowman-other-snowball.webp'
-import marqueeQuietly from './assets/marquee-quietly.webp'
-import marqueeQuietGlow from './assets/marquee-quiet-glow.webp'
-import marqueeSoftHour from './assets/marquee-soft-hour.webp'
-import marqueeLightStays from './assets/marquee-light-stays.webp'
-import marqueeLessWarmer from './assets/marquee-less-warmer.webp'
-import marqueeSoftDesign from './assets/marquee-soft-design.webp'
-import marqueeCloseBy from './assets/marquee-close-by.webp'
-import marqueeStillWarm from './assets/marquee-still-warm.webp'
+import collaborationLeft from './assets/snowman-collab-left-figma.webp'
+import collaborationRight from './assets/snowman-collab-right-figma.webp'
+import marqueeCardQuietly from './assets/marquee-card-quietly.webp'
+import marqueeCardQuietGlow from './assets/marquee-card-quiet-glow.webp'
+import marqueeCardSoftHour from './assets/marquee-card-soft-hour.webp'
+import marqueeCardLightStays from './assets/marquee-card-light-stays.webp'
+import marqueeCardLessWarmer from './assets/marquee-card-less-warmer.webp'
+import marqueeCardSoftDesign from './assets/marquee-card-soft-design.webp'
+import marqueeCardCloseBy from './assets/marquee-card-close-by.webp'
+import marqueeCardStillWarm from './assets/marquee-card-still-warm.webp'
 import otherSnowman from './assets/other-snowman.webp'
 import otherSnowball from './assets/other-snowball.webp'
 import otherMario from './assets/other-mario.webp'
@@ -23,12 +23,14 @@ import styles from './SnowmanDetailSection.module.css'
 gsap.registerPlugin(ScrollTrigger)
 
 const OTHER_PRODUCTS_DRAG_RESISTANCE = 0.48
+const HERO_VIDEO_URL =
+  'https://res.cloudinary.com/dfi8egvz1/video/upload/v1782694757/iklamp/snowman22-v2-table-720p.mp4'
 
 const storySlides = [heroImage, introLamp, collaborationLeft]
 
 const topMarqueeCards = [
   {
-    image: marqueeQuietly,
+    image: marqueeCardQuietly,
     alt: 'SNOWMAN lamp with Quietly here copy',
     variant: 'quietlyCard',
     content: (
@@ -39,18 +41,19 @@ const topMarqueeCards = [
     ),
   },
   {
-    image: marqueeQuietGlow,
+    image: marqueeCardQuietGlow,
     alt: 'Round SNOWMAN lamp glowing quietly',
+    variant: 'quietGlowCard',
     content: <p className={`${styles.marqueeCopy} ${styles.quietGlowCopy}`}>A quiet glow.</p>,
   },
   {
-    image: marqueeSoftHour,
+    image: marqueeCardSoftHour,
     alt: 'SNOWMAN lamp framed in orange poster',
     variant: 'softHourCard',
-    content: <p className={`${styles.marqueeCopy} ${styles.softHourCopy}`}>A soft hour.</p>,
+    content: null,
   },
   {
-    image: marqueeLightStays,
+    image: marqueeCardLightStays,
     alt: 'SNOWMAN lamp on striped textile',
     content: (
       <p className={`${styles.marqueeCopy} ${styles.lightStaysCopy}`}>
@@ -62,14 +65,15 @@ const topMarqueeCards = [
 
 const bottomMarqueeCards = [
   {
-    image: marqueeLessWarmer,
+    image: marqueeCardLessWarmer,
     alt: 'Small SNOWMAN lamp poster on green background',
     variant: 'lessWarmerCard',
     content: <p className={`${styles.marqueeCopy} ${styles.lessWarmerCopy}`}>Less, but warmer.</p>,
   },
   {
-    image: marqueeSoftDesign,
+    image: marqueeCardSoftDesign,
     alt: 'SNOWMAN lamp shadow detail',
+    variant: 'softDesignCard',
     content: (
       <p className={`${styles.marqueeCopy} ${styles.softDesignCopy}`}>
         Soft by <em>design.</em>
@@ -77,7 +81,7 @@ const bottomMarqueeCards = [
     ),
   },
   {
-    image: marqueeCloseBy,
+    image: marqueeCardCloseBy,
     alt: 'Person holding a SNOWMAN lamp near greenery',
     content: (
       <div className={`${styles.marqueeCopy} ${styles.closeByCopy}`}>
@@ -91,7 +95,7 @@ const bottomMarqueeCards = [
     ),
   },
   {
-    image: marqueeStillWarm,
+    image: marqueeCardStillWarm,
     alt: 'Hand adjusting a warm SNOWMAN lamp',
     variant: 'stillWarmCard',
     content: (
@@ -105,12 +109,11 @@ const bottomMarqueeCards = [
 const renderMarqueeCards = (cards) =>
   [...cards, ...cards].map((card, index) => (
     <article
-      className={`${styles.marqueeCard} ${card.variant ? styles[card.variant] : ''}`}
+      className={styles.marqueeCard}
       key={`${card.alt}-${index}`}
       aria-hidden={index >= cards.length}
     >
       <img src={card.image} alt={index < cards.length ? card.alt : ''} draggable="false" />
-      {card.content}
     </article>
   ))
 
@@ -434,11 +437,18 @@ function SnowmanDetailSection() {
   return (
     <main className={styles.detail}>
       <section className={`${styles.panel} ${styles.hero}`}>
-        <img
+        <video
           className={styles.heroBackground}
-          src={heroImage}
-          alt="SNOWMAN22 V2 조명"
-        />
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          poster={heroImage}
+          aria-label="SNOWMAN22 V2 lighting video"
+        >
+          <source src={HERO_VIDEO_URL} type="video/mp4" />
+        </video>
         <h1 className={styles.heroTitle}>SNOWMAN</h1>
       </section>
 
