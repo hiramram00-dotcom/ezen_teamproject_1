@@ -418,6 +418,8 @@
   max-width: none;
   height: var(--crop-height, 100%);
   object-fit: cover;
+  /* hover scale이 보이는 크롭 영역의 중심을 기준으로 커지도록 보정 */
+  transform-origin: var(--origin-x, 50%) var(--origin-y, 50%);
 }
 
 @keyframes thumbnail-frame-cycle {
