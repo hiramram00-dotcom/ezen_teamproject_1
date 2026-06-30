@@ -299,6 +299,7 @@
 .productButton:hover {
   background: var(--color-base-3, #000);
   color: var(--color-base-2, #fff7ea);
+  cursor: pointer;
 }
 
 .productButtonText {

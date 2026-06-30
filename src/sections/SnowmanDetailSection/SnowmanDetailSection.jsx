@@ -592,6 +592,7 @@ function SnowmanDetailSection() {
               target="_blank"
               rel="noopener noreferrer"
               draggable="false"
+              data-cursor="pointer"
             >
               <img src={otherSnowman} alt="SNOWMAN22 V2" draggable="false" />
               <h3>
@@ -609,6 +610,7 @@ function SnowmanDetailSection() {
               target="_blank"
               rel="noopener noreferrer"
               draggable="false"
+              data-cursor="pointer"
             >
               <img src={otherSnowball} alt="V2 SNOWBALL22" draggable="false" />
               <h3>
@@ -626,6 +628,7 @@ function SnowmanDetailSection() {
               target="_blank"
               rel="noopener noreferrer"
               draggable="false"
+              data-cursor="pointer"
             >
               <img src={otherMario} alt="MARIO 14 Table" draggable="false" />
               <h3>MARIO 14 Table</h3>
@@ -639,6 +642,7 @@ function SnowmanDetailSection() {
               target="_blank"
               rel="noopener noreferrer"
               draggable="false"
+              data-cursor="pointer"
             >
               <img src={otherFlamingo} alt="FLAMINGO 26" draggable="false" />
               <h3>
@@ -658,6 +662,7 @@ function SnowmanDetailSection() {
               target="_blank"
               rel="noopener noreferrer"
               draggable="false"
+              data-cursor="pointer"
             >
               <img src={otherApollo} alt="APOLLO 22" draggable="false" />
               <h3>APOLLO 22</h3>

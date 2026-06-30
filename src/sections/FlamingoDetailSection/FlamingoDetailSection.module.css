@@ -414,6 +414,7 @@
   position: absolute;
   top: 50.6771cqw;
   left: 50%;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -434,6 +435,7 @@
 .collaborationButton:hover {
   background: var(--color-base-3);
   color: var(--color-base-1);
+  cursor: pointer;
 }
 
 .collaborationButtonText {
@@ -554,6 +556,7 @@
   display: block;
   color: inherit;
   pointer-events: auto;
+  cursor: pointer !important;
 }
 
 .otherCard img {

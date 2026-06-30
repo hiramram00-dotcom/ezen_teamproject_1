@@ -215,6 +215,7 @@ export function ProductOtherSection() {
               target="_blank"
               rel="noopener noreferrer"
               draggable="false"
+              data-cursor="pointer"
             >
               <img src={product.image} alt="" draggable="false" />
               <h3>{product.name}</h3>
@@ -690,6 +691,7 @@ function SnowballDetailSection() {
           href="https://brand.naver.com/iklamp/search?q=snowball"
           target="_blank"
           rel="noopener noreferrer"
+          data-cursor="pointer"
         >
           <span ref={productButtonTextRef} className={styles.productButtonText}>
             제품 보러가기
