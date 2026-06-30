@@ -916,6 +916,16 @@
   white-space: nowrap;
 }
 
+@media (min-width: 701px) and (max-width: 1199px) {
+  .storyCopy h2 {
+    font-size: 20px !important;
+  }
+
+  .collaborationButton {
+    font-size: 14px !important;
+  }
+}
+
 @media (max-width: 700px) {
   .introDescription,
   .storyCopy p,
