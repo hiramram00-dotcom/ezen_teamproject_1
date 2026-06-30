@@ -332,14 +332,44 @@ function AboutIntroParticles({ onComplete }) {
       targetProgress = Math.min(targetProgress + event.deltaY / scrollDistance, 1)
     }
 
+    let touchStartY = null
+
+    const handleTouchStart = (event) => {
+      if (completed) return
+      touchStartY = event.touches[0].clientY
+    }
+
+    const handleTouchMove = (event) => {
+      if (completed || touchStartY === null) return
+      const deltaY = touchStartY - event.touches[0].clientY
+      if (deltaY <= 0) return
+      event.preventDefault()
+      const scrollDistance = Math.max(
+        window.innerWidth * INTRO_SCROLL_DISTANCE_RATIO,
+        window.innerHeight * 0.72,
+      )
+      targetProgress = Math.min(targetProgress + deltaY / scrollDistance, 1)
+      touchStartY = event.touches[0].clientY
+    }
+
+    const handleTouchEnd = () => {
+      touchStartY = null
+    }
+
     buildParticles()
     animationFrame = requestAnimationFrame(draw)
     window.addEventListener('resize', buildParticles)
     window.addEventListener('wheel', handleWheel, { passive: false })
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: false })
+    window.addEventListener('touchend', handleTouchEnd, { passive: true })
 
     return () => {
       window.removeEventListener('resize', buildParticles)
       window.removeEventListener('wheel', handleWheel)
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
+      window.removeEventListener('touchend', handleTouchEnd)
       if (animationFrame) cancelAnimationFrame(animationFrame)
     }
   }, [onComplete])
