@@ -18,6 +18,7 @@ import otherMario from '../FlamingoDetailSection/assets/other-mario.webp'
 import otherFlamingo from '../FlamingoDetailSection/assets/other-flamingo.webp'
 import otherApollo from '../FlamingoDetailSection/assets/other-apollo.webp'
 import styles from './SnowballDetailSection.module.css'
+import otherStyles from '../../styles/otherTrack.module.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -176,8 +177,8 @@ export function ProductOtherSection() {
       onPointerCancel={endDrag}
     >
       <div
-        className={`${styles.dragHint} ${
-          hasDraggedOtherProducts ? styles.dragHintHidden : ''
+        className={`${otherStyles.dragHint} ${
+          hasDraggedOtherProducts ? otherStyles.dragHintHidden : ''
         }`}
         aria-hidden="true"
       >
@@ -185,13 +186,13 @@ export function ProductOtherSection() {
         <span>→</span>
       </div>
 
-      <div className={styles.otherTrack}>
-        <div ref={otherIntroRef} className={styles.otherIntro}>
+      <div className={otherStyles.otherTrack}>
+        <div ref={otherIntroRef} className={otherStyles.otherIntro}>
           <h2>
-            <span className={styles.otherTitleLead}>Other</span>
-            <span className={styles.otherTitleAccent}>
+            <span className={otherStyles.otherTitleLead}>Other</span>
+            <span className={otherStyles.otherTitleAccent}>
               Products
-              <span className={styles.otherArrow} aria-hidden="true">
+              <span className={otherStyles.otherArrow} aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="7" y1="7" x2="17" y2="17" />
                   <polyline points="17 8 17 17 8 17" />
@@ -200,9 +201,9 @@ export function ProductOtherSection() {
             </span>
           </h2>
           <p>
-            부드러운 빛으로 일상에 편안함을 더하는
+            부드러운 빛으로
             <br />
-            조명을 찾고 있다면
+            일상에 편안함을 더하는 조명을 찾고 있다면
           </p>
         </div>
 
@@ -604,7 +605,11 @@ function SnowballDetailSection() {
             <em data-intro-line>softly settled.</em>
           </h2>
           <p ref={introDescriptionRef}>
-            둥근 유리 안에서 빛이 부드럽게 번집니다. 또렷하지 않아 더 편안한 빛이 공간의 온도를 천천히 끌어올리고, 곁에 두는 시간에 잔잔한 포근함을 더합니다. 밝히는 것을 넘어, 하루의 끝까지 가만히 머무는 작은 존재로 곁을 지킵니다.
+            둥근 유리 안에서 빛이 부드럽게 번집니다. 또렷하지 않아 더 편안한 빛이 공간의 온도를
+            <br />
+            천천히 끌어올리고, 곁에 두는 시간에 잔잔한 포근함을 더합니다. 밝히는 것을 넘어,
+            <br />
+            하루의 끝까지 가만히 머무는 작은 존재로 곁을 지킵니다.
           </p>
         </div>
       </section>
@@ -613,7 +618,13 @@ function SnowballDetailSection() {
         <div className={styles.storyCopy}>
           <h2 ref={storyTitleRef}>A Sphere That Holds Warmth.</h2>
           <p ref={storyDescriptionRef}>
-            은은한 빛이 천천히 내려앉아 책상 위를 차분히 물들입니다. 둥근 유리를 지난 또렷하지 않은 빛이 마주한 공간을 낮게 가라앉히고, 가까운 자리에 포근한 온기를 더합니다. 오래 켜두어도 눈이 편안한 부드러운 빛은, 시선을 끌지 않아도 하루의 끝을 조용히 함께합니다.
+            은은한 빛이 천천히 내려앉아 책상 위를 차분히 물들입니다.
+            <br />
+            둥근 유리를 지난 또렷하지 않은 빛이 마주한 공간을 낮게 가라앉히고,
+            <br />
+            가까운 자리에 포근한 온기를 더합니다. 오래 켜두어도 눈이 편안한
+            <br />
+            부드러운 빛은 시선을 끌지 않아도 하루의 끝을 조용히 함께합니다.
           </p>
         </div>
         <div className={styles.storyVisual}>

@@ -22,6 +22,7 @@ import otherMario from './assets/other-mario.webp'
 import otherFlamingo from './assets/other-flamingo.webp'
 import otherApollo from './assets/other-apollo.webp'
 import styles from './SnowmanDetailSection.module.css'
+import otherStyles from '../../styles/otherTrack.module.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -466,10 +467,11 @@ function SnowmanDetailSection() {
             <em data-intro-line>in its simplest form.</em>
           </h2>
           <p ref={introDescriptionRef} className={styles.introDescription}>
-            군더더기 없는 실루엣 안에, 가장 본질적인 빛의 따뜻함을 담았습니다.
-            화려한 장식이나 복잡한 구조 대신, 둥글고 단정한 형태만으로 공간에
-            스며듭니다. 꾸미지 않아도 충분한 빛, 오래 보아도 질리지 않는 단순함
-            속에서 일상의 온기가 조용히 머뭅니다.
+            군더더기 없는 실루엣 안에, 가장 본질적인 빛의 따뜻함을 담았습니다. 화려한 장식이나
+            <br />
+            복잡한 구조 대신, 둥글고 단정한 형태만으로 공간에 스며듭니다. 꾸미지 않아도 충분한 빛,
+            <br />
+            오래 보아도 질리지 않는 단순함 속에서 일상의 온기가 조용히 머뭅니다.
           </p>
         </div>
       </section>
@@ -496,10 +498,13 @@ function SnowmanDetailSection() {
         <div className={styles.storyCopy}>
           <h2 ref={storyTitleRef}>Standing, softly lit.</h2>
           <p ref={storyDescriptionRef}>
-            두 겹으로 포개진 둥근 디퓨저가 빛을 표면 전체로 감싸, 눈부심 없이
-            고르게 퍼뜨립니다. 위아래로 맞닿은 곡면은 눈사람을 닮은 둥근 형태로
-            어느 방향에서 보아도 단정합니다. 빛이 부드럽게 번져 공간을 편안한
-            밝기로 채웁니다.
+            두 겹으로 포개진 둥근 디퓨저가 빛을 표면 전체로 감싸,
+            <br />
+            눈부심 없이 고르게 퍼뜨립니다. 위아래로 맞닿은 곡면은
+            <br />
+            눈사람을 닮은 둥근 형태로 어느 방향에서 보아도 단정합니다.
+            <br />
+            빛이 부드럽게 번져 공간을 편안한 밝기로 채웁니다.
           </p>
         </div>
       </section>
@@ -550,8 +555,8 @@ function SnowmanDetailSection() {
         onPointerCancel={endDrag}
       >
         <div
-          className={`${styles.dragHint} ${
-            hasDraggedOtherProducts ? styles.dragHintHidden : ''
+          className={`${otherStyles.dragHint} ${
+            hasDraggedOtherProducts ? otherStyles.dragHintHidden : ''
           }`}
           aria-hidden="true"
         >
@@ -559,13 +564,13 @@ function SnowmanDetailSection() {
           <span>←→</span>
         </div>
 
-        <div className={styles.otherTrack}>
-          <div ref={otherIntroRef} className={styles.otherIntro}>
+        <div className={otherStyles.otherTrack}>
+          <div ref={otherIntroRef} className={otherStyles.otherIntro}>
             <h2>
-              <span className={styles.otherTitleLead}>Other</span>
-              <span className={styles.otherTitleAccent}>
+              <span className={otherStyles.otherTitleLead}>Other</span>
+              <span className={otherStyles.otherTitleAccent}>
                 Products
-                <span className={styles.otherArrow} aria-hidden="true">
+                <span className={otherStyles.otherArrow} aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="7" y1="7" x2="17" y2="17" />
                     <polyline points="17 8 17 17 8 17" />
@@ -574,9 +579,9 @@ function SnowmanDetailSection() {
               </span>
             </h2>
             <p>
-              부드러운 빛으로 일상에 편안함을 더하는
+              부드러운 빛으로
               <br />
-              조명을 찾고 있다면
+              일상에 편안함을 더하는 조명을 찾고 있다면
             </p>
           </div>
 
