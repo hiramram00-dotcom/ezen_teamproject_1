@@ -175,7 +175,7 @@ function PurposeSection() {
         <div className={styles.missionVisual}>
           <img className={styles.missionImage} src={teamImage} alt="" />
           <p className={styles.missionTitle}>
-            우리는 <strong>세상을 이롭게 하는 빛</strong>을 만듭니다.
+            우리는<span className={styles.mobileBr} /> <strong>세상을 이롭게 하는 빛</strong>을<span className={styles.mobileBr} /> 만듭니다.
           </p>
         </div>
         <div ref={missionBodyRef} className={styles.missionBody}>
