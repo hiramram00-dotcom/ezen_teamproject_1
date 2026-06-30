@@ -308,6 +308,16 @@
   font-weight: 300;
 }
 
+.mobileBr {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobileBr {
+    display: block;
+  }
+}
+
 /* ----- ?대?吏 ----- */
 .media {
   width: 100%;
@@ -380,7 +390,7 @@
 
   .heading {
     margin-bottom: 6vw;
-    font-size: clamp(40px, 12vw, 120px);
+    font-size: 56px;
     white-space: normal;
   }
 
@@ -415,7 +425,7 @@
   .marker {
     margin: 4vw 0 3vw;
     text-align: left;
-    font-size: 86px;
+    font-size: 60px;
     font-weight: 500;
   }
 
@@ -436,11 +446,11 @@
   }
 
   .title {
-    font-size: 24px;
+    font-size: 18px;
   }
 
   .description {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .mediaRow {

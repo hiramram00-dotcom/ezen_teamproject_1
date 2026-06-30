@@ -162,11 +162,11 @@ function PurposeSection() {
             <i />
             <strong>김홍도</strong>
           </p>
-          <blockquote>“빛에는 희망의 개념도 있잖아요. 우리는 희망을 만드는 거예요.”</blockquote>
+          <blockquote>&ldquo;빛에는 희망의 개념도 있잖아요.<br className={styles.mobileBr} />우리는 희망을 만드는 거예요.&rdquo;</blockquote>
           <p ref={descriptionRef} className={styles.description}>
-            60년 넘게 이어온 제조 기술과 빛에 대한 깊은 이해를 바탕으로,
-            <br />
-            일광전구의 새로운 방향성을 만들어가고 있습니다.
+            60년 넘게 이어온 제조 기술과 빛에 대한<span className={styles.mobileBr} />
+            깊은 이해를 바탕으로, 일광전구의<span className={styles.mobileBr} />
+            새로운 방향성을 만들어가고 있습니다.
           </p>
         </div>
       </div>

@@ -64,7 +64,13 @@ const historyItems = [
     key: '2013',
     yearLabel: '2013',
     title: '1st 리브랜딩',
-    description: '창립 50주년을 맞아 브랜드 리뉴얼을 진행했습니다.',
+    description: (
+      <>
+        창립 50주년을 맞아 브랜드 리뉴얼을
+        <span className={styles.mobileBr} />
+        진행했습니다.
+      </>
+    ),
     images: [
       { src: about2013a, w: 580, h: 580 },
       { src: about2013b, w: 404, h: 358 },
@@ -78,7 +84,9 @@ const historyItems = [
       <>
         2nd 리브랜딩과 SNOWMAN 시리즈 출시를 통해
         <br />
-        전구 제조사를 넘어 디자인 조명 브랜드로 도약했습니다.
+        전구 제조사를 넘어 디자인 조명 브랜드로
+        <span className={styles.mobileBr} />
+        도약했습니다.
       </>
     ),
     images: [{ src: about2021, w: 1000, h: 580 }],
@@ -100,14 +108,26 @@ const historyItems = [
     key: '2023',
     yearLabel: '2023',
     title: '60주년 브랜드북 발간',
-    description: '60년 브랜드의 역사를 담은 브랜드북을 발간하였습니다.',
+    description: (
+      <>
+        60년 브랜드의 역사를 담은 브랜드북을
+        <span className={styles.mobileBr} />
+        발간하였습니다.
+      </>
+    ),
     images: [{ src: about2023, w: 1000, h: 580 }],
   },
   {
     key: '2026',
     yearLabel: '2026',
     title: '서울리빙디자인페어 참가',
-    description: '10회 연속으로 서울리빙디자인페어에 참가하였습니다.',
+    description: (
+      <>
+        10회 연속으로 서울리빙디자인페어에
+        <span className={styles.mobileBr} />
+        참가하였습니다.
+      </>
+    ),
     images: [{ src: about2026, w: 1000, h: 580 }],
   },
   {
