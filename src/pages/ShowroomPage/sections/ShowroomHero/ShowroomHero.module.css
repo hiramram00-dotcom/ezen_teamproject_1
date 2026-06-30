@@ -31,6 +31,12 @@
 }
 
 /* ---------- 비주얼 + 라벨 오버레이 ---------- */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .intro {
+    font-size: 16px;
+  }
+}
+
 .visual {
   position: relative;
   width: 100%;

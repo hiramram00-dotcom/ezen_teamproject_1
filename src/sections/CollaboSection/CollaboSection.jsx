@@ -80,9 +80,9 @@ const BASE_SPEED = 70 // px/s 자동 흐름(스크롤 가속 없음)
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
 
-// 모바일: 처음 보여줄 카드 수 (나머지는 '더보기'에 숨김)
 const MOBILE_VISIBLE = 3
 
+// 모바일: 처음 보여줄 카드 수 (나머지는 '더보기'에 숨김)
 function CollaboSection() {
   const wrapRef = useRef(null)
   const titleRef = useRef(null)
@@ -102,8 +102,7 @@ function CollaboSection() {
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches,
   )
-  const [expanded, setExpanded] = useState(false) // '더보기'로 전체 표시 여부
-
+  const [expanded, setExpanded] = useState(false)
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 767px)')
     const onChange = () => setIsMobile(mq.matches)
@@ -175,6 +174,7 @@ function CollaboSection() {
     let last = performance.now()
     let raf = 0
     let isVisible = false
+    const manualOnly = window.matchMedia('(max-width: 1199px)').matches
 
     // ----- 호버(카드 위에서만 정지) / 드래그 -----
     const overCard = (el) => !!(el && el.closest && el.closest('[data-card]'))
@@ -255,7 +255,7 @@ function CollaboSection() {
 
       // 마퀴 (호버/드래그 중엔 자동 정지)
       const inView = rect.bottom > 0 && rect.top < vh
-      if (inView && !hovering && !dragging) {
+      if (inView && !manualOnly && !hovering && !dragging) {
         pos = posMod(pos + BASE_SPEED * dt)
       }
       if (copyW > 0) track.style.transform = `translateX(${-pos}px)`
