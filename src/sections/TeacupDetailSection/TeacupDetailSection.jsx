@@ -383,6 +383,7 @@ function TeacupDetailSection() {
           href="https://brand.naver.com/iklamp/search?q=teacup"
           target="_blank"
           rel="noopener noreferrer"
+          data-cursor="pointer"
         >
           <span ref={productButtonTextRef} className={styles.productButtonText}>
             제품 보러가기

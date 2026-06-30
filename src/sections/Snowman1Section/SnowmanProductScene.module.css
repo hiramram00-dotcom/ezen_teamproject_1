@@ -43,7 +43,7 @@
   top: 50%;
   left: 50%;
   z-index: 3;
-  width: min(70vw, 1180px);
+  width: min(62vw, 1060px);
   aspect-ratio: 1 / 1;
   opacity: var(--model-opacity);
   transform:
