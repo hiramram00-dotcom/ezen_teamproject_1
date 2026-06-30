@@ -20,6 +20,8 @@ const INTRO_SCROLL_DISTANCE_RATIO = 0.5
 const INTRO_MAX_PROGRESS_STEP = 0.018
 
 const getAboutLayoutWidth = () => Math.min(window.innerWidth, 1920)
+const getIntroCenterYRatio = (width) =>
+  width >= 768 && width <= 1199 ? 0.5 : INTRO_CENTER_Y_RATIO
 const ABOUT_STORY_VIDEO =
   'https://res.cloudinary.com/dg9hg29hc/video/upload/ADORABLE_ANYWHERE_DUMBO13_-_YouTube_-_Chrome_2026-06-22_11-23-20_zhldeh.mp4'
 
@@ -81,7 +83,7 @@ function sampleIntroTextPoints(width, height, particleCount) {
   const mask = document.createElement('canvas')
   const maskContext = mask.getContext('2d', { willReadFrequently: true })
   const centerX = width / 2
-  const centerY = height * INTRO_CENTER_Y_RATIO
+  const centerY = height * getIntroCenterYRatio(width)
   const sinceSize = getFontSizeToken('--fs-title-4', 70)
   const yearSize = getFontSizeToken('--fs-display-1', 180)
   const textCenterY = centerY - width * 0.01
@@ -158,7 +160,7 @@ function AboutIntroParticles({ onComplete }) {
       const width = window.innerWidth
       const height = Math.max(window.innerHeight, width * 0.5625)
       const centerX = width / 2
-      const centerY = height * INTRO_CENTER_Y_RATIO
+      const centerY = height * getIntroCenterYRatio(width)
       const ringRadius = Math.min(width, height) * 0.22
       const particleCount =
         width <= 768 ? INTRO_PARTICLE_COUNT_MOBILE : INTRO_PARTICLE_COUNT
@@ -220,7 +222,7 @@ function AboutIntroParticles({ onComplete }) {
       const width = canvas.width / renderRatio
       const height = canvas.height / renderRatio
       const centerX = width / 2
-      const centerY = height * INTRO_CENTER_Y_RATIO
+      const centerY = height * getIntroCenterYRatio(width)
       context.globalCompositeOperation = 'source-over'
       context.clearRect(0, 0, width, height)
       context.lineCap = 'round'

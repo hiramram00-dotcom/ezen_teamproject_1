@@ -94,6 +94,18 @@
   filter: contrast(0.9) brightness(1.04) saturate(0.95);
 }
 
+@media (max-width: 1199px) {
+  .preview {
+    display: none;
+  }
+
+  .dim {
+    opacity: 1;
+    font-size: clamp(40px, 6vw, var(--fs-title-1));
+    font-weight: 600;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .preview,
   .previewInner img {

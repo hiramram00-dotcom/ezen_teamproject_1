@@ -188,6 +188,20 @@
   line-height: 1;
 }
 
+@media (min-width: 768px) and (max-width: 1199px) {
+  .title span:first-child {
+    top: calc(2 * var(--philosophy-unit));
+  }
+
+  .title span:last-child {
+    top: calc(31 * var(--philosophy-unit));
+  }
+
+  .panel .message {
+    top: calc(calc(8.2 * var(--philosophy-unit)) + calc(28.2 * var(--philosophy-unit)) / 2);
+  }
+}
+
 .message {
   position: absolute;
   top: calc(calc(8.2 * var(--philosophy-unit)) + calc(28.2 * var(--philosophy-unit)) / 2 + calc(2 * var(--philosophy-unit))); /* ?곷떒 議곕챸 ?대?吏???몃줈 以묒븰 */

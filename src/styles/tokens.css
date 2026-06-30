@@ -56,7 +56,9 @@
 @media (min-width: 768px) and (max-width: 1023px) {
   :root { --layout-gutter: 24px;
           --fs-title-2: 72px;
-          --fs-title-4: 56px;
+          --fs-title-3: 66px;
+          --fs-title-4: 64px;
+          --fs-sub-2: 17px;
         }
 }
 @media (max-width: 767px) {

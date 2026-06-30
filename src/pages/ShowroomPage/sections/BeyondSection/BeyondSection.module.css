@@ -133,6 +133,13 @@
 }
 
 /* ===================== 모바일 (≤767px) ===================== */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .desc,
+  .darkText {
+    font-size: 16px;
+  }
+}
+
 @media (max-width: 767px) {
   /* 갤러리: 좌(텍스트)+우(이미지) 가로 → 세로 스택, sticky 해제 */
   .gallery {

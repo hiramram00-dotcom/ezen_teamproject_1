@@ -236,7 +236,7 @@
   }
 
   .tagline {
-    font-size: var(--fs-sub-2);
+    font-size: 15px;
     white-space: normal;
   }
 
@@ -272,6 +272,12 @@
 }
 
 /* 모바일 (767px 이하) */
+@media (min-width: 768px) and (max-width: 1300px) {
+  .main {
+    align-items: end;
+  }
+}
+
 @media (max-width: 767px) {
   .footer {
     padding: 48px var(--layout-gutter) 32px;
