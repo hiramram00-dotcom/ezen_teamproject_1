@@ -138,16 +138,31 @@
 .storyCopy h2,
 .mosaic figcaption {
   margin: 0;
-  font-family: var(--font-deco);
   font-size: 1.4583cqw;
-  font-style: italic;
-  font-weight: 500;
   line-height: 1.4;
   letter-spacing: -0.05em;
 }
 
 .storyCopy h2 {
-  margin-bottom: 0.2604cqw;
+  font-family: var(--font-deco);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.mosaicCaptionAccent {
+  font-family: var(--font-deco);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.mosaicCaptionPlain {
+  font-family: var(--font-en);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.storyCopy h2 {
+  margin-bottom: 1cqw;
   will-change: transform, opacity;
 }
 

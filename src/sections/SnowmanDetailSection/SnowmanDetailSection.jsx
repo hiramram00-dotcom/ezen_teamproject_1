@@ -5,6 +5,9 @@ import heroImage from './assets/hero-snowman.webp'
 import introLamp from './assets/intro-snowman.webp'
 import collaborationLeft from './assets/snowman-collab-left-figma.webp'
 import collaborationRight from './assets/snowman-collab-right-figma.webp'
+import storyPendantTouch from './assets/story-pendant-touch.webp'
+import storyTableLamp from './assets/story-table-lamp.webp'
+import storyChairFloorLamp from './assets/story-chair-floor-lamp.webp'
 import marqueeCardQuietly from './assets/marquee-card-quietly.webp'
 import marqueeCardQuietGlow from './assets/marquee-card-quiet-glow.webp'
 import marqueeCardSoftHour from './assets/marquee-card-soft-hour.webp'
@@ -26,7 +29,7 @@ const OTHER_PRODUCTS_DRAG_RESISTANCE = 0.48
 const HERO_VIDEO_URL =
   'https://res.cloudinary.com/dfi8egvz1/video/upload/v1782694757/iklamp/snowman22-v2-table-720p.mp4'
 
-const storySlides = [heroImage, introLamp, collaborationLeft]
+const storySlides = [storyPendantTouch, storyTableLamp, storyChairFloorLamp]
 
 const topMarqueeCards = [
   {
@@ -107,7 +110,7 @@ const bottomMarqueeCards = [
 ]
 
 const renderMarqueeCards = (cards) =>
-  [...cards, ...cards].map((card, index) => (
+  Array.from({ length: 4 }, () => cards).flat().map((card, index) => (
     <article
       className={styles.marqueeCard}
       key={`${card.alt}-${index}`}
@@ -226,11 +229,12 @@ function SnowmanDetailSection() {
       for (let index = 1; index <= slides.length; index += 1) {
         const next = index % slides.length
         slider
-          .set(slides[next], { xPercent: 100, zIndex: 2 }, '+=1.5')
+          .set(slides[next], { xPercent: 100, autoAlpha: 0, zIndex: 2 }, '+=1.5')
           .to(slides[next], {
             xPercent: 0,
-            duration: 0.7,
-            ease: 'power1.out',
+            autoAlpha: 1,
+            duration: 0.9,
+            ease: 'power2.inOut',
           })
           .set(slides[current], { xPercent: 100, zIndex: 0 })
           .set(slides[next], { zIndex: 1 })
@@ -481,10 +485,10 @@ function SnowmanDetailSection() {
               src={src}
               alt={
                 index === 0
-                  ? 'SNOWMAN 조명 클로즈업'
+                  ? '손으로 SNOWMAN 펜던트 조명을 만지는 모습'
                   : index === 1
-                    ? '창가에 놓인 SNOWMAN 조명'
-                    : 'SNOWMAN 조명 디테일'
+                    ? '햇빛이 드는 협탁 위에 놓인 SNOWMAN 테이블 조명'
+                    : '원목 벽 앞 의자 옆에 놓인 SNOWMAN 플로어 조명'
               }
             />
           ))}
@@ -525,7 +529,9 @@ function SnowmanDetailSection() {
         <a
           ref={collaborationButtonRef}
           className={styles.collaborationButton}
-          href="#"
+          href="https://brand.naver.com/iklamp/category/a2ef0d94e57d4dd4afd4df3a9df5e0bd?cp=1"
+          target="_blank"
+          rel="noopener noreferrer"
           data-cursor="pointer"
         >
           <span ref={collaborationButtonTextRef} className={styles.collaborationButtonText}>
@@ -575,42 +581,82 @@ function SnowmanDetailSection() {
           </div>
 
           <article className={`${styles.otherCard} ${styles.snowmanCard}`}>
-            <img src={otherSnowman} alt="SNOWMAN22 V2" draggable="false" />
-            <h3>
-              SNOWMAN22
-              <br />
-              V2
-            </h3>
+            <a
+              className={styles.otherCardLink}
+              href="https://brand.naver.com/iklamp/category/a2ef0d94e57d4dd4afd4df3a9df5e0bd?cp=1"
+              target="_blank"
+              rel="noopener noreferrer"
+              draggable="false"
+            >
+              <img src={otherSnowman} alt="SNOWMAN22 V2" draggable="false" />
+              <h3>
+                SNOWMAN22
+                <br />
+                V2
+              </h3>
+            </a>
           </article>
 
           <article className={`${styles.otherCard} ${styles.snowballCard}`}>
-            <img src={otherSnowball} alt="V2 SNOWBALL22" draggable="false" />
-            <h3>
-              V2
-              <br />
-              SNOWBALL22
-            </h3>
+            <a
+              className={styles.otherCardLink}
+              href="https://brand.naver.com/iklamp/search?q=snowball"
+              target="_blank"
+              rel="noopener noreferrer"
+              draggable="false"
+            >
+              <img src={otherSnowball} alt="V2 SNOWBALL22" draggable="false" />
+              <h3>
+                V2
+                <br />
+                SNOWBALL22
+              </h3>
+            </a>
           </article>
 
           <article className={`${styles.otherCard} ${styles.marioCard}`}>
-            <img src={otherMario} alt="MARIO 14 Table" draggable="false" />
-            <h3>MARIO 14 Table</h3>
+            <a
+              className={styles.otherCardLink}
+              href="https://brand.naver.com/iklamp/search?q=mario"
+              target="_blank"
+              rel="noopener noreferrer"
+              draggable="false"
+            >
+              <img src={otherMario} alt="MARIO 14 Table" draggable="false" />
+              <h3>MARIO 14 Table</h3>
+            </a>
           </article>
 
           <article className={`${styles.otherCard} ${styles.flamingoCard}`}>
-            <img src={otherFlamingo} alt="FLAMINGO 26" draggable="false" />
-            <h3>
-              FLA
-              <br />
-              MINGO
-              <br />
-              26
-            </h3>
+            <a
+              className={styles.otherCardLink}
+              href="https://brand.naver.com/iklamp/search?q=flamongo"
+              target="_blank"
+              rel="noopener noreferrer"
+              draggable="false"
+            >
+              <img src={otherFlamingo} alt="FLAMINGO 26" draggable="false" />
+              <h3>
+                FLA
+                <br />
+                MINGO
+                <br />
+                26
+              </h3>
+            </a>
           </article>
 
           <article className={`${styles.otherCard} ${styles.apolloCard}`}>
-            <img src={otherApollo} alt="APOLLO 22" draggable="false" />
-            <h3>APOLLO 22</h3>
+            <a
+              className={styles.otherCardLink}
+              href="https://brand.naver.com/iklamp/search?q=apollo"
+              target="_blank"
+              rel="noopener noreferrer"
+              draggable="false"
+            >
+              <img src={otherApollo} alt="APOLLO 22" draggable="false" />
+              <h3>APOLLO 22</h3>
+            </a>
           </article>
         </div>
       </section>
