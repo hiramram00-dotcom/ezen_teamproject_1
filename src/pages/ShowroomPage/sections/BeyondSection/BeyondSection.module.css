@@ -33,6 +33,10 @@
   font-weight: 400;
 }
 
+.descMobile {
+  display: none;
+}
+
 .galleryImages {
   flex: 0 0 54%; /* 오른쪽 이미지 폭 축소 (기존 ~64%) */
   min-width: 0;
@@ -90,6 +94,10 @@
   line-height: 1.6;
   font-size: 18px;
   font-weight: 400;
+}
+
+.darkTextMobile {
+  display: none;
 }
 
 .darkPhotos {
@@ -156,6 +164,19 @@
 
   .desc {
     display: block;
+    font-size: 15px;
+  }
+
+  .descDesktop {
+    display: none;
+  }
+
+  .descMobile {
+    display: block;
+  }
+
+  .darkText {
+    font-size: 15px;
   }
 
   .desc p {
@@ -172,6 +193,15 @@
 
   .desc p > span::after {
     content: ' ';
+  }
+
+  .descMobile p,
+  .descMobile p > span {
+    display: block;
+  }
+
+  .descMobile p > span::after {
+    content: none;
   }
 
   .galleryImages {
@@ -202,6 +232,22 @@
   .darkText p > span::after,
   .darkText > span::after {
     content: ' ';
+  }
+
+  .darkTextDesktop {
+    display: none;
+  }
+
+  .darkTextMobile {
+    display: block;
+  }
+
+  .darkTextMobile > span {
+    display: block;
+  }
+
+  .darkTextMobile > span::after {
+    content: none;
   }
 
   /* 검정 블록 하단 두 사진 — 왼쪽 여백 크게 남던 것 균형 조정 */

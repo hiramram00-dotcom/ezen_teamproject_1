@@ -109,6 +109,10 @@
   font-size: var(--fs-sub-1);
 }
 
+.mobileBreak {
+  display: none;
+}
+
 .socials {
   display: flex;
   justify-content: space-between;
@@ -317,6 +321,10 @@
   .tagline {
     white-space: normal;
     font-size: var(--fs-sub-2);
+  }
+
+  .mobileBreak {
+    display: block;
   }
 
   .socials {

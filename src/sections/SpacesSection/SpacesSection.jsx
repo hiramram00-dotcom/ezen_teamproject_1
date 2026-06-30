@@ -13,6 +13,12 @@ const rooms = [
     title: 'Living Room',
     image: livingImg,
     imageOn: livingOnImg,
+    mobileCaption: [
+      '머무르고, 쉬고, 대화를 나누는 거실.',
+      '일광전구는 공간의 크기와 생활 방식을 살펴',
+      '머무는 시간이 더욱 편안해지도록',
+      '거실의 빛과 분위기를 완성합니다.',
+    ],
     alt: '빈티지 텔레비전과 의자가 놓인 거실',
     caption: (
       <>
@@ -30,6 +36,12 @@ const rooms = [
     title: 'Bed Room',
     image: bedImg,
     imageOn: bedOnImg,
+    mobileCaption: [
+      '하루의 끝에는 밝음보다 편안함이 필요합니다.',
+      '눈에 부담을 덜어주는 은은한 빛과',
+      '차분하게 가라앉는 따뜻한 온기로,',
+      '침실을 깊은 휴식의 공간으로 바꿉니다.',
+    ],
     alt: '은은한 빛이 드는 침실의 침대',
     caption: (
       <>
@@ -47,6 +59,12 @@ const rooms = [
     title: 'Dining Room',
     image: diningImg,
     imageOn: diningOnImg,
+    mobileCaption: [
+      '한 끼의 식사와 자연스러운 대화가 이어지는 곳.',
+      '식탁 위에 고르게 머무는 따뜻한 빛이',
+      '음식과 사람의 표정을 선명하게 비추고,',
+      '함께하는 시간을 더욱 풍성하게 만듭니다.',
+    ],
     alt: '촛불이 켜진 다이닝 테이블',
     caption: (
       <>
@@ -430,7 +448,17 @@ function SpacesSection() {
                       panelTextRefs.current[index] = node
                     }}
                   >
-                    <p className={styles.caption}>{room.caption}</p>
+                    <p className={styles.caption}>
+                      <span className={styles.captionDesktop}>{room.caption}</span>
+                      <span className={styles.captionMobile}>
+                        {room.mobileCaption.map((line, lineIndex) => (
+                          <span key={line}>
+                            {line}
+                            {lineIndex < room.mobileCaption.length - 1 && <br />}
+                          </span>
+                        ))}
+                      </span>
+                    </p>
                     <span className={styles.bulb} aria-hidden="true">
                       <svg className={styles.bulbBase} viewBox="0 0 40 54">
                         {LAMP_ICONS[index]}

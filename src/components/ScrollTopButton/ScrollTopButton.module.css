@@ -75,6 +75,22 @@
 }
 
 /* ===== 물결(투명도) 애니메이션 — hover/focus 시 아래→위로 흐르는 착시 ===== */
+@media (max-width: 767px) {
+  .topButton {
+    width: 48px;
+    height: 48px;
+    gap: 2px;
+  }
+
+  .chevron {
+    width: 14px;
+  }
+
+  .label {
+    font-size: 9px;
+  }
+}
+
 .topButton:hover .chevron,
 .topButton:focus-visible .chevron {
   animation: chevronWave 1.2s ease-in-out infinite;

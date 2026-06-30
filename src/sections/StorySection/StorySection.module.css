@@ -366,6 +366,7 @@
     grid-template-columns: minmax(0, 1fr) clamp(72px, 24vw, 116px) minmax(0, 1fr);
     gap: 12px;
     margin-top: 0;
+    transform: translateX(-1vw);
   }
 
   .footerTextLeft {

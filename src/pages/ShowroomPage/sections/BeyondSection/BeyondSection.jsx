@@ -26,7 +26,7 @@ function BeyondSection() {
       <div className={styles.gallery}>
         <div className={styles.galleryText}>
           <Reveal as="h2" className={`${styles.title} type-subtitle-1`}>Beyond the Room</Reveal>
-          <div className={`${styles.desc} type-body-4`}>
+          <div className={`${styles.desc} ${styles.descDesktop} type-body-4`}>
             <RevealLines
               as="p"
               lines={[
@@ -42,6 +42,17 @@ function BeyondSection() {
                 '일광전구 서울 쇼룸은',
                 '집 안과 밖의 장면을 따라',
                 '빛이 공간에 머무는 방식을 보여줍니다.',
+              ]}
+            />
+          </div>
+          <div className={`${styles.desc} ${styles.descMobile} type-body-4`}>
+            <RevealLines
+              as="p"
+              lines={[
+                '오래된 목조 구조가 남아 있는 실내와 붉은 기와지붕',
+                '너머로 보이는 창, 식물과 조명이 함께 놓인 테라스까지.',
+                '일광전구 서울 쇼룸은 집 안과 밖의 장면을 따라 빛이',
+                '공간에 머무는 방식을 보여줍니다.',
               ]}
             />
           </div>
@@ -73,13 +84,26 @@ function BeyondSection() {
           <Reveal as="h2" className={`${styles.darkTitle} type-subtitle-1`}>Experience Light</Reveal>
           <RevealLines
             as="p"
-            className={`${styles.darkText} type-collabo-x`}
+            className={`${styles.darkText} ${styles.darkTextDesktop} type-collabo-x`}
             collapseToFlow
             lines={[
               '일광전구 서울 쇼룸은 제품을 진열하는 매장을 넘어, 빛이 실제 공간 안에서 어떻게 작동하는지',
               '보여주는 브랜드 하우스입니다. 벽의 색, 가구의 재질, 테이블의 높이, 창밖에서 들어오는 자연광과',
               '함께 하나의 분위기를 만들어냅니다. 이곳에서는 조명을 고르는 일이 단순한 구매가 아니라,',
               '내 공간에 어울리는 빛을 상상하는 경험이 됩니다.',
+            ]}
+          />
+          <RevealLines
+            as="p"
+            className={`${styles.darkText} ${styles.darkTextMobile} type-collabo-x`}
+            lines={[
+              '일광전구 서울 쇼룸은 제품을 진열하는 매장을 넘어,',
+              '빛이 실제 공간 안에서 어떻게 작동하는지 보여주는',
+              '브랜드 하우스입니다. 벽의 색, 가구의 재질, 테이블의',
+              '높이, 창밖에서 들어오는 자연광과 함께 하나의 분위기를',
+              '만들어냅니다. 이곳에서는 조명을 고르는 일이 단순한',
+              '구매가 아니라, 내 공간에 어울리는 빛을 상상하는',
+              '경험이 됩니다.',
             ]}
           />
         </div>
@@ -96,13 +120,23 @@ function BeyondSection() {
           <Reveal as="h2" className={`${styles.darkTitle} type-subtitle-1`}>Light, Up Close</Reveal>
           <RevealLines
             as="p"
-            className={`${styles.darkText} type-collabo-x`}
+            className={`${styles.darkText} ${styles.darkTextDesktop} type-collabo-x`}
             collapseToFlow
             lines={[
               '멀리서 보던 조명을 가까이서 만지고, 켜고, 비교해 볼 수 있는 곳.',
               '같은 제품도 공간과 각도에 따라 전혀 다른 빛을 보여줍니다.',
               '일광전구 서울 쇼룸은 그 차이를 가장 정직하게 보여주는 자리이며,',
               '선택의 기준이 되어줍니다.',
+            ]}
+          />
+          <RevealLines
+            as="p"
+            className={`${styles.darkText} ${styles.darkTextMobile} type-collabo-x`}
+            lines={[
+              '멀리서 보던 조명을 가까이서 만지고, 켜고, 비교해 볼 수',
+              '있는 곳. 같은 제품도 공간과 각도에 따라 전혀 다른 빛을',
+              '보여줍니다. 일광전구 서울 쇼룸은 그 차이를 가장',
+              '정직하게 보여주는 자리이며, 선택의 기준이 되어줍니다.',
             ]}
           />
         </div>

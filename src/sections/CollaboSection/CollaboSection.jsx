@@ -33,6 +33,7 @@ const CARDS = [
     img: imgKittybunnypony,
     brand: 'KITTY BUNNY PONY',
     desc: ['키티버니포니의 감각적인 패턴과 함께', '오래 머물고 싶은 공간을 함께 만들어갔습니다.'],
+    mobileDesc: ['키티버니포니의 감각적인', '패턴과 함께', '오래 머물고 싶은 공간을', '함께 만들어갔습니다.'],
     imgH: 297,
     offset: 131,
     to: '/collabo-detail',
@@ -49,6 +50,7 @@ const CARDS = [
     img: imgChilsung,
     brand: '칠성사이다',
     desc: ['칠성사이다의 청량한 브랜드 감성과 함께', '그린 크리스마스를 선보였습니다.'],
+    mobileDesc: ['칠성사이다의 청량한', '브랜드 감성과 함께 그린', '크리스마스를 선보였습니다.'],
     imgH: 251,
     offset: 170,
     to: '/collabo-detail',
@@ -57,6 +59,7 @@ const CARDS = [
     img: imgWarmgreytale,
     brand: '웜그레이테일',
     desc: ['웜그레이테일만의 따뜻한 일러스트에', '일광전구의 빛을 더했습니다.'],
+    mobileDesc: ['웜그레이테일만의 따뜻한', '일러스트에', '일광전구의 빛을 더했습니다.'],
     imgH: 322,
     offset: 0,
     to: '/collabo-detail/kakao',
@@ -65,6 +68,7 @@ const CARDS = [
     img: imgKanu,
     brand: 'KANU',
     desc: ['커피 한 잔의 여유와 함께하는 빛.', '일상의 여유를 더욱 따뜻하게 만들었습니다.'],
+    mobileDesc: ['커피 한 잔의 여유와', '함께하는 빛.', '일상의 여유를 더욱 따뜻하게', '만들었습니다.'],
     imgH: 241,
     offset: 170,
     to: '/collabo-detail',
@@ -306,7 +310,9 @@ function CollaboSection() {
             <span className="fs-title-1" style={{ fontFamily: 'var(--font-en)', fontWeight: 500 }}>ILKW.</span>
           </h2>
           <p className={`${styles.desc} ${styles.fxBlurIn} fs-body-2`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
-            다양한 브랜드와 함께 새로운 빛의 경험을 만들어갑니다.
+            다양한 브랜드와 함께 새로운 빛의 경험을
+            <br />
+            만들어갑니다.
           </p>
         </div>
 
@@ -335,9 +341,12 @@ function CollaboSection() {
                   ILKW <span className={styles.cardX}>x</span> {card.brand}
                 </p>
                 <p className={`${styles.cardDesc} fs-sub-1`} style={{ fontFamily: 'var(--font-kr)', fontWeight: 300 }}>
-                  {card.desc[0]}
-                  <br />
-                  {card.desc[1]}
+                  {(card.mobileDesc ?? card.desc).map((line, lineIndex, lines) => (
+                    <span key={line}>
+                      {line}
+                      {lineIndex < lines.length - 1 && <br />}
+                    </span>
+                  ))}
                 </p>
               </div>
             </li>

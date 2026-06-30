@@ -165,9 +165,16 @@ function MakeLightSection() {
               <span ref={restTextRef}>, ILKW.</span>
             </h2>
             <p ref={descRef} className={styles.desc}>
-              우리는 빛이 머무는 모든 순간을 생각합니다.
-              <br />
-              사람과 공간을 위한 더 나은 빛, 그것이 일광전구가 만드는 가치입니다.
+              <span className={styles.descDesktop}>
+                우리는 빛이 머무는 모든 순간을 생각합니다.
+                <br />
+                사람과 공간을 위한 더 나은 빛, 그것이 일광전구가 만드는 가치입니다.
+              </span>
+              <span className={styles.descMobile}>
+                <span>우리는 빛이 머무는 모든 순간을 생각합니다.</span>
+                <span>사람과 공간을 위한 더 나은 빛,</span>
+                <span>그것이 일광전구가 만드는 가치입니다.</span>
+              </span>
             </p>
           </div>
         </div>

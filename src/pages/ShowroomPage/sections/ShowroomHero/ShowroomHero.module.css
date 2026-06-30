@@ -30,10 +30,32 @@
   font-weight: 400;
 }
 
+.introMobile {
+  display: none;
+}
+
 /* ---------- 비주얼 + 라벨 오버레이 ---------- */
 @media (min-width: 768px) and (max-width: 1199px) {
   .intro {
     font-size: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  .heroTitle {
+    font-size: var(--fs-title-2);
+  }
+
+  .intro {
+    font-size: 15px;
+  }
+
+  .introDesktop {
+    display: none;
+  }
+
+  .introMobile {
+    display: block;
   }
 }
 

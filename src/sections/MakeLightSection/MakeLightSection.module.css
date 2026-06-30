@@ -140,6 +140,10 @@
   color: #fff;
 }
 
+.descMobile {
+  display: none;
+}
+
 @media (min-width: 768px) and (max-width: 1199px) {
   .copyBlock {
     left: 5.5%;
@@ -179,14 +183,25 @@
   }
 
   .headline {
-    font-size: clamp(38px, 11vw, var(--fs-body-1));
+    font-size: 28px;
     line-height: 1.08;
     white-space: normal;
   }
 
   .desc {
+    width: 100%;
     font-size: clamp(13px, 3.7vw, var(--fs-sub-3));
+    font-weight: 300;
     line-height: 1.55;
+  }
+
+  .descDesktop {
+    display: none;
+  }
+
+  .descMobile,
+  .descMobile > span {
+    display: block;
   }
 
   .dim {

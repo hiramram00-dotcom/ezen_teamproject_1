@@ -264,6 +264,20 @@
   }
 }
 
+@media (max-width: 767px) {
+  .detail h3 {
+    font-size: 20px;
+  }
+
+  .detail p {
+    font-size: 15px;
+  }
+
+  .buyLink {
+    font-size: 14px;
+  }
+}
+
 
 @media (prefers-reduced-motion: reduce) {
   .snowman {
