@@ -146,6 +146,9 @@
   .stickyInner {
     position: static;
     height: auto;
+    /* 콘텐츠가 짧아 위로 쏠리던 문제 → 첫 화면을 채우고 세로 중앙 정렬로 균형 */
+    min-height: 100svh;
+    justify-content: center;
     overflow: visible;
     padding-left: clamp(16px, 5vw, 32px);
     padding-right: clamp(16px, 5vw, 32px);
