@@ -335,3 +335,28 @@
     background-position: -61.67% 50%;
   }
 }
+
+.mobileBr {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobileBr {
+    display: block;
+  }
+
+  .ceo {
+    font-size: 18px;
+  }
+
+  .ceoCopy blockquote {
+    font-size: 17px;
+    white-space: normal;
+    word-break: keep-all;
+    margin-bottom: 12px;
+  }
+
+  .description {
+    font-size: 14px;
+  }
+}

@@ -609,6 +609,10 @@
 }
 
 @media (min-width: 768px) and (max-width: 1199px) {
+  .legacyCopy p {
+    font-size: 19px;
+  }
+
   .tagline {
     font-size: 56px;
   }
@@ -671,6 +675,168 @@
   .storySecond .storyClosingStatement {
     top: calc(19.66 * var(--about-vw) + 3.9em + var(--story-vcenter));
     left: calc(var(--about-side-offset) + 37.5 * var(--about-vw));
+  }
+}
+
+.storyFirstMobile {
+  display: none;
+}
+
+.storySecondMobile {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .historyTitleOverlay {
+    font-size: 36px;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .story {
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .storyMedia {
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: auto;
+    transform: translate(-50%, -50%) scale(var(--story-media-scale, 1));
+    transform-origin: center;
+  }
+
+  .story > .storyLead,
+  .story > .storyLeadSide,
+  .story .storyLeadTail,
+  .story .storyClosing,
+  .storySecond .storyLead,
+  .storySecond .storyClosing {
+    left: 0;
+    width: 100%;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .story > .storyLead {
+    top: calc(50% - 28.125vw - 5.5em);
+  }
+
+  .story > .storyLeadSide {
+    top: calc(50% - 28.125vw - 2.8em);
+  }
+
+  .story .storyLeadTail {
+    top: calc(50% + 28.125vw + 24px);
+  }
+
+  .story > .storyTailYearsGroup .storyClosingYears {
+    top: calc(50% + 28.125vw + 1.3em + 24px);
+  }
+
+  .story > .storyClosingStatement {
+    top: calc(50% + 28.125vw + 2.8em + 24px);
+  }
+
+  .storySecond .storyLead {
+    top: calc(50% - 28.125vw - 6.8em);
+  }
+
+  .storySecond .storyClosingYears {
+    top: calc(50% - 28.125vw - 2.8em);
+  }
+
+  .storySecond .storyClosingBridge {
+    top: calc(50% + 28.125vw + 24px);
+  }
+
+  .storySecond .storyClosingStatement {
+    top: calc(50% + 28.125vw + 1.5em + 24px);
+  }
+
+  .storySecondDesktop {
+    display: none;
+  }
+
+  .storySecondMobile {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+
+  .storySecondMobileTop,
+  .storySecondMobileBottom {
+    position: absolute;
+    left: 0;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 var(--layout-gutter);
+    margin: 0;
+  }
+
+  .storySecondMobileTop {
+    top: calc(50% - 28.125vw - 5.5em);
+    text-align: left;
+  }
+
+  .storySecondMobileBottom {
+    top: calc(50% + 28.125vw + 24px - 0.3em);
+    text-align: right;
+  }
+
+  .storyFirstDesktop {
+    display: none;
+  }
+
+  .storyFirstMobile {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+
+  .storyPhaseTwo .storyFirstMobile,
+  .storyPassed .storyFirstMobile {
+    display: none;
+  }
+
+  .storyFirstMobileTop,
+  .storyFirstMobileBottom {
+    position: absolute;
+    left: 0;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 var(--layout-gutter);
+    margin: 0;
+  }
+
+  .storyFirstMobileTop {
+    top: calc(50% - 28.125vw - 5.5em);
+    text-align: left;
+  }
+
+  .storyFirstMobileBottom {
+    top: calc(50% + 28.125vw + 24px - 0.3em);
+    text-align: right;
+  }
+
+  .story > .storyLead,
+  .story > .storyLeadSide,
+  .storySecond .storyLead,
+  .storySecond .storyClosingYears {
+    box-sizing: border-box;
+    padding: 0 var(--layout-gutter);
+    text-align: left;
+  }
+
+  .story .storyLeadTail,
+  .story > .storyTailYearsGroup .storyClosingYears,
+  .story > .storyClosingStatement,
+  .storySecond .storyClosingBridge,
+  .storySecond .storyClosingStatement {
+    box-sizing: border-box;
+    padding: 0 var(--layout-gutter);
+    text-align: right;
   }
 }
 

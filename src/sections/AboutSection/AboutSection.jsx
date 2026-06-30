@@ -38,6 +38,17 @@ function getFontSizeToken(tokenName, fallback) {
   return Number.parseFloat(tokenValue) || fallback
 }
 
+function getIntroTextSizes(width) {
+  if (width <= 767) {
+    return { sinceSize: 28, yearSize: 90 }
+  }
+
+  return {
+    sinceSize: getFontSizeToken('--fs-title-4', 70),
+    yearSize: getFontSizeToken('--fs-display-1', 180),
+  }
+}
+
 function StoryTypedLines({
   lines,
   progress,
@@ -84,12 +95,11 @@ function sampleIntroTextPoints(width, height, particleCount) {
   const maskContext = mask.getContext('2d', { willReadFrequently: true })
   const centerX = width / 2
   const centerY = height * getIntroCenterYRatio(width)
-  const sinceSize = getFontSizeToken('--fs-title-4', 70)
-  const yearSize = getFontSizeToken('--fs-display-1', 180)
+  const { sinceSize, yearSize } = getIntroTextSizes(width)
   const textCenterY = centerY - width * 0.01
   const textGap = width * INTRO_TEXT_GAP_RATIO
-  const maskWidth = Math.ceil(width * 0.3)
-  const maskHeight = Math.ceil(width * 0.2)
+  const maskWidth = Math.ceil(width * (width <= 767 ? 0.7 : 0.3))
+  const maskHeight = Math.ceil(width * (width <= 767 ? 0.5 : 0.2))
   const maskLeft = centerX - maskWidth / 2
   const maskTop = textCenterY - maskHeight / 2
   const step = Math.max(3, Math.round(width / 420))
@@ -283,8 +293,7 @@ function AboutIntroParticles({ onComplete }) {
 
       if (write > 0.78) {
         const solidTextOpacity = (write - 0.78) / 0.22
-        const sinceSize = getFontSizeToken('--fs-title-4', 70)
-        const yearSize = getFontSizeToken('--fs-display-1', 180)
+        const { sinceSize, yearSize } = getIntroTextSizes(width)
         const textCenterY = centerY - width * 0.01
         const textGap = width * INTRO_TEXT_GAP_RATIO
 
@@ -638,7 +647,7 @@ function AboutSection() {
           storyPhase === 'after' ? styles.storyPassed : ''
         }`}
       >
-        <p className={styles.storyLead}>
+        <p className={`${styles.storyLead} ${styles.storyFirstDesktop}`}>
           <StoryTypedLines
             lines={['From the days', 'when incandescent bulbs lit']}
             progress={storyLeadProgress}
@@ -647,7 +656,7 @@ function AboutSection() {
           />
         </p>
 
-        <p className={styles.storyLeadSide}>
+        <p className={`${styles.storyLeadSide} ${styles.storyFirstDesktop}`}>
           <StoryTypedLines
             lines={['everyday', 'life to -']}
             progress={storyLeadProgress}
@@ -656,7 +665,7 @@ function AboutSection() {
           />
         </p>
 
-        <div className={styles.storyTailYearsGroup}>
+        <div className={`${styles.storyTailYearsGroup} ${styles.storyFirstDesktop}`}>
           <p className={styles.storyLeadTail}>
             <StoryTypedLines
               lines={['the present day,']}
@@ -684,7 +693,7 @@ function AboutSection() {
           aria-label="ILKW 브랜드 영상"
         />
 
-        <p className={`${styles.storyClosing} ${styles.storyClosingStatement}`}>
+        <p className={`${styles.storyClosing} ${styles.storyClosingStatement} ${styles.storyFirstDesktop}`}>
           <StoryTypedLines
             lines={['ILKWANG has brought light', 'into people’s lives.']}
             progress={storyClosingProgress}
@@ -694,8 +703,28 @@ function AboutSection() {
           />
         </p>
 
+        <div className={styles.storyFirstMobile}>
+          <p className={styles.storyFirstMobileTop}>
+            <StoryTypedLines
+              lines={['From the days', 'when incandescent', 'bulbs everyday', 'life to-']}
+              progress={storyLeadProgress}
+              totalWords={14}
+              strongWords={['incandescent']}
+            />
+          </p>
+
+          <p className={styles.storyFirstMobileBottom}>
+            <StoryTypedLines
+              lines={['the present day,', 'for over 60 years,', 'ILKWANG has brought', "light into people's lives."]}
+              progress={storyClosingProgress}
+              totalWords={13}
+              strongWords={['ILKWANG']}
+            />
+          </p>
+        </div>
+
         <div className={styles.storySecond}>
-          <p className={styles.storyLead}>
+          <p className={`${styles.storyLead} ${styles.storySecondDesktop}`}>
             <StoryTypedLines
               lines={['Decades of technology', 'and a philosophy shaped', 'over time.']}
               progress={storySecondProgress}
@@ -704,7 +733,7 @@ function AboutSection() {
             />
           </p>
 
-          <p className={`${styles.storyClosing} ${styles.storyClosingYears}`}>
+          <p className={`${styles.storyClosing} ${styles.storyClosingYears} ${styles.storySecondDesktop}`}>
             <StoryTypedLines
               lines={['Beyond a single', 'source of light,']}
               progress={storySecondProgress}
@@ -713,7 +742,7 @@ function AboutSection() {
             />
           </p>
 
-          <p className={`${styles.storyClosing} ${styles.storyClosingBridge}`}>
+          <p className={`${styles.storyClosing} ${styles.storyClosingBridge} ${styles.storySecondDesktop}`}>
             <StoryTypedLines
               lines={['we continue to']}
               progress={storySecondProgress}
@@ -722,7 +751,7 @@ function AboutSection() {
             />
           </p>
 
-          <p className={`${styles.storyClosing} ${styles.storyClosingStatement}`}>
+          <p className={`${styles.storyClosing} ${styles.storyClosingStatement} ${styles.storySecondDesktop}`}>
             <StoryTypedLines
               lines={['understand people and the', 'spaces they inhabit.']}
               progress={storySecondProgress}
@@ -731,6 +760,26 @@ function AboutSection() {
               strongWords={['spaces']}
             />
           </p>
+
+          <div className={styles.storySecondMobile}>
+            <p className={styles.storySecondMobileTop}>
+              <StoryTypedLines
+                lines={['Decades of technology', 'and a philosophy', 'shaped over time.', 'Beyond a single source -']}
+                progress={storySecondProgress}
+                totalWords={26}
+                strongWords={['technology']}
+              />
+            </p>
+
+            <p className={styles.storySecondMobileBottom}>
+              <StoryTypedLines
+                lines={['of light, we continue to', 'understand people and', 'the spaces they inhabit.']}
+                progress={storySecondProgress}
+                startIndex={14}
+                totalWords={26}
+              />
+            </p>
+          </div>
         </div>
       </div>
 

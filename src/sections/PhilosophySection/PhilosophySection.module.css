@@ -188,6 +188,27 @@
   line-height: 1;
 }
 
+@media (max-width: 767px) {
+  .philosophy {
+    --philosophy-unit: 1.691vw;
+  }
+
+  .panel {
+    width: 74vw;
+    height: 82.5vw;
+  }
+
+  .panel .message {
+    font-size: 14px;
+    top: calc(calc(8.2 * var(--philosophy-unit)) + calc(28.2 * var(--philosophy-unit)) / 2 + calc(4 * var(--philosophy-unit)));
+  }
+
+  .lightFrame {
+    width: 40vw;
+    height: 57vw;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 1199px) {
   .title span:first-child {
     top: calc(2 * var(--philosophy-unit));
