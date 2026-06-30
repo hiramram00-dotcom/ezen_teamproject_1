@@ -25,7 +25,7 @@
 .hero {
   max-width: none;
   height: 100svh;
-  min-height: 56.25vw;
+  min-height: 100svh;
 }
 
 .intro {
@@ -110,7 +110,7 @@
 .introTitle em {
   font-family: var(--font-deco);
   font-style: italic;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .introDescription {
@@ -152,7 +152,7 @@
 }
 
 .storyCopy h2 {
-  margin-bottom: 0.2604cqw;
+  margin-bottom: 1cqw;
   font-family: var(--font-deco);
   font-size: 1.4583cqw;
   font-style: italic;
@@ -530,7 +530,7 @@
   z-index: 5;
   display: flex;
   flex-direction: column;
-  gap: 17px;
+  gap: 6px;
   width: max-content;
   margin-top: 159px;
   margin-left: calc(max((100vw - 1920px) / 2, 0px) + 40px);
@@ -541,7 +541,7 @@
   margin: 0;
   font-size: 80px;
   font-weight: 400;
-  line-height: 1.2;
+  line-height: 0.92;
   letter-spacing: -2.4px;
   white-space: nowrap;
 }
@@ -549,7 +549,7 @@
 .otherTitleLead,
 .otherTitleAccent {
   display: block;
-  line-height: 1.2;
+  line-height: 0.92;
 }
 
 .otherTitleLead {
@@ -660,6 +660,14 @@
 
 .dragging .otherCard[data-visible="true"]:nth-of-type(2n) {
   transform: translateY(var(--drag-float-y-alt, 14px)) scale(0.985);
+}
+
+.otherCardLink {
+  position: absolute;
+  inset: 0;
+  display: block;
+  color: inherit;
+  pointer-events: auto;
 }
 
 .otherCard img {

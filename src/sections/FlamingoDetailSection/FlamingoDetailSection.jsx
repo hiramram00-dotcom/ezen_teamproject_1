@@ -148,11 +148,12 @@ function FlamingoDetailSection() {
       for (let index = 1; index <= slides.length; index += 1) {
         const next = index % slides.length
         slider
-          .set(slides[next], { xPercent: 100, zIndex: 2 }, '+=1.5')
+          .set(slides[next], { xPercent: 100, autoAlpha: 0, zIndex: 2 }, '+=1.5')
           .to(slides[next], {
             xPercent: 0,
-            duration: 0.7,
-            ease: 'power1.out',
+            autoAlpha: 1,
+            duration: 0.9,
+            ease: 'power2.inOut',
           })
           .set(slides[current], { xPercent: 100, zIndex: 0 })
           .set(slides[next], { zIndex: 1 })
@@ -228,62 +229,31 @@ function FlamingoDetailSection() {
     if (!poster) return undefined
 
     const ctx = gsap.context(() => {
-      const tracks = poster.querySelectorAll('[data-poster-track]')
+      const tracks = Array.from(poster.querySelectorAll('[data-poster-track]'))
       const lineBar = poster.querySelector('[data-poster-line-bar]')
 
-      gsap.set(tracks, { yPercent: 0 })
+      gsap.set(tracks, { yPercent: 110 })
       gsap.set(lineBar, { scaleX: 0, transformOrigin: 'left center' })
 
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        gsap.set(tracks, { yPercent: 0 })
+        gsap.set(lineBar, { scaleX: 1 })
+        return
+      }
 
-      const swapLoop = gsap
-        .timeline({ paused: true, repeat: -1 })
-        .to(tracks, { yPercent: -50, duration: 0.4, ease: 'sine.inOut' }, 0.9)
-        .to(tracks, { yPercent: -50, duration: 0.9 }, 1.3)
-
-      const barIntro = gsap.fromTo(
-        lineBar,
-        { scaleX: 0 },
-        { scaleX: 1, duration: 1.6, ease: 'power2.out', delay: 0.25, paused: true }
-      )
-
-      const pulse = gsap
-        .timeline({ paused: true, repeat: -1, repeatDelay: 1.5 })
-        .to(greenPosterImageRef.current, {
-          scale: 1.22,
-          duration: 2,
-          ease: 'sine.inOut',
-        })
-        .to(
-          greenPosterImageRef.current,
-          { scale: 1, duration: 2, ease: 'sine.inOut' },
-          '+=1.5'
-        )
+      const reveal = gsap
+        .timeline({ paused: true })
+        .to(tracks[0], { yPercent: 0, duration: 0.58, ease: 'power3.out' }, 0)
+        .to(tracks[1], { yPercent: 0, duration: 0.58, ease: 'power3.out' }, 0.14)
+        .to(lineBar, { scaleX: 1, duration: 0.62, ease: 'power2.out' }, 0.34)
+        .to(tracks[2], { yPercent: 0, duration: 0.58, ease: 'power3.out' }, 0.52)
 
       ScrollTrigger.create({
         trigger: poster,
-        start: 'top bottom',
+        start: 'top 82%',
         end: 'bottom top',
-        onEnter: () => {
-          swapLoop.play()
-          barIntro.restart()
-          pulse.play()
-        },
-        onEnterBack: () => {
-          swapLoop.play()
-          barIntro.restart()
-          pulse.play()
-        },
-        onLeave: () => {
-          swapLoop.pause()
-          barIntro.pause(0)
-          pulse.pause()
-        },
-        onLeaveBack: () => {
-          swapLoop.pause()
-          barIntro.pause(0)
-          pulse.pause()
-        },
+        onEnter: () => reveal.restart(),
+        onLeaveBack: () => reveal.pause(0),
       })
     }, poster)
 
@@ -319,29 +289,29 @@ function FlamingoDetailSection() {
       const madeForDistance = posterHeight * (-90 / 557)
       const momentDistance = posterHeight * (147 / 557)
 
+      gsap.set(madeForRef.current, { y: madeForDistance })
+      gsap.set(momentRef.current, { y: momentDistance })
+
       const float = gsap
-        .timeline({ paused: true, repeat: -1 })
+        .timeline({ paused: true })
         .to(
           madeForRef.current,
-          { y: madeForDistance, duration: 1, ease: 'sine.inOut' },
-          0.8
+          { y: 0, duration: 0.9, ease: 'power3.out' },
+          0
         )
         .to(
           momentRef.current,
-          { y: momentDistance, duration: 1, ease: 'sine.inOut' },
-          0.8
+          { y: 0, duration: 0.9, ease: 'power3.out' },
+          0
         )
-        .to(madeForRef.current, { y: 0, duration: 1, ease: 'sine.inOut' }, 2.6)
-        .to(momentRef.current, { y: 0, duration: 1, ease: 'sine.inOut' }, 2.6)
 
       ScrollTrigger.create({
         trigger: centerPoster,
-        start: 'top bottom',
+        start: 'top 82%',
         end: 'bottom top',
-        onEnter: () => float.play(),
-        onEnterBack: () => float.play(),
-        onLeave: () => float.pause(),
-        onLeaveBack: () => float.pause(),
+        onEnter: () => float.restart(),
+        onEnterBack: () => float.restart(),
+        onLeaveBack: () => float.pause(0),
       })
     }, centerPoster)
 
@@ -353,49 +323,48 @@ function FlamingoDetailSection() {
     if (!creamPoster) return undefined
 
     const ctx = gsap.context(() => {
-      gsap.set(madeToRef.current, { x: 0 })
-      gsap.set(glowRef.current, { x: 0 })
+      const creamTextElements = [
+        madeToRef.current,
+        glowRef.current,
+        creamLogoRef.current,
+        creamYearRef.current,
+      ]
+
+      gsap.set(creamTextElements, { y: 42, autoAlpha: 0 })
       gsap.set(creamProductImageRef.current, { scale: 1 })
 
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        gsap.set(creamTextElements, { y: 0, autoAlpha: 1 })
+        gsap.set(creamProductImageRef.current, { scale: 1.16 })
+        return
+      }
 
-      const posterWidth = creamPoster.offsetWidth
-      const madeToDistance = posterWidth * (159 / 450)
-      const glowDistance = posterWidth * (-123 / 450)
-
-      const drift = gsap
-        .timeline({ paused: true, repeat: -1 })
+      const reveal = gsap
+        .timeline({ paused: true })
         .to(
-          madeToRef.current,
-          { x: madeToDistance, duration: 1, ease: 'sine.inOut' },
-          0.8
-        )
-        .to(
-          glowRef.current,
-          { x: glowDistance, duration: 1, ease: 'sine.inOut' },
-          0.8
-        )
-        .to(madeToRef.current, { x: 0, duration: 1, ease: 'sine.inOut' }, 2.6)
-        .to(glowRef.current, { x: 0, duration: 1, ease: 'sine.inOut' }, 2.6)
-        .to(
-          creamProductImageRef.current,
-          { scale: 1.35, duration: 1, ease: 'sine.inOut' },
-          0.8
+          creamTextElements,
+          {
+            y: 0,
+            autoAlpha: 1,
+            duration: 0.95,
+            ease: 'power3.out',
+            stagger: 0.04,
+          },
+          0
         )
         .to(
           creamProductImageRef.current,
-          { scale: 1, duration: 1, ease: 'sine.inOut' },
-          2.6
+          { scale: 1.16, duration: 1.05, ease: 'power2.out' },
+          0
         )
 
       ScrollTrigger.create({
         trigger: creamPoster,
-        start: 'top bottom',
+        start: 'top 82%',
         end: 'bottom top',
-        onEnter: () => drift.play(),
-        onEnterBack: () => drift.play(),
-        onLeave: () => drift.pause(),
-        onLeaveBack: () => drift.pause(),
+        onEnter: () => reveal.restart(),
+        onEnterBack: () => reveal.restart(),
+        onLeaveBack: () => reveal.pause(0),
       })
     }, creamPoster)
 
@@ -707,7 +676,9 @@ function FlamingoDetailSection() {
         <a
           ref={collaborationButtonRef}
           className={styles.collaborationButton}
-          href="#"
+          href="https://brand.naver.com/iklamp/search?q=flamongo"
+          target="_blank"
+          rel="noopener noreferrer"
           data-cursor="pointer"
         >
           <span ref={collaborationButtonTextRef} className={styles.collaborationButtonText}>
@@ -759,42 +730,82 @@ function FlamingoDetailSection() {
           </div>
 
           <article className={`${styles.otherCard} ${styles.snowmanCard}`}>
-            <img src={otherSnowman} alt="SNOWMAN22 V2" draggable="false" />
-            <h3>
-              SNOWMAN22
-              <br />
-              V2
-            </h3>
+            <a
+              className={styles.otherCardLink}
+              href="https://brand.naver.com/iklamp/category/a2ef0d94e57d4dd4afd4df3a9df5e0bd?cp=1"
+              target="_blank"
+              rel="noopener noreferrer"
+              draggable="false"
+            >
+              <img src={otherSnowman} alt="SNOWMAN22 V2" draggable="false" />
+              <h3>
+                SNOWMAN22
+                <br />
+                V2
+              </h3>
+            </a>
           </article>
 
           <article className={`${styles.otherCard} ${styles.snowballCard}`}>
-            <img src={otherSnowball} alt="V2 SNOWBALL22" draggable="false" />
-            <h3>
-              V2
-              <br />
-              SNOWBALL22
-            </h3>
+            <a
+              className={styles.otherCardLink}
+              href="https://brand.naver.com/iklamp/search?q=snowball"
+              target="_blank"
+              rel="noopener noreferrer"
+              draggable="false"
+            >
+              <img src={otherSnowball} alt="V2 SNOWBALL22" draggable="false" />
+              <h3>
+                V2
+                <br />
+                SNOWBALL22
+              </h3>
+            </a>
           </article>
 
           <article className={`${styles.otherCard} ${styles.marioCard}`}>
-            <img src={otherMario} alt="MARIO 14 Table" draggable="false" />
-            <h3>MARIO 14 Table</h3>
+            <a
+              className={styles.otherCardLink}
+              href="https://brand.naver.com/iklamp/search?q=mario"
+              target="_blank"
+              rel="noopener noreferrer"
+              draggable="false"
+            >
+              <img src={otherMario} alt="MARIO 14 Table" draggable="false" />
+              <h3>MARIO 14 Table</h3>
+            </a>
           </article>
 
           <article className={`${styles.otherCard} ${styles.flamingoCard}`}>
-            <img src={otherFlamingo} alt="FLAMINGO 26" draggable="false" />
-            <h3>
-              FLA
-              <br />
-              MINGO
-              <br />
-              26
-            </h3>
+            <a
+              className={styles.otherCardLink}
+              href="https://brand.naver.com/iklamp/search?q=flamongo"
+              target="_blank"
+              rel="noopener noreferrer"
+              draggable="false"
+            >
+              <img src={otherFlamingo} alt="FLAMINGO 26" draggable="false" />
+              <h3>
+                FLA
+                <br />
+                MINGO
+                <br />
+                26
+              </h3>
+            </a>
           </article>
 
           <article className={`${styles.otherCard} ${styles.apolloCard}`}>
-            <img src={otherApollo} alt="APOLLO 22" draggable="false" />
-            <h3>APOLLO 22</h3>
+            <a
+              className={styles.otherCardLink}
+              href="https://brand.naver.com/iklamp/search?q=apollo"
+              target="_blank"
+              rel="noopener noreferrer"
+              draggable="false"
+            >
+              <img src={otherApollo} alt="APOLLO 22" draggable="false" />
+              <h3>APOLLO 22</h3>
+            </a>
           </article>
         </div>
       </section>

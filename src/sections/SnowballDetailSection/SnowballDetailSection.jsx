@@ -10,7 +10,7 @@ import mosaicBox from './assets/mosaic-box.webp'
 import mosaicLamp from './assets/mosaic-lamp.webp'
 import mosaicGlow from './assets/mosaic-glow.webp'
 import mosaicPendant from './assets/mosaic-pendant.webp'
-import galleryLeft from './assets/gallery-left-bottom.webp'
+import galleryLeft from './assets/gallery-left-crop.webp'
 import galleryRight from './assets/gallery-right.webp'
 import otherSnowman from '../FlamingoDetailSection/assets/other-snowman.webp'
 import otherSnowball from '../FlamingoDetailSection/assets/other-snowball.webp'
@@ -30,11 +30,36 @@ const storySlides = [
 ]
 
 const otherProducts = [
-  { name: <>SNOWMAN22<br />V2</>, image: otherSnowman, className: 'snowmanCard' },
-  { name: <>V2<br />SNOWBALL22</>, image: otherSnowball, className: 'snowballCard' },
-  { name: 'MARIO 14 Table', image: otherMario, className: 'marioCard' },
-  { name: <>FLA<br />MINGO<br />26</>, image: otherFlamingo, className: 'flamingoCard' },
-  { name: 'APOLLO 22', image: otherApollo, className: 'apolloCard' },
+  {
+    name: <>SNOWMAN22<br />V2</>,
+    image: otherSnowman,
+    className: 'snowmanCard',
+    link: 'https://brand.naver.com/iklamp/category/a2ef0d94e57d4dd4afd4df3a9df5e0bd?cp=1',
+  },
+  {
+    name: <>V2<br />SNOWBALL22</>,
+    image: otherSnowball,
+    className: 'snowballCard',
+    link: 'https://brand.naver.com/iklamp/search?q=snowball',
+  },
+  {
+    name: 'MARIO 14 Table',
+    image: otherMario,
+    className: 'marioCard',
+    link: 'https://brand.naver.com/iklamp/search?q=mario',
+  },
+  {
+    name: <>FLA<br />MINGO<br />26</>,
+    image: otherFlamingo,
+    className: 'flamingoCard',
+    link: 'https://brand.naver.com/iklamp/search?q=flamongo',
+  },
+  {
+    name: 'APOLLO 22',
+    image: otherApollo,
+    className: 'apolloCard',
+    link: 'https://brand.naver.com/iklamp/search?q=apollo',
+  },
 ]
 
 export function ProductOtherSection() {
@@ -183,8 +208,16 @@ export function ProductOtherSection() {
 
         {otherProducts.map((product) => (
           <article className={`${styles.otherCard} ${styles[product.className]}`} key={product.className}>
-            <img src={product.image} alt="" draggable="false" />
-            <h3>{product.name}</h3>
+            <a
+              className={styles.otherCardLink}
+              href={product.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              draggable="false"
+            >
+              <img src={product.image} alt="" draggable="false" />
+              <h3>{product.name}</h3>
+            </a>
           </article>
         ))}
       </div>
@@ -193,6 +226,7 @@ export function ProductOtherSection() {
 }
 
 function SnowballDetailSection() {
+  const heroImageRef = useRef(null)
   const introRef = useRef(null)
   const introImageRef = useRef(null)
   const introCopyRef = useRef(null)
@@ -202,12 +236,35 @@ function SnowballDetailSection() {
   const storySlideRefs = useRef([])
   const storyTitleRef = useRef(null)
   const storyDescriptionRef = useRef(null)
+  const mosaicRef = useRef(null)
+  const mosaicLeftRef = useRef(null)
+  const mosaicLeftTextRef = useRef(null)
+  const mosaicTopRef = useRef(null)
+  const mosaicTopLampRef = useRef(null)
+  const mosaicBottomRef = useRef(null)
+  const mosaicPendantRef = useRef(null)
+  const mosaicBlankRef = useRef(null)
   const galleryRef = useRef(null)
   const galleryGridRef = useRef(null)
   const galleryEyebrowRef = useRef(null)
   const galleryTitleRef = useRef(null)
   const productButtonRef = useRef(null)
   const productButtonTextRef = useRef(null)
+
+  useLayoutEffect(() => {
+    const heroImageEl = heroImageRef.current
+    if (!heroImageEl) return undefined
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+
+    const tween = gsap.fromTo(
+      heroImageEl,
+      { scale: 1.22 },
+      { scale: 1, duration: 2.2, delay: 0.1, ease: 'power3.out' }
+    )
+
+    return () => tween.kill()
+  }, [])
 
   useLayoutEffect(() => {
     const intro = introRef.current
@@ -281,11 +338,12 @@ function SnowballDetailSection() {
       for (let index = 1; index <= slides.length; index += 1) {
         const next = index % slides.length
         slider
-          .set(slides[next], { xPercent: 100, zIndex: 2 }, '+=1.5')
+          .set(slides[next], { xPercent: 100, autoAlpha: 0, zIndex: 2 }, '+=1.5')
           .to(slides[next], {
             xPercent: 0,
-            duration: 0.7,
-            ease: 'power1.out',
+            autoAlpha: 1,
+            duration: 0.9,
+            ease: 'power2.inOut',
           })
           .set(slides[current], { xPercent: 100, zIndex: 0 })
           .set(slides[next], { zIndex: 1 })
@@ -326,6 +384,126 @@ function SnowballDetailSection() {
           '-=0.2'
         )
     }, story)
+
+    return () => ctx.revert()
+  }, [])
+
+  useLayoutEffect(() => {
+    const mosaic = mosaicRef.current
+    if (!mosaic) return undefined
+
+    const ctx = gsap.context(() => {
+      const downCards = [mosaicLeftRef.current, mosaicTopRef.current].filter(Boolean)
+      const upCards = [
+        mosaicBottomRef.current,
+        mosaicPendantRef.current,
+        mosaicBlankRef.current,
+      ].filter(Boolean)
+      const lamp = mosaicTopLampRef.current
+      const mosaicLeftTextLines = mosaicLeftTextRef.current?.querySelectorAll('[data-mosaic-text]')
+      const mosaicLeadTextLines = mosaicLeftTextRef.current?.querySelectorAll('[data-mosaic-lead-text]')
+      const mosaicSnowballText = mosaicLeftRef.current?.querySelector('[data-mosaic-title-text]')
+
+      gsap.set(downCards, { autoAlpha: 0, y: -54 })
+      gsap.set(upCards, { autoAlpha: 0, y: 54 })
+      gsap.set(mosaicLeftTextLines, { autoAlpha: 0, yPercent: 110 })
+      gsap.set(mosaicSnowballText, { autoAlpha: 0, yPercent: 110 })
+      gsap.set(lamp, { y: 0 })
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        gsap.set([...downCards, ...upCards], { autoAlpha: 1, y: 0 })
+        gsap.set(mosaicLeftTextLines, { autoAlpha: 1, yPercent: 0 })
+        gsap.set(mosaicSnowballText, { autoAlpha: 1, yPercent: 0 })
+        return
+      }
+
+      const reveal = gsap
+        .timeline({ paused: true })
+        .to(
+          downCards,
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 1.2,
+            ease: 'power4.out',
+            stagger: 0.08,
+          },
+          0
+        )
+        .to(
+          upCards,
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 1.2,
+            ease: 'power4.out',
+            stagger: 0.08,
+          },
+          0.08
+        )
+        .to(
+          mosaicLeadTextLines,
+          {
+            autoAlpha: 1,
+            yPercent: 0,
+            duration: 0.72,
+            ease: 'power3.out',
+            stagger: 0.14,
+          },
+          0.45
+        )
+        .to(
+          mosaicSnowballText,
+          {
+            autoAlpha: 1,
+            yPercent: 0,
+            duration: 0.4,
+            ease: 'power3.out',
+          },
+          0.65
+        )
+
+      let floatTween = null
+
+      const startFloat = () => {
+        if (!lamp) return
+        floatTween?.kill()
+        floatTween = gsap.to(lamp, {
+          y: -20,
+          duration: 1.85,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+        })
+      }
+
+      ScrollTrigger.create({
+        trigger: mosaic,
+        start: 'top 78%',
+        end: 'bottom top',
+        onEnter: () => {
+          floatTween?.kill()
+          gsap.set(lamp, { y: 0 })
+          reveal.restart()
+          reveal.eventCallback('onComplete', startFloat)
+        },
+        onEnterBack: () => {
+          floatTween?.kill()
+          gsap.set(lamp, { y: 0 })
+          reveal.restart()
+          reveal.eventCallback('onComplete', startFloat)
+        },
+        onLeave: () => {
+          floatTween?.kill()
+          gsap.set(lamp, { y: 0 })
+        },
+        onLeaveBack: () => {
+          floatTween?.kill()
+          gsap.set(lamp, { y: 0 })
+          reveal.pause(0)
+        },
+      })
+    }, mosaic)
 
     return () => ctx.revert()
   }, [])
@@ -411,7 +589,7 @@ function SnowballDetailSection() {
     <main className={styles.detail}>
       <section className={`${styles.panel} ${styles.hero}`} aria-label="SNOWBALL 제품 소개">
         <div className={styles.heroVisual}>
-          <img src={heroImage} alt="소파 위에 놓인 SNOWBALL 조명" />
+          <img ref={heroImageRef} src={heroImage} alt="소파 위에 놓인 SNOWBALL 조명" />
         </div>
         <h1>SNOWBALL</h1>
       </section>
@@ -422,20 +600,20 @@ function SnowballDetailSection() {
         </div>
         <div ref={introCopyRef} className={styles.introCopy}>
           <h2 ref={introTitleRef}>
-            <span data-intro-line>A quiet</span>
-            <em data-intro-line>form of light.</em>
+            <span data-intro-line>Light,</span>
+            <em data-intro-line>softly settled.</em>
           </h2>
           <p ref={introDescriptionRef}>
-            빛이 공간과 사람 사이에 만들어내는 감각에 주목했습니다. 시선을 끄는 조형성과 편안한 조명 경험으로 공간의 인상을 섬세하게 변화시키고, 머무는 시간에 여유와 깊이를 더합니다. 조명을 단순한 기능이 아닌 취향을 표현하며 일상에 오래 머무는 존재로 제안합니다.
+            둥근 유리 안에서 빛이 부드럽게 번집니다. 또렷하지 않아 더 편안한 빛이 공간의 온도를 천천히 끌어올리고, 곁에 두는 시간에 잔잔한 포근함을 더합니다. 밝히는 것을 넘어, 하루의 끝까지 가만히 머무는 작은 존재로 곁을 지킵니다.
           </p>
         </div>
       </section>
 
       <section ref={storyRef} className={`${styles.panel} ${styles.story}`}>
         <div className={styles.storyCopy}>
-          <h2 ref={storyTitleRef}>Elegance in Every Curve.</h2>
+          <h2 ref={storyTitleRef}>A Sphere That Holds Warmth.</h2>
           <p ref={storyDescriptionRef}>
-            플라밍고 시리즈는 유연하게 이어지는 곡선과 절제된 형태로 공간에 우아한 균형을 더합니다. 낮에는 하나의 오브제로 존재하고, 밤에는 따뜻한 빛으로 일상의 풍경을 부드럽게 밝힙니다. 빛을 켜는 순간의 온도와 결에는, 오랜 시간 빛을 다루어 온 일광전구의 감각이 조용히 담겨 있습니다.
+            은은한 빛이 천천히 내려앉아 책상 위를 차분히 물들입니다. 둥근 유리를 지난 또렷하지 않은 빛이 마주한 공간을 낮게 가라앉히고, 가까운 자리에 포근한 온기를 더합니다. 오래 켜두어도 눈이 편안한 부드러운 빛은, 시선을 끌지 않아도 하루의 끝을 조용히 함께합니다.
           </p>
         </div>
         <div className={styles.storyVisual}>
@@ -453,38 +631,59 @@ function SnowballDetailSection() {
         </div>
       </section>
 
-      <section className={`${styles.panel} ${styles.mosaic}`} aria-label="SNOWBALL 제품 이미지">
-        <div className={styles.mosaicLeft}>
+      <section ref={mosaicRef} className={`${styles.panel} ${styles.mosaic}`} aria-label="SNOWBALL 제품 이미지">
+        <div ref={mosaicLeftRef} className={styles.mosaicLeft}>
+          <p ref={mosaicLeftTextRef} className={styles.mosaicLeftLead}>
+            <span className={styles.mosaicTextMask}>
+              <span data-mosaic-text data-mosaic-lead-text>GLOW</span>
+            </span>
+            <span className={styles.mosaicTextMask}>
+              <span data-mosaic-text data-mosaic-lead-text>WITHOUT EDGES.</span>
+            </span>
+          </p>
           <img src={mosaicBox} alt="테이블 위 SNOWBALL 조명과 패키지" />
+          <h2>
+            <span className={styles.mosaicTextMask}>
+              <span data-mosaic-text data-mosaic-title-text>SNOWBALL</span>
+            </span>
+          </h2>
         </div>
-        <div className={styles.mosaicTop}>
+        <div ref={mosaicTopRef} className={styles.mosaicTop}>
           <div className={styles.mosaicTopFrame}>
-            <div className={styles.mosaicTopRotated}>
+            <div ref={mosaicTopLampRef} className={styles.mosaicTopRotated}>
               <img src={mosaicLamp} alt="SNOWBALL 테이블 조명" />
             </div>
           </div>
         </div>
-        <div className={styles.mosaicBottom}>
+        <div ref={mosaicBottomRef} className={styles.mosaicBottom}>
           <img src={mosaicGlow} alt="빛을 밝힌 SNOWBALL 조명" />
         </div>
-        <div className={styles.mosaicPendant}>
+        <div ref={mosaicPendantRef} className={styles.mosaicPendant}>
           <img src={mosaicPendant} alt="공간에 설치된 SNOWBALL 펜던트 조명" />
         </div>
-        <div className={styles.mosaicBlank} aria-hidden="true" />
+        <div ref={mosaicBlankRef} className={styles.mosaicBlank} aria-hidden="true">
+          <div className={styles.mosaicBlankPattern} />
+        </div>
       </section>
 
       <section ref={galleryRef} className={`${styles.panel} ${styles.gallery}`}>
-        <p ref={galleryEyebrowRef} className={styles.galleryEyebrow}>공간에 온기를 더하는 빛.</p>
+        <p ref={galleryEyebrowRef} className={styles.galleryEyebrow}>잔잔하게 번져 가는 둥근 하루.</p>
         <h2 ref={galleryTitleRef}>SNOWBALL</h2>
         <div ref={galleryGridRef} className={styles.galleryGrid}>
           <div><img src={galleryLeft} alt="천장에 설치된 SNOWBALL 조명" /></div>
           <div><img src={galleryRight} alt="카펫 위에 놓인 SNOWBALL 조명" /></div>
         </div>
-        <span ref={productButtonRef} className={styles.productButton}>
+        <a
+          ref={productButtonRef}
+          className={styles.productButton}
+          href="https://brand.naver.com/iklamp/search?q=snowball"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <span ref={productButtonTextRef} className={styles.productButtonText}>
             제품 보러가기
           </span>
-        </span>
+        </a>
       </section>
 
       <ProductOtherSection />
