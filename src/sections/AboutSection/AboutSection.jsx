@@ -43,6 +43,10 @@ function getIntroTextSizes(width) {
     return { sinceSize: 28, yearSize: 90 }
   }
 
+  if (width <= 1199) {
+    return { sinceSize: 50, yearSize: 130 }
+  }
+
   return {
     sinceSize: getFontSizeToken('--fs-title-4', 70),
     yearSize: getFontSizeToken('--fs-display-1', 180),
