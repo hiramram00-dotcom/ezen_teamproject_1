@@ -10,7 +10,6 @@ import galleryLeft from './assets/gallery-left.webp'
 import galleryRight from './assets/gallery-right.webp'
 import storySlidePlant from './assets/story-slide-plant.webp'
 import storySlideTulip from './assets/story-slide-tulip.webp'
-import storySlideTable from './assets/story-slide-table.webp'
 import { ProductOtherSection } from '../SnowballDetailSection/SnowballDetailSection'
 import styles from './TeacupDetailSection.module.css'
 
@@ -20,10 +19,10 @@ const storySlides = [
   { src: storyImage, alt: '레드 TEACUP 조명이 놓인 테이블' },
   { src: storySlidePlant, alt: 'TEACUP 조명과 식물이 놓인 공간' },
   { src: storySlideTulip, alt: '튤립과 함께 놓인 TEACUP 조명' },
-  { src: storySlideTable, alt: '책과 함께 놓인 TEACUP 조명' },
 ]
 
 function TeacupDetailSection() {
+  const heroImageRef = useRef(null)
   const introRef = useRef(null)
   const introImageRef = useRef(null)
   const introCopyRef = useRef(null)
@@ -40,6 +39,21 @@ function TeacupDetailSection() {
   const galleryTitleRef = useRef(null)
   const productButtonRef = useRef(null)
   const productButtonTextRef = useRef(null)
+
+  useLayoutEffect(() => {
+    const heroImageEl = heroImageRef.current
+    if (!heroImageEl) return undefined
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+
+    const tween = gsap.fromTo(
+      heroImageEl,
+      { scale: 1.22 },
+      { scale: 1, duration: 2.2, delay: 0.1, ease: 'power3.out' }
+    )
+
+    return () => tween.kill()
+  }, [])
 
   useLayoutEffect(() => {
     const intro = introRef.current
@@ -112,11 +126,12 @@ function TeacupDetailSection() {
       for (let index = 1; index <= slides.length; index += 1) {
         const next = index % slides.length
         slider
-          .set(slides[next], { xPercent: 100, zIndex: 2 }, '+=1.5')
+          .set(slides[next], { xPercent: 100, autoAlpha: 0, zIndex: 2 }, '+=1.5')
           .to(slides[next], {
             xPercent: 0,
-            duration: 0.7,
-            ease: 'power1.out',
+            autoAlpha: 1,
+            duration: 0.9,
+            ease: 'power2.inOut',
           })
           .set(slides[current], { xPercent: 100, zIndex: 0 })
           .set(slides[next], { zIndex: 1 })
@@ -283,7 +298,7 @@ function TeacupDetailSection() {
   return (
     <main className={styles.detail}>
       <section className={`${styles.panel} ${styles.hero}`} aria-label="TEACUP 제품 소개">
-        <img className={styles.heroImage} src={heroImage} alt="햇빛이 드는 공간에 놓인 TEACUP 조명" />
+        <img ref={heroImageRef} className={styles.heroImage} src={heroImage} alt="햇빛이 드는 공간에 놓인 TEACUP 조명" />
         <h1>TEACUP</h1>
       </section>
 
@@ -333,10 +348,16 @@ function TeacupDetailSection() {
           <div className={styles.mosaicImageMask}>
             <img data-mosaic-image="down" src={mosaicLeft} alt="책상 위 TEACUP 조명" />
           </div>
-          <figcaption data-mosaic-caption>One Warm Point in the Dark.</figcaption>
+          <figcaption data-mosaic-caption>
+            <span className={styles.mosaicCaptionAccent}>One Warm Point</span>
+            <span className={styles.mosaicCaptionPlain}> in the Dark.</span>
+          </figcaption>
         </figure>
         <figure className={styles.mosaicRight}>
-          <figcaption data-mosaic-caption>Where the Day Lingers.</figcaption>
+          <figcaption data-mosaic-caption>
+            <span className={styles.mosaicCaptionAccent}>Where the Day </span>
+            <span className={styles.mosaicCaptionPlain}>Lingers.</span>
+          </figcaption>
           <div className={styles.mosaicImageMask}>
             <img data-mosaic-image="up" src={mosaicRight} alt="꽃과 함께 놓인 TEACUP 조명" />
           </div>
@@ -350,11 +371,17 @@ function TeacupDetailSection() {
           <div><img src={galleryLeft} alt="선반 위 레드 TEACUP 조명" /></div>
           <div><img src={galleryRight} alt="계단 위 화이트 TEACUP 조명" /></div>
         </div>
-        <span ref={productButtonRef} className={styles.productButton}>
+        <a
+          ref={productButtonRef}
+          className={styles.productButton}
+          href="https://brand.naver.com/iklamp/search?q=teacup"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <span ref={productButtonTextRef} className={styles.productButtonText}>
             제품 보러가기
           </span>
-        </span>
+        </a>
       </section>
 
       <ProductOtherSection />

@@ -25,7 +25,7 @@
 .hero {
   max-width: none;
   height: 100svh;
-  min-height: 56.25vw;
+  min-height: 100svh;
 }
 
 .intro {
@@ -41,10 +41,18 @@
 }
 
 .marqueeShowcase {
+  --marquee-card-size: clamp(320px, 22.3958vw, 430px);
+  --marquee-card-gap: min(2.6042vw, 50px);
+  --marquee-set-shift: calc((var(--marquee-card-size) + var(--marquee-card-gap)) * 4);
+  --marquee-row-gap: 50px;
+  --marquee-row-top: max(
+    0px,
+    calc((100cqh - (var(--marquee-card-size) * 2 + var(--marquee-row-gap))) / 2)
+  );
   max-width: none;
-  height: min(56.25vw, 1080px);
-  min-height: min(56.25vw, 1080px);
-  margin-top: max(-0.0521vw, -1px);
+  height: clamp(720px, 56.25vw, 1080px);
+  min-height: clamp(720px, 56.25vw, 1080px);
+  margin-top: clamp(56px, 5vw, 96px);
   overflow: hidden;
 }
 
@@ -118,7 +126,7 @@
 .introTitle em {
   font-family: var(--font-deco);
   font-style: italic;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .introDescription {
@@ -160,7 +168,7 @@
 }
 
 .storyCopy h2 {
-  margin-bottom: 0.2604cqw;
+  margin-bottom: 1cqw;
   font-family: var(--font-deco);
   font-size: 1.4583cqw;
   font-style: italic;
@@ -194,26 +202,26 @@
   position: absolute;
   left: 0;
   display: flex;
-  gap: min(2.6042vw, 50px);
+  gap: var(--marquee-card-gap);
   width: max-content;
   will-change: transform;
 }
 
 .marqueeRowTop {
-  top: min(6.849vw, 131.5px);
+  top: var(--marquee-row-top);
   animation: snowmanMarqueeRight 24s linear infinite;
 }
 
 .marqueeRowBottom {
-  top: min(30.2865vw, 581.5px);
+  top: calc(var(--marquee-row-top) + var(--marquee-card-size) + var(--marquee-row-gap));
   animation: snowmanMarqueeLeft 24s linear infinite;
 }
 
 .marqueeCard {
   position: relative;
   flex: 0 0 auto;
-  width: min(19.1146vw, 367px);
-  height: min(19.1146vw, 367px);
+  width: var(--marquee-card-size);
+  height: var(--marquee-card-size);
   overflow: hidden;
   background: #716f6d;
   color: var(--color-base-1);
@@ -396,13 +404,13 @@
   }
 
   to {
-    transform: translateX(calc(-50% - min(1.3021vw, 25px)));
+    transform: translateX(calc(var(--marquee-set-shift) * -1));
   }
 }
 
 @keyframes snowmanMarqueeRight {
   from {
-    transform: translateX(calc(-50% - min(1.3021vw, 25px)));
+    transform: translateX(calc(var(--marquee-set-shift) * -1));
   }
 
   to {
@@ -758,7 +766,7 @@
   z-index: 5;
   display: flex;
   flex-direction: column;
-  gap: 17px;
+  gap: 6px;
   width: max-content;
   margin-top: 159px;
   margin-left: calc(max((100vw - 1920px) / 2, 0px) + 40px);
@@ -769,7 +777,7 @@
   margin: 0;
   font-size: 80px;
   font-weight: 400;
-  line-height: 1.2;
+  line-height: 0.92;
   letter-spacing: -2.4px;
   white-space: nowrap;
 }
@@ -777,7 +785,7 @@
 .otherTitleLead,
 .otherTitleAccent {
   display: block;
-  line-height: 1.2;
+  line-height: 0.92;
 }
 
 .otherTitleLead {
@@ -888,6 +896,14 @@
 
 .dragging .otherCard[data-visible="true"]:nth-of-type(2n) {
   transform: translateY(var(--drag-float-y-alt, 14px)) scale(0.985);
+}
+
+.otherCardLink {
+  position: absolute;
+  inset: 0;
+  display: block;
+  color: inherit;
+  pointer-events: auto;
 }
 
 .otherCard img {
