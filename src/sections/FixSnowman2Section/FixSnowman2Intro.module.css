@@ -231,6 +231,18 @@
     width: auto;
   }
 
+  .title p {
+    line-height: 1;
+  }
+
+  .textInnerRight {
+    transform: translate(50vw, 3svh);
+  }
+
+  .snowmanLine.triggered .textInnerRight {
+    transform: translate(0, 3svh);
+  }
+
   .title :global(.type-italic-2),
   .title :global(.type-title-semibold) {
     /* 모바일 기기 폭에 맞춰 36px ~ 48px 사이로 자연스럽게 늘어났다 줄어듭니다 */

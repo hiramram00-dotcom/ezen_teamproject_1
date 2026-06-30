@@ -62,5 +62,10 @@
         }
 }
 @media (max-width: 767px) {
-  :root { --layout-gutter: 16px; }
+  :root { --layout-gutter: 16px; 
+          --fs-title-2: 42px;
+          --fs-sub-1: 16px;
+          --fs-sub-2: 14px;
+          --fs-sub-3: 14px;
+  }
 }

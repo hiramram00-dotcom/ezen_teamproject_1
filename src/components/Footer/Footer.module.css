@@ -287,15 +287,15 @@
   /* 카드 가로 더 넓힘(중앙 유지) */
   .card {
     left: 13%;
-    top: 19.477%;
+    top: 17%;
     width: 74%;
-    height: 61.047%;
+    height: 66%;
     translate: none;
   }
-  .cardHeading { font-size: 20px; }
-  .cardCompact .cardHeading { font-size: 20px; }
+  .cardHeading { font-size: 18px; }
+  .cardCompact .cardHeading { font-size: 18px; }
   .cardLink { font-size: 16px; }
-  .cardEmail { font-size: 20px; }
+  .cardEmail { font-size: 18px; }
   .body {
     min-height: auto;
     padding: 24px 20px 16px;

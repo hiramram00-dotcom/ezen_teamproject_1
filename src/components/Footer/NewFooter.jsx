@@ -92,7 +92,9 @@ export default function NewFooter() {
           <p className={styles.tagline}>
             처음 빛을 밝혔던 그 온도 그대로,
             <br />
-            60년의 시간을 넘어 지금 이 순간에도 일광전구는 빛의 원형을 이어갑니다.
+            60년의 시간을 넘어 지금 이 순간에도
+            <br className={styles.mobileBreak} />
+            일광전구는 빛의 원형을 이어갑니다.
           </p>
           <div className={styles.socials}>
             {SOCIALS.map(({ label, href }) => (

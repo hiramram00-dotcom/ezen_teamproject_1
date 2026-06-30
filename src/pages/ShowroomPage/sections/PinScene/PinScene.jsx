@@ -183,7 +183,9 @@ function PinScene() {
                   <p className={`${styles.desc} type-body-4`}>
                     조명과 가구가 함께 놓인 장면을 통해
                     <br />
-                    제품의 형태와 크기감, 빛이 만드는 분위기를 경험할 수 있습니다.
+                    제품의 형태와 크기감, 빛이 만드는 분위기를
+                    <br className={styles.mobileBreak} />
+                    경험할 수 있습니다.
                   </p>
                 </div>
 
@@ -231,10 +233,20 @@ function PinScene() {
                 <div className={styles.col}>
                   <h3 className={`${styles.colTitle} type-body-semibold-2`}>위치 · 운영시간</h3>
                   <p className={`${styles.colText} type-body-4`}>
-                    서울특별시 중구 퇴계로4길 2-1 로컬스티치 B동 1층
+                    <span className={styles.desktopOnly}>서울특별시 중구 퇴계로4길 2-1 로컬스티치 B동 1층</span>
+                    <span className={styles.mobileOnly}>
+                      서울특별시 중구 퇴계로4길 2-1
+                      <br />
+                      로컬스티치 B동 1층
+                    </span>
                   </p>
                   <p className={`${styles.colText} type-body-4`}>
-                    MON-SUN 11:00-20:00&nbsp;&nbsp;/&nbsp;&nbsp;BREAK TIME 15:00-16:00
+                    <span className={styles.desktopOnly}>MON-SUN 11:00-20:00&nbsp;&nbsp;/&nbsp;&nbsp;BREAK TIME 15:00-16:00</span>
+                    <span className={styles.mobileOnly}>
+                      MON-SUN 11:00-20:00
+                      <br />
+                      BREAK TIME 15:00-16:00
+                    </span>
                   </p>
                 </div>
 

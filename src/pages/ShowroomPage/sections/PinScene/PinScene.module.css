@@ -303,6 +303,11 @@
   margin-top: 8px;
 }
 
+.mobileBreak,
+.mobileOnly {
+  display: none;
+}
+
 .colContact {
   padding-left: clamp(32px, 5vw, 72px);
   border-left: 1px solid color-mix(in srgb, var(--color-base-3) 14%, transparent);
@@ -357,6 +362,15 @@
 
   .desc {
     font-size: 15px;
+  }
+
+  .mobileBreak,
+  .mobileOnly {
+    display: block;
+  }
+
+  .desktopOnly {
+    display: none;
   }
 
   .divider {
