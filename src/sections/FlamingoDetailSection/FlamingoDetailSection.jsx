@@ -18,6 +18,7 @@ import otherMario from './assets/other-mario.webp'
 import otherFlamingo from './assets/other-flamingo.webp'
 import otherApollo from './assets/other-apollo.webp'
 import styles from './FlamingoDetailSection.module.css'
+import otherStyles from '../../styles/otherTrack.module.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -562,10 +563,11 @@ function FlamingoDetailSection() {
             <em data-intro-line>form of light.</em>
           </h2>
           <p ref={introDescriptionRef} className={styles.introDescription}>
-            빛이 공간과 사람 사이에 만들어내는 감각에 주목했습니다. 시선을 끄는
-            조형성과 편안한 조명 경험으로 공간의 인상을 섬세하게 변화시키고,
-            머무는 시간에 여유와 깊이를 더합니다. 조명을 단순한 기능이 아닌 취향을
-            표현하며 일상에 오래 머무는 존재로 제안합니다.
+            빛이 공간과 사람 사이에 만들어내는 감각에 주목했습니다. 시선을 끄는 조형성과
+            <br />
+            편안한 조명 경험으로 공간의 인상을 섬세하게 변화시키고, 머무는 시간에 여유와 깊이를 더합니다.
+            <br />
+            조명을 단순한 기능이 아닌 취향을 표현하며 일상에 오래 머무는 존재로 제안합니다.
           </p>
         </div>
       </section>
@@ -593,11 +595,13 @@ function FlamingoDetailSection() {
         <div className={styles.storyCopy}>
           <h2 ref={storyTitleRef}>Elegance in Every Curve.</h2>
           <p ref={storyDescriptionRef}>
-            플라밍고 시리즈는 유연하게 이어지는 곡선과 절제된 형태로 공간에
-            우아한 균형을 더합니다. 낮에는 하나의 오브제로 존재하고, 밤에는
-            따뜻한 빛으로 일상의 풍경을 부드럽게 밝힙니다. 빛을 켜는 순간의
-            온도와 결에는, 오랜 시간 빛을 다루어 온 일광전구의 감각이 조용히
-            담겨 있습니다.
+            플라밍고 시리즈는 유연하게 이어지는 곡선과 절제된 형태로
+            <br />
+            공간에 우아한 균형을 더합니다. 낮에는 하나의 오브제로 존재하고, 밤에는
+            <br />
+            따뜻한 빛으로 일상의 풍경을 부드럽게 밝힙니다. 빛을 켜는 순간의 온도와
+            <br />
+            결에는, 오랜 시간 빛을 다루어 온 일광전구의 감각이 조용히 담겨 있습니다.
           </p>
         </div>
       </section>
@@ -699,8 +703,8 @@ function FlamingoDetailSection() {
         onPointerCancel={endDrag}
       >
         <div
-          className={`${styles.dragHint} ${
-            hasDraggedOtherProducts ? styles.dragHintHidden : ''
+          className={`${otherStyles.dragHint} ${
+            hasDraggedOtherProducts ? otherStyles.dragHintHidden : ''
           }`}
           aria-hidden="true"
         >
@@ -708,13 +712,13 @@ function FlamingoDetailSection() {
           <span>← →</span>
         </div>
 
-        <div className={styles.otherTrack}>
-          <div ref={otherIntroRef} className={styles.otherIntro}>
+        <div className={otherStyles.otherTrack}>
+          <div ref={otherIntroRef} className={otherStyles.otherIntro}>
             <h2>
-              <span className={styles.otherTitleLead}>Other</span>
-              <span className={styles.otherTitleAccent}>
+              <span className={otherStyles.otherTitleLead}>Other</span>
+              <span className={otherStyles.otherTitleAccent}>
                 Products
-                <span className={styles.otherArrow} aria-hidden="true">
+                <span className={otherStyles.otherArrow} aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="7" y1="7" x2="17" y2="17" />
                     <polyline points="17 8 17 17 8 17" />
@@ -723,9 +727,9 @@ function FlamingoDetailSection() {
               </span>
             </h2>
             <p>
-              부드러운 빛으로 일상에 편안함을 더하는
+              부드러운 빛으로
               <br />
-              조명을 찾고 있다면
+              일상에 편안함을 더하는 조명을 찾고 있다면
             </p>
           </div>
 
