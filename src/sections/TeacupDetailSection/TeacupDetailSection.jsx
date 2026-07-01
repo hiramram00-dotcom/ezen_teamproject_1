@@ -314,11 +314,14 @@ function TeacupDetailSection() {
           <p ref={introDescriptionRef}>
             <span className={styles.defaultCopy}>
               손이 닿는 자리에 두는 작은 빛에 마음을 두었습니다. 크지 않아
-              <br className={styles.tabletBr} />
-              더 가깝게 느껴지는 따뜻함이 책상 한 켠을 조용히 데우고,
-              <br className={styles.tabletBr} />
+              <br className={styles.tabletBr} />{' '}
+              더 가깝게 느껴지는 따뜻함이
+              <br className={styles.desktopBr} />{' '}
+              책상 한 켠을 조용히 데우고,
+              <br className={styles.tabletBr} />{' '}
               혼자 보내는 시간에 낮은 온기를 더합니다. 공간 전체가 아닌,
-              <br className={styles.tabletBr} />
+              <br className={styles.desktopBr} />{' '}
+              <br className={styles.tabletBr} />{' '}
               바로 곁의 한 뼘을 밝히는 빛으로 제안합니다.
             </span>
             <span className={styles.mobileCopy}>
@@ -340,15 +343,21 @@ function TeacupDetailSection() {
           <p ref={storyDescriptionRef}>
             <span className={styles.defaultCopy}>
               티컵 시리즈는 일상의 그릇을 닮은 작은 형태로,
-              <br className={styles.tabletBr} />
-              곁에 두기 좋은 빛을 제안합니다.
-              <br className={styles.tabletBr} />
+              <br className={styles.tabletBr} />{' '}
+              곁에 두기 좋은 빛을
+              <br className={styles.desktopBr} />{' '}
+              제안합니다.
+              <br className={styles.tabletBr} />{' '}
               낮에는 책상 위 단정한 오브제로 머물고, 밤에는
-              <br className={styles.tabletBr} />
-              손이 닿는 거리에서 따뜻한 빛을 밝힙니다.
-              <br className={styles.tabletBr} />
-              작지만 단단한 형태와 빛의 온도에는, 오랜 시간
-              <br className={styles.tabletBr} />
+              <br className={styles.tabletBr} />{' '}
+              손이
+              <br className={styles.desktopBr} />{' '}
+              닿는 거리에서 따뜻한 빛을 밝힙니다.
+              <br className={styles.tabletBr} />{' '}
+              작지만 단단한 형태와 빛의
+              <br className={styles.desktopBr} />{' '}
+              온도에는, 오랜 시간
+              <br className={styles.tabletBr} />{' '}
               빛을 다루어 온 일광전구의 감각이 담겨 있습니다.
             </span>
             <span className={styles.mobileCopy}>

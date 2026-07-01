@@ -617,11 +617,14 @@ function SnowballDetailSection() {
           <p ref={introDescriptionRef}>
             <span className={styles.defaultCopy}>
               둥근 유리 안에서 빛이 부드럽게 번집니다. 또렷하지 않아
-              <br className={styles.tabletBr} />
-              더 편안한 빛이 공간의 온도를 천천히 끌어올리고,
-              <br className={styles.tabletBr} />
+              <br className={styles.tabletBr} />{' '}
+              더 편안한 빛이 공간의 온도를
+              <br className={styles.desktopBr} />{' '}
+              천천히 끌어올리고,
+              <br className={styles.tabletBr} />{' '}
               곁에 두는 시간에 잔잔한 포근함을 더합니다. 밝히는 것을 넘어,
-              <br className={styles.tabletBr} />
+              <br className={styles.desktopBr} />{' '}
+              <br className={styles.tabletBr} />{' '}
               하루의 끝까지 가만히 머무는 작은 존재로 곁을 지킵니다.
             </span>
             <span className={styles.mobileCopy}>
@@ -643,15 +646,20 @@ function SnowballDetailSection() {
           <p ref={storyDescriptionRef}>
             <span className={styles.defaultCopy}>
               은은한 빛이 천천히 내려앉아 책상 위를 차분히
-              <br className={styles.tabletBr} />
-              물들입니다. 둥근 유리를 지난 또렷하지 않은 빛이
-              <br className={styles.tabletBr} />
+              <br className={styles.tabletBr} />{' '}
+              물들입니다. 둥근 유리를
+              <br className={styles.desktopBr} />{' '}
+              지난 또렷하지 않은 빛이
+              <br className={styles.tabletBr} />{' '}
               마주한 공간을 낮게 가라앉히고, 가까운 자리에
-              <br className={styles.tabletBr} />
+              <br className={styles.desktopBr} />{' '}
+              <br className={styles.tabletBr} />{' '}
               포근한 온기를 더합니다. 오래 켜두어도 눈이
-              <br className={styles.tabletBr} />
-              편안한 부드러운 빛은 시선을 끌지 않아도
-              <br className={styles.tabletBr} />
+              <br className={styles.tabletBr} />{' '}
+              편안한 부드러운 빛은
+              <br className={styles.desktopBr} />{' '}
+              시선을 끌지 않아도
+              <br className={styles.tabletBr} />{' '}
               하루의 끝을 조용히 함께합니다.
             </span>
             <span className={styles.mobileCopy}>

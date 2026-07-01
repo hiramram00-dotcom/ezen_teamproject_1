@@ -74,7 +74,7 @@
   position: absolute;
   top: 62.5926%;
   left: 50%;
-  width: 36.5625%;
+  width: 70%;
   transform: translateX(-50%);
   text-align: center;
 }
@@ -138,7 +138,7 @@
   position: absolute;
   left: 1.9792cqw;
   bottom: 1.3542cqw;
-  width: 29.4792cqw;
+  width: 42cqw;
 }
 
 .storyCopy h2 {
@@ -840,9 +840,11 @@
   }
 }
 
+.desktopBr { display: inline; }
 .tabletBr { display: none; }
 
 @media (min-width: 701px) and (max-width: 1199px) {
+  .desktopBr { display: none; }
   .tabletBr { display: inline; }
   .intro {
     margin-bottom: 30px;
@@ -883,6 +885,11 @@
 
   .gallery {
     height: 725px !important;
+  }
+
+  .galleryGrid {
+    top: calc(20.9259% + 20px);
+    height: calc(64.8148% - 20px);
   }
 
   .galleryEyebrow {
