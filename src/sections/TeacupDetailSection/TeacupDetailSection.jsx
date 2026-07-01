@@ -312,11 +312,24 @@ function TeacupDetailSection() {
             <em data-intro-line>pool of warmth.</em>
           </h2>
           <p ref={introDescriptionRef}>
-            손이 닿는 자리에 두는 작은 빛에 마음을 두었습니다. 크지 않아 더 가깝게 느껴지는
-            <br />
-            따뜻함이 책상 한 켠을 조용히 데우고, 혼자 보내는 시간에 낮은 온기를 더합니다.
-            <br />
-            공간 전체가 아닌, 바로 곁의 한 뼘을 밝히는 빛으로 제안합니다.
+            <span className={styles.defaultCopy}>
+              손이 닿는 자리에 두는 작은 빛에 마음을 두었습니다. 크지 않아
+              <br className={styles.tabletBr} />
+              더 가깝게 느껴지는 따뜻함이 책상 한 켠을 조용히 데우고,
+              <br className={styles.tabletBr} />
+              혼자 보내는 시간에 낮은 온기를 더합니다. 공간 전체가 아닌,
+              <br className={styles.tabletBr} />
+              바로 곁의 한 뼘을 밝히는 빛으로 제안합니다.
+            </span>
+            <span className={styles.mobileCopy}>
+              손이 닿는 자리에 두는 작은 빛에 마음을 두었습니다. 크지 않아
+              <br />
+              더 가깝게 느껴지는 따뜻함이 책상 한 켠을 조용히 데우고,
+              <br />
+              혼자 보내는 시간에 낮은 온기를 더합니다. 공간 전체가 아닌,
+              <br />
+              바로 곁의 한 뼘을 밝히는 빛으로 제안합니다.
+            </span>
           </p>
         </div>
       </section>
@@ -325,13 +338,28 @@ function TeacupDetailSection() {
         <div className={styles.storyCopy}>
           <h2 ref={storyTitleRef}>A Cup of Quiet Light.</h2>
           <p ref={storyDescriptionRef}>
-            티컵 시리즈는 일상의 그릇을 닮은 작은 형태로, 곁에 두기 좋은 빛을
-            <br />
-            제안합니다. 낮에는 책상 위 단정한 오브제로 머물고,
-            <br />
-            밤에는 손이 닿는 거리에서 따뜻한 빛을 밝힙니다. 작지만 단단한 형태와
-            <br />
-            빛의 온도에는, 오랜 시간 빛을 다루어 온 일광전구의 감각이 담겨 있습니다.
+            <span className={styles.defaultCopy}>
+              티컵 시리즈는 일상의 그릇을 닮은 작은 형태로,
+              <br className={styles.tabletBr} />
+              곁에 두기 좋은 빛을 제안합니다.
+              <br className={styles.tabletBr} />
+              낮에는 책상 위 단정한 오브제로 머물고, 밤에는
+              <br className={styles.tabletBr} />
+              손이 닿는 거리에서 따뜻한 빛을 밝힙니다.
+              <br className={styles.tabletBr} />
+              작지만 단단한 형태와 빛의 온도에는, 오랜 시간
+              <br className={styles.tabletBr} />
+              빛을 다루어 온 일광전구의 감각이 담겨 있습니다.
+            </span>
+            <span className={styles.mobileCopy}>
+              티컵 시리즈는 일상의 그릇을 닮은 작은 형태로, 곁에 두기 좋은 빛을
+              <br />
+              제안합니다. 낮에는 책상 위 단정한 오브제로 머물고, 밤에는 손이
+              <br />
+              닿는 거리에서 따뜻한 빛을 밝힙니다. 작지만 단단한 형태와 빛의
+              <br />
+              온도에는, 오랜 시간 빛을 다루어 온 일광전구의 감각이 담겨 있습니다.
+            </span>
           </p>
         </div>
         <div className={styles.storyVisual}>
@@ -355,14 +383,28 @@ function TeacupDetailSection() {
             <img data-mosaic-image="down" src={mosaicLeft} alt="책상 위 TEACUP 조명" />
           </div>
           <figcaption data-mosaic-caption>
-            <span className={styles.mosaicCaptionAccent}>One Warm Point</span>
-            <span className={styles.mosaicCaptionPlain}> in the Dark.</span>
+            <span className={styles.defaultMosaicCaption}>
+              <span className={styles.mosaicCaptionAccent}>One Warm Point</span>
+              <span className={styles.mosaicCaptionPlain}> in the Dark.</span>
+            </span>
+            <span className={styles.mobileMosaicCaption}>
+              <span className={styles.mosaicCaptionAccent}>One warm point</span>
+              <br />
+              <span className={styles.mosaicCaptionPlain}>in the Dark.</span>
+            </span>
           </figcaption>
         </figure>
         <figure className={styles.mosaicRight}>
           <figcaption data-mosaic-caption>
-            <span className={styles.mosaicCaptionAccent}>Where the Day </span>
-            <span className={styles.mosaicCaptionPlain}>Lingers.</span>
+            <span className={styles.defaultMosaicCaption}>
+              <span className={styles.mosaicCaptionAccent}>Where the Day </span>
+              <span className={styles.mosaicCaptionPlain}>Lingers.</span>
+            </span>
+            <span className={styles.mobileMosaicCaption}>
+              <span className={styles.mosaicCaptionAccent}>Where the Day</span>
+              <br />
+              <span className={styles.mosaicCaptionPlain}>Lingers.</span>
+            </span>
           </figcaption>
           <div className={styles.mosaicImageMask}>
             <img data-mosaic-image="up" src={mosaicRight} alt="꽃과 함께 놓인 TEACUP 조명" />

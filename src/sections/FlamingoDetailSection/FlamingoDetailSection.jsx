@@ -563,11 +563,35 @@ function FlamingoDetailSection() {
             <em data-intro-line>form of light.</em>
           </h2>
           <p ref={introDescriptionRef} className={styles.introDescription}>
-            빛이 공간과 사람 사이에 만들어내는 감각에 주목했습니다. 시선을 끄는 조형성과
-            <br />
-            편안한 조명 경험으로 공간의 인상을 섬세하게 변화시키고, 머무는 시간에 여유와 깊이를 더합니다.
-            <br />
-            조명을 단순한 기능이 아닌 취향을 표현하며 일상에 오래 머무는 존재로 제안합니다.
+            <span className={styles.introDescriptionDefault}>
+              빛이 공간과 사람 사이에 만들어내는 감각에 주목했습니다. 시선을 끄는 조형성과
+              <br />
+              편안한 조명 경험으로 공간의 인상을 섬세하게 변화시키고, 머무는 시간에 여유와 깊이를 더합니다.
+              <br />
+              조명을 단순한 기능이 아닌 취향을 표현하며 일상에 오래 머무는 존재로 제안합니다.
+            </span>
+            <span className={styles.introDescriptionTablet}>
+              빛이 공간과 사람 사이에 만들어내는 감각에 주목했습니다.
+              <br />
+              시선을 끄는 조형성과 편안한 조명 경험으로 공간의 인상을 섬세하게 변화시키고,
+              <br />
+              머무는 시간에 여유와 깊이를 더합니다.
+              <br />
+              조명을 단순한 기능이 아닌 취향을 표현하며 일상에 오래 머무는 존재로 제안합니다.
+            </span>
+            <span className={styles.introDescriptionMobile}>
+              빛이 공간과 사람 사이에 만들어내는 감각에
+              <br />
+              주목했습니다. 시선을 끄는 조형성과 편안한
+              <br />
+              조명 경험으로 공간의 인상을 섬세하게 변화시키고,
+              <br />
+              머무는 시간에 여유와 깊이를 더합니다.
+              <br />
+              조명을 단순한 기능이 아닌 취향을 표현하며
+              <br />
+              일상에 오래 머무는 존재로 제안합니다.
+            </span>
           </p>
         </div>
       </section>
@@ -595,13 +619,28 @@ function FlamingoDetailSection() {
         <div className={styles.storyCopy}>
           <h2 ref={storyTitleRef}>Elegance in Every Curve.</h2>
           <p ref={storyDescriptionRef}>
-            플라밍고 시리즈는 유연하게 이어지는 곡선과 절제된 형태로
-            <br />
-            공간에 우아한 균형을 더합니다. 낮에는 하나의 오브제로 존재하고, 밤에는
-            <br />
-            따뜻한 빛으로 일상의 풍경을 부드럽게 밝힙니다. 빛을 켜는 순간의 온도와
-            <br />
-            결에는, 오랜 시간 빛을 다루어 온 일광전구의 감각이 조용히 담겨 있습니다.
+            <span className={styles.storyDescriptionDefault}>
+              플라밍고 시리즈는 유연하게 이어지는 곡선과 절제된 형태로
+              <br />
+              공간에 우아한 균형을 더합니다. 낮에는 하나의 오브제로 존재하고, 밤에는
+              <br />
+              따뜻한 빛으로 일상의 풍경을 부드럽게 밝힙니다. 빛을 켜는 순간의 온도와
+              <br />
+              결에는, 오랜 시간 빛을 다루어 온 일광전구의 감각이 조용히 담겨 있습니다.
+            </span>
+            <span className={styles.storyDescriptionTablet}>
+              플라밍고 시리즈는 유연하게 이어지는 곡선과
+              <br />
+              절제된 형태로 공간에 우아한 균형을 더합니다.
+              <br />
+              낮에는 하나의 오브제로 존재하고, 밤에는
+              <br />
+              따뜻한 빛으로 일상의 풍경을 부드럽게 밝힙니다.
+              <br />
+              빛을 켜는 순간의 온도와 결에는, 오랜 시간 빛을
+              <br />
+              다루어 온 일광전구의 감각이 조용히 담겨 있습니다.
+            </span>
           </p>
         </div>
       </section>
@@ -703,7 +742,7 @@ function FlamingoDetailSection() {
         onPointerCancel={endDrag}
       >
         <div
-          className={`${otherStyles.dragHint} ${
+          className={`${otherStyles.dragHint} ${otherStyles.dragHintDesktop} ${
             hasDraggedOtherProducts ? otherStyles.dragHintHidden : ''
           }`}
           aria-hidden="true"
@@ -731,6 +770,15 @@ function FlamingoDetailSection() {
               <br />
               일상에 편안함을 더하는 조명을 찾고 있다면
             </p>
+            <div
+              className={`${otherStyles.dragHint} ${otherStyles.dragHintTablet} ${
+                hasDraggedOtherProducts ? otherStyles.dragHintHidden : ''
+              }`}
+              aria-hidden="true"
+            >
+              <span>Drag</span>
+              <span>← →</span>
+            </div>
           </div>
 
           <article className={`${styles.otherCard} ${styles.snowmanCard}`}>

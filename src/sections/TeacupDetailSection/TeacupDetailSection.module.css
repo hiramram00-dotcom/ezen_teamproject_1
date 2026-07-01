@@ -242,7 +242,7 @@
 
 .gallery h2 {
   position: absolute;
-  top: 6.9444%;
+  top: calc(6.9444% + 10px);
   left: 50%;
   z-index: 2;
   margin: 0;
@@ -339,21 +339,169 @@
   }
 }
 
+.mobileCopy {
+  display: none;
+}
+
+.mobileMosaicCaption {
+  display: none;
+}
+
 @media (max-width: 700px) {
+  .defaultCopy {
+    display: none;
+  }
+
+  .mobileCopy {
+    display: inline;
+  }
+
+  .defaultMosaicCaption {
+    display: none;
+  }
+
+  .mobileMosaicCaption {
+    display: inline;
+  }
+
+  .mosaicRight figcaption {
+    text-align: right;
+  }
+
+  .hero {
+    display: none;
+  }
+
+  .introVisual {
+    left: 5%;
+    width: 90%;
+    top: 110px;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
   .panel {
     min-height: 360px;
+  }
+
+  .intro {
+    height: calc(310px + 50.625cqw);
+    min-height: calc(310px + 50.625cqw);
+  }
+
+  .story {
+    min-height: 670px;
+  }
+
+  .introCopy {
+    top: calc(110px + 50.625cqw + 24px);
+    width: 88%;
   }
 
   .introCopy p,
   .storyCopy p,
   .galleryEyebrow,
   .productButton {
-    font-size: 7px;
+    font-size: 13px;
   }
 
   .storyCopy h2,
   .mosaic figcaption {
-    font-size: 9px;
+    font-size: 14px;
+  }
+
+  .storyVisual {
+    inset: auto;
+    top: 40px;
+    left: 5%;
+    width: 90%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+  }
+
+  .storyCopy {
+    top: calc(40px + 120cqw + 24px);
+    bottom: auto;
+    left: 5%;
+    width: 90%;
+  }
+
+  .gallery {
+    height: 310px;
+    min-height: 310px;
+  }
+
+  .galleryEyebrow {
+    top: 2.7604cqw;
+  }
+
+  .gallery h2 {
+    top: calc(3.9063cqw + 10px);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  .galleryGrid {
+    top: 96px;
+    height: 36.4583cqw;
+  }
+
+  .productButton {
+    box-sizing: border-box;
+    top: 250px;
+    bottom: auto;
+    width: 130px;
+    height: 37px;
+  }
+}
+
+.tabletBr { display: none; }
+
+@media (min-width: 701px) and (max-width: 1199px) {
+  .tabletBr { display: inline; }
+
+  .mosaic {
+    margin-block: 100px;
+  }
+  .intro {
+    margin-bottom: 30px;
+    min-height: 725px;
+  }
+
+  .story {
+    min-height: 725px;
+  }
+
+  .otherProducts {
+    margin-top: -60px;
+  }
+
+  .introCopy {
+    top: calc(62.5926% + 5px);
+  }
+
+  .story .storyCopy h2 {
+    font-size: 18px !important;
+  }
+
+  .productButton {
+    box-sizing: border-box;
+    top: auto !important;
+    bottom: 30px !important;
+    width: 140px !important;
+    height: 40px !important;
+    font-size: 14px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 10;
+  }
+
+  .gallery {
+    height: 725px !important;
+  }
+
+  .galleryEyebrow {
+    font-size: var(--fs-sub-1);
   }
 }
 

@@ -633,7 +633,7 @@
 
 .collaborationTitle {
   position: absolute;
-  top: 3.9063cqw;
+  top: calc(3.9063cqw + 10px);
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-deco);
@@ -916,25 +916,184 @@
   white-space: nowrap;
 }
 
+.tabletBr { display: none; }
+.mobileCopy { display: none; }
+
+@media (min-width: 701px) and (max-width: 1199px) {
+  .desktopBr { display: none; }
+  .tabletBr { display: inline; }
+}
+
 @media (min-width: 701px) and (max-width: 1199px) {
   .storyCopy h2 {
-    font-size: 20px !important;
+    font-size: 18px !important;
+  }
+
+  .otherProducts {
+    margin-top: -60px !important;
+  }
+}
+
+@media (min-width: 701px) and (max-width: 1199px) {
+  .intro {
+    margin-bottom: 30px;
+    min-height: 725px;
+  }
+
+  .story {
+    min-height: 725px;
+  }
+
+  .introCopy {
+    top: calc(58.8889% + 2.0833cqw + 5px);
+  }
+
+  .story .storyCopy h2 {
+    font-size: 18px !important;
+  }
+
+  .storyCopy {
+    width: 42cqw;
+  }
+
+  .marqueeShowcase {
+    margin-block: 100px;
+  }
+
+  .collaboration {
+    height: calc(min(56.25vw, 1080px) + 80px);
   }
 
   .collaborationButton {
+    box-sizing: border-box;
+    width: 140px !important;
+    height: 40px !important;
     font-size: 14px !important;
+  }
+
+  .otherProducts {
+    height: calc(min(56.25vw, 1080px) + 130px);
+  }
+
+  .otherCard {
+    translate: 0 60px;
   }
 }
 
 @media (max-width: 700px) {
+  .defaultCopy {
+    display: none;
+  }
+
+  .mobileCopy {
+    display: inline;
+  }
+
+  .marqueeShowcase {
+    --marquee-card-size: clamp(140px, 42vw, 180px);
+    --marquee-card-gap: 12px;
+    --marquee-row-gap: 16px;
+    --marquee-row-top: 12px;
+    height: calc(var(--marquee-card-size) * 2 + var(--marquee-row-gap) + 24px);
+    min-height: calc(var(--marquee-card-size) * 2 + var(--marquee-row-gap) + 24px);
+    margin-top: 24px;
+  }
+
+  .hero {
+    display: none;
+  }
+
+  .intro {
+    height: 550px;
+  }
+
+  .introVisual {
+    left: 5%;
+    width: 90%;
+    top: 110px;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .introCopy {
+    top: calc(110px + 50.625cqw + 24px);
+    width: 88%;
+  }
+
   .introDescription,
   .storyCopy p,
   .collaborationSubtitle {
-    font-size: 7px;
+    font-size: 13px;
   }
 
   .storyCopy h2 {
-    font-size: 9px;
+    font-size: 14px;
+  }
+
+  .story {
+    height: 670px;
+  }
+
+  .storyVisual {
+    top: 40px;
+    left: 5%;
+    right: auto;
+    width: 90%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+  }
+
+  .storyCopy {
+    top: calc(40px + 120cqw + 24px);
+    bottom: auto;
+    left: 5%;
+    width: 90%;
+  }
+
+  .collaboration {
+    height: 310px;
+    margin-top: 60px;
+  }
+
+  .collaborationGrid {
+    top: 96px;
+  }
+
+  .collaborationButton {
+    box-sizing: border-box;
+    top: 250px;
+    width: 130px;
+    height: 37px;
+    font-size: 13px;
+  }
+
+  .otherProducts {
+    height: 320px;
+  }
+
+  .snowmanCard {
+    top: 175px;
+    left: 19px;
+  }
+
+  .snowballCard {
+    top: 165px;
+    left: 135px;
+  }
+
+  .marioCard {
+    top: 175px;
+    left: 238px;
+  }
+
+  .flamingoCard {
+    top: 165px;
+    left: 376px;
+  }
+
+  .apolloCard {
+    top: 180px;
+    left: 455px;
   }
 
 }
