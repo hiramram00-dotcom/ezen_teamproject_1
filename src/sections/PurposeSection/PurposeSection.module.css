@@ -340,6 +340,21 @@
   display: none;
 }
 
+@media (min-width: 768px) and (max-width: 1199px) {
+  .ceo,
+  .ceoCopy blockquote {
+    font-size: clamp(18px, calc(10.87px + 0.928vw), 22px);
+  }
+
+  .description {
+    font-size: clamp(13px, calc(7.65px + 0.696vw), 16px);
+  }
+
+  .missionTitle {
+    font-size: clamp(13px, calc(0.53px + 1.624vw), 20px);
+  }
+}
+
 @media (max-width: 767px) {
   .mobileBr {
     display: block;
