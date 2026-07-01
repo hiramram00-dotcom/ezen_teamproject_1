@@ -281,7 +281,7 @@
      보정. 화면이 높을수록 위아래 여백이 생기는데 이 값이 콘텐츠를 중앙에 둔다(1080 높이선 0).
      자식 요소들이 상속받아 top 계산에 사용. */
   --story-vcenter: max(0px, calc((100svh - 56.25 * var(--about-vw)) / 2));
-  top: calc(136 * var(--about-vw));
+  top: calc(136 * var(--about-vw) + var(--about-mobile-offset, 0px));
   left: 0;
   width: 100%;
   height: max(calc(56.25 * var(--about-vw)), 100svh);
@@ -300,7 +300,7 @@
 }
 
 .storyPassed {
-  top: calc(514.5 * var(--about-vw));
+  top: calc(514.5 * var(--about-vw) + var(--about-mobile-offset, 0px));
 }
 
 .storyLead {
@@ -499,7 +499,7 @@
 
 .ending {
   position: absolute;
-  top: calc(570.75 * var(--about-vw));
+  top: calc(570.75 * var(--about-vw) + var(--about-mobile-offset, 0px));
   left: 0;
   display: flex;
   align-items: center;
@@ -687,6 +687,17 @@
 }
 
 @media (max-width: 767px) {
+  .legacyGallery img,
+  .legacyGallery video {
+    width: 25.5vw;
+    height: 34vw;
+  }
+
+  .legacyGallery img:last-child,
+  .legacyGallery video:last-child {
+    width: 25vw;
+  }
+
   .historyTitleOverlay {
     font-size: 36px;
     white-space: normal;

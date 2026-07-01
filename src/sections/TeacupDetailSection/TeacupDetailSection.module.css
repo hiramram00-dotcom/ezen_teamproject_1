@@ -348,6 +348,10 @@
 }
 
 @media (max-width: 700px) {
+  .panel + .panel:not(.intro) {
+    margin-top: 60px;
+  }
+
   .defaultCopy {
     display: none;
   }
@@ -427,8 +431,8 @@
   }
 
   .gallery {
-    height: 310px;
-    min-height: 310px;
+    height: 320px;
+    min-height: 320px;
   }
 
   .galleryEyebrow {
@@ -448,7 +452,7 @@
 
   .productButton {
     box-sizing: border-box;
-    top: 250px;
+    top: 260px;
     bottom: auto;
     width: 130px;
     height: 37px;

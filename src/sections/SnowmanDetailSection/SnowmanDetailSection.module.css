@@ -986,6 +986,14 @@
 }
 
 @media (max-width: 700px) {
+  .panel + .panel:not(.intro) {
+    margin-top: 60px;
+  }
+
+  .otherProducts {
+    margin-top: 60px;
+  }
+
   .defaultCopy {
     display: none;
   }
@@ -1056,7 +1064,7 @@
   }
 
   .collaboration {
-    height: 310px;
+    height: 320px;
     margin-top: 60px;
   }
 
@@ -1066,7 +1074,7 @@
 
   .collaborationButton {
     box-sizing: border-box;
-    top: 250px;
+    top: 260px;
     width: 130px;
     height: 37px;
     font-size: 13px;
@@ -1083,22 +1091,22 @@
 
   .snowballCard {
     top: 165px;
-    left: 135px;
+    left: calc(35px + 29.9479cqw);
   }
 
   .marioCard {
     top: 175px;
-    left: 238px;
+    left: calc(51px + 56.0417cqw);
   }
 
   .flamingoCard {
     top: 165px;
-    left: 376px;
+    left: calc(67px + 91.875cqw);
   }
 
   .apolloCard {
     top: 180px;
-    left: 455px;
+    left: calc(83px + 111.6146cqw);
   }
 
 }
