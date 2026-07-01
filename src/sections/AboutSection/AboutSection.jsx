@@ -20,6 +20,10 @@ const INTRO_SCROLL_DISTANCE_RATIO = 0.5
 const INTRO_MAX_PROGRESS_STEP = 0.018
 
 const getAboutLayoutWidth = () => Math.min(window.innerWidth, 1920)
+const getAboutMobileVerticalOffset = () => {
+  if (window.innerWidth > 767) return 0
+  return Math.max(window.innerHeight - getAboutLayoutWidth() * 0.5625, 0)
+}
 const getIntroCenterYRatio = (width) =>
   width >= 768 && width <= 1199 ? 0.5 : INTRO_CENTER_Y_RATIO
 const ABOUT_STORY_VIDEO =
@@ -455,7 +459,7 @@ function AboutSection() {
 
       const aboutTop = about.getBoundingClientRect().top + window.scrollY
       const layoutWidth = getAboutLayoutWidth()
-      const start = aboutTop + layoutWidth * 1.18
+      const start = aboutTop + layoutWidth * 1.18 + getAboutMobileVerticalOffset()
       const distance = layoutWidth * 3.05
       const progress = (window.scrollY - start) / distance
       const clampedProgress = Math.min(Math.max(progress, 0), 1.3)
@@ -509,7 +513,9 @@ function AboutSection() {
 
     const applyHeight = () => {
       const bufferPx = window.innerHeight * (PIN_DISTANCE_RATIO + HISTORY_TITLE_HOLD_RATIO)
-      about.style.height = `calc(660.75 * var(--about-vw) + ${bufferPx}px)`
+      const mobileOffsetPx = getAboutMobileVerticalOffset()
+      about.style.setProperty('--about-mobile-offset', `${mobileOffsetPx}px`)
+      about.style.height = `calc(660.75 * var(--about-vw) + ${bufferPx + mobileOffsetPx}px)`
     }
 
     applyHeight()
@@ -526,12 +532,13 @@ function AboutSection() {
       const vwPx = (v) => (v / 100) * getAboutLayoutWidth()
       const bufferPx = window.innerHeight * PIN_DISTANCE_RATIO
       const titleHoldPx = window.innerHeight * HISTORY_TITLE_HOLD_RATIO
-      const endingTopPx = aboutTop + vwPx(570.75)
+      const mobileOffsetPx = getAboutMobileVerticalOffset()
+      const endingTopPx = aboutTop + vwPx(570.75) + mobileOffsetPx
       const pinStartPx = endingTopPx + window.innerHeight * 0.18
       about.style.setProperty('--ending-pinned-top', (endingTopPx - pinStartPx).toFixed(2) + 'px')
       // .about의 실제 끝(= History 시작 지점)에 핀이 정확히 끝나도록 맞춰서
       // 핀 해제 후 빈 검정 구간이 남지 않게 한다
-      const pinEndPx = aboutTop + vwPx(660.75) + bufferPx
+      const pinEndPx = aboutTop + vwPx(660.75) + mobileOffsetPx + bufferPx
       const pinDistancePx = pinEndPx - pinStartPx
       const scrollY = window.scrollY
 
