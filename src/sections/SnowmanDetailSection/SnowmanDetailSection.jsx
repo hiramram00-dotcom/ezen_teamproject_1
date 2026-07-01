@@ -467,11 +467,32 @@ function SnowmanDetailSection() {
             <em data-intro-line>in its simplest form.</em>
           </h2>
           <p ref={introDescriptionRef} className={styles.introDescription}>
-            군더더기 없는 실루엣 안에, 가장 본질적인 빛의 따뜻함을 담았습니다. 화려한 장식이나
-            <br />
-            복잡한 구조 대신, 둥글고 단정한 형태만으로 공간에 스며듭니다. 꾸미지 않아도 충분한 빛,
-            <br />
-            오래 보아도 질리지 않는 단순함 속에서 일상의 온기가 조용히 머뭅니다.
+            <span className={styles.defaultCopy}>
+              군더더기 없는 실루엣 안에, 가장 본질적인 빛의 따뜻함을
+              <br className={styles.tabletBr} />
+              담았습니다. 화려한 장식이나
+              <br className={styles.desktopBr} />
+              복잡한 구조 대신,
+              <br className={styles.tabletBr} />
+              둥글고 단정한 형태만으로 공간에 스며듭니다.
+              <br className={styles.tabletBr} />
+              꾸미지 않아도 충분한 빛,
+              <br className={styles.desktopBr} />
+              오래 보아도 질리지 않는
+              <br className={styles.tabletBr} />
+              단순함 속에서 일상의 온기가 조용히 머뭅니다.
+            </span>
+            <span className={styles.mobileCopy}>
+              군더더기 없는 실루엣 안에, 가장 본질적인 빛의 따뜻함을
+              <br />
+              담았습니다. 화려한 장식이나 복잡한 구조 대신,
+              <br />
+              단정한 형태만으로 공간에 스며듭니다.
+              <br />
+              꾸미지 않아도 충분한 빛, 오래 보아도 질리지 않는
+              <br />
+              단순함 속에서 일상의 온기가 조용히 머뭅니다.
+            </span>
           </p>
         </div>
       </section>
@@ -498,13 +519,24 @@ function SnowmanDetailSection() {
         <div className={styles.storyCopy}>
           <h2 ref={storyTitleRef}>Standing, softly lit.</h2>
           <p ref={storyDescriptionRef}>
-            두 겹으로 포개진 둥근 디퓨저가 빛을 표면 전체로 감싸,
-            <br />
-            눈부심 없이 고르게 퍼뜨립니다. 위아래로 맞닿은 곡면은
-            <br />
-            눈사람을 닮은 둥근 형태로 어느 방향에서 보아도 단정합니다.
-            <br />
-            빛이 부드럽게 번져 공간을 편안한 밝기로 채웁니다.
+            <span className={styles.defaultCopy}>
+              두 겹으로 포개진 둥근 디퓨저가 빛을 표면 전체로 감싸,
+              <br className={styles.tabletBr} />
+              눈부심 없이 고르게 퍼뜨립니다. 위아래로 맞닿은
+              <br className={styles.tabletBr} />
+              곡면은 눈사람을 닮은 둥근 형태로 어느 방향에서 보아도
+              <br className={styles.tabletBr} />
+              단정합니다. 빛이 부드럽게 번져 공간을 편안한 밝기로 채웁니다.
+            </span>
+            <span className={styles.mobileCopy}>
+              두 겹으로 포개진 둥근 디퓨저가 빛을 표면 전체로 감싸, 눈부심 없이
+              <br />
+              고르게 퍼뜨립니다. 위아래로 맞닿은 곡면은 눈사람을 닮은
+              <br />
+              둥근 형태로 어느 방향에서 보아도 단정합니다. 빛이 부드럽게 번져
+              <br />
+              공간을 편안한 밝기로 채웁니다.
+            </span>
           </p>
         </div>
       </section>
@@ -555,7 +587,7 @@ function SnowmanDetailSection() {
         onPointerCancel={endDrag}
       >
         <div
-          className={`${otherStyles.dragHint} ${
+          className={`${otherStyles.dragHint} ${otherStyles.dragHintDesktop} ${
             hasDraggedOtherProducts ? otherStyles.dragHintHidden : ''
           }`}
           aria-hidden="true"
@@ -583,6 +615,15 @@ function SnowmanDetailSection() {
               <br />
               일상에 편안함을 더하는 조명을 찾고 있다면
             </p>
+            <div
+              className={`${otherStyles.dragHint} ${otherStyles.dragHintTablet} ${
+                hasDraggedOtherProducts ? otherStyles.dragHintHidden : ''
+              }`}
+              aria-hidden="true"
+            >
+              <span>Drag</span>
+              <span>← →</span>
+            </div>
           </div>
 
           <article className={`${styles.otherCard} ${styles.snowmanCard}`}>

@@ -88,6 +88,11 @@
 
 /* 모바일: 락업(특히 KAKAO 가로 로고)이 화면 폭을 넘겨 잘리지 않고 정중앙에 오도록 축소 */
 @media (max-width: 767px) {
+  .hero {
+    height: 100svh;
+    min-height: 100svh;
+  }
+
   .lockup {
     max-width: calc(100vw - 28px);
     justify-content: center;

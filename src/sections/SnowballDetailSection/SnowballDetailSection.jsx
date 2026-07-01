@@ -177,7 +177,7 @@ export function ProductOtherSection() {
       onPointerCancel={endDrag}
     >
       <div
-        className={`${otherStyles.dragHint} ${
+        className={`${otherStyles.dragHint} ${otherStyles.dragHintDesktop} ${
           hasDraggedOtherProducts ? otherStyles.dragHintHidden : ''
         }`}
         aria-hidden="true"
@@ -205,6 +205,15 @@ export function ProductOtherSection() {
             <br />
             일상에 편안함을 더하는 조명을 찾고 있다면
           </p>
+          <div
+            className={`${otherStyles.dragHint} ${otherStyles.dragHintTablet} ${
+              hasDraggedOtherProducts ? otherStyles.dragHintHidden : ''
+            }`}
+            aria-hidden="true"
+          >
+            <span>Drag</span>
+            <span>→</span>
+          </div>
         </div>
 
         {otherProducts.map((product) => (
@@ -606,11 +615,24 @@ function SnowballDetailSection() {
             <em data-intro-line>softly settled.</em>
           </h2>
           <p ref={introDescriptionRef}>
-            둥근 유리 안에서 빛이 부드럽게 번집니다. 또렷하지 않아 더 편안한 빛이 공간의 온도를
-            <br />
-            천천히 끌어올리고, 곁에 두는 시간에 잔잔한 포근함을 더합니다. 밝히는 것을 넘어,
-            <br />
-            하루의 끝까지 가만히 머무는 작은 존재로 곁을 지킵니다.
+            <span className={styles.defaultCopy}>
+              둥근 유리 안에서 빛이 부드럽게 번집니다. 또렷하지 않아
+              <br className={styles.tabletBr} />
+              더 편안한 빛이 공간의 온도를 천천히 끌어올리고,
+              <br className={styles.tabletBr} />
+              곁에 두는 시간에 잔잔한 포근함을 더합니다. 밝히는 것을 넘어,
+              <br className={styles.tabletBr} />
+              하루의 끝까지 가만히 머무는 작은 존재로 곁을 지킵니다.
+            </span>
+            <span className={styles.mobileCopy}>
+              둥근 유리 안에서 빛이 부드럽게 번집니다. 또렷하지 않아
+              <br />
+              더 편안한 빛이 공간의 온도를 천천히 끌어올리고, 곁에 두는 시간에
+              <br />
+              잔잔한 포근함을 더합니다. 밝히는 것을 넘어, 하루의 끝까지
+              <br />
+              가만히 머무는 작은 존재로 곁을 지킵니다.
+            </span>
           </p>
         </div>
       </section>
@@ -619,13 +641,30 @@ function SnowballDetailSection() {
         <div className={styles.storyCopy}>
           <h2 ref={storyTitleRef}>A Sphere That Holds Warmth.</h2>
           <p ref={storyDescriptionRef}>
-            은은한 빛이 천천히 내려앉아 책상 위를 차분히 물들입니다.
-            <br />
-            둥근 유리를 지난 또렷하지 않은 빛이 마주한 공간을 낮게 가라앉히고,
-            <br />
-            가까운 자리에 포근한 온기를 더합니다. 오래 켜두어도 눈이 편안한
-            <br />
-            부드러운 빛은 시선을 끌지 않아도 하루의 끝을 조용히 함께합니다.
+            <span className={styles.defaultCopy}>
+              은은한 빛이 천천히 내려앉아 책상 위를 차분히
+              <br className={styles.tabletBr} />
+              물들입니다. 둥근 유리를 지난 또렷하지 않은 빛이
+              <br className={styles.tabletBr} />
+              마주한 공간을 낮게 가라앉히고, 가까운 자리에
+              <br className={styles.tabletBr} />
+              포근한 온기를 더합니다. 오래 켜두어도 눈이
+              <br className={styles.tabletBr} />
+              편안한 부드러운 빛은 시선을 끌지 않아도
+              <br className={styles.tabletBr} />
+              하루의 끝을 조용히 함께합니다.
+            </span>
+            <span className={styles.mobileCopy}>
+              은은한 빛이 천천히 내려앉아 책상 위를 차분히 물들입니다.
+              <br />
+              둥근 유리를 지난 또렷하지 않은 빛이 마주한 공간을 낮게
+              <br />
+              가라앉히고, 가까운 자리에 포근한 온기를 더합니다.
+              <br />
+              오래 켜두어도 눈이 편안한 부드러운 빛은
+              <br />
+              시선을 끌지 않아도 하루의 끝을 조용히 함께합니다.
+            </span>
           </p>
         </div>
         <div className={styles.storyVisual}>

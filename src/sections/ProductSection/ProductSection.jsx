@@ -314,6 +314,7 @@ function ProductSection({ onOpenProduct }) {
 
               <div className={styles.productInfo}>
                 <div className={styles.productInfoInner}>
+
                 <h2
                   className={styles.productName}
                   aria-label={product.name}
@@ -360,6 +361,18 @@ function ProductSection({ onOpenProduct }) {
                     {renderThumbnailFrames(product)}
                     <span data-thumbnail-reveal className={styles.thumbnailReveal} aria-hidden="true" />
                   </figure>
+                )}
+                {isLinked && (
+                  <button
+                    type="button"
+                    className={styles.mobileInfoCta}
+                    onClick={() => openProduct(product.detail)}
+                    data-cursor="pointer"
+                    aria-label={`${product.name} 상세 페이지 열기`}
+                  >
+                    컬렉션 자세히 보기
+                    <span className={styles.mainCtaArrow}>→</span>
+                  </button>
                 )}
                 </div>
               </div>
