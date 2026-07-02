@@ -368,7 +368,9 @@
 
 /* ?곗뒪?ы넲(紐⑥뀡 ?덉슜): 媛?釉붾줉???ㅼ젣 prefix/suffix 議곌컖???대깽???꾩튂??議댁옱?섍퀬,
    JS???꾩옱 ?곕룄 ?섎떒怨??대깽???대?吏 ?섎떒??留뚮궃 ??transform留?蹂댁젙?쒕떎. */
-@media (min-width: 1200px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 1200px) and (prefers-reduced-motion: no-preference) {
+  /* position:fixed(.rail)·JS 롤링과 발동 기준 통일. hover·pointer를 요구하면
+     개발자도구 기기모드(터치)에서 마커가 안 숨어 연도가 중복 노출된다. */
   .block .marker {
     visibility: hidden;
   }
