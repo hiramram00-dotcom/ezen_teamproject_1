@@ -293,8 +293,12 @@ function HistorySection() {
     const blocks = blockRefs.current.filter(Boolean)
     if (!rail || !blocks.length) return undefined
 
+    // position:fixed(.rail)는 폭 조건만으로 걸리는데, 이 rail을 다시 밀어내는(고정 해제)
+    // 로직이 hover·pointer까지 요구하면 개발자도구 기기모드(터치 에뮬=hover:none/pointer:coarse)
+    // 에서 실행되지 않아 rail이 영영 fixed로 남는다. 발동 기준을 position:fixed와 동일하게
+    // 폭+모션 기준으로 통일한다(스크롤 기반 연출이라 터치에서도 정상 동작).
     const mq = window.matchMedia(
-      '(min-width: 1200px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
+      '(min-width: 1200px) and (prefers-reduced-motion: no-preference)',
     )
 
     const prefixSpans = Array.from(rail.querySelectorAll('[data-rail-prefix]'))
