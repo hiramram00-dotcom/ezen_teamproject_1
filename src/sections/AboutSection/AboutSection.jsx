@@ -26,8 +26,11 @@ const getAboutMobileVerticalOffset = () => {
 }
 const getIntroCenterYRatio = (width) =>
   width >= 768 && width <= 1199 ? 0.5 : INTRO_CENTER_Y_RATIO
-const ABOUT_STORY_VIDEO =
-  'https://res.cloudinary.com/dg9hg29hc/video/upload/ADORABLE_ANYWHERE_DUMBO13_-_YouTube_-_Chrome_2026-06-22_11-23-20_zhldeh.mp4'
+const ABOUT_STORY_VIDEOS = [
+  '/videos/about-story.mp4',
+  'https://res.cloudinary.com/dg9hg29hc/video/upload/ADORABLE_ANYWHERE_DUMBO13_-_YouTube_-_Chrome_2026-06-22_11-23-20_zhldeh.mp4',
+  'https://res.cloudinary.com/dg9hg29hc/video/upload/ADORABLE_ANYWHERE_DUMBO13_-_YouTube_-_Chrome_2026-06-22_11-25-33_nhgokf.mp4',
+]
 
 function easeInOutCubic(value) {
   return value < 0.5 ? 4 * value ** 3 : 1 - (-2 * value + 2) ** 3 / 2
@@ -726,13 +729,19 @@ function AboutSection() {
 
         <video
           className={styles.storyMedia}
-          src={ABOUT_STORY_VIDEO}
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
+          poster={tableLampImage}
           aria-label="ILKW 브랜드 영상"
-        />
+        >
+          {ABOUT_STORY_VIDEOS.map((src) => (
+            <source key={src} src={src} type="video/mp4" />
+          ))}
+          <source src={tableLampVideo} type="video/webm" />
+        </video>
 
         <p className={`${styles.storyClosing} ${styles.storyClosingStatement} ${styles.storyFirstDesktop}`}>
           <StoryTypedLines
