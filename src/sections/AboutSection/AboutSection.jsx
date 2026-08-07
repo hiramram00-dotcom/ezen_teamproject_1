@@ -26,11 +26,8 @@ const getAboutMobileVerticalOffset = () => {
 }
 const getIntroCenterYRatio = (width) =>
   width >= 768 && width <= 1199 ? 0.5 : INTRO_CENTER_Y_RATIO
-const ABOUT_STORY_VIDEOS = [
-  '/videos/about-story.mp4',
-  'https://res.cloudinary.com/dg9hg29hc/video/upload/ADORABLE_ANYWHERE_DUMBO13_-_YouTube_-_Chrome_2026-06-22_11-23-20_zhldeh.mp4',
-  'https://res.cloudinary.com/dg9hg29hc/video/upload/ADORABLE_ANYWHERE_DUMBO13_-_YouTube_-_Chrome_2026-06-22_11-25-33_nhgokf.mp4',
-]
+const ABOUT_STORY_VIDEO_EMBED_URL =
+  'https://player.cloudinary.com/embed/?cloud_name=ddit4bjrw&public_id=ADORABLE_ANYWHERE_DUMBO13_-_YouTube_-_Chrome_2026-06-22_11-23-20_jsz5wl&autoplay=true&muted=true&loop=true&controls=false'
 
 function easeInOutCubic(value) {
   return value < 0.5 ? 4 * value ** 3 : 1 - (-2 * value + 2) ** 3 / 2
@@ -614,10 +611,10 @@ function AboutSection() {
         : 0
   // 검정(0) -> 크림(1)으로 배경색 자체를 보간 — History와 같은 색이라 핀이 풀려도 끊김이 없다
   const endingBgColor = `rgb(${255 * endingOverlayOpacity}, ${247 * endingOverlayOpacity}, ${234 * endingOverlayOpacity})`
-  const storyLeadProgress = clamp(storyProgress / 0.24, 0, 1)
-  const storyMediaProgress = clamp((storyProgress - 0.28) / 0.16, 0, 1)
-  const storyTailProgress = clamp((storyProgress - 0.44) / 0.1, 0, 1)
-  const storyClosingProgress = clamp((storyProgress - 0.48) / 0.26, 0, 1)
+  const storyLeadProgress = clamp(storyProgress / 0.28, 0, 1)
+  const storyMediaProgress = clamp((storyProgress - 0.32) / 0.16, 0, 1)
+  const storyTailProgress = clamp((storyProgress - 0.52) / 0.1, 0, 1)
+  const storyClosingProgress = clamp((storyProgress - 0.56) / 0.26, 0, 1)
   const storySecondProgress = clamp((storyProgress - 0.86) / 0.32, 0, 1)
 
   return (
@@ -682,6 +679,7 @@ function AboutSection() {
           '--story-media-mask': `${(1 - storyMediaProgress) * 50}%`,
           '--story-media-brightness': 0.18 + storyMediaProgress * 0.72,
           '--story-media-scale': 1.06 - storyMediaProgress * 0.06,
+          '--story-media-opacity': storyMediaProgress,
         }}
         className={`${styles.story} fs-title-3 ${
           storyPhase === 'first' || storyPhase === 'second' ? styles.storyRevealed : ''
@@ -695,7 +693,7 @@ function AboutSection() {
           <StoryTypedLines
             lines={['From the days', 'when incandescent bulbs lit']}
             progress={storyLeadProgress}
-            totalWords={13}
+            totalWords={11}
             strongWords={['incandescent']}
           />
         </p>
@@ -704,8 +702,8 @@ function AboutSection() {
           <StoryTypedLines
             lines={['everyday', 'life to -']}
             progress={storyLeadProgress}
-            startIndex={8}
-            totalWords={14}
+            startIndex={7}
+            totalWords={11}
           />
         </p>
 
@@ -727,21 +725,14 @@ function AboutSection() {
           </p>
         </div>
 
-        <video
+        <iframe
           className={styles.storyMedia}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster={tableLampImage}
-          aria-label="ILKW 브랜드 영상"
-        >
-          {ABOUT_STORY_VIDEOS.map((src) => (
-            <source key={src} src={src} type="video/mp4" />
-          ))}
-          <source src={tableLampVideo} type="video/webm" />
-        </video>
+          src={ABOUT_STORY_VIDEO_EMBED_URL}
+          title="ILKW 브랜드 영상"
+          allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+          allowFullScreen
+          frameBorder="0"
+        />
 
         <p className={`${styles.storyClosing} ${styles.storyClosingStatement} ${styles.storyFirstDesktop}`}>
           <StoryTypedLines

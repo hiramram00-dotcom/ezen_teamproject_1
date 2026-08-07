@@ -340,11 +340,11 @@
   width: calc(36.9 * var(--about-vw));
   height: calc(18 * var(--about-vw));
   aspect-ratio: 16 / 9;
-  opacity: 1;
+  opacity: var(--story-media-opacity, 0);
   object-fit: cover;
   object-position: top center;
-  clip-path: inset(0);
-  filter: brightness(0.9) saturate(0.9);
+  clip-path: inset(0 0 var(--story-media-mask, 50%) 0);
+  filter: brightness(var(--story-media-brightness, 0.18)) saturate(0.9);
   transform: scale(var(--story-media-scale, 1.06));
   transform-origin: center;
   will-change: transform;
